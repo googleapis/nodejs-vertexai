@@ -17,7 +17,10 @@
 
 const API_BASE_PATH = 'aiplatform.googleapis.com';
 
-import {GenerateContentRequest} from '../types/content';
+import {
+    GenerateContentRequest, CLIENT_INFO,
+} from '../types/content';
+
 /**
  * Makes a POST request to a Vertex service
  */
@@ -55,9 +58,15 @@ export async function postRequest({
       apiVersion}/projects/${project}/locations/${region}/${resourcePath}:${
       resourceMethod}&alt=sse`;
 
+  // TODO: switch to `vertexEndpoint` for client side telemetry collection
   return await fetch(labsEndpoint, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+      'Content-Type': 'application/json',
+      'user_agent': CLIENT_INFO.user_agent,
+      'client_library_language': CLIENT_INFO.client_library_language,
+      'client_library_version': CLIENT_INFO.client_library_version,
+    },
     body: JSON.stringify(data),
   });
 }
