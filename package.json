@@ -1,0 +1,42 @@
+{
+  "name": "@google-cloud/vertexai",
+  "description": "Vertex Generative AI client for Node.js",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "author": "Google LLC",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "homepage": "https://github.com/googleapis/nodejs-vertexai",
+  "repository": "googleapis/nodejs-vertexai",
+  "main": "build/src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "clean": "gts clean",
+    "compile": "tsc",
+    "docs": "jsdoc -c .jsdoc.js",
+    "predocs-test": "npm run docs",
+    "docs-test": "linkinator docs",
+    "compile:oss": "tsc -p tsconfig.json.oss",
+    "fix": "gts fix",
+    "test": "TODO",
+    "lint": "gts lint",
+    "clean-js-files": "find . -type f -name \"*.js\" -exec rm -f {} +",
+    "clean-js-map-files": "find . -type f -name \"*.js.map\" -exec rm -f {} +",
+    "clean-d-ts-files": "find . -type f -name \"*.d.ts\" -exec rm -f {} +",
+    "clean-after-pack": "echo \"cleaning\" && rm -rf node_modules/ && npm run clean-js-files && npm run clean-js-map-files && npm run clean-d-ts-files",
+    "prepare": "if [ \"${CUSTOM_PACK}\" ]; then echo \"custom compile\" && npm run compile:oss; else npm run compile; fi",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint",
+    "postpack": "if [ \"${CLEAN}\" ]; then npm run clean-after-pack; fi"
+  },
+  "dependencies": {
+    "google-auth-library": "^9.1.0"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^5.1.2",
+    "@types/node": "^20.9.0",
+    "gts": "^5.2.0",
+    "typescript": "~5.2.0"
+  }
+}
