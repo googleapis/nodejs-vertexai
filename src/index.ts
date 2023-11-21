@@ -19,7 +19,7 @@
 import {GoogleAuth} from 'google-auth-library';
 
 import {emptyGenerator, processStream} from './process_stream';
-import {Content, GenerateContentParams, GenerateContentRequest, GenerateContentResult, GenerationConfig, Part, SafetySetting} from './types/content';
+import {Content, GenerateContentParams, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting} from './types/content';
 import {postRequest} from './util';
 
 // TODO: update this when model names are available
@@ -37,8 +37,7 @@ export class VertexAI {
       apiKey: string,  // TODO: remove when we switch to Vertex endpoint
       apiEndpoint?: string,
   ) {
-    this.preview =
-        new VertexAI_Internal(project, location, apiKey, apiEndpoint);
+    this.preview = new VertexAI_Internal(project, location, apiKey);
   }
 }
 
@@ -60,9 +59,9 @@ export class VertexAI_Internal {
    * us-central1-aiplatform.googleapis.com) will be used.
    */
   constructor(
-      protected readonly project: string,
-      protected readonly location: string,
-      protected readonly apiKey:
+      readonly project: string,
+      readonly location: string,
+      readonly apiKey:
           string,  // TODO: remove when we switch to Vertex endpoint
       protected readonly apiEndpoint?: string,
   ) {}
@@ -72,7 +71,7 @@ export class VertexAI_Internal {
    * @param vertex The VertexAI instance.
    */
   // TODO: change the `any` type below to be more specific
-  protected get token(): Promise<any>|string {
+  get token(): Promise<any>|string {
     if (this.tokenInternal) {
       return this.tokenInternal;
     }
@@ -80,6 +79,134 @@ export class VertexAI_Internal {
     // TODO: add error handling here
     const token = Promise.resolve(this.googleAuth.getAccessToken());
     return token;
+  }
+
+  getGenerativeModel(modelParams: ModelParams): GenerativeModel {
+    // TODO: decide if we want to validate the provided model string
+    return new GenerativeModel(
+        this,
+        modelParams.model,
+        modelParams.generation_config,
+        modelParams.safety_settings,
+    );
+  }
+}
+
+/**
+ * Params to initiate a multiturn chat with the model via startChat
+ */
+export declare interface StartChatParams {
+  history?: Content[];
+  safety_settings?: SafetySetting[];
+  generation_config?: GenerationConfig;
+  stream?: boolean;
+}
+
+// StartChatSessionRequest and ChatSession are defined here instead of in
+// src/types to avoid a circular dependency issue due the dep on
+// VertexAI_Internal
+
+/**
+ * All params passed to initiate multiturn chat via startChat
+ */
+export declare interface StartChatSessionRequest extends StartChatParams {
+  _vertex_instance: VertexAI_Internal;
+  _model_instance: GenerativeModel;
+}
+
+/**
+ * Session for a multiturn chat with the model
+ */
+export class ChatSession {
+  // Substitute apiKey for these in Labs
+  private project: string;
+  private location: string;
+
+  private historyInternal: Content[];
+  private _vertex_instance: VertexAI_Internal;
+  private _model_instance: GenerativeModel;
+
+
+  model: string;
+  generation_config?: GenerationConfig;
+  safety_settings?: SafetySetting[];
+
+  get history(): Content[] {
+    return this.historyInternal;
+  }
+
+  constructor(request: StartChatSessionRequest) {
+    this.project = request._vertex_instance.project;
+    this.location = request._vertex_instance.location;
+    this.model = request._model_instance.model;
+    this._model_instance = request._model_instance;
+    this.historyInternal = request.history ?? [];
+    this._vertex_instance = request._vertex_instance;
+  }
+
+  async sendMessage(request: string|
+                    Array<string|Part>): Promise<GenerateContentResult> {
+    // TODO: this is stubbed until the service is available
+    let generateContentrequest: GenerateContentParams = {
+      model: this.model,
+      contents: [],
+      safety_settings: this.safety_settings,
+      generation_config: this.generation_config,
+    };
+
+    let currentContent = [];
+
+    if (typeof request === 'string') {
+      currentContent = [{role: 'user', parts: [{text: request}]}];
+    } else if (Array.isArray(request)) {
+      for (const item of request) {
+        if (typeof item === 'string') {
+          currentContent.push({role: 'user', parts: [{text: item}]});
+        } else {
+          currentContent.push({role: 'user', parts: [item]});
+        }
+      }
+    };
+
+    generateContentrequest.contents = currentContent;
+    const generateContentResponse =
+        await this._model_instance.generateContent(generateContentrequest);
+    // TODO: add error handling
+
+    // First add the messages sent by the user
+    for (const content of currentContent) {
+      this.historyInternal.push(content);
+    };
+
+    for (const result of generateContentResponse.responses) {
+      for (const candidate of result.candidates) {
+        this.historyInternal.push(candidate.content);
+      }
+    }
+    return generateContentResponse;
+  }
+}
+
+
+/**
+ * Base class for generative models.
+ *
+ * NOTE: this class should not be instantiated directly. Use
+ * `vertexai.preview.getGenerativeModel()` instead.
+ */
+export class GenerativeModel {
+  model: string;
+  generation_config?: GenerationConfig;
+  safety_settings?: SafetySetting[];
+  private _vertex_instance: VertexAI_Internal;
+
+  constructor(
+      vertex_instance: VertexAI_Internal, model: string,
+      generation_config?: GenerationConfig, safety_settings?: SafetySetting[]) {
+    this._vertex_instance = vertex_instance;
+    this.model = model;
+    this.generation_config = generation_config;
+    this.safety_settings = safety_settings;
   }
 
   /**
@@ -97,22 +224,21 @@ export class VertexAI_Internal {
     const generateContentRequest: GenerateContentRequest = {
       model: request.model,
       contents: request.contents,
-      generation_config: request.generation_config,
-      safety_settings: request.safety_settings,
+      generation_config: request.generation_config ?? this.generation_config,
+      safety_settings: request.safety_settings ?? this.safety_settings,
     }
 
     let response;
     try {
       response = await postRequest({
-        region: this.location,
-        project: this.project,
+        region: this._vertex_instance.location,
+        project: this._vertex_instance.project,
         resourcePath: publisherModelEndpoint,
         resourceMethod: request.stream ? 'streamGenerateContent' :
                                          'generateContent',
-        token: await this.token,
+        token: await this._vertex_instance.token,
         data: generateContentRequest,
-        apiKey: this.apiKey,
-        apiEndpoint: this.apiEndpoint,
+        apiKey: this._vertex_instance.apiKey,
       });
       if (response === undefined) {
         throw new Error('did not get a valid response.')
@@ -145,120 +271,13 @@ export class VertexAI_Internal {
 
   startChat(request: StartChatParams): ChatSession {
     const startChatRequest = {
-      model: request.model,
-      project: this.project,
-      location: this.location,
       history: request.history,
-      generation_config: request.generation_config,
-      safety_settings: request.safety_settings,
-      _vertex_instance: this,
+      generation_config: request.generation_config ?? this.generation_config,
+      safety_settings: request.safety_settings ?? this.safety_settings,
+      _vertex_instance: this._vertex_instance,
+      _model_instance: this,
     };
 
     return new ChatSession(startChatRequest);
   }
 }
-
-/**
- * Params to initiate a multiturn chat with the model via startChat
- */
-export declare interface StartChatParams {
-  model: string;
-  history?: Content[];
-  safety_settings?: SafetySetting[];
-  generation_config?: GenerationConfig;
-  stream?: boolean;
-}
-
-// StartChatSessionRequest and ChatSession are defined here instead of in
-// src/types to avoid a circular dependency issue due the dep on
-// VertexAI_Internal
-
-/**
- * All params passed to initiate multiturn chat via startChat
- */
-export declare interface StartChatSessionRequest extends StartChatParams {
-  project: string;
-  location: string;
-  _vertex_instance: VertexAI_Internal;
-}
-
-/**
- * Session for a multiturn chat with the model
- */
-export class ChatSession {
-  // Substitute apiKey for these in Labs
-  private project: string;
-  private location: string;
-
-  private _history: Content[];
-  private _vertex_instance: VertexAI_Internal;
-
-
-  model: string;
-  generation_config?: GenerationConfig;
-  safety_settings?: SafetySetting[];
-
-  get history(): Content[] {
-    return this._history;
-  }
-
-  constructor(request: StartChatSessionRequest) {
-    this.project = request.project;
-    this.location = request.location;
-    this.model = request.model;
-    this._history = request.history ?? [];
-    this._vertex_instance = request._vertex_instance;
-  }
-
-  async sendMessage(request: string|
-                    Array<string|Part>): Promise<GenerateContentResult> {
-    // TODO: this is stubbed until the service is available
-    let generateContentrequest: GenerateContentParams = {
-      model: this.model,
-      contents: [],
-      safety_settings: this.safety_settings,
-      generation_config: this.generation_config,
-    };
-
-    let currentContent = [];
-
-    if (typeof request === 'string') {
-      currentContent = [{role: 'user', parts: [{text: request}]}];
-    } else if (Array.isArray(request)) {
-      for (const item of request) {
-        if (typeof item === 'string') {
-          currentContent.push({role: 'user', parts: [{text: item}]});
-        } else {
-          currentContent.push({role: 'user', parts: [item]});
-        }
-      }
-    };
-
-    generateContentrequest.contents = currentContent;
-    const generateContentResponse =
-        await this._vertex_instance.generateContent(generateContentrequest);
-    // TODO: add error handling
-
-    // First add the messages sent by the user
-    for (const content of currentContent) {
-      this._history.push(content);
-    };
-
-    for (const result of generateContentResponse.responses) {
-      for (const candidate of result.candidates) {
-        this._history.push(candidate.content);
-      }
-    }
-    return generateContentResponse;
-  }
-}
-
-export {
-  Content,
-  GenerateContentParams,
-  GenerateContentRequest,
-  GenerateContentResult,
-  GenerationConfig,
-  Part,
-  SafetySetting
-};

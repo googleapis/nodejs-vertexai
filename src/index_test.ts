@@ -18,7 +18,7 @@
 /* tslint:disable */
 import 'jasmine';
 
-import {ChatSession, StartChatParams, VertexAI} from './index';
+import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
 import {GenerateContentParams, GenerateContentResult} from './types/content';
 import * as PostRequest from './util/post_request';
@@ -48,10 +48,12 @@ const TEST_ENDPOINT_BASE_PATH = 'test.googleapis.com';
 
 describe('VertexAI', () => {
   let vertexai: VertexAI;
+  let model: GenerativeModel;
 
   beforeEach(() => {
     vertexai = new VertexAI(PROJECT, LOCATION, API_KEY);
     vertexai.preview['tokenInternal'] = 'testtoken';
+    model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
   });
 
   it('should be instantiated', () => {
@@ -70,7 +72,7 @@ describe('VertexAI', () => {
         responses: TEST_MODEL_RESPONSE,
       };
       spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
-      const resp = await vertexai.preview.generateContent(req);
+      const resp = await model.generateContent(req);
       expect(resp).toEqual(expectedResult);
     });
     // TODO: add test from stream=true here
@@ -103,10 +105,9 @@ describe('VertexAI', () => {
   describe('startChat', () => {
     it('returns a ChatSession', () => {
       const req: StartChatParams = {
-        model: MODEL_ID,
         history: TEST_USER_CHAT_MESSAGE,
       };
-      const resp = vertexai.preview.startChat(req);
+      const resp = model.startChat(req);
       expect(resp).toBeInstanceOf(ChatSession);
     });
   });
@@ -119,8 +120,8 @@ describe('ChatSession', () => {
   beforeEach(() => {
     vertexai = new VertexAI(PROJECT, LOCATION, API_KEY);
     vertexai.preview['tokenInternal'] = 'testtoken';
-    chatSession = vertexai.preview.startChat({
-      model: MODEL_ID,
+    const model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+    chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
     });
   });

@@ -27,9 +27,16 @@ export declare interface GenerateContentParams extends GenerateContentRequest {
 /**
  * Params used by the generateContent endpoint
  */
-export declare interface GenerateContentRequest {
-  model: string;
+export declare interface GenerateContentRequest extends ModelParams {
   contents: Content[];
+}
+
+
+/**
+ * Configuration for initializing a model, for example via getGenerativeModel
+ */
+export declare interface ModelParams {
+  model: string;
   safety_settings?: SafetySetting[];
   generation_config?: GenerationConfig;
 }
