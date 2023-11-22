@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-const API_BASE_PATH = 'aiplatform.googleapis.com';
+// TODO: update to prod endpoint when ready
+const API_BASE_PATH = 'autopush-aiplatform.sandbox.googleapis.com';
 
 import {
     GenerateContentRequest, CLIENT_INFO,
@@ -27,13 +28,13 @@ import {
 export async function postRequest({
   region,
   project,
-  apiVersion = 'v1',
   resourcePath,
   resourceMethod,
   token,
   data,
-  apiKey,  // TODO: remove when we switch to Vertex endpoint
   apiEndpoint,
+  // TODO: update to prod version when ready
+  apiVersion = 'internal',
 }: {
   region: string,
   project: string,
@@ -41,27 +42,19 @@ export async function postRequest({
   resourceMethod: string,
   token: string,
   data: GenerateContentRequest,
-  apiVersion?: string,
-  apiKey?: string,  // TODO: remove when we switch to Vertex endpoint
   apiEndpoint?: string,
+  apiVersion?: string,
 }): Promise<Response|undefined> {
-  // TODO: replace Labs endpoint with vertex when service is available
-  // TODO: add user-agent to the request header for Vertex endpoint
-
-  const labsEndpoint =
-      `https://autopush-generativelanguage.sandbox.googleapis.com/v1beta/models/gemini-pro:${
-          resourceMethod}?key=${apiKey}&alt=sse`;
-
   const vertexBaseEndpoint = apiEndpoint ?? `${region}-${API_BASE_PATH}`;
 
   const vertexEndpoint = `https://${vertexBaseEndpoint}/${
       apiVersion}/projects/${project}/locations/${region}/${resourcePath}:${
       resourceMethod}&alt=sse`;
 
-  // TODO: switch to `vertexEndpoint` for client side telemetry collection
-  return await fetch(labsEndpoint, {
+  return await fetch(vertexEndpoint, {
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
       'user_agent': CLIENT_INFO.user_agent,
       'client_library_language': CLIENT_INFO.client_library_language,

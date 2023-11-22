@@ -34,10 +34,9 @@ export class VertexAI {
   constructor(
       project: string,
       location: string,
-      apiKey: string,  // TODO: remove when we switch to Vertex endpoint
       apiEndpoint?: string,
   ) {
-    this.preview = new VertexAI_Internal(project, location, apiKey);
+    this.preview = new VertexAI_Internal(project, location, apiEndpoint);
   }
 }
 
@@ -61,10 +60,12 @@ export class VertexAI_Internal {
   constructor(
       readonly project: string,
       readonly location: string,
-      readonly apiKey:
-          string,  // TODO: remove when we switch to Vertex endpoint
-      protected readonly apiEndpoint?: string,
-  ) {}
+      readonly apiEndpoint?: string,
+  ) {
+    this.project = project;
+    this.location = location;
+    this.apiEndpoint = apiEndpoint;
+  }
 
   /**
    * Gets an authentication token for making Vertex REST API requests.
@@ -146,7 +147,6 @@ export class ChatSession {
 
   async sendMessage(request: string|
                     Array<string|Part>): Promise<GenerateContentResult> {
-    // TODO: this is stubbed until the service is available
     let generateContentrequest: GenerateContentParams = {
       model: this.model,
       contents: [],
@@ -213,9 +213,6 @@ export class GenerativeModel {
    * Make a generateContent request.
    * @param request A GenerateContentRequest object with the request contents.
    * @return The GenerateContentResponse object with the response candidates.
-   *
-   * NOTE: this method is stubbed in postRequest for now until the service is
-   * available.
    */
   async generateContent(request: GenerateContentParams):
       Promise<GenerateContentResult> {
@@ -238,7 +235,7 @@ export class GenerativeModel {
                                          'generateContent',
         token: await this._vertex_instance.token,
         data: generateContentRequest,
-        apiKey: this._vertex_instance.apiKey,
+        apiEndpoint: this._vertex_instance.apiEndpoint,
       });
       if (response === undefined) {
         throw new Error('did not get a valid response.')
