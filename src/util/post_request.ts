@@ -49,7 +49,7 @@ export async function postRequest({
 
   const vertexEndpoint = `https://${vertexBaseEndpoint}/${
       apiVersion}/projects/${project}/locations/${region}/${resourcePath}:${
-      resourceMethod}&alt=sse`;
+      resourceMethod}`;
 
   return await fetch(vertexEndpoint, {
     method: 'POST',
