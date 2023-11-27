@@ -98,7 +98,7 @@ export declare interface SafetyRating {
  */
 export declare interface Content {
   parts: Part[];
-  role: string;
+  role?: string;
 }
 
 /**
@@ -135,8 +135,9 @@ export declare interface GenerativeContentBlob {
  * Metadata on token count for the request
  */
 export declare interface UsageMetadata {
-  prompt_token_count: number;
-  candidates_token_count: number;
+  prompt_token_count?: number;
+  candidates_token_count?: number;
+  totalTokenCount?: number;
 }
 
 /**
@@ -200,11 +201,11 @@ export declare interface GenerateContentResponse {
  * Content candidate from the model
  */
 export declare interface GenerateContentCandidate {
-  index: number;
   content: Content;
-  finish_reason: FinishReason;
-  finish_message: string;
-  safety_ratings: SafetyRating[];
+  index?: number;
+  finish_reason?: FinishReason;
+  finish_message?: string;
+  safety_ratings?: SafetyRating[];
   citation_metadata?: CitationMetadata;
 }
 
