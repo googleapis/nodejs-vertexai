@@ -102,7 +102,7 @@ describe('VertexAI', () => {
           .toContain(TEST_ENDPOINT_BASE_PATH);
     });
   });
-  
+
   describe('generateContent', () => {
     it('default the base API endpoint when base API not provided', async () => {
       const vertexaiWithoutBasePath =
@@ -155,6 +155,7 @@ describe('ChatSession', () => {
 
   it('should add the provided message to the session history', () => {
     expect(chatSession.history).toEqual(TEST_USER_CHAT_MESSAGE);
+    expect(chatSession.history.length).toEqual(1);
   });
 
   describe('sendMessage', () => {

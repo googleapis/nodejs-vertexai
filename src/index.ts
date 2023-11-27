@@ -127,8 +127,6 @@ export class ChatSession {
   private _vertex_instance: VertexAI_Internal;
   private _model_instance: GenerativeModel;
 
-
-  model: string;
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
 
@@ -139,45 +137,48 @@ export class ChatSession {
   constructor(request: StartChatSessionRequest) {
     this.project = request._vertex_instance.project;
     this.location = request._vertex_instance.location;
-    this.model = request._model_instance.model;
     this._model_instance = request._model_instance;
     this.historyInternal = request.history ?? [];
     this._vertex_instance = request._vertex_instance;
   }
 
+  // TODO: update this to sendMessage / streamSendMessage after generateContent
+  // is split
   async sendMessage(request: string|
                     Array<string|Part>): Promise<GenerateContentResult> {
-    let generateContentrequest: GenerateContentParams = {
-      model: this.model,
-      contents: [],
-      safety_settings: this.safety_settings,
-      generation_config: this.generation_config,
-    };
-
-    let currentContent = [];
+    let newParts: Part[] = [];
 
     if (typeof request === 'string') {
-      currentContent = [{role: 'user', parts: [{text: request}]}];
+      newParts = [{text: request}];
     } else if (Array.isArray(request)) {
       for (const item of request) {
         if (typeof item === 'string') {
-          currentContent.push({role: 'user', parts: [{text: item}]});
+          newParts.push({text: item});
         } else {
-          currentContent.push({role: 'user', parts: [item]});
+          newParts.push(item);
         }
       }
     };
 
-    generateContentrequest.contents = currentContent;
-    const generateContentResponse =
-        await this._model_instance.generateContent(generateContentrequest);
-    // TODO: add error handling
+    const newContent: Content = {role: 'user', parts: newParts};
 
-    // First add the messages sent by the user
-    for (const content of currentContent) {
-      this.historyInternal.push(content);
+    // TODO: should this wait to append to history until a response is returned
+    // successfully?
+    this.historyInternal.push(newContent);
+
+    let generateContentrequest: GenerateContentParams = {
+      model: this._model_instance.model,
+      contents: this.historyInternal,
+      safety_settings: this.safety_settings,
+      generation_config: this.generation_config,
+      stream: true,
     };
 
+    const generateContentResponse =
+        await this._model_instance.generateContent(generateContentrequest);
+
+    // This is currently not iterating over generateContentResponse.stream, it's
+    // iterating over the list of returned responses
     for (const result of generateContentResponse.responses) {
       for (const candidate of result.candidates) {
         this.historyInternal.push(candidate.content);
@@ -231,6 +232,7 @@ export class GenerativeModel {
         region: this._vertex_instance.location,
         project: this._vertex_instance.project,
         resourcePath: publisherModelEndpoint,
+        // TODO: update when this method is split for streaming / non-streaming
         resourceMethod: request.stream ? 'streamGenerateContent' :
                                          'generateContent',
         token: await this._vertex_instance.token,
@@ -262,8 +264,6 @@ export class GenerativeModel {
       // True or undefined (default true)
       return streamResult;
     }
-
-    // TODO: handle streaming and non-streaming response here
   }
 
   startChat(request: StartChatParams): ChatSession {
