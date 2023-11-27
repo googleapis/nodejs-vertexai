@@ -63,7 +63,6 @@ describe('VertexAI', () => {
   describe('generateContent', () => {
     it('returns a GenerateContentResponse when stream=false', async () => {
       const req: GenerateContentParams = {
-        model: 'content-generation-model',
         contents: TEST_USER_CHAT_MESSAGE,
         stream: false,
       };
@@ -87,7 +86,6 @@ describe('VertexAI', () => {
       });
 
       const req: GenerateContentParams = {
-        model: 'content-generation-model',
         contents: TEST_USER_CHAT_MESSAGE,
         stream: false,
       };
@@ -113,7 +111,6 @@ describe('VertexAI', () => {
       });
 
       const req: GenerateContentParams = {
-        model: 'content-generation-model',
         contents: TEST_USER_CHAT_MESSAGE,
         stream: false,
       };

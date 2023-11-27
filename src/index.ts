@@ -167,7 +167,6 @@ export class ChatSession {
     this.historyInternal.push(newContent);
 
     let generateContentrequest: GenerateContentParams = {
-      model: this._model_instance.model,
       contents: this.historyInternal,
       safety_settings: this.safety_settings,
       generation_config: this.generation_config,
@@ -217,10 +216,9 @@ export class GenerativeModel {
    */
   async generateContent(request: GenerateContentParams):
       Promise<GenerateContentResult> {
-    const publisherModelEndpoint = `publishers/google/models/${request.model}`;
+    const publisherModelEndpoint = `publishers/google/models/${this.model}`;
 
     const generateContentRequest: GenerateContentRequest = {
-      model: request.model,
       contents: request.contents,
       generation_config: request.generation_config ?? this.generation_config,
       safety_settings: request.safety_settings ?? this.safety_settings,
