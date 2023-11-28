@@ -31,6 +31,21 @@ export declare interface GenerateContentRequest extends BaseModelParams {
   contents: Content[];
 }
 
+/**
+ * Params used to call countTokens
+ */
+export declare interface CountTokensRequest {
+  contents: Content[];
+}
+
+/**
+ * Response returned from countTokens
+ */
+export declare interface CountTokensResponse {
+  totalTokens: number;
+  totalBillableCharacters?: number;
+}
+
 
 /**
  * Configuration for initializing a model, for example via getGenerativeModel
