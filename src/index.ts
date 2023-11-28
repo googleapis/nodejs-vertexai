@@ -18,7 +18,7 @@
 /* tslint:disable */
 import {GoogleAuth} from 'google-auth-library';
 
-import {emptyGenerator, processStream} from './process_stream';
+import {emptyGenerator, processNonStream, processStream} from './process_stream';
 import {Content, CountTokensRequest, CountTokensResponse, GenerateContentParams, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting} from './types/content';
 import {postRequest} from './util';
 
@@ -164,6 +164,7 @@ export class ChatSession {
 
     // TODO: should this wait to append to history until a response is returned
     // successfully?
+    console.log("pushing history role", newContent.role);
     this.historyInternal.push(newContent);
 
     let generateContentrequest: GenerateContentParams = {
@@ -180,6 +181,7 @@ export class ChatSession {
     // iterating over the list of returned responses
     for (const result of generateContentResponse.responses) {
       for (const candidate of result.candidates) {
+        console.log('pushing history role', candidate.content.role);
         this.historyInternal.push(candidate.content);
       }
     }
@@ -246,9 +248,16 @@ export class GenerativeModel {
     } catch (e) {
       console.log(e);
     }
+    
+    if (!request.stream) {
+      const result: GenerateContentResult = processNonStream(response);
+      return Promise.resolve(result);
+    }
 
     const streamResult = processStream(response);
-
+    // TODO: update chat unit test mock response to reflect logic in stream processing
+    // then remove the ts-ignore comment and remove request.stream===false
+    // @ts-ignore
     if (request.stream === false && streamResult.stream !== undefined) {
       const responses = [];
       for await (const resp of streamResult.stream) {

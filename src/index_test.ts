@@ -69,7 +69,7 @@ describe('VertexAI', () => {
       const expectedResult: GenerateContentResult = {
         responses: TEST_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+      spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
       const resp = await model.generateContent(req);
       expect(resp).toEqual(expectedResult);
     });
@@ -94,7 +94,7 @@ describe('VertexAI', () => {
       };
       const requestSpy = spyOn(global, 'fetch');
       spyOn(StreamFunctions,
-      'processStream').and.returnValue(expectedResult); await
+      'processNonStream').and.returnValue(expectedResult); await
       model.generateContent(req);
       expect(requestSpy.calls.allArgs()[0][0].toString())
           .toContain(TEST_ENDPOINT_BASE_PATH);
@@ -118,8 +118,7 @@ describe('VertexAI', () => {
         responses: TEST_MODEL_RESPONSE,
       };
       const requestSpy = spyOn(global, 'fetch');
-      spyOn(StreamFunctions,
-      'processStream').and.returnValue(expectedResult); await
+      spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult); await
       model.generateContent(req);
       expect(requestSpy.calls.allArgs()[0][0].toString())
           .toContain(`${LOCATION}-autopush-aiplatform.sandbox.googleapis.com`);
