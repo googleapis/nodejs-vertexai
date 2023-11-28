@@ -85,3 +85,23 @@ export function processStream(
   }
   return {responses: [], stream: emptyGenerator()};
 }
+
+/**
+ * Process model responses from generateContent when stream=false | undefined
+ */
+export function processNonStream(response: any): GenerateContentResult {
+
+  if (response !== undefined) {
+    // ts-ignore
+    const responseJson = response.json();
+    return {
+      responses: [responseJson],
+      stream: emptyGenerator()
+    };
+  }
+  
+  return {
+    responses: [],
+    stream: emptyGenerator(),
+  };
+}
