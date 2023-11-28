@@ -19,7 +19,7 @@
 import {GoogleAuth} from 'google-auth-library';
 
 import {emptyGenerator, processStream} from './process_stream';
-import {Content, GenerateContentParams, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting} from './types/content';
+import {Content, CountTokensRequest, CountTokensResponse, GenerateContentParams, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting} from './types/content';
 import {postRequest} from './util';
 
 // TODO: update this when model names are available
@@ -263,6 +263,42 @@ export class GenerativeModel {
       return streamResult;
     }
   }
+
+  /**
+   * Make a countTokens request.
+   * @param request A CountTokensRequest object with the request contents.
+   * @return The CountTokensResponse object with the token count.
+   */
+  async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
+    let response;
+    try {
+      response = await postRequest({
+        region: this._vertex_instance.location,
+        project: this._vertex_instance.project,
+        resourcePath: `publishers/google/models/${this.model}`,
+        resourceMethod: 'countTokens',
+        token: await this._vertex_instance.token,
+        data: request,
+        apiEndpoint: this._vertex_instance.apiEndpoint,
+      });
+      if (response === undefined) {
+        throw new Error('did not get a valid response.');
+      }
+      if (!response.ok) {
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+
+    } catch (e) {
+      console.log(e);
+    }
+    if (response) {
+      const responseJson = await response.json();
+      return responseJson as CountTokensResponse;
+    } else {
+      throw new Error('did not get a valid response.');
+    }
+  }
+
 
   startChat(request: StartChatParams): ChatSession {
     const startChatRequest = {

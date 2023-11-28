@@ -20,7 +20,7 @@ import 'jasmine';
 
 import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
-import {GenerateContentParams, GenerateContentResult} from './types/content';
+import {CountTokensRequest, CountTokensResponse, GenerateContentParams, GenerateContentResult} from './types/content';
 import * as PostRequest from './util/post_request';
 
 const PROJECT = 'test_project';
@@ -133,6 +133,26 @@ describe('VertexAI', () => {
       };
       const resp = model.startChat(req);
       expect(resp).toBeInstanceOf(ChatSession);
+    });
+  });
+
+  describe('countTokens', () => {
+    it('returns the token count', async () => {
+      const req: CountTokensRequest = {
+        contents: TEST_USER_CHAT_MESSAGE,
+      };
+      const responseBody = {
+        totalTokens: 1,
+      };
+      const response = new Response(JSON.stringify(responseBody), {
+        status: 200,
+        statusText: 'OK',
+        headers: {'Content-Type': 'application/json'},
+      });
+      const responsePromise = Promise.resolve(response);
+      spyOn(global, 'fetch').and.returnValue(responsePromise);
+      const resp = await model.countTokens(req);
+      expect(resp).toEqual(responseBody);
     });
   });
 });

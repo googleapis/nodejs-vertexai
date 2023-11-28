@@ -18,9 +18,7 @@
 // TODO: update to prod endpoint when ready
 const API_BASE_PATH = 'autopush-aiplatform.sandbox.googleapis.com';
 
-import {
-    GenerateContentRequest, CLIENT_INFO,
-} from '../types/content';
+import {GenerateContentRequest, CLIENT_INFO, CountTokensRequest} from '../types/content';
 
 /**
  * Makes a POST request to a Vertex service
@@ -41,7 +39,7 @@ export async function postRequest({
   resourcePath: string,
   resourceMethod: string,
   token: string,
-  data: GenerateContentRequest,
+  data: GenerateContentRequest|CountTokensRequest,
   apiEndpoint?: string,
   apiVersion?: string,
 }): Promise<Response|undefined> {
