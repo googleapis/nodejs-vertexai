@@ -15,5 +15,5 @@
  * limitations under the License.
  */
 
-export * as constants from './constants';
-export {postRequest} from './post_request';
+export const GENERATE_CONTENT_METHOD = 'generateContent';
+export const STREAMING_GENERATE_CONTENT_METHOD = 'streamGenerateContent';

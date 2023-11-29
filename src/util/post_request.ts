@@ -19,6 +19,7 @@
 const API_BASE_PATH = 'autopush-aiplatform.sandbox.googleapis.com';
 
 import {GenerateContentRequest, CLIENT_INFO, CountTokensRequest} from '../types/content';
+import * as constants from './constants';
 
 /**
  * Makes a POST request to a Vertex service
@@ -48,8 +49,8 @@ export async function postRequest({
   let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/projects/${
       project}/locations/${region}/${resourcePath}:${resourceMethod}`;
 
-  // Use server sent events for generateContent methods
-  if (resourceMethod.toLowerCase().includes('generatecontent')) {
+  // Use server sent events for streamGenerateContent
+  if (resourceMethod === constants.STREAMING_GENERATE_CONTENT_METHOD) {
     vertexEndpoint += '?alt=sse';
   };
 

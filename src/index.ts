@@ -20,7 +20,7 @@ import {GoogleAuth} from 'google-auth-library';
 
 import {processNonStream, processStream} from './process_stream';
 import {Content, CountTokensRequest, CountTokensResponse, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting, StreamGenerateContentResult, VertexInit} from './types/content';
-import {postRequest} from './util';
+import {constants, postRequest} from './util';
 
 // TODO: update this when model names are available
 // const SUPPORTED_MODELS: Array<string> = ['text-bison@001'];
@@ -231,7 +231,7 @@ export class GenerativeModel {
         region: this._vertex_instance.location,
         project: this._vertex_instance.project,
         resourcePath: publisherModelEndpoint,
-        resourceMethod: 'generateContent',
+        resourceMethod: constants.GENERATE_CONTENT_METHOD,
         token: await this._vertex_instance.token,
         data: generateContentRequest,
         apiEndpoint: this._vertex_instance.apiEndpoint,
@@ -271,7 +271,7 @@ export class GenerativeModel {
         region: this._vertex_instance.location,
         project: this._vertex_instance.project,
         resourcePath: publisherModelEndpoint,
-        resourceMethod: 'streamGenerateContent',
+        resourceMethod: constants.STREAMING_GENERATE_CONTENT_METHOD,
         token: await this._vertex_instance.token,
         data: generateContentRequest,
         apiEndpoint: this._vertex_instance.apiEndpoint,
