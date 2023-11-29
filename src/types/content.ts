@@ -17,14 +17,6 @@
 
 
 /**
- * Params for the generateContent method
- */
-export declare interface GenerateContentParams extends GenerateContentRequest {
-  // defaults to true
-  stream?: boolean;
-}
-
-/**
  * Params used by the generateContent endpoint
  */
 export declare interface GenerateContentRequest extends BaseModelParams {
@@ -122,15 +114,25 @@ export declare interface Content {
  * Exactly one of text or inline_data must be provided.
  */
 // TODO: Adjust so one must be true.
-export declare interface TextPart {
+export interface BasePart {}
+
+export interface TextPart extends BasePart {
   text: string;
+  inline_data?: never;
 }
 
-export declare interface InlineDataPart {
+export interface InlineDataPart extends BasePart {
+  text?: never;
   inline_data: GenerativeContentBlob;
 }
 
-export declare type Part = TextPart | InlineDataPart;
+// TODO: add validation to ensurefile_data starts with `gs://`
+export interface FileDataPart extends BasePart {
+  text?: never;
+  file_data: string;
+}
+
+export declare type Part = TextPart | InlineDataPart | FileDataPart;
 
 /**
  * Raw media bytes sent directly in the request. Text should not be sent as
@@ -194,12 +196,16 @@ enum FinishReason {
  */
 export declare interface GenerateContentResult {
   // All GenerateContentResponses received so far
-  responses: GenerateContentResponse[];
+  response: GenerateContentResponse;
+}
+
+/**
+ * Wrapper for respones from a streamGenerateContent request
+ */
+export declare interface StreamGenerateContentResult {
   // Async iterable that provides one GenerateContentResponse at a time
-  stream?: AsyncGenerator<GenerateContentResponse>;
-  // If there are no candidates because this request was blocked, we will
-  // get prompt_feedback from the first (and only) response.
-  prompt_feedback?: PromptFeedback;
+  response: Promise<GenerateContentResponse>;
+  stream: AsyncGenerator<GenerateContentResponse>;
 }
 
 /**
@@ -208,8 +214,8 @@ export declare interface GenerateContentResult {
 export declare interface GenerateContentResponse {
   candidates: GenerateContentCandidate[];
   // This is only populated if there are no candidates due to a safety block
-  prompt_feedback?: PromptFeedback;
-  usage_metadata?: UsageMetadata;
+  promptFeedback?: PromptFeedback;
+  usageMetadata?: UsageMetadata;
 }
 
 /**
@@ -218,10 +224,10 @@ export declare interface GenerateContentResponse {
 export declare interface GenerateContentCandidate {
   content: Content;
   index?: number;
-  finish_reason?: FinishReason;
-  finish_message?: string;
-  safety_ratings?: SafetyRating[];
-  citation_metadata?: CitationMetadata;
+  finishReason?: FinishReason;
+  finishMessage?: string;
+  safetyRatings?: SafetyRating[];
+  citationMetadata?: CitationMetadata;
 }
 
 /**

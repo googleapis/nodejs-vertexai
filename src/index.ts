@@ -18,8 +18,8 @@
 /* tslint:disable */
 import {GoogleAuth} from 'google-auth-library';
 
-import {emptyGenerator, processNonStream, processStream} from './process_stream';
-import {Content, CountTokensRequest, CountTokensResponse, GenerateContentParams, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting} from './types/content';
+import {processNonStream, processStream} from './process_stream';
+import {Content, CountTokensRequest, CountTokensResponse, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting, StreamGenerateContentResult} from './types/content';
 import {postRequest} from './util';
 
 // TODO: update this when model names are available
@@ -142,8 +142,8 @@ export class ChatSession {
     this._vertex_instance = request._vertex_instance;
   }
 
-  // TODO: update this to sendMessage / streamSendMessage after generateContent
-  // is split
+  // TODO: unbreak this and update to sendMessage / streamSendMessage after
+  // generateContent is split
   async sendMessage(request: string|
                     Array<string|Part>): Promise<GenerateContentResult> {
     let newParts: Part[] = [];
@@ -166,23 +166,15 @@ export class ChatSession {
     // successfully?
     this.historyInternal.push(newContent);
 
-    let generateContentrequest: GenerateContentParams = {
+    let generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal,
       safety_settings: this.safety_settings,
       generation_config: this.generation_config,
-      stream: true,
     };
 
     const generateContentResponse =
         await this._model_instance.generateContent(generateContentrequest);
 
-    // This is currently not iterating over generateContentResponse.stream, it's
-    // iterating over the list of returned responses
-    for (const result of generateContentResponse.responses) {
-      for (const candidate of result.candidates) {
-        this.historyInternal.push(candidate.content);
-      }
-    }
     return generateContentResponse;
   }
 }
@@ -214,7 +206,7 @@ export class GenerativeModel {
    * @param request A GenerateContentRequest object with the request contents.
    * @return The GenerateContentResponse object with the response candidates.
    */
-  async generateContent(request: GenerateContentParams):
+  async generateContent(request: GenerateContentRequest):
       Promise<GenerateContentResult> {
     const publisherModelEndpoint = `publishers/google/models/${this.model}`;
 
@@ -230,9 +222,7 @@ export class GenerativeModel {
         region: this._vertex_instance.location,
         project: this._vertex_instance.project,
         resourcePath: publisherModelEndpoint,
-        // TODO: update when this method is split for streaming / non-streaming
-        resourceMethod: request.stream ? 'streamGenerateContent' :
-                                         'generateContent',
+        resourceMethod: 'generateContent',
         token: await this._vertex_instance.token,
         data: generateContentRequest,
         apiEndpoint: this._vertex_instance.apiEndpoint,
@@ -246,29 +236,49 @@ export class GenerativeModel {
     } catch (e) {
       console.log(e);
     }
-    
-    if (!request.stream) {
-      const result: GenerateContentResult = processNonStream(response);
-      return Promise.resolve(result);
+
+    const result: GenerateContentResult = processNonStream(response);
+    return Promise.resolve(result);
+  }
+
+  /**
+   * Make a streamGenerateContent request.
+   * @param request A GenerateContentRequest object with the request contents.
+   * @return The GenerateContentResponse object with the response candidates.
+   */
+  async streamGenerateContent(request: GenerateContentRequest):
+      Promise<StreamGenerateContentResult> {
+    const publisherModelEndpoint = `publishers/google/models/${this.model}`;
+
+    const generateContentRequest: GenerateContentRequest = {
+      contents: request.contents,
+      generation_config: request.generation_config ?? this.generation_config,
+      safety_settings: request.safety_settings ?? this.safety_settings,
+    }
+
+    let response;
+    try {
+      response = await postRequest({
+        region: this._vertex_instance.location,
+        project: this._vertex_instance.project,
+        resourcePath: publisherModelEndpoint,
+        resourceMethod: 'streamGenerateContent',
+        token: await this._vertex_instance.token,
+        data: generateContentRequest,
+        apiEndpoint: this._vertex_instance.apiEndpoint,
+      });
+      if (response === undefined) {
+        throw new Error('did not get a valid response.')
+      }
+      if (!response.ok) {
+        throw new Error(`${response.status} ${response.statusText}`)
+      }
+    } catch (e) {
+      console.log(e);
     }
 
     const streamResult = processStream(response);
-    // TODO: update chat unit test mock response to reflect logic in stream processing
-    // then remove the ts-ignore comment and remove request.stream===false
-    // @ts-ignore
-    if (request.stream === false && streamResult.stream !== undefined) {
-      const responses = [];
-      for await (const resp of streamResult.stream) {
-        responses.push(resp);
-      }
-      return {
-        stream: emptyGenerator(),
-        responses,
-      };
-    } else {
-      // True or undefined (default true)
-      return streamResult;
-    }
+    return Promise.resolve(streamResult);
   }
 
   /**

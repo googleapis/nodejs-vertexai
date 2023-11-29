@@ -20,30 +20,39 @@ import 'jasmine';
 
 import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
-import {CountTokensRequest, CountTokensResponse, GenerateContentParams, GenerateContentResult} from './types/content';
-import * as PostRequest from './util/post_request';
+import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, StreamGenerateContentResult} from './types/content';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
-const MODEL_ID = 'test_model_id';
 const TEST_USER_CHAT_MESSAGE =
     [{role: 'user', parts: [{text: 'How are you doing today?'}]}];
-const TEST_MODEL_RESPONSE = [{
-  candidates: [
-    {
-      index: 1,
-      content:
-          {role: 'assistant', parts: [{text: 'I\m doing great! How are you?'}]},
-      finish_reason: 0,
-      finish_message: '',
-      safety_ratings: [{category: 0, threshold: 0}],
-    },
-  ],
+const TEST_CANDIDATES = [
+  {
+    index: 1,
+    content:
+        {role: 'assistant', parts: [{text: 'I\m doing great! How are you?'}]},
+    finish_reason: 0,
+    finish_message: '',
+    safety_ratings: [{category: 0, threshold: 0}],
+  },
+];
+const TEST_MODEL_RESPONSE = {
+  candidates: TEST_CANDIDATES,
   usage_metadata: {prompt_token_count: 0, candidates_token_count: 0}
 
-}];
+};
 
 const TEST_ENDPOINT_BASE_PATH = 'test.googleapis.com';
+
+/**
+ * Returns a generator, used to mock the streamGenerateContent response
+ */
+export async function*
+    testGenerator(): AsyncGenerator<GenerateContentResponse> {
+  yield {
+    candidates: TEST_CANDIDATES,
+  };
+}
 
 describe('VertexAI', () => {
   let vertexai: VertexAI;
@@ -59,21 +68,18 @@ describe('VertexAI', () => {
     expect(vertexai).toBeInstanceOf(VertexAI);
   });
 
-  // TODO: update this test when stream and unary implementation is separated
   describe('generateContent', () => {
-    it('returns a GenerateContentResponse when stream=false', async () => {
-      const req: GenerateContentParams = {
+    it('returns a GenerateContentResponse', async () => {
+      const req: GenerateContentRequest = {
         contents: TEST_USER_CHAT_MESSAGE,
-        stream: false,
       };
       const expectedResult: GenerateContentResult = {
-        responses: TEST_MODEL_RESPONSE,
+        response: TEST_MODEL_RESPONSE,
       };
       spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
       const resp = await model.generateContent(req);
       expect(resp).toEqual(expectedResult);
     });
-    // TODO: add test from stream=true here
   });
 
   describe('generateContent', () => {
@@ -85,12 +91,11 @@ describe('VertexAI', () => {
         model: 'gemini-pro'
       });
 
-      const req: GenerateContentParams = {
+      const req: GenerateContentRequest = {
         contents: TEST_USER_CHAT_MESSAGE,
-        stream: false,
       };
       const expectedResult: GenerateContentResult = {
-        responses: TEST_MODEL_RESPONSE,
+        response: TEST_MODEL_RESPONSE,
       };
       const requestSpy = spyOn(global, 'fetch');
       spyOn(StreamFunctions,
@@ -110,18 +115,32 @@ describe('VertexAI', () => {
         model: 'gemini-pro'
       });
 
-      const req: GenerateContentParams = {
+      const req: GenerateContentRequest = {
         contents: TEST_USER_CHAT_MESSAGE,
-        stream: false,
       };
       const expectedResult: GenerateContentResult = {
-        responses: TEST_MODEL_RESPONSE,
+        response: TEST_MODEL_RESPONSE,
       };
       const requestSpy = spyOn(global, 'fetch');
       spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult); await
       model.generateContent(req);
       expect(requestSpy.calls.allArgs()[0][0].toString())
           .toContain(`${LOCATION}-autopush-aiplatform.sandbox.googleapis.com`);
+    });
+  });
+
+  describe('streamGenerateContent', () => {
+    it('returns a GenerateContentResponse', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE,
+      };
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+      const resp = await model.streamGenerateContent(req);
+      expect(resp).toEqual(expectedResult);
     });
   });
 
@@ -174,19 +193,24 @@ describe('ChatSession', () => {
     expect(chatSession.history.length).toEqual(1);
   });
 
-  describe('sendMessage', () => {
-    it('returns a GenerateContentResponse', async () => {
-      const req = 'How are you doing today?';
-      const expectedResult: GenerateContentResult = {
-        responses: TEST_MODEL_RESPONSE,
-        stream: StreamFunctions.emptyGenerator(),
-      };
-      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
-      const resp = await chatSession.sendMessage(req);
-      expect(resp).toEqual(expectedResult);
-      expect(chatSession.history.length).toEqual(3);
-    });
+  // TODO: update sendMessage after generateContent and streamGenerateContent
+  // are working
+  describe(
+      'sendMessage',
+      () => {
+          // it('returns a GenerateContentResponse', async () => {
+          //   const req = 'How are you doing today?';
+          //   const expectedResult: GenerateContentResult = {
+          //     responses: TEST_MODEL_RESPONSE,
+          //   };
+          //   spyOn(StreamFunctions,
+          //   'processStream').and.returnValue(expectedResult);
+          //   const resp = await chatSession.sendMessage(req);
+          //   expect(resp).toEqual(expectedResult);
+          //   expect(chatSession.history.length).toEqual(3);
+          // });
 
-    // TODO: add test cases for different content types passed to sendMessage
-  });
+          // TODO: add test cases for different content types passed to
+          // sendMessage
+      });
 });

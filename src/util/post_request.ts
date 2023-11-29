@@ -45,9 +45,13 @@ export async function postRequest({
 }): Promise<Response|undefined> {
   const vertexBaseEndpoint = apiEndpoint ?? `${region}-${API_BASE_PATH}`;
 
-  const vertexEndpoint = `https://${vertexBaseEndpoint}/${
-      apiVersion}/projects/${project}/locations/${region}/${resourcePath}:${
-      resourceMethod}`;
+  let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/projects/${
+      project}/locations/${region}/${resourcePath}:${resourceMethod}`;
+
+  // Use server sent events for generateContent methods
+  if (resourceMethod.toLowerCase().includes('generatecontent')) {
+    vertexEndpoint += '?alt=sse';
+  };
 
   return await fetch(vertexEndpoint, {
     method: 'POST',
