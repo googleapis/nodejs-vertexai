@@ -18,6 +18,8 @@
 /* tslint:disable */
 import 'jasmine';
 
+import * as fs from 'fs';
+
 import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
 import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, StreamGenerateContentResult} from './types/content';
@@ -46,7 +48,17 @@ const TEST_EMPTY_MODEL_RESPONSE = {
 };
 
 const TEST_ENDPOINT_BASE_PATH = 'test.googleapis.com';
+const TEST_FILENAME = '/tmp/image.jpeg';
+const INVALID_FILENAME = 'image.txt';
+const TEST_GCS_FILENAME = 'gs://test_bucket/test_image.jpeg';
 
+const TEST_MULTIPART_MESSAGE = [{
+  role: 'user',
+  parts: [
+    {text: 'What is in this picture?'},
+    {file_data: {file_uri: TEST_GCS_FILENAME, mime_type: 'image/jpeg'}}
+  ]
+}];
 /**
  * Returns a generator, used to mock the streamGenerateContent response
  */
@@ -140,19 +152,41 @@ describe('VertexAI', () => {
   });
 
   describe('streamGenerateContent', () => {
-    it('returns a GenerateContentResponse', async () => {
-      const req: GenerateContentRequest = {
-        contents: TEST_USER_CHAT_MESSAGE,
-      };
-      const expectedResult: StreamGenerateContentResult = {
-        response: Promise.resolve(TEST_MODEL_RESPONSE),
-        stream: testGenerator(),
-      };
-      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
-      const resp = await model.streamGenerateContent(req);
-      expect(resp).toEqual(expectedResult);
-    });
+    it('returns a GenerateContentResponse when passed text content',
+       async () => {
+         const req: GenerateContentRequest = {
+           contents: TEST_USER_CHAT_MESSAGE,
+         };
+         const expectedResult: StreamGenerateContentResult = {
+           response: Promise.resolve(TEST_MODEL_RESPONSE),
+           stream: testGenerator(),
+         };
+         spyOn(StreamFunctions, 'processStream')
+             .and.returnValue(expectedResult);
+         const resp = await model.streamGenerateContent(req);
+         expect(resp).toEqual(expectedResult);
+       });
   });
+
+  describe('streamGenerateContent', () => {
+    it('returns a GenerateContentResponse when passed multi-part content with a GCS URI',
+       async () => {
+         const req: GenerateContentRequest = {
+           contents: TEST_MULTIPART_MESSAGE,
+         };
+         const expectedResult: StreamGenerateContentResult = {
+           response: Promise.resolve(TEST_MODEL_RESPONSE),
+           stream: testGenerator(),
+         };
+         spyOn(StreamFunctions, 'processStream')
+             .and.returnValue(expectedResult);
+         const resp = await model.streamGenerateContent(req);
+         expect(resp).toEqual(expectedResult);
+       });
+  });
+
+  // TODO: add a streaming test with a multipart message and inline image data
+  // (b64 string)
 
   describe('startChat', () => {
     it('returns a ChatSession', () => {
@@ -237,5 +271,23 @@ describe('ChatSession', () => {
     });
     // TODO: add test cases for different content types passed to
     // sendMessage
+  });
+
+  describe('imageToBase64', () => {
+    let imageBuffer: Buffer;
+
+    beforeEach(() => {
+      imageBuffer = Buffer.alloc(1024, 1);
+    });
+
+    it('returns a base64 string when passed a Buffer', async () => {
+      const resp = await vertexai.preview.imageToBase64(imageBuffer);
+      expect(typeof resp).toEqual('string');
+    });
+    it('returns a base64 string when passed a filepath', async () => {
+      fs.writeFileSync(`${TEST_FILENAME}`, imageBuffer);
+      const resp = await vertexai.preview.imageToBase64(TEST_FILENAME);
+      expect(typeof resp).toEqual('string');
+    });
   });
 });

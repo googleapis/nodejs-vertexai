@@ -134,10 +134,15 @@ export interface InlineDataPart extends BasePart {
   inline_data: GenerativeContentBlob;
 }
 
+export interface FileData {
+  mime_type: string;
+  file_uri: string;
+}
+
 // TODO: add validation to ensurefile_data starts with `gs://`
 export interface FileDataPart extends BasePart {
   text?: never;
-  file_data: string;
+  file_data: FileData;
 }
 
 export declare type Part = TextPart | InlineDataPart | FileDataPart;
@@ -150,10 +155,8 @@ export declare interface GenerativeContentBlob {
   // The MIME type of the source data. The only accepted values: "image/png",
   // "image/jpeg".
   mime_type: string;
-  // Raw bytes for media formats - image, audio, video, etc.
-  // This is type bytes in the proto
-  // Node prefers Buffer over Uint8Array?
-  data: Uint8Array|Buffer;
+  // image must be base64 string
+  data: string;
 }
 
 /**

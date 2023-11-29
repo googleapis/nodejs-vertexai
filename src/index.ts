@@ -16,12 +16,12 @@
  */
 
 /* tslint:disable */
+import * as fs from 'fs';
 import {GoogleAuth} from 'google-auth-library';
 
 import {processNonStream, processStream} from './process_stream';
 import {Content, CountTokensRequest, CountTokensResponse, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting, StreamGenerateContentResult, VertexInit} from './types/content';
 import {constants, postRequest} from './util';
-
 // TODO: update this when model names are available
 // const SUPPORTED_MODELS: Array<string> = ['text-bison@001'];
 
@@ -84,6 +84,26 @@ export class VertexAI_Internal {
     // TODO: add error handling here
     const token = Promise.resolve(this.googleAuth.getAccessToken());
     return token;
+  }
+
+  async imageToBase64(image: Buffer|string): Promise<string> {
+    if (Buffer.isBuffer(image)) {
+      return Promise.resolve(image.toString('base64'));
+    } else if (
+        typeof image === 'string' &&
+        (image.endsWith('.jpeg') || image.endsWith('.png'))) {
+      // TODO: consider storing supported file types in a constant
+      try {
+        const imageBuffer = await fs.readFileSync(image);
+        return Promise.resolve(imageBuffer.toString('base64'));
+      } catch (e) {
+        throw new Error(`Error reading from image file: ${e}`);
+      }
+
+    } else {
+      throw new Error(
+          'Invalid image provided. Please provide either a Buffer or a local filepath to a jpeg or png image.');
+    }
   }
 
   getGenerativeModel(modelParams: ModelParams): GenerativeModel {
