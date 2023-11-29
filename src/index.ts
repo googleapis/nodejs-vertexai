@@ -19,7 +19,7 @@
 import {GoogleAuth} from 'google-auth-library';
 
 import {processNonStream, processStream} from './process_stream';
-import {Content, CountTokensRequest, CountTokensResponse, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting, StreamGenerateContentResult} from './types/content';
+import {Content, CountTokensRequest, CountTokensResponse, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting, StreamGenerateContentResult, VertexInit} from './types/content';
 import {postRequest} from './util';
 
 // TODO: update this when model names are available
@@ -27,16 +27,20 @@ import {postRequest} from './util';
 
 /**
  * Base class for authenticating to Vertex, creates the preview namespace.
+ * The base class object takes the following arguments:
+ * @param project The Google Cloud project to use for the request
+ * @param location The Google Cloud project location to use for the
+ *     request
+ * @param apiEndpoint Optional. The base Vertex AI endpoint to use for the
+ *     request. If not provided, the default regionalized endpoint (i.e.
+ * us-central1-aiplatform.googleapis.com) will be used.
  */
 export class VertexAI {
   public preview: VertexAI_Internal;
 
-  constructor(
-      project: string,
-      location: string,
-      apiEndpoint?: string,
-  ) {
-    this.preview = new VertexAI_Internal(project, location, apiEndpoint);
+  constructor(init: VertexInit) {
+    this.preview =
+        new VertexAI_Internal(init.project, init.location, init.apiEndpoint);
   }
 }
 
@@ -142,8 +146,7 @@ export class ChatSession {
     this._vertex_instance = request._vertex_instance;
   }
 
-  // TODO: unbreak this and update to sendMessage / streamSendMessage after
-  // generateContent is split
+  // TODO: add streamSendMessage that calls streamGenerateContent
   async sendMessage(request: string|
                     Array<string|Part>): Promise<GenerateContentResult> {
     let newParts: Part[] = [];
@@ -162,18 +165,24 @@ export class ChatSession {
 
     const newContent: Content = {role: 'user', parts: newParts};
 
-    // TODO: should this wait to append to history until a response is returned
-    // successfully?
-    this.historyInternal.push(newContent);
-
     let generateContentrequest: GenerateContentRequest = {
-      contents: this.historyInternal,
+      contents: this.historyInternal.concat([newContent]),
       safety_settings: this.safety_settings,
       generation_config: this.generation_config,
     };
 
     const generateContentResponse =
         await this._model_instance.generateContent(generateContentrequest);
+
+    // Only push the latest message to history if the response returned a result
+    if (generateContentResponse.response.candidates.length !== 0) {
+      this.historyInternal.push(newContent);
+      this.historyInternal.push(
+          generateContentResponse.response.candidates[0].content);
+    } else {
+      // TODO: handle promptFeedback in the response
+      throw new Error('Did not get a response from the model');
+    }
 
     return generateContentResponse;
   }

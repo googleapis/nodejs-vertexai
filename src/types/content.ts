@@ -15,6 +15,14 @@
  * limitations under the License.
  */
 
+/**
+ * Params used to initialize the Vertex SDK
+ */
+export declare interface VertexInit {
+  project: string;
+  location: string;
+  apiEndpoint?: string;
+}
 
 /**
  * Params used by the generateContent endpoint
