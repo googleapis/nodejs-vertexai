@@ -1,12 +1,11 @@
 {
   "name": "vertexai",
   "name_pretty": "Google Cloud Vertex AI",
-  "product_documentation": "https://cloud.google.com/vertex-ai",
   "release_level": "preview",
   "language": "nodejs",
   "repo": "googleapis/nodejs-vertexai",
   "distribution_name": "@google-cloud/vertexai",
   "api_id": "aiplatform.googleapis.com",
-  "api_shortname": "vertexai",
+  "api_shortname": "aiplatform",
   "library_type": "GAPIC_MANUAL"
 }
