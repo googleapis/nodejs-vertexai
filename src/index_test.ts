@@ -273,6 +273,31 @@ describe('ChatSession', () => {
     // sendMessage
   });
 
+  describe('streamSendMessage', () => {
+    it('returns a StreamGenerateContentResponse and appends to history', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      const chatSession= model.startChat({
+        history: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+      });
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedResult);
+      expect(chatSession.history.length).toEqual(1);
+      expect(chatSession.history[0].role).toEqual('user');
+      const result = await chatSession.streamSendMessage(req);
+      const response = await result.response;
+      const expectedResponse = await expectedResult.response;
+      expect(response).toEqual(expectedResponse);
+      expect(chatSession.history.length).toEqual(3);
+      expect(chatSession.history[0].role).toEqual('user');
+      expect(chatSession.history[1].role).toEqual('user');
+      expect(chatSession.history[2].role).toEqual('assistant');
+    });
+  });
+
   describe('imageToBase64', () => {
     let imageBuffer: Buffer;
 
