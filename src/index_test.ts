@@ -159,7 +159,7 @@ describe('VertexAI', () => {
           .and.returnValue(expectedStreamResult);
       await model.generateContent(req);
       expect(requestSpy.calls.allArgs()[0][0].toString())
-          .toContain(`${LOCATION}-autopush-aiplatform.sandbox.googleapis.com`);
+          .toContain(`${LOCATION}-staging-aiplatform.sandbox.googleapis.com`);
     });
   });
 

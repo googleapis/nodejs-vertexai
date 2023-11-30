@@ -16,7 +16,7 @@
  */
 
 // TODO: update to prod endpoint when ready
-const API_BASE_PATH = 'autopush-aiplatform.sandbox.googleapis.com';
+const API_BASE_PATH = 'staging-aiplatform.sandbox.googleapis.com';
 
 import {GenerateContentRequest, CLIENT_INFO, CountTokensRequest} from '../types/content';
 import * as constants from './constants';
@@ -32,8 +32,7 @@ export async function postRequest({
   token,
   data,
   apiEndpoint,
-  // TODO: update to prod version when ready
-  apiVersion = 'internal',
+  apiVersion = 'v1beta1',
 }: {
   region: string,
   project: string,
