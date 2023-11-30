@@ -143,7 +143,6 @@ export declare interface StartChatSessionRequest extends StartChatParams {
  * Session for a multiturn chat with the model
  */
 export class ChatSession {
-  // Substitute apiKey for these in Labs
   private project: string;
   private location: string;
 
@@ -157,7 +156,7 @@ export class ChatSession {
   get history(): Content[] {
     return this.historyInternal;
   }
-
+  
   constructor(request: StartChatSessionRequest) {
     this.project = request._vertex_instance.project;
     this.location = request._vertex_instance.location;
@@ -166,48 +165,64 @@ export class ChatSession {
     this._vertex_instance = request._vertex_instance;
   }
 
-  // TODO: add streamSendMessage that calls streamGenerateContent
   async sendMessage(request: string|
                     Array<string|Part>): Promise<GenerateContentResult> {
-    let newParts: Part[] = [];
-
-    if (typeof request === 'string') {
-      newParts = [{text: request}];
-    } else if (Array.isArray(request)) {
-      for (const item of request) {
-        if (typeof item === 'string') {
-          newParts.push({text: item});
-        } else {
-          newParts.push(item);
-        }
-      }
-    };
-
-    const newContent: Content = {role: 'user', parts: newParts};
-
+    const newContent: Content = formulateNewContent(request);
     let generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat([newContent]),
       safety_settings: this.safety_settings,
       generation_config: this.generation_config,
     };
 
-    const generateContentResponse =
+    const generateContentResult =
         await this._model_instance.generateContent(generateContentrequest);
+    
+    const generateContentResponse = await generateContentResult.response;
 
     // Only push the latest message to history if the response returned a result
-    if (generateContentResponse.response.candidates.length !== 0) {
+    if (generateContentResponse.candidates.length !== 0) {
       this.historyInternal.push(newContent);
       this.historyInternal.push(
-          generateContentResponse.response.candidates[0].content);
+        generateContentResponse.candidates[0].content);
     } else {
       // TODO: handle promptFeedback in the response
-      throw new Error('Did not get a response from the model');
+      throw new Error('Did not get a candidate from the model');
     }
 
-    return generateContentResponse;
+    return Promise.resolve({response:generateContentResponse});
   }
+  
+  async streamSendMessage(request: string|
+    Array<string|Part>): Promise<StreamGenerateContentResult> {
+      const newContent: Content = formulateNewContent(request);
+      let generateContentrequest: GenerateContentRequest = {
+        contents: this.historyInternal.concat([newContent]),
+        safety_settings: this.safety_settings,
+        generation_config: this.generation_config,
+      };
+  
+      const streamGenerateContentResult =
+          await this._model_instance.streamGenerateContent(generateContentrequest);
+      const streamGenerateContentResponse =
+          await streamGenerateContentResult.response;
+      // Only push the latest message to history if the response returned a result
+      if (streamGenerateContentResponse.candidates.length !== 0) {
+        this.historyInternal.push(newContent);
+        this.historyInternal.push(
+          streamGenerateContentResponse.candidates[0].content);
+      } else {
+        // TODO: handle promptFeedback in the response
+        throw new Error('Did not get a candidate from the model');
+      }
+  
+      return Promise.resolve(
+          {
+            response: Promise.resolve(streamGenerateContentResponse),
+            stream: streamGenerateContentResult.stream,
+          }
+      );
+    } 
 }
-
 
 /**
  * Base class for generative models.
@@ -357,4 +372,24 @@ export class GenerativeModel {
 
     return new ChatSession(startChatRequest);
   }
+}
+  
+function formulateNewContent(request: string|Array<string|Part>): Content {
+  
+  let newParts: Part[] = [];
+
+  if (typeof request === 'string') {
+    newParts = [{text: request}];
+  } else if (Array.isArray(request)) {
+    for (const item of request) {
+      if (typeof item === 'string') {
+        newParts.push({text: item});
+      } else {
+        newParts.push(item);
+      }
+    }
+  };
+
+  const newContent: Content = {role: 'user', parts: newParts};
+  return newContent;
 }
