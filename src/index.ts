@@ -233,6 +233,8 @@ export class GenerativeModel {
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
   private _vertex_instance: VertexAI_Internal;
+  // TODO: https://b.corp.google.com/issues/314168438
+  private _use_non_stream: boolean = false;
 
   constructor(
       vertex_instance: VertexAI_Internal, model: string,
@@ -250,6 +252,15 @@ export class GenerativeModel {
    */
   async generateContent(request: GenerateContentRequest):
       Promise<GenerateContentResult> {
+    
+    if (!this._use_non_stream) {
+      const streamGenerateContentResult: StreamGenerateContentResult = await this.streamGenerateContent(request);
+      const result: GenerateContentResult = {
+        response: await streamGenerateContentResult.response,
+      };
+      return Promise.resolve(result);
+    }
+    
     const publisherModelEndpoint = `publishers/google/models/${this.model}`;
 
     const generateContentRequest: GenerateContentRequest = {

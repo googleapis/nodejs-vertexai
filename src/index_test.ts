@@ -94,7 +94,11 @@ describe('VertexAI', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedStreamResult);
       const resp = await model.generateContent(req);
       expect(resp).toEqual(expectedResult);
     });
@@ -118,9 +122,13 @@ describe('VertexAI', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
       const requestSpy = spyOn(global, 'fetch');
-      spyOn(StreamFunctions, 'processNonStream')
-          .and.returnValue(expectedResult);
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedStreamResult);
       await model.generateContent(req);
       expect(requestSpy.calls.allArgs()[0][0].toString())
           .toContain(TEST_ENDPOINT_BASE_PATH);
@@ -142,9 +150,13 @@ describe('VertexAI', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
       const requestSpy = spyOn(global, 'fetch');
-      spyOn(StreamFunctions, 'processNonStream')
-          .and.returnValue(expectedResult);
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedStreamResult);
       await model.generateContent(req);
       expect(requestSpy.calls.allArgs()[0][0].toString())
           .toContain(`${LOCATION}-autopush-aiplatform.sandbox.googleapis.com`);
@@ -244,8 +256,12 @@ describe('ChatSession', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream')
-          .and.returnValue(expectedResult);
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedStreamResult);
       const resp = await chatSession.sendMessage(req);
       expect(resp).toEqual(expectedResult);
       expect(chatSession.history.length).toEqual(3);
@@ -262,8 +278,12 @@ describe('ChatSession', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_EMPTY_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream')
-          .and.returnValue(expectedResult);
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedStreamResult);
       // Shouldn't append anything to history with an empty result
       // expect(chatSession.history.length).toEqual(1);
       // expect(await chatSession.sendMessage(req))
