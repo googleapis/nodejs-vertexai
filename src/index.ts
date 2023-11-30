@@ -180,8 +180,11 @@ export class ChatSession {
     // Only push the latest message to history if the response returned a result
     if (generateContentResponse.candidates.length !== 0) {
       this.historyInternal.push(newContent);
-      this.historyInternal.push(
-        generateContentResponse.candidates[0].content);
+      let contentFromAssistant = generateContentResponse.candidates[0].content;
+      if (!contentFromAssistant.role) {
+        contentFromAssistant.role = constants.MODEL_ROLE;
+      }
+      this.historyInternal.push(contentFromAssistant);
     } else {
       // TODO: handle promptFeedback in the response
       throw new Error('Did not get a candidate from the model');
@@ -206,8 +209,11 @@ export class ChatSession {
       // Only push the latest message to history if the response returned a result
       if (streamGenerateContentResponse.candidates.length !== 0) {
         this.historyInternal.push(newContent);
-        this.historyInternal.push(
-          streamGenerateContentResponse.candidates[0].content);
+        let contentFromAssistant = streamGenerateContentResponse.candidates[0].content;
+        if (!contentFromAssistant.role) {
+          contentFromAssistant.role = constants.MODEL_ROLE;
+        }
+        this.historyInternal.push(contentFromAssistant);
       } else {
         // TODO: handle promptFeedback in the response
         throw new Error('Did not get a candidate from the model');
@@ -398,6 +404,6 @@ function formulateNewContent(request: string|Array<string|Part>): Content {
     }
   };
 
-  const newContent: Content = {role: 'user', parts: newParts};
+  const newContent: Content = {role: constants.USER_ROLE, parts: newParts};
   return newContent;
 }

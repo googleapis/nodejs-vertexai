@@ -23,16 +23,17 @@ import * as fs from 'fs';
 import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
 import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, StreamGenerateContentResult} from './types/content';
+import {constants} from './util';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
 const TEST_USER_CHAT_MESSAGE =
-    [{role: 'user', parts: [{text: 'How are you doing today?'}]}];
+    [{role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]}];
 const TEST_CANDIDATES = [
   {
     index: 1,
     content:
-        {role: 'assistant', parts: [{text: 'I\m doing great! How are you?'}]},
+        {role: constants.MODEL_ROLE, parts: [{text: 'I\m doing great! How are you?'}]},
     finish_reason: 0,
     finish_message: '',
     safety_ratings: [{category: 0, threshold: 0}],
@@ -42,7 +43,20 @@ const TEST_MODEL_RESPONSE = {
   candidates: TEST_CANDIDATES,
   usage_metadata: {prompt_token_count: 0, candidates_token_count: 0}
 };
-
+const TEST_CANDIDATES_MISSING_ROLE = [
+  {
+    index: 1,
+    content:
+        {parts: [{text: 'I\m doing great! How are you?'}]},
+    finish_reason: 0,
+    finish_message: '',
+    safety_ratings: [{category: 0, threshold: 0}],
+  },
+];
+const TEST_MODEL_RESPONSE_MISSING_ROLE = {
+  candidates: TEST_CANDIDATES_MISSING_ROLE,
+  usage_metadata: {prompt_token_count: 0, candidates_token_count: 0}
+};
 const TEST_EMPTY_MODEL_RESPONSE = {
   candidates: [],
 };
@@ -53,7 +67,7 @@ const INVALID_FILENAME = 'image.txt';
 const TEST_GCS_FILENAME = 'gs://test_bucket/test_image.jpeg';
 
 const TEST_MULTIPART_MESSAGE = [{
-  role: 'user',
+  role: constants.USER_ROLE,
   parts: [
     {text: 'What is in this picture?'},
     {file_data: {file_uri: TEST_GCS_FILENAME, mime_type: 'image/jpeg'}}
@@ -301,20 +315,42 @@ describe('ChatSession', () => {
         stream: testGenerator(),
       };
       const chatSession= model.startChat({
-        history: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+        history: [{role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]}],
       });
       spyOn(StreamFunctions, 'processStream')
           .and.returnValue(expectedResult);
       expect(chatSession.history.length).toEqual(1);
-      expect(chatSession.history[0].role).toEqual('user');
+      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       const result = await chatSession.streamSendMessage(req);
       const response = await result.response;
       const expectedResponse = await expectedResult.response;
       expect(response).toEqual(expectedResponse);
       expect(chatSession.history.length).toEqual(3);
-      expect(chatSession.history[0].role).toEqual('user');
-      expect(chatSession.history[1].role).toEqual('user');
-      expect(chatSession.history[2].role).toEqual('assistant');
+      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
+      expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
+      expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+    });
+    it('returns a StreamGenerateContentResponse and appends role if missiong', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE_MISSING_ROLE),
+        stream: testGenerator(),
+      };
+      const chatSession= model.startChat({
+        history: [{role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]}],
+      });
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedResult);
+      expect(chatSession.history.length).toEqual(1);
+      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
+      const result = await chatSession.streamSendMessage(req);
+      const response = await result.response;
+      const expectedResponse = await expectedResult.response;
+      expect(response).toEqual(expectedResponse);
+      expect(chatSession.history.length).toEqual(3);
+      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
+      expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
+      expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
     });
   });
 
