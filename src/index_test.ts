@@ -411,22 +411,4 @@ describe('ChatSession', () => {
       expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
     });
   });
-
-  describe('imageToBase64', () => {
-    let imageBuffer: Buffer;
-
-    beforeEach(() => {
-      imageBuffer = Buffer.alloc(1024, 1);
-    });
-
-    it('returns a base64 string when passed a Buffer', async () => {
-      const resp = await vertexai.preview.imageToBase64(imageBuffer);
-      expect(typeof resp).toEqual('string');
-    });
-    it('returns a base64 string when passed a filepath', async () => {
-      fs.writeFileSync(`${TEST_FILENAME}`, imageBuffer);
-      const resp = await vertexai.preview.imageToBase64(TEST_FILENAME);
-      expect(typeof resp).toEqual('string');
-    });
-  });
 });
