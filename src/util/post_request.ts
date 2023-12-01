@@ -18,7 +18,11 @@
 // TODO: update to prod endpoint when ready
 const API_BASE_PATH = 'staging-aiplatform.sandbox.googleapis.com';
 
-import {GenerateContentRequest, CLIENT_INFO, CountTokensRequest} from '../types/content';
+import {
+  GenerateContentRequest,
+  CLIENT_INFO,
+  CountTokensRequest,
+} from '../types/content';
 import * as constants from './constants';
 
 /**
@@ -34,33 +38,32 @@ export async function postRequest({
   apiEndpoint,
   apiVersion = 'v1beta1',
 }: {
-  region: string,
-  project: string,
-  resourcePath: string,
-  resourceMethod: string,
-  token: string,
-  data: GenerateContentRequest|CountTokensRequest,
-  apiEndpoint?: string,
-  apiVersion?: string,
-}): Promise<Response|undefined> {
+  region: string;
+  project: string;
+  resourcePath: string;
+  resourceMethod: string;
+  token: string;
+  data: GenerateContentRequest | CountTokensRequest;
+  apiEndpoint?: string;
+  apiVersion?: string;
+}): Promise<Response | undefined> {
   const vertexBaseEndpoint = apiEndpoint ?? `${region}-${API_BASE_PATH}`;
 
-  let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/projects/${
-      project}/locations/${region}/${resourcePath}:${resourceMethod}`;
+  let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/projects/${project}/locations/${region}/${resourcePath}:${resourceMethod}`;
 
   // Use server sent events for streamGenerateContent
   if (resourceMethod === constants.STREAMING_GENERATE_CONTENT_METHOD) {
     vertexEndpoint += '?alt=sse';
-  };
+  }
 
   return await fetch(vertexEndpoint, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
-      'user_agent': CLIENT_INFO.user_agent,
-      'client_library_language': CLIENT_INFO.client_library_language,
-      'client_library_version': CLIENT_INFO.client_library_version,
+      user_agent: CLIENT_INFO.user_agent,
+      client_library_language: CLIENT_INFO.client_library_language,
+      client_library_version: CLIENT_INFO.client_library_version,
     },
     body: JSON.stringify(data),
   });

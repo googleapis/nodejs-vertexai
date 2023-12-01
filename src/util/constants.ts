@@ -17,5 +17,5 @@
 
 export const GENERATE_CONTENT_METHOD = 'generateContent';
 export const STREAMING_GENERATE_CONTENT_METHOD = 'streamGenerateContent';
-export const USER_ROLE = "user";
-export const MODEL_ROLE = "model";
+export const USER_ROLE = 'user';
+export const MODEL_ROLE = 'model';

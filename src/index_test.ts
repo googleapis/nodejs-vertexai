@@ -22,18 +22,29 @@ import * as fs from 'fs';
 
 import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
-import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, HarmBlockThreshold, HarmCategory, StreamGenerateContentResult} from './types/content';
+import {
+  CountTokensRequest,
+  GenerateContentRequest,
+  GenerateContentResponse,
+  GenerateContentResult,
+  HarmBlockThreshold,
+  HarmCategory,
+  StreamGenerateContentResult,
+} from './types/content';
 import {constants} from './util';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
-const TEST_USER_CHAT_MESSAGE =
-    [{role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]}];
+const TEST_USER_CHAT_MESSAGE = [
+  {role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]},
+];
 
-const TEST_SAFETY_RATINGS = [{
-  category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-  threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-}];
+const TEST_SAFETY_RATINGS = [
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+];
 const TEST_GENERATION_CONFIG = {
   candidate_count: 1,
   stop_sequences: ['hello'],
@@ -43,7 +54,7 @@ const TEST_CANDIDATES = [
     index: 1,
     content: {
       role: constants.MODEL_ROLE,
-      parts: [{text: 'I\m doing great! How are you?'}]
+      parts: [{text: 'Im doing great! How are you?'}],
     },
     finish_reason: 0,
     finish_message: '',
@@ -52,12 +63,12 @@ const TEST_CANDIDATES = [
 ];
 const TEST_MODEL_RESPONSE = {
   candidates: TEST_CANDIDATES,
-  usage_metadata: {prompt_token_count: 0, candidates_token_count: 0}
+  usage_metadata: {prompt_token_count: 0, candidates_token_count: 0},
 };
 const TEST_CANDIDATES_MISSING_ROLE = [
   {
     index: 1,
-    content: {parts: [{text: 'I\m doing great! How are you?'}]},
+    content: {parts: [{text: 'Im doing great! How are you?'}]},
     finish_reason: 0,
     finish_message: '',
     safety_ratings: TEST_SAFETY_RATINGS,
@@ -65,7 +76,7 @@ const TEST_CANDIDATES_MISSING_ROLE = [
 ];
 const TEST_MODEL_RESPONSE_MISSING_ROLE = {
   candidates: TEST_CANDIDATES_MISSING_ROLE,
-  usage_metadata: {prompt_token_count: 0, candidates_token_count: 0}
+  usage_metadata: {prompt_token_count: 0, candidates_token_count: 0},
 };
 const TEST_EMPTY_MODEL_RESPONSE = {
   candidates: [],
@@ -76,18 +87,19 @@ const TEST_FILENAME = '/tmp/image.jpeg';
 const INVALID_FILENAME = 'image.txt';
 const TEST_GCS_FILENAME = 'gs://test_bucket/test_image.jpeg';
 
-const TEST_MULTIPART_MESSAGE = [{
-  role: constants.USER_ROLE,
-  parts: [
-    {text: 'What is in this picture?'},
-    {file_data: {file_uri: TEST_GCS_FILENAME, mime_type: 'image/jpeg'}}
-  ]
-}];
+const TEST_MULTIPART_MESSAGE = [
+  {
+    role: constants.USER_ROLE,
+    parts: [
+      {text: 'What is in this picture?'},
+      {file_data: {file_uri: TEST_GCS_FILENAME, mime_type: 'image/jpeg'}},
+    ],
+  },
+];
 /**
  * Returns a generator, used to mock the streamGenerateContent response
  */
-export async function*
-    testGenerator(): AsyncGenerator<GenerateContentResponse> {
+export async function* testGenerator(): AsyncGenerator<GenerateContentResponse> {
   yield {
     candidates: TEST_CANDIDATES,
   };
@@ -122,32 +134,34 @@ describe('VertexAI', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedStreamResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
       const resp = await model.generateContent(req);
       expect(resp).toEqual(expectedResult);
     });
   });
 
   describe('generateContent', () => {
-    it('returns a GenerateContentResponse when passed safety_settings and generation_config',
-       async () => {
-         const req: GenerateContentRequest = {
-           contents: TEST_USER_CHAT_MESSAGE,
-           safety_settings: TEST_SAFETY_RATINGS,
-           generation_config: TEST_GENERATION_CONFIG,
-         };
-         const expectedResult: GenerateContentResult = {
-           response: TEST_MODEL_RESPONSE,
-         };
-         const expectedStreamResult: StreamGenerateContentResult = {
-           response: Promise.resolve(TEST_MODEL_RESPONSE),
-           stream: testGenerator(),
-         };
-         spyOn(StreamFunctions, 'processStream')
-             .and.returnValue(expectedStreamResult);
-         const resp = await model.generateContent(req);
-         expect(resp).toEqual(expectedResult);
-       });
+    it('returns a GenerateContentResponse when passed safety_settings and generation_config', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE,
+        safety_settings: TEST_SAFETY_RATINGS,
+        generation_config: TEST_GENERATION_CONFIG,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      const resp = await model.generateContent(req);
+      expect(resp).toEqual(expectedResult);
+    });
   });
 
   describe('generateContent', () => {
@@ -159,7 +173,7 @@ describe('VertexAI', () => {
       });
       vertexaiWithBasePath.preview['tokenInternal'] = 'testtoken';
       model = vertexaiWithBasePath.preview.getGenerativeModel({
-        model: 'gemini-pro'
+        model: 'gemini-pro',
       });
 
       const req: GenerateContentRequest = {
@@ -173,21 +187,25 @@ describe('VertexAI', () => {
         stream: testGenerator(),
       };
       const requestSpy = spyOn(global, 'fetch');
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedStreamResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
       await model.generateContent(req);
-      expect(requestSpy.calls.allArgs()[0][0].toString())
-          .toContain(TEST_ENDPOINT_BASE_PATH);
+      expect(requestSpy.calls.allArgs()[0][0].toString()).toContain(
+        TEST_ENDPOINT_BASE_PATH
+      );
     });
   });
 
   describe('generateContent', () => {
     it('default the base API endpoint when base API not provided', async () => {
-      const vertexaiWithoutBasePath =
-          new VertexAI({project: PROJECT, location: LOCATION});
+      const vertexaiWithoutBasePath = new VertexAI({
+        project: PROJECT,
+        location: LOCATION,
+      });
       vertexaiWithoutBasePath.preview['tokenInternal'] = 'testtoken';
       model = vertexaiWithoutBasePath.preview.getGenerativeModel({
-        model: 'gemini-pro'
+        model: 'gemini-pro',
       });
 
       const req: GenerateContentRequest = {
@@ -201,46 +219,44 @@ describe('VertexAI', () => {
         stream: testGenerator(),
       };
       const requestSpy = spyOn(global, 'fetch');
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedStreamResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
       await model.generateContent(req);
-      expect(requestSpy.calls.allArgs()[0][0].toString())
-          .toContain(`${LOCATION}-staging-aiplatform.sandbox.googleapis.com`);
+      expect(requestSpy.calls.allArgs()[0][0].toString()).toContain(
+        `${LOCATION}-staging-aiplatform.sandbox.googleapis.com`
+      );
     });
   });
 
   describe('streamGenerateContent', () => {
-    it('returns a GenerateContentResponse when passed text content',
-       async () => {
-         const req: GenerateContentRequest = {
-           contents: TEST_USER_CHAT_MESSAGE,
-         };
-         const expectedResult: StreamGenerateContentResult = {
-           response: Promise.resolve(TEST_MODEL_RESPONSE),
-           stream: testGenerator(),
-         };
-         spyOn(StreamFunctions, 'processStream')
-             .and.returnValue(expectedResult);
-         const resp = await model.streamGenerateContent(req);
-         expect(resp).toEqual(expectedResult);
-       });
+    it('returns a GenerateContentResponse when passed text content', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE,
+      };
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+      const resp = await model.streamGenerateContent(req);
+      expect(resp).toEqual(expectedResult);
+    });
   });
 
   describe('streamGenerateContent', () => {
-    it('returns a GenerateContentResponse when passed multi-part content with a GCS URI',
-       async () => {
-         const req: GenerateContentRequest = {
-           contents: TEST_MULTIPART_MESSAGE,
-         };
-         const expectedResult: StreamGenerateContentResult = {
-           response: Promise.resolve(TEST_MODEL_RESPONSE),
-           stream: testGenerator(),
-         };
-         spyOn(StreamFunctions, 'processStream')
-             .and.returnValue(expectedResult);
-         const resp = await model.streamGenerateContent(req);
-         expect(resp).toEqual(expectedResult);
-       });
+    it('returns a GenerateContentResponse when passed multi-part content with a GCS URI', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_MULTIPART_MESSAGE,
+      };
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+      const resp = await model.streamGenerateContent(req);
+      expect(resp).toEqual(expectedResult);
+    });
   });
 
   // TODO: add a streaming test with a multipart message and inline image data
@@ -306,8 +322,9 @@ describe('ChatSession', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedStreamResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
       const resp = await chatSession.sendMessage(req);
       expect(resp).toEqual(expectedResult);
       expect(chatSession.history.length).toEqual(3);
@@ -328,8 +345,9 @@ describe('ChatSession', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedStreamResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
       // Shouldn't append anything to history with an empty result
       // expect(chatSession.history.length).toEqual(1);
       // expect(await chatSession.sendMessage(req))
@@ -346,11 +364,15 @@ describe('ChatSession', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      const chatSession= model.startChat({
-        history: [{role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]}],
+      const chatSession = model.startChat({
+        history: [
+          {
+            role: constants.USER_ROLE,
+            parts: [{text: 'How are you doing today?'}],
+          },
+        ],
       });
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       const result = await chatSession.streamSendMessage(req);
@@ -368,11 +390,15 @@ describe('ChatSession', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE_MISSING_ROLE),
         stream: testGenerator(),
       };
-      const chatSession= model.startChat({
-        history: [{role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]}],
+      const chatSession = model.startChat({
+        history: [
+          {
+            role: constants.USER_ROLE,
+            parts: [{text: 'How are you doing today?'}],
+          },
+        ],
       });
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       const result = await chatSession.streamSendMessage(req);

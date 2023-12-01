@@ -20,7 +20,19 @@ import * as fs from 'fs';
 import {GoogleAuth} from 'google-auth-library';
 
 import {processNonStream, processStream} from './process_stream';
-import {Content, CountTokensRequest, CountTokensResponse, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting, StreamGenerateContentResult, VertexInit} from './types/content';
+import {
+  Content,
+  CountTokensRequest,
+  CountTokensResponse,
+  GenerateContentRequest,
+  GenerateContentResult,
+  GenerationConfig,
+  ModelParams,
+  Part,
+  SafetySetting,
+  StreamGenerateContentResult,
+  VertexInit,
+} from './types/content';
 import {constants, postRequest} from './util';
 export * from './types';
 
@@ -41,8 +53,11 @@ export class VertexAI {
   public preview: VertexAI_Internal;
 
   constructor(init: VertexInit) {
-    this.preview =
-        new VertexAI_Internal(init.project, init.location, init.apiEndpoint);
+    this.preview = new VertexAI_Internal(
+      init.project,
+      init.location,
+      init.apiEndpoint
+    );
   }
 }
 
@@ -50,8 +65,9 @@ export class VertexAI {
  * VertexAI class implementation
  */
 export class VertexAI_Internal {
-  protected googleAuth: GoogleAuth = new GoogleAuth(
-      {scopes: 'https://www.googleapis.com/auth/cloud-platform'});
+  protected googleAuth: GoogleAuth = new GoogleAuth({
+    scopes: 'https://www.googleapis.com/auth/cloud-platform',
+  });
   private tokenInternal?: string;
 
   /**
@@ -64,9 +80,9 @@ export class VertexAI_Internal {
    * us-central1-aiplatform.googleapis.com) will be used.
    */
   constructor(
-      readonly project: string,
-      readonly location: string,
-      readonly apiEndpoint?: string,
+    readonly project: string,
+    readonly location: string,
+    readonly apiEndpoint?: string
   ) {
     this.project = project;
     this.location = location;
@@ -78,7 +94,7 @@ export class VertexAI_Internal {
    * @param vertex The VertexAI instance.
    */
   // TODO: change the `any` type below to be more specific
-  get token(): Promise<any>|string {
+  get token(): Promise<any> | string {
     if (this.tokenInternal) {
       return this.tokenInternal;
     }
@@ -88,12 +104,13 @@ export class VertexAI_Internal {
     return token;
   }
 
-  async imageToBase64(image: Buffer|string): Promise<string> {
+  async imageToBase64(image: Buffer | string): Promise<string> {
     if (Buffer.isBuffer(image)) {
       return Promise.resolve(image.toString('base64'));
     } else if (
-        typeof image === 'string' &&
-        (image.endsWith('.jpeg') || image.endsWith('.png'))) {
+      typeof image === 'string' &&
+      (image.endsWith('.jpeg') || image.endsWith('.png'))
+    ) {
       // TODO: consider storing supported file types in a constant
       try {
         const imageBuffer = await fs.readFileSync(image);
@@ -101,20 +118,20 @@ export class VertexAI_Internal {
       } catch (e) {
         throw new Error(`Error reading from image file: ${e}`);
       }
-
     } else {
       throw new Error(
-          'Invalid image provided. Please provide either a Buffer or a local filepath to a jpeg or png image.');
+        'Invalid image provided. Please provide either a Buffer or a local filepath to a jpeg or png image.'
+      );
     }
   }
 
   getGenerativeModel(modelParams: ModelParams): GenerativeModel {
     // TODO: decide if we want to validate the provided model string
     return new GenerativeModel(
-        this,
-        modelParams.model,
-        modelParams.generation_config,
-        modelParams.safety_settings,
+      this,
+      modelParams.model,
+      modelParams.generation_config,
+      modelParams.safety_settings
     );
   }
 }
@@ -158,7 +175,7 @@ export class ChatSession {
   get history(): Content[] {
     return this.historyInternal;
   }
-  
+
   constructor(request: StartChatSessionRequest) {
     this.project = request._vertex_instance.project;
     this.location = request._vertex_instance.location;
@@ -167,22 +184,25 @@ export class ChatSession {
     this._vertex_instance = request._vertex_instance;
   }
 
-  async sendMessage(request: string|
-                    Array<string|Part>): Promise<GenerateContentResult> {
+  async sendMessage(
+    request: string | Array<string | Part>
+  ): Promise<GenerateContentResult> {
     const newContent: Content = formulateNewContent(request);
-    let generateContentrequest: GenerateContentRequest = {
+    const generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat([newContent]),
       safety_settings: this.safety_settings,
       generation_config: this.generation_config,
     };
 
-    const generateContentResult =
-        await this._model_instance.generateContent(generateContentrequest);
+    const generateContentResult = await this._model_instance.generateContent(
+      generateContentrequest
+    );
     const generateContentResponse = await generateContentResult.response;
     // Only push the latest message to history if the response returned a result
     if (generateContentResponse.candidates.length !== 0) {
       this.historyInternal.push(newContent);
-      let contentFromAssistant = generateContentResponse.candidates[0].content;
+      const contentFromAssistant =
+        generateContentResponse.candidates[0].content;
       if (!contentFromAssistant.role) {
         contentFromAssistant.role = constants.MODEL_ROLE;
       }
@@ -192,42 +212,42 @@ export class ChatSession {
       throw new Error('Did not get a candidate from the model');
     }
 
-    return Promise.resolve({response:generateContentResponse});
+    return Promise.resolve({response: generateContentResponse});
   }
 
-  async streamSendMessage(request: string|
-    Array<string|Part>): Promise<StreamGenerateContentResult> {
-      const newContent: Content = formulateNewContent(request);
-      let generateContentrequest: GenerateContentRequest = {
-        contents: this.historyInternal.concat([newContent]),
-        safety_settings: this.safety_settings,
-        generation_config: this.generation_config,
-      };
-  
-      const streamGenerateContentResult =
-          await this._model_instance.streamGenerateContent(generateContentrequest);
-      const streamGenerateContentResponse =
-          await streamGenerateContentResult.response;
-      // Only push the latest message to history if the response returned a result
-      if (streamGenerateContentResponse.candidates.length !== 0) {
-        this.historyInternal.push(newContent);
-        let contentFromAssistant = streamGenerateContentResponse.candidates[0].content;
-        if (!contentFromAssistant.role) {
-          contentFromAssistant.role = constants.MODEL_ROLE;
-        }
-        this.historyInternal.push(contentFromAssistant);
-      } else {
-        // TODO: handle promptFeedback in the response
-        throw new Error('Did not get a candidate from the model');
-      }
+  async streamSendMessage(
+    request: string | Array<string | Part>
+  ): Promise<StreamGenerateContentResult> {
+    const newContent: Content = formulateNewContent(request);
+    const generateContentrequest: GenerateContentRequest = {
+      contents: this.historyInternal.concat([newContent]),
+      safety_settings: this.safety_settings,
+      generation_config: this.generation_config,
+    };
 
-      return Promise.resolve(
-          {
-            response: Promise.resolve(streamGenerateContentResponse),
-            stream: streamGenerateContentResult.stream,
-          }
-      );
-    } 
+    const streamGenerateContentResult =
+      await this._model_instance.streamGenerateContent(generateContentrequest);
+    const streamGenerateContentResponse =
+      await streamGenerateContentResult.response;
+    // Only push the latest message to history if the response returned a result
+    if (streamGenerateContentResponse.candidates.length !== 0) {
+      this.historyInternal.push(newContent);
+      const contentFromAssistant =
+        streamGenerateContentResponse.candidates[0].content;
+      if (!contentFromAssistant.role) {
+        contentFromAssistant.role = constants.MODEL_ROLE;
+      }
+      this.historyInternal.push(contentFromAssistant);
+    } else {
+      // TODO: handle promptFeedback in the response
+      throw new Error('Did not get a candidate from the model');
+    }
+
+    return Promise.resolve({
+      response: Promise.resolve(streamGenerateContentResponse),
+      stream: streamGenerateContentResult.stream,
+    });
+  }
 }
 
 /**
@@ -242,11 +262,14 @@ export class GenerativeModel {
   safety_settings?: SafetySetting[];
   private _vertex_instance: VertexAI_Internal;
   // TODO: https://b.corp.google.com/issues/314168438
-  private _use_non_stream: boolean = false;
+  private _use_non_stream = false;
 
   constructor(
-      vertex_instance: VertexAI_Internal, model: string,
-      generation_config?: GenerationConfig, safety_settings?: SafetySetting[]) {
+    vertex_instance: VertexAI_Internal,
+    model: string,
+    generation_config?: GenerationConfig,
+    safety_settings?: SafetySetting[]
+  ) {
     this._vertex_instance = vertex_instance;
     this.model = model;
     this.generation_config = generation_config;
@@ -258,24 +281,25 @@ export class GenerativeModel {
    * @param request A GenerateContentRequest object with the request contents.
    * @return The GenerateContentResponse object with the response candidates.
    */
-  async generateContent(request: GenerateContentRequest):
-      Promise<GenerateContentResult> {
-    
+  async generateContent(
+    request: GenerateContentRequest
+  ): Promise<GenerateContentResult> {
     if (!this._use_non_stream) {
-      const streamGenerateContentResult: StreamGenerateContentResult = await this.streamGenerateContent(request);
+      const streamGenerateContentResult: StreamGenerateContentResult =
+        await this.streamGenerateContent(request);
       const result: GenerateContentResult = {
         response: await streamGenerateContentResult.response,
       };
       return Promise.resolve(result);
     }
-    
+
     const publisherModelEndpoint = `publishers/google/models/${this.model}`;
 
     const generateContentRequest: GenerateContentRequest = {
       contents: request.contents,
       generation_config: request.generation_config ?? this.generation_config,
       safety_settings: request.safety_settings ?? this.safety_settings,
-    }
+    };
 
     let response;
     try {
@@ -289,10 +313,10 @@ export class GenerativeModel {
         apiEndpoint: this._vertex_instance.apiEndpoint,
       });
       if (response === undefined) {
-        throw new Error('did not get a valid response.')
+        throw new Error('did not get a valid response.');
       }
       if (!response.ok) {
-        throw new Error(`${response.status} ${response.statusText}`)
+        throw new Error(`${response.status} ${response.statusText}`);
       }
     } catch (e) {
       console.log(e);
@@ -307,15 +331,16 @@ export class GenerativeModel {
    * @param request A GenerateContentRequest object with the request contents.
    * @return The GenerateContentResponse object with the response candidates.
    */
-  async streamGenerateContent(request: GenerateContentRequest):
-      Promise<StreamGenerateContentResult> {
+  async streamGenerateContent(
+    request: GenerateContentRequest
+  ): Promise<StreamGenerateContentResult> {
     const publisherModelEndpoint = `publishers/google/models/${this.model}`;
 
     const generateContentRequest: GenerateContentRequest = {
       contents: request.contents,
       generation_config: request.generation_config ?? this.generation_config,
       safety_settings: request.safety_settings ?? this.safety_settings,
-    }
+    };
 
     let response;
     try {
@@ -329,10 +354,10 @@ export class GenerativeModel {
         apiEndpoint: this._vertex_instance.apiEndpoint,
       });
       if (response === undefined) {
-        throw new Error('did not get a valid response.')
+        throw new Error('did not get a valid response.');
       }
       if (!response.ok) {
-        throw new Error(`${response.status} ${response.statusText}`)
+        throw new Error(`${response.status} ${response.statusText}`);
       }
     } catch (e) {
       console.log(e);
@@ -365,7 +390,6 @@ export class GenerativeModel {
       if (!response.ok) {
         throw new Error(`${response.status} ${response.statusText}`);
       }
-
     } catch (e) {
       console.log(e);
     }
@@ -390,8 +414,7 @@ export class GenerativeModel {
   }
 }
 
-function formulateNewContent(request: string|Array<string|Part>): Content {
-
+function formulateNewContent(request: string | Array<string | Part>): Content {
   let newParts: Part[] = [];
 
   if (typeof request === 'string') {
@@ -404,7 +427,7 @@ function formulateNewContent(request: string|Array<string|Part>): Content {
         newParts.push(item);
       }
     }
-  };
+  }
 
   const newContent: Content = {role: constants.USER_ROLE, parts: newParts};
   return newContent;

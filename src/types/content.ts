@@ -46,7 +46,6 @@ export declare interface CountTokensResponse {
   totalBillableCharacters?: number;
 }
 
-
 /**
  * Configuration for initializing a model, for example via getGenerativeModel
  */
@@ -125,6 +124,7 @@ export declare interface Content {
  * Exactly one of text or inline_data must be provided.
  */
 // TODO: Adjust so one must be true.
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BasePart {}
 
 export interface TextPart extends BasePart {
@@ -261,19 +261,19 @@ export declare interface CitationSource {
   license?: string;
 }
 
-const USER_AGENT_PRODUCT = "model-builder";
+const USER_AGENT_PRODUCT = 'model-builder';
 
-const CLIENT_LIBRARY_LANGUAGE = "node-js";
+const CLIENT_LIBRARY_LANGUAGE = 'node-js';
 
 // TODO: update this version number using release-please
-const CLIENT_LIBRARY_VERSION = "0.1.0";
+const CLIENT_LIBRARY_VERSION = '0.1.0';
 
 const USER_AGENT = USER_AGENT_PRODUCT + '/' + CLIENT_LIBRARY_VERSION;
 
 const CLIENT_INFO = {
-  'user_agent': USER_AGENT,
-  'client_library_language': CLIENT_LIBRARY_LANGUAGE,
-  'client_library_version': CLIENT_LIBRARY_VERSION,
+  user_agent: USER_AGENT,
+  client_library_language: CLIENT_LIBRARY_LANGUAGE,
+  client_library_version: CLIENT_LIBRARY_VERSION,
 };
 
 export {CLIENT_INFO};

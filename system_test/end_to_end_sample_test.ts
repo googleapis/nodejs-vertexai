@@ -18,22 +18,21 @@
 // @ts-ignore
 import {VertexAI} from '@google-cloud/vertexai';
 
-const PROJECT =
-    'cloud-llm-preview1';  // TODO: change this to infer from Kokoro env
+const PROJECT = 'cloud-llm-preview1'; // TODO: change this to infer from Kokoro env
 const LOCATION = 'us-central1';
 const TEXT_REQUEST = {
   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
 };
 
 const TEXT_PART = {
-  text: 'What is this a picture of?'
+  text: 'What is this a picture of?',
 };
 // TODO: change this to an image in our test project when it's set up
 const GCS_FILE_PART = {
   file_data: {
     file_uri: 'gs://sararob_imagegeneration_test/kitten.jpeg',
-    mime_type: 'image/jpeg'
-  }
+    mime_type: 'image/jpeg',
+  },
 };
 const MULTI_PART_REQUEST = {
   contents: [{role: 'user', parts: [TEXT_PART, GCS_FILE_PART]}],
@@ -52,7 +51,7 @@ const generativeVisionModel = vertex_ai.preview.getGenerativeModel({
 
 async function testStreamGenerateContentText() {
   const streamingResp =
-      await generativeTextModel.streamGenerateContent(TEXT_REQUEST);
+    await generativeTextModel.streamGenerateContent(TEXT_REQUEST);
 
   for await (const item of streamingResp.stream) {
     console.log('stream chunk:', item);
@@ -63,7 +62,7 @@ async function testStreamGenerateContentText() {
 
 async function testStreamGenerateContentMultiPart() {
   const streamingResp =
-      await generativeVisionModel.streamGenerateContent(MULTI_PART_REQUEST);
+    await generativeVisionModel.streamGenerateContent(MULTI_PART_REQUEST);
 
   for await (const item of streamingResp.stream) {
     console.log('stream chunk:', item);
