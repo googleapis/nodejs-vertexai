@@ -22,6 +22,8 @@ import {GoogleAuth} from 'google-auth-library';
 import {processNonStream, processStream} from './process_stream';
 import {Content, CountTokensRequest, CountTokensResponse, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting, StreamGenerateContentResult, VertexInit} from './types/content';
 import {constants, postRequest} from './util';
+export * from './types';
+
 // TODO: update this when model names are available
 // const SUPPORTED_MODELS: Array<string> = ['text-bison@001'];
 

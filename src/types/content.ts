@@ -82,22 +82,25 @@ export declare interface GenerationConfig {
   top_k?: number;
 }
 
-enum HarmCategory {
-  HARM_CATEGORY_UNSPECIFIED = 0,
-  HARM_CATEGORY_DEROGATORY = 1,
-  HARM_CATEGORY_TOXICITY = 2,
-  HARM_CATEGORY_VIOLENCE = 3,
-  HARM_CATEGORY_SEXUAL = 4,
-  HARM_CATEGORY_MEDICAL = 5,
-  HARM_CATEGORY_DANGEROUS = 6
+export enum HarmCategory {
+  HARM_CATEGORY_UNSPECIFIED = 'HARM_CATEGORY_UNSPECIFIED',
+  HARM_CATEGORY_HATE_SPEECH = 'HARM_CATEGORY_HATE_SPEECH',
+  HARM_CATEGORY_DANGEROUS_CONTENT = 'HARM_CATEGORY_DANGEROUS_CONTENT',
+  HARM_CATEGORY_HARASSMENT = 'HARM_CATEGORY_HARASSMENT',
+  HARM_CATEGORY_SEXUALLY_EXPLICIT = 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
 }
 
-enum HarmBlockThreshold {
-  HARM_BLOCK_THRESHOLD_UNSPECIFIED = 0,
-  BLOCK_LOW_AND_ABOVE = 1,
-  BLOCK_MEDIUM_AND_ABOVE = 2,
-  BLOCK_ONLY_HIGH = 3,
-  BLOCK_NONE = 4,
+export enum HarmBlockThreshold {
+  // Unspecified harm block threshold.
+  HARM_BLOCK_THRESHOLD_UNSPECIFIED = 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+  // Block low threshold and above (i.e. block more).
+  BLOCK_LOW_AND_ABOVE = 'BLOCK_LOW_AND_ABOVE',
+  // Block medium threshold and above.
+  BLOCK_MEDIUM_AND_ABOVE = 'BLOCK_MEDIUM_AND_ABOVE',
+  // Block only high threshold (i.e. block less).
+  BLOCK_ONLY_HIGH = 'BLOCK_ONLY_HIGH',
+  // Block none.
+  BLOCK_NONE = 'BLOCK_NONE',
 }
 
 /**
@@ -178,28 +181,28 @@ export declare interface PromptFeedback {
   block_reason_message: string;
 }
 
-enum BlockedReason {
+export enum BlockedReason {
   // A blocked reason was not specified.
-  BLOCKED_REASON_UNSPECIFIED = 0,
+  BLOCKED_REASON_UNSPECIFIED = 'BLOCK_REASON_UNSPECIFIED',
   // Content was blocked by safety settings.
-  SAFETY = 1,
+  SAFETY = 'SAFETY',
   // Content was blocked, but the reason is uncategorized.
-  OTHER = 2,
+  OTHER = 'OTHER',
 }
 
-enum FinishReason {
+export enum FinishReason {
   // Default value. This value is unused.
-  FINISH_REASON_UNSPECIFIED = 0,
+  FINISH_REASON_UNSPECIFIED = 'FINISH_REASON_UNSPECIFIED',
   // Natural stop point of the model or provided stop sequence.
-  STOP = 1,
+  STOP = 'STOP',
   // The maximum number of tokens as specified in the request was reached.
-  MAX_TOKENS = 2,
+  MAX_TOKENS = 'MAX_TOKENS',
   // The candidate content was flagged for safety reasons.
-  SAFETY = 3,
+  SAFETY = 'SAFETY',
   // The candidate content was flagged for recitation reasons.
-  RECITATION = 4,
+  RECITATION = 'RECITATION',
   // Unknown reason.
-  OTHER = 5,
+  OTHER = 'OTHER',
 }
 
 /**

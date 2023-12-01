@@ -22,21 +22,32 @@ import * as fs from 'fs';
 
 import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
-import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, StreamGenerateContentResult} from './types/content';
+import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, HarmBlockThreshold, HarmCategory, StreamGenerateContentResult} from './types/content';
 import {constants} from './util';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
 const TEST_USER_CHAT_MESSAGE =
     [{role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]}];
+
+const TEST_SAFETY_RATINGS = [{
+  category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+  threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+}];
+const TEST_GENERATION_CONFIG = {
+  candidate_count: 1,
+  stop_sequences: ['hello'],
+};
 const TEST_CANDIDATES = [
   {
     index: 1,
-    content:
-        {role: constants.MODEL_ROLE, parts: [{text: 'I\m doing great! How are you?'}]},
+    content: {
+      role: constants.MODEL_ROLE,
+      parts: [{text: 'I\m doing great! How are you?'}]
+    },
     finish_reason: 0,
     finish_message: '',
-    safety_ratings: [{category: 0, threshold: 0}],
+    safety_ratings: TEST_SAFETY_RATINGS,
   },
 ];
 const TEST_MODEL_RESPONSE = {
@@ -46,11 +57,10 @@ const TEST_MODEL_RESPONSE = {
 const TEST_CANDIDATES_MISSING_ROLE = [
   {
     index: 1,
-    content:
-        {parts: [{text: 'I\m doing great! How are you?'}]},
+    content: {parts: [{text: 'I\m doing great! How are you?'}]},
     finish_reason: 0,
     finish_message: '',
-    safety_ratings: [{category: 0, threshold: 0}],
+    safety_ratings: TEST_SAFETY_RATINGS,
   },
 ];
 const TEST_MODEL_RESPONSE_MISSING_ROLE = {
@@ -116,6 +126,28 @@ describe('VertexAI', () => {
       const resp = await model.generateContent(req);
       expect(resp).toEqual(expectedResult);
     });
+  });
+
+  describe('generateContent', () => {
+    it('returns a GenerateContentResponse when passed safety_settings and generation_config',
+       async () => {
+         const req: GenerateContentRequest = {
+           contents: TEST_USER_CHAT_MESSAGE,
+           safety_settings: TEST_SAFETY_RATINGS,
+           generation_config: TEST_GENERATION_CONFIG,
+         };
+         const expectedResult: GenerateContentResult = {
+           response: TEST_MODEL_RESPONSE,
+         };
+         const expectedStreamResult: StreamGenerateContentResult = {
+           response: Promise.resolve(TEST_MODEL_RESPONSE),
+           stream: testGenerator(),
+         };
+         spyOn(StreamFunctions, 'processStream')
+             .and.returnValue(expectedStreamResult);
+         const resp = await model.generateContent(req);
+         expect(resp).toEqual(expectedResult);
+       });
   });
 
   describe('generateContent', () => {
