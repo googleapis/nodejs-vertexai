@@ -16,7 +16,7 @@
  */
 
 // TODO: update to prod endpoint when ready
-const API_BASE_PATH = 'staging-aiplatform.sandbox.googleapis.com';
+const API_BASE_PATH = 'autopush-aiplatform.sandbox.googleapis.com';
 
 import {
   GenerateContentRequest,

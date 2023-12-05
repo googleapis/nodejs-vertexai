@@ -270,9 +270,8 @@ describe('VertexAI', () => {
         expectedStreamResult
       );
       await model.generateContent(req);
-      expect(requestSpy.calls.allArgs()[0][0].toString()).toContain(
-        `${LOCATION}-staging-aiplatform.sandbox.googleapis.com`
-      );
+      expect(requestSpy.calls.allArgs()[0][0].toString())
+          .toContain(`${LOCATION}-autopush-aiplatform.sandbox.googleapis.com`);
     });
   });
 
