@@ -142,7 +142,6 @@ export interface FileData {
   file_uri: string;
 }
 
-// TODO: add validation to ensurefile_data starts with `gs://`
 export interface FileDataPart extends BasePart {
   text?: never;
   file_data: FileData;

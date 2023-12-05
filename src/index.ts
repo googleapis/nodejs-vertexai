@@ -35,8 +35,17 @@ import {
 import {constants, postRequest} from './util';
 export * from './types';
 
-// TODO: update this when model names are available
-// const SUPPORTED_MODELS: Array<string> = ['text-bison@001'];
+export function validateGcsInput(contents: Content[]) {
+  for (const content of contents) {
+    for (const part of content.parts) {
+      if ('file_data' in part) {
+        if (!part['file_data']['file_uri'].startsWith('gs://')) {
+          throw new Error('Google Cloud Storage URIs must start with gs://');
+        }
+      }
+    }
+  }
+}
 
 /**
  * Base class for authenticating to Vertex, creates the preview namespace.
@@ -97,14 +106,17 @@ export class VertexAI_Internal {
     if (this.tokenInternal) {
       return this.tokenInternal;
     }
-    // Generate a new token if it hasn't been set
-    // TODO: add error handling here
-    const token = Promise.resolve(this.googleAuth.getAccessToken());
+    let token;
+    try {
+      token = Promise.resolve(this.googleAuth.getAccessToken());
+    } catch (e) {
+      throw new Error(`Error getting Google Cloud authentication token: ${e}`);
+    }
+
     return token;
   }
 
   getGenerativeModel(modelParams: ModelParams): GenerativeModel {
-    // TODO: decide if we want to validate the provided model string
     return new GenerativeModel(
       this,
       modelParams.model,
@@ -239,7 +251,6 @@ export class GenerativeModel {
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
   private _vertex_instance: VertexAI_Internal;
-  // TODO: https://b.corp.google.com/issues/314168438
   private _use_non_stream = false;
 
   constructor(
@@ -262,6 +273,8 @@ export class GenerativeModel {
   async generateContent(
     request: GenerateContentRequest
   ): Promise<GenerateContentResult> {
+    validateGcsInput(request.contents);
+
     if (!this._use_non_stream) {
       const streamGenerateContentResult: StreamGenerateContentResult =
         await this.streamGenerateContent(request);
@@ -312,6 +325,8 @@ export class GenerativeModel {
   async streamGenerateContent(
     request: GenerateContentRequest
   ): Promise<StreamGenerateContentResult> {
+    validateGcsInput(request.contents);
+
     const publisherModelEndpoint = `publishers/google/models/${this.model}`;
 
     const generateContentRequest: GenerateContentRequest = {

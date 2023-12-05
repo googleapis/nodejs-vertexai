@@ -20,23 +20,40 @@ import 'jasmine';
 
 import * as fs from 'fs';
 
-import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
+import {ChatSession, GenerativeModel, StartChatParams, validateGcsInput, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
-import {
-  CountTokensRequest,
-  GenerateContentRequest,
-  GenerateContentResponse,
-  GenerateContentResult,
-  HarmBlockThreshold,
-  HarmCategory,
-  StreamGenerateContentResult,
-} from './types/content';
+import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, HarmBlockThreshold, HarmCategory, StreamGenerateContentResult,} from './types/content';
 import {constants} from './util';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
 const TEST_USER_CHAT_MESSAGE = [
   {role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]},
+];
+
+const TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE = [
+  {
+    role: constants.USER_ROLE,
+    parts: [
+      {text: 'How are you doing today?'},
+      {
+        file_data: {
+          file_uri: 'gs://test_bucket/test_image.jpeg',
+          mime_type: 'image/jpeg'
+        }
+      },
+    ],
+  },
+];
+
+const TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE = [
+  {
+    role: constants.USER_ROLE,
+    parts: [
+      {text: 'How are you doing today?'},
+      {file_data: {file_uri: 'test_image.jpeg', mime_type: 'image/jpeg'}},
+    ],
+  },
 ];
 
 const TEST_SAFETY_RATINGS = [
@@ -139,6 +156,36 @@ describe('VertexAI', () => {
       );
       const resp = await model.generateContent(req);
       expect(resp).toEqual(expectedResult);
+    });
+  });
+
+  describe('generateContent', () => {
+    it('returns a GenerateContentResponse when passed a GCS URI', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedStreamResult);
+      const resp = await model.generateContent(req);
+      expect(resp).toEqual(expectedResult);
+    });
+  });
+
+  describe('generateContent', () => {
+    it('raises an error when passed an invalid GCS URI', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE,
+      };
+      expect(() => {
+        validateGcsInput(req.contents);
+      }).toThrow();
     });
   });
 
