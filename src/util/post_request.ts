@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-// TODO: update to prod endpoint when ready
-const API_BASE_PATH = 'staging-aiplatform.sandbox.googleapis.com';
+const API_BASE_PATH = 'aiplatform.googleapis.com';
 
 import {
   GenerateContentRequest,

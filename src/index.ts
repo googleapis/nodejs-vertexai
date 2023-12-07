@@ -205,9 +205,8 @@ export class ChatSession {
     return Promise.resolve({response: generateContentResponse});
   }
 
-  async streamSendMessage(
-    request: string | Array<string | Part>
-  ): Promise<StreamGenerateContentResult> {
+  async sendMessageStream(request: string|Array<string|Part>):
+      Promise<StreamGenerateContentResult> {
     const newContent: Content = formulateNewContent(request);
     const generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat([newContent]),
@@ -216,7 +215,8 @@ export class ChatSession {
     };
 
     const streamGenerateContentResult =
-      await this._model_instance.streamGenerateContent(generateContentrequest);
+        await this._model_instance.generateContentStream(
+            generateContentrequest);
     const streamGenerateContentResponse =
       await streamGenerateContentResult.response;
     // Only push the latest message to history if the response returned a result
@@ -277,7 +277,7 @@ export class GenerativeModel {
 
     if (!this._use_non_stream) {
       const streamGenerateContentResult: StreamGenerateContentResult =
-        await this.streamGenerateContent(request);
+          await this.generateContentStream(request);
       const result: GenerateContentResult = {
         response: await streamGenerateContentResult.response,
       };
@@ -318,13 +318,12 @@ export class GenerativeModel {
   }
 
   /**
-   * Make a streamGenerateContent request.
+   * Make a generateContentStream request.
    * @param request A GenerateContentRequest object with the request contents.
    * @return The GenerateContentResponse object with the response candidates.
    */
-  async streamGenerateContent(
-    request: GenerateContentRequest
-  ): Promise<StreamGenerateContentResult> {
+  async generateContentStream(request: GenerateContentRequest):
+      Promise<StreamGenerateContentResult> {
     validateGcsInput(request.contents);
 
     const publisherModelEndpoint = `publishers/google/models/${this.model}`;
