@@ -47,6 +47,16 @@ export function validateGcsInput(contents: Content[]) {
   }
 }
 
+export function validateGenerationConfig(generation_config: GenerationConfig):
+    GenerationConfig {
+  if ('top_k' in generation_config) {
+    if (!(generation_config.top_k! > 0) || !(generation_config.top_k! <= 40)) {
+      delete generation_config.top_k;
+    }
+  }
+  return generation_config;
+}
+
 /**
  * Base class for authenticating to Vertex, creates the preview namespace.
  * The base class object takes the following arguments:
@@ -117,6 +127,11 @@ export class VertexAI_Internal {
   }
 
   getGenerativeModel(modelParams: ModelParams): GenerativeModel {
+    if (modelParams.generation_config) {
+      modelParams.generation_config =
+          validateGenerationConfig(modelParams.generation_config);
+    }
+
     return new GenerativeModel(
       this,
       modelParams.model,
@@ -275,6 +290,11 @@ export class GenerativeModel {
   ): Promise<GenerateContentResult> {
     validateGcsInput(request.contents);
 
+    if (request.generation_config) {
+      request.generation_config =
+          validateGenerationConfig(request.generation_config);
+    }
+
     if (!this._use_non_stream) {
       const streamGenerateContentResult: StreamGenerateContentResult =
           await this.generateContentStream(request);
@@ -325,6 +345,11 @@ export class GenerativeModel {
   async generateContentStream(request: GenerateContentRequest):
       Promise<StreamGenerateContentResult> {
     validateGcsInput(request.contents);
+
+    if (request.generation_config) {
+      request.generation_config =
+          validateGenerationConfig(request.generation_config);
+    }
 
     const publisherModelEndpoint = `publishers/google/models/${this.model}`;
 

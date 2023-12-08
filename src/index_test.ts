@@ -22,12 +22,14 @@ import {ChatSession, GenerativeModel, StartChatParams, validateGcsInput, VertexA
 import * as StreamFunctions from './process_stream';
 import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, HarmBlockThreshold, HarmCategory, StreamGenerateContentResult,} from './types/content';
 import {constants} from './util';
+import * as RequestFunctions from './util/post_request';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
 const TEST_USER_CHAT_MESSAGE = [
   {role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]},
 ];
+const TEST_TOKEN = 'testtoken';
 
 const TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE = [
   {
@@ -129,7 +131,7 @@ describe('VertexAI', () => {
       project: PROJECT,
       location: LOCATION,
     });
-    vertexai.preview['tokenInternal'] = 'testtoken';
+    vertexai.preview['tokenInternal'] = TEST_TOKEN;
     model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
   });
 
@@ -270,6 +272,56 @@ describe('VertexAI', () => {
       await model.generateContent(req);
       expect(requestSpy.calls.allArgs()[0][0].toString())
           .toContain(`${LOCATION}-aiplatform.googleapis.com`);
+    });
+  });
+
+  describe('generateContent', () => {
+    it('removes top_k when it is set to 0', async () => {
+      const reqWithEmptyConfigs: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+        generation_config: {top_k: 0},
+        safety_settings: [],
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      const requestSpy = spyOn(global, 'fetch');
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedStreamResult);
+      await model.generateContent(reqWithEmptyConfigs);
+      const requestArgs = requestSpy.calls.allArgs()[0][1];
+      if (typeof requestArgs == 'object' && requestArgs) {
+        expect(JSON.stringify(requestArgs['body'])).not.toContain('top_k');
+      }
+    });
+  });
+
+  describe('generateContent', () => {
+    it('inclues top_k when it is within 1 - 40', async () => {
+      const reqWithEmptyConfigs: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+        generation_config: {top_k: 1},
+        safety_settings: [],
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      const requestSpy = spyOn(global, 'fetch');
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedStreamResult);
+      await model.generateContent(reqWithEmptyConfigs);
+      const requestArgs = requestSpy.calls.allArgs()[0][1];
+      if (typeof requestArgs == 'object' && requestArgs) {
+        expect(JSON.stringify(requestArgs['body'])).toContain('top_k');
+      }
     });
   });
 
