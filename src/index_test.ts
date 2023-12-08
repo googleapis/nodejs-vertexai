@@ -18,7 +18,7 @@
 /* tslint:disable */
 import 'jasmine';
 
-import {ChatSession, GenerativeModel, StartChatParams, validateGcsInput, VertexAI} from './index';
+import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
 import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, HarmBlockThreshold, HarmCategory, StreamGenerateContentResult,} from './types/content';
 import {constants} from './util';
@@ -183,9 +183,7 @@ describe('VertexAI', () => {
       const req: GenerateContentRequest = {
         contents: TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE,
       };
-      expect(() => {
-        validateGcsInput(req.contents);
-      }).toThrow();
+      await expectAsync(model.generateContent(req)).toBeRejectedWithError(URIError);
     });
   });
 

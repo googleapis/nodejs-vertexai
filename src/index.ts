@@ -35,28 +35,6 @@ import {
 import {constants, postRequest} from './util';
 export * from './types';
 
-export function validateGcsInput(contents: Content[]) {
-  for (const content of contents) {
-    for (const part of content.parts) {
-      if ('file_data' in part) {
-        if (!part['file_data']['file_uri'].startsWith('gs://')) {
-          throw new Error('Google Cloud Storage URIs must start with gs://');
-        }
-      }
-    }
-  }
-}
-
-export function validateGenerationConfig(generation_config: GenerationConfig):
-    GenerationConfig {
-  if ('top_k' in generation_config) {
-    if (!(generation_config.top_k! > 0) || !(generation_config.top_k! <= 40)) {
-      delete generation_config.top_k;
-    }
-  }
-  return generation_config;
-}
-
 /**
  * Base class for authenticating to Vertex, creates the preview namespace.
  * The base class object takes the following arguments:
@@ -448,4 +426,27 @@ function formulateNewContent(request: string | Array<string | Part>): Content {
 
   const newContent: Content = {role: constants.USER_ROLE, parts: newParts};
   return newContent;
+}
+
+function validateGcsInput(contents: Content[]) {
+  for (const content of contents) {
+    for (const part of content.parts) {
+      if ('file_data' in part) {
+        const uri = part['file_data']['file_uri'];
+        if (!uri.startsWith('gs://')) {
+          throw new URIError(`Found invalid Google Cloud Storage URI ${uri}, Google Cloud Storage URIs must start with gs://`);
+        }
+      }
+    }
+  }
+}
+
+function validateGenerationConfig(generation_config: GenerationConfig):
+    GenerationConfig {
+  if ('top_k' in generation_config) {
+    if (!(generation_config.top_k! > 0) || !(generation_config.top_k! <= 40)) {
+      delete generation_config.top_k;
+    }
+  }
+  return generation_config;
 }
