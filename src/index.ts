@@ -32,6 +32,7 @@ import {
   StreamGenerateContentResult,
   VertexInit,
 } from './types/content';
+import {GoogleAuthError} from './types/errors';
 import {constants, postRequest} from './util';
 export * from './types';
 
@@ -58,23 +59,20 @@ export class VertexAI {
 }
 
 /**
- * VertexAI class implementation
- */
+ * VertexAI class internal implementation for authentication.
+ * This class object takes the following arguments:
+ * @param project The Google Cloud project to use for the request
+ * @param location The Google Cloud project location to use for the request
+ * @param apiEndpoint The base Vertex AI endpoint to use for the request. If
+ *        not provided, the default regionalized endpoint
+ *        (i.e. us-central1-aiplatform.googleapis.com) will be used.
+*/
 export class VertexAI_Internal {
   protected googleAuth: GoogleAuth = new GoogleAuth({
     scopes: 'https://www.googleapis.com/auth/cloud-platform',
   });
   private tokenInternal?: string;
 
-  /**
-   * API client for authenticating to Vertex
-   * @param project The Google Cloud project to use for the request
-   * @param location The Google Cloud project location to use for the
-   *     request
-   * @param apiEndpoint The base Vertex AI endpoint to use for the request. If
-   *     not provided, the default regionalized endpoint (i.e.
-   * us-central1-aiplatform.googleapis.com) will be used.
-   */
   constructor(
     readonly project: string,
     readonly location: string,
@@ -85,22 +83,27 @@ export class VertexAI_Internal {
     this.apiEndpoint = apiEndpoint;
   }
 
-  /**
-   * Gets an authentication token for making Vertex REST API requests.
-   * @param vertex The VertexAI instance.
-   */
   // TODO: change the `any` type below to be more specific
   get token(): Promise<any> | string {
     if (this.tokenInternal) {
       return this.tokenInternal;
     }
+    const credential_error_message = "\nUnable to authenticate your request\
+        \nDepending on your run time environment, you can get authentication by\
+        \n- if in local instance or cloud shell: `!gcloud auth login`\
+        \n- if in Colab:\
+        \n    -`from google.colab import auth`\
+        \n    -`auth.authenticate_user()`\
+        \n- if in service account or other: please follow guidance in https://cloud.google.com/docs/authentication";
     let token;
     try {
       token = Promise.resolve(this.googleAuth.getAccessToken());
     } catch (e) {
-      throw new Error(`Error getting Google Cloud authentication token: ${e}`);
+      throw new GoogleAuthError(`${credential_error_message}\n${e}`);
     }
-
+    if (!token) {
+      throw new GoogleAuthError(`${credential_error_message}`);
+    }
     return token;
   }
 

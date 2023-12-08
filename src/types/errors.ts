@@ -15,5 +15,11 @@
  * limitations under the License.
  */
 
-export * from './content';
-export * from './errors';
+class GoogleAuthError extends Error {
+    constructor(message: string) {
+      super(message);
+      this.name = 'GoogleAuthError';
+    }
+}
+
+export {GoogleAuthError};
