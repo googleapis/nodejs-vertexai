@@ -27,10 +27,9 @@ const TEXT_REQUEST = {
 const TEXT_PART = {
   text: 'What is this a picture of?',
 };
-// TODO: change this to an image in our test project when it's set up
 const GCS_FILE_PART = {
   file_data: {
-    file_uri: 'gs://sararob_imagegeneration_test/kitten.jpeg',
+    file_uri: 'gs://generativeai-downloads/images/scones.jpg',
     mime_type: 'image/jpeg',
   },
 };
@@ -49,9 +48,9 @@ const generativeVisionModel = vertex_ai.preview.getGenerativeModel({
   model: 'gemini-vision-pro',
 });
 
-async function testStreamGenerateContentText() {
+async function testGenerateContentStreamText() {
   const streamingResp =
-    await generativeTextModel.streamGenerateContent(TEXT_REQUEST);
+      await generativeTextModel.generateContentStream(TEXT_REQUEST);
 
   for await (const item of streamingResp.stream) {
     console.log('stream chunk:', item);
@@ -60,9 +59,9 @@ async function testStreamGenerateContentText() {
   console.log('aggregated response: ', await streamingResp.response);
 }
 
-async function testStreamGenerateContentMultiPart() {
+async function testGenerateContentStreamMultiPart() {
   const streamingResp =
-    await generativeVisionModel.streamGenerateContent(MULTI_PART_REQUEST);
+      await generativeVisionModel.generateContentStream(MULTI_PART_REQUEST);
 
   for await (const item of streamingResp.stream) {
     console.log('stream chunk:', item);
@@ -76,6 +75,6 @@ async function testCountTokens() {
   console.log('count tokens response: ', countTokensResp);
 }
 
-testStreamGenerateContentText();
-testStreamGenerateContentMultiPart();
+testGenerateContentStreamText();
+testGenerateContentStreamMultiPart();
 testCountTokens();
