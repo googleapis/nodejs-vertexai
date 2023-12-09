@@ -341,13 +341,14 @@ export class GenerativeModel {
     };
 
     let response;
+    const token = await this._vertex_instance.token;
     try {
       response = await postRequest({
         region: this._vertex_instance.location,
         project: this._vertex_instance.project,
         resourcePath: publisherModelEndpoint,
         resourceMethod: constants.STREAMING_GENERATE_CONTENT_METHOD,
-        token: await this._vertex_instance.token,
+        token: token,
         data: generateContentRequest,
         apiEndpoint: this._vertex_instance.apiEndpoint,
       });
