@@ -130,7 +130,7 @@ describe('VertexAI', () => {
       project: PROJECT,
       location: LOCATION,
     });
-    vertexai.preview['tokenInternal'] = TEST_TOKEN;
+    vertexai.preview['tokenInternalPromise'] = Promise.resolve(TEST_TOKEN);
     model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
   });
 
@@ -215,7 +215,7 @@ describe('VertexAI', () => {
         location: LOCATION,
         apiEndpoint: TEST_ENDPOINT_BASE_PATH,
       });
-      vertexaiWithBasePath.preview['tokenInternal'] = 'testtoken';
+      vertexaiWithBasePath.preview['tokenInternalPromise'] = Promise.resolve(TEST_TOKEN);
       model = vertexaiWithBasePath.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
@@ -247,7 +247,7 @@ describe('VertexAI', () => {
         project: PROJECT,
         location: LOCATION,
       });
-      vertexaiWithoutBasePath.preview['tokenInternal'] = 'testtoken';
+      vertexaiWithoutBasePath.preview['tokenInternalPromise'] = Promise.resolve(TEST_TOKEN);
       model = vertexaiWithoutBasePath.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
@@ -393,7 +393,7 @@ describe('ChatSession', () => {
 
   beforeEach(() => {
     vertexai = new VertexAI({project: PROJECT, location: LOCATION});
-    vertexai.preview['tokenInternal'] = 'testtoken';
+    vertexai.preview['tokenInternalPromise'] = Promise.resolve(TEST_TOKEN);
     model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,

@@ -71,7 +71,7 @@ export class VertexAI_Internal {
   protected googleAuth: GoogleAuth = new GoogleAuth({
     scopes: 'https://www.googleapis.com/auth/cloud-platform',
   });
-  private tokenInternal?: string;
+  private tokenInternalPromise?: Promise<any>;
 
   constructor(
     readonly project: string,
@@ -83,10 +83,9 @@ export class VertexAI_Internal {
     this.apiEndpoint = apiEndpoint;
   }
 
-  // TODO: change the `any` type below to be more specific
-  get token(): Promise<any> | string {
-    if (this.tokenInternal) {
-      return this.tokenInternal;
+  get token(): Promise<any> {
+    if (this.tokenInternalPromise) {
+      return this.tokenInternalPromise;
     }
     const credential_error_message = "\nUnable to authenticate your request\
         \nDepending on your run time environment, you can get authentication by\
@@ -95,16 +94,12 @@ export class VertexAI_Internal {
         \n    -`from google.colab import auth`\
         \n    -`auth.authenticate_user()`\
         \n- if in service account or other: please follow guidance in https://cloud.google.com/docs/authentication";
-    let token;
-    try {
-      token = Promise.resolve(this.googleAuth.getAccessToken());
-    } catch (e) {
-      throw new GoogleAuthError(`${credential_error_message}\n${e}`);
-    }
-    if (!token) {
-      throw new GoogleAuthError(`${credential_error_message}`);
-    }
-    return token;
+    const tokenPromise = this.googleAuth.getAccessToken().catch(
+          e => {
+            throw new GoogleAuthError(`${credential_error_message}\n${e}`);
+          }
+        );
+    return tokenPromise;
   }
 
   getGenerativeModel(modelParams: ModelParams): GenerativeModel {
