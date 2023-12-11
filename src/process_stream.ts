@@ -135,9 +135,11 @@ function aggregateResponses(
         response.candidates[i].finishMessage;
       aggregatedResponse.candidates[i].safetyRatings =
         response.candidates[i].safetyRatings;
-      for (const part of response.candidates[i].content.parts) {
-        if (part.text) {
-          aggregatedResponse.candidates[i].content.parts[0].text += part.text;
+      if ('parts' in response.candidates[i].content) {
+        for (const part of response.candidates[i].content.parts) {
+          if (part.text) {
+            aggregatedResponse.candidates[i].content.parts[0].text += part.text;
+          }
         }
       }
     }

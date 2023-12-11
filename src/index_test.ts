@@ -22,7 +22,6 @@ import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
 import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, HarmBlockThreshold, HarmCategory, StreamGenerateContentResult,} from './types/content';
 import {constants} from './util';
-import * as RequestFunctions from './util/post_request';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
