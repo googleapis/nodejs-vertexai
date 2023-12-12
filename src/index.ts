@@ -145,6 +145,7 @@ export declare interface StartChatSessionRequest extends StartChatParams {
 export class ChatSession {
   private project: string;
   private location: string;
+  private _send_stream_promise: Promise<void> = Promise.resolve();
 
   private historyInternal: Content[];
   private _vertex_instance: VertexAI_Internal;
@@ -195,21 +196,12 @@ export class ChatSession {
 
     return Promise.resolve({response: generateContentResponse});
   }
-
-  async sendMessageStream(request: string|Array<string|Part>):
-      Promise<StreamGenerateContentResult> {
-    const newContent: Content = formulateNewContent(request);
-    const generateContentrequest: GenerateContentRequest = {
-      contents: this.historyInternal.concat([newContent]),
-      safety_settings: this.safety_settings,
-      generation_config: this.generation_config,
-    };
-
-    const streamGenerateContentResultPromise =
-        this._model_instance.generateContentStream(
-            generateContentrequest);
-    const streamGenerateContentResult =
-      await streamGenerateContentResultPromise;
+  
+  async appendHistory(
+      streamGenerateContentResultPromise: Promise<StreamGenerateContentResult>,
+      newContent: Content,
+      ): Promise<void> {
+    const streamGenerateContentResult = await streamGenerateContentResultPromise;
     const streamGenerateContentResponse =
         await streamGenerateContentResult.response;
     // Only push the latest message to history if the response returned a result
@@ -225,7 +217,22 @@ export class ChatSession {
       // TODO: handle promptFeedback in the response
       throw new Error('Did not get a candidate from the model');
     }
+  }
 
+  async sendMessageStream(request: string|Array<string|Part>):
+      Promise<StreamGenerateContentResult> {
+    const newContent: Content = formulateNewContent(request);
+    const generateContentrequest: GenerateContentRequest = {
+      contents: this.historyInternal.concat([newContent]),
+      safety_settings: this.safety_settings,
+      generation_config: this.generation_config,
+    };
+
+    const streamGenerateContentResultPromise =
+        this._model_instance.generateContentStream(
+            generateContentrequest);
+
+    this._send_stream_promise = this.appendHistory(streamGenerateContentResultPromise, newContent);
     return streamGenerateContentResultPromise;
   }
 }
