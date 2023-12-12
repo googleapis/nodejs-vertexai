@@ -205,11 +205,13 @@ export class ChatSession {
       generation_config: this.generation_config,
     };
 
-    const streamGenerateContentResult =
-        await this._model_instance.generateContentStream(
+    const streamGenerateContentResultPromise =
+        this._model_instance.generateContentStream(
             generateContentrequest);
+    const streamGenerateContentResult =
+      await streamGenerateContentResultPromise;
     const streamGenerateContentResponse =
-      await streamGenerateContentResult.response;
+        await streamGenerateContentResult.response;
     // Only push the latest message to history if the response returned a result
     if (streamGenerateContentResponse.candidates.length !== 0) {
       this.historyInternal.push(newContent);
@@ -224,10 +226,7 @@ export class ChatSession {
       throw new Error('Did not get a candidate from the model');
     }
 
-    return Promise.resolve({
-      response: Promise.resolve(streamGenerateContentResponse),
-      stream: streamGenerateContentResult.stream,
-    });
+    return streamGenerateContentResultPromise;
   }
 }
 
