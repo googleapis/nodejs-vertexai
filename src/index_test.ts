@@ -20,7 +20,7 @@ import 'jasmine';
 
 import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
-import {CountTokensRequest, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, HarmBlockThreshold, HarmCategory, StreamGenerateContentResult,} from './types/content';
+import {CountTokensRequest, FinishReason, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, HarmBlockThreshold, HarmCategory, StreamGenerateContentResult,} from './types/content';
 import {constants} from './util';
 
 const PROJECT = 'test_project';
@@ -72,9 +72,17 @@ const TEST_CANDIDATES = [
       role: constants.MODEL_ROLE,
       parts: [{text: 'Im doing great! How are you?'}],
     },
-    finish_reason: 0,
-    finish_message: '',
-    safety_ratings: TEST_SAFETY_RATINGS,
+    finishReason: FinishReason.STOP,
+    finishMessage: '',
+    safetyRatings: TEST_SAFETY_RATINGS,
+    citationMetadata: {
+      citationSources: [{
+        startIndex: 367,
+        endIndex: 491,
+        uri:
+            'https://www.numerade.com/ask/question/why-does-the-uncertainty-principle-make-it-impossible-to-predict-a-trajectory-for-the-clectron-95172/'
+      }]
+    }
   },
 ];
 const TEST_MODEL_RESPONSE = {
@@ -319,6 +327,29 @@ describe('VertexAI', () => {
       if (typeof requestArgs == 'object' && requestArgs) {
         expect(JSON.stringify(requestArgs['body'])).toContain('top_k');
       }
+    });
+  });
+
+  describe('generateContent', () => {
+    it('aggregates citation metadata', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream')
+          .and.returnValue(expectedStreamResult);
+      const resp = await model.generateContent(req);
+      console.log(resp.response.candidates[0].citationMetadata, 'yoyoyo');
+      expect(
+          resp.response.candidates[0].citationMetadata?.citationSources.length)
+          .toEqual(TEST_MODEL_RESPONSE.candidates[0]
+                       .citationMetadata.citationSources.length);
     });
   });
 

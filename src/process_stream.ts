@@ -15,12 +15,7 @@
  * limitations under the License.
  */
 
-import {
-  GenerateContentCandidate,
-  GenerateContentResponse,
-  GenerateContentResult,
-  StreamGenerateContentResult,
-} from './types/content';
+import {CitationSource, GenerateContentCandidate, GenerateContentResponse, GenerateContentResult, StreamGenerateContentResult,} from './types/content';
 
 // eslint-disable-next-line no-useless-escape
 const responseLineRE = /^data\: (.*)\r\n/;
@@ -125,10 +120,23 @@ function aggregateResponses(
           },
         } as GenerateContentCandidate;
       }
-      // TODO: figure out if the last one is final and we should keep
-      // overwriting or whether each chunk has its own citationMetadata
-      aggregatedResponse.candidates[i].citationMetadata =
-        response.candidates[i].citationMetadata;
+      if (response.candidates[i].citationMetadata) {
+        if (!aggregatedResponse.candidates[i]
+                 .citationMetadata?.citationSources) {
+          aggregatedResponse.candidates[i].citationMetadata = {
+            citationSources: [] as CitationSource[],
+          };
+        }
+
+
+        let existingMetadata = response.candidates[i].citationMetadata ?? {};
+
+        if (aggregatedResponse.candidates[i].citationMetadata) {
+          aggregatedResponse.candidates[i].citationMetadata!.citationSources =
+              aggregatedResponse.candidates[i]
+                  .citationMetadata!.citationSources.concat(existingMetadata);
+        }
+      }
       aggregatedResponse.candidates[i].finishReason =
         response.candidates[i].finishReason;
       aggregatedResponse.candidates[i].finishMessage =

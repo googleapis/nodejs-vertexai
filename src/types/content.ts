@@ -247,15 +247,15 @@ export declare interface GenerateContentCandidate {
  * Citation information for model-generated canadidate.
  */
 export declare interface CitationMetadata {
-  citation_sources: CitationSource[];
+  citationSources: CitationSource[];
 }
 
 /**
  * Citations to sources for a specific response
  */
 export declare interface CitationSource {
-  start_index?: number;
-  end_index?: number;
+  startIndex?: number;
+  endIndex?: number;
   uri?: string;
   license?: string;
 }
