@@ -25,6 +25,7 @@ export GCLOUD_PROJECT=long-door-651
 cd $(dirname $0)/..
 
 # Run a pre-test hook, if a pre-system-test.sh is in the project
+#
 if [ -f .kokoro/pre-system-test.sh ]; then
     set +x
     . .kokoro/pre-system-test.sh
