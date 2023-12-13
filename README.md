@@ -117,6 +117,21 @@ async function multiPartContentImageString() {
 multiPartContentImageString();
 ```
 
+## Content generation: non-streaming
+
+```typescript
+async function generateContent() {
+  const request = {
+    contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+  };
+  const resp = await generativeModel.generateContent(request);
+
+  console.log('aggregated response: ', JSON.stringify(await resp.response));
+};
+
+generateContent();
+```
+
 ## Counting tokens
 
 ```typescript
