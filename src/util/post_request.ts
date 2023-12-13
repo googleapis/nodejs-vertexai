@@ -35,17 +35,14 @@ export async function postRequest({
   token,
   data,
   apiEndpoint,
-  apiVersion = 'v1beta1',
+  apiVersion = 'v1',
 }: {
-  region: string;
-  project: string;
-  resourcePath: string;
-  resourceMethod: string;
+  region: string; project: string; resourcePath: string; resourceMethod: string;
   token: string;
   data: GenerateContentRequest | CountTokensRequest;
   apiEndpoint?: string;
   apiVersion?: string;
-}): Promise<Response | undefined> {
+}): Promise<Response|undefined> {
   const vertexBaseEndpoint = apiEndpoint ?? `${region}-${API_BASE_PATH}`;
 
   let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/projects/${project}/locations/${region}/${resourcePath}:${resourceMethod}`;
