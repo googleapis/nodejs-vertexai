@@ -55,11 +55,11 @@ export async function postRequest({
   return await fetch(vertexEndpoint, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
-      user_agent: CLIENT_INFO.user_agent,
-      client_library_language: CLIENT_INFO.client_library_language,
-      client_library_version: CLIENT_INFO.client_library_version,
+      'User-Agent': CLIENT_INFO.user_agent,
+      'client_library_language': CLIENT_INFO.client_library_language,
+      'client_library_version': CLIENT_INFO.client_library_version,
     },
     body: JSON.stringify(data),
   });
