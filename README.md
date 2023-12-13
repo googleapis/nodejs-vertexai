@@ -2,11 +2,12 @@
 
 The Vertex AI Node.js SDK enables developers to use Google's state-of-the-art generative AI models (like Gemini) to build AI-powered features and applications.
 
+[See here](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/main/generative-ai/snippets) for detailed samples using the Vertex AI Node.js SDK.
 
 ## Before you begin
 
 1.  [Select or create a Cloud Platform project](https://console.cloud.google.com/project).
-1.  [Enable billing for your project](https://console.cloud.google.com/project).
+1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 1.  [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
 1.  [Set up authentication with a service account](https://cloud.google.com/docs/authentication/getting-started) so you can access the
     API from your local workstation.
