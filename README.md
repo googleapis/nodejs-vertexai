@@ -80,7 +80,7 @@ async function streamChat() {
 streamChat();
 ```
 
-## Multi-part content generation: text and image
+## Multi-part content generation
 
 ### Providing a Google Cloud Storage image URI
 ```typescript
@@ -104,18 +104,38 @@ multiPartContent();
 ### Providing a base64 image string
 ```typescript
 async function multiPartContentImageString() {
-    const b64imageStr = "yourbase64imagestr";
-    const filePart = {inline_data: {data: b64imageStr, mime_type: "image/jpeg"}};
+    // Replace this with your own base64 image string
+    const base64Image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+    const filePart = {inline_data: {data: base64Image, mime_type: 'image/jpeg'}};
     const textPart = {text: 'What is this a picture of?'};
     const request = {
         contents: [{role: 'user', parts: [textPart, filePart]}],
       };
     const resp = await generativeVisionModel.generateContentStream(request);
     const contentResponse = await resp.response;
-    console.log(contentResponse.candidates[0].content);
+    console.log(contentResponse.candidates[0].content.parts[0].text);
 }
 
 multiPartContentImageString();
+```
+
+### Multi-part content with text and video
+```typescript
+async function multiPartContentVideo() {
+    const filePart = {file_data: {file_uri: 'gs://cloud-samples-data/video/animals.mp4', mime_type: 'video/mp4'}};
+    const textPart = {text: 'What is in the video?'};
+    const request = {
+        contents: [{role: 'user', parts: [textPart, filePart]}],
+      };
+    const streamingResp = await generativeVisionModel.generateContentStream(request);
+    for await (const item of streamingResp.stream) {
+      console.log('stream chunk: ', JSON.stringify(item));
+    }
+    const aggregatedResponse = await streamingResp.response;
+    console.log(aggregatedResponse.candidates[0].content);
+}
+
+multiPartContentVideo();
 ```
 
 ## Content generation: non-streaming
