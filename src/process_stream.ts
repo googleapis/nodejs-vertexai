@@ -35,6 +35,20 @@ async function* generateResponseSequence(
 }
 
 /**
+ * Utility function to create an ArrayBuffer from an array of Uint8Arrays.
+ */
+function createArrayBufferFromUint8Arrays(uint8Arrays: Uint8Array[]): ArrayBuffer {
+  let totalLength = uint8Arrays.reduce((acc, uint8Array) => acc + uint8Array.length, 0);
+  let arrayBuffer = new ArrayBuffer(totalLength);
+  let view = new Uint8Array(arrayBuffer);
+  let position = 0;
+  uint8Arrays.forEach(uint8Array => {
+      view.set(uint8Array, position);
+      position += uint8Array.length;
+  });
+  return arrayBuffer;
+}
+/**
  * Reads a raw stream from the fetch response and joins incomplete
  * chunks, returning a new stream that provides a single complete
  * GenerateContentResponse in each iteration.
@@ -42,7 +56,7 @@ async function* generateResponseSequence(
 function readFromReader(
   reader: ReadableStreamDefaultReader
 ): ReadableStream<GenerateContentResponse> {
-  let currentText = '';
+  const chunks: Uint8Array[] = [];
   const stream = new ReadableStream<GenerateContentResponse>({
     start(controller) {
       return pump();
@@ -54,8 +68,9 @@ function readFromReader(
               controller.close();
               return;
             }
-            const chunk = new TextDecoder().decode(value);
-            currentText += chunk;
+            chunks.push(value);
+            const arrayBuffer = createArrayBufferFromUint8Arrays(chunks);
+            const currentText = new TextDecoder().decode(arrayBuffer);
             const match = currentText.match(responseLineRE);
             if (match) {
               let parsedResponse: GenerateContentResponse;
@@ -66,7 +81,7 @@ function readFromReader(
               } catch (e) {
                 throw new Error(`Error parsing JSON response: "${match[1]}"`);
               }
-              currentText = '';
+              chunks.splice(0);
               if ('candidates' in parsedResponse) {
                 controller.enqueue(parsedResponse);
               } else {
