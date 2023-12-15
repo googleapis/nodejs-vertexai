@@ -16,9 +16,12 @@
  */
 
 // @ts-ignore
-import {VertexAI} from '@google-cloud/vertexai';
+import * as assert from 'assert';
 
-const PROJECT = 'cloud-llm-preview1'; // TODO: change this to infer from Kokoro env
+import {VertexAI} from '../src';
+
+// TODO: this env var isn't getting populated correctly
+const PROJECT = process.env.GCLOUD_PROJECT;
 const LOCATION = 'us-central1';
 const TEXT_REQUEST = {
   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
@@ -27,54 +30,130 @@ const TEXT_REQUEST = {
 const TEXT_PART = {
   text: 'What is this a picture of?',
 };
+
 const GCS_FILE_PART = {
   file_data: {
-    file_uri: 'gs://generativeai-downloads/images/scones.jpg',
+    file_uri: 'gs://nodejs_vertex_system_test_resources/scones.jpg',
     mime_type: 'image/jpeg',
   },
 };
-const MULTI_PART_REQUEST = {
+const BASE_64_IMAGE =
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+const INLINE_DATA_FILE_PART = {
+  inline_data: {
+    data: BASE_64_IMAGE,
+    mime_type: 'image/jpeg',
+  },
+}
+
+const MULTI_PART_GCS_REQUEST = {
   contents: [{role: 'user', parts: [TEXT_PART, GCS_FILE_PART]}],
+};
+const MULTI_PART_BASE64_REQUEST = {
+  contents: [{role: 'user', parts: [TEXT_PART, INLINE_DATA_FILE_PART]}],
 };
 
 // Initialize Vertex with your Cloud project and location
-const vertex_ai = new VertexAI({project: PROJECT, location: LOCATION});
+const vertex_ai = new VertexAI({project: 'long-door-651', location: LOCATION});
 
 const generativeTextModel = vertex_ai.preview.getGenerativeModel({
   model: 'gemini-pro',
+  generation_config: {
+    max_output_tokens: 256,
+  }
 });
 
 const generativeVisionModel = vertex_ai.preview.getGenerativeModel({
-  model: 'gemini-vision-pro',
+  model: 'gemini-pro-vision',
 });
 
-async function testGenerateContentStreamText() {
-  const streamingResp =
-      await generativeTextModel.generateContentStream(TEXT_REQUEST);
+// TODO (b/316599049): update tests to use jasmine expect syntax:
+// expect(...).toBeInstanceOf(...)
+describe('generateContentStream', () => {
+  beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  });
 
-  for await (const item of streamingResp.stream) {
-    console.log('stream chunk:', item);
-  }
+  it('should should return a stream and aggregated response when passed text',
+     async () => {
+       const streamingResp =
+           await generativeTextModel.generateContentStream(TEXT_REQUEST);
 
-  console.log('aggregated response: ', await streamingResp.response);
-}
+       for await (const item of streamingResp.stream) {
+         assert(
+             item.candidates[0],
+             `sys test failure on generateContentStream, for item ${
+                 item.candidates[0]}`);
+       }
 
-async function testGenerateContentStreamMultiPart() {
-  const streamingResp =
-      await generativeVisionModel.generateContentStream(MULTI_PART_REQUEST);
+       const aggregatedResp = await streamingResp.response;
+       assert(
+           aggregatedResp.candidates[0],
+           `sys test failure on generateContentStream for aggregated response: ${
+               aggregatedResp.candidates[0]}`);
+     });
+  it('should should return a stream and aggregated response when passed multipart base64 content',
+     async () => {
+       const streamingResp = await generativeVisionModel.generateContentStream(
+           MULTI_PART_BASE64_REQUEST);
 
-  for await (const item of streamingResp.stream) {
-    console.log('stream chunk:', item);
-  }
+       for await (const item of streamingResp.stream) {
+         assert(
+             item.candidates[0],
+             `sys test failure on generateContentStream, for item ${
+                 item.candidates[0]}`);
+       }
 
-  console.log('aggregated response: ', await streamingResp.response);
-}
+       const aggregatedResp = await streamingResp.response;
+       assert(
+           aggregatedResp.candidates[0],
+           `sys test failure on generateContentStream for aggregated response: ${
+               aggregatedResp.candidates[0]}`);
+     });
+  // TODO: this is returning a 500 on the system test project
+  // it('should should return a stream and aggregated response when passed
+  // multipart GCS content',
+  //    async () => {
+  //      const streamingResp = await
+  //      generativeVisionModel.generateContentStream(
+  //          MULTI_PART_GCS_REQUEST);
 
-async function testCountTokens() {
-  const countTokensResp = await generativeVisionModel.countTokens(TEXT_REQUEST);
-  console.log('count tokens response: ', countTokensResp);
-}
+  //      for await (const item of streamingResp.stream) {
+  //        assert(item.candidates[0]);
+  //        console.log('stream chunk: ', item);
+  //      }
 
-testGenerateContentStreamText();
-testGenerateContentStreamMultiPart();
-testCountTokens();
+  //      const aggregatedResp = await streamingResp.response;
+  //      assert(aggregatedResp.candidates[0]);
+  //      console.log('aggregated response: ', aggregatedResp);
+  //    });
+});
+
+// TODO (b/316599049): add tests for generateContent and sendMessage
+
+describe('sendMessageStream', () => {
+  beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  });
+  it('should should return a stream and populate history', async () => {
+    const chat = generativeTextModel.startChat({});
+    const chatInput1 = 'How can I learn more about Node.js?';
+    const result1 = await chat.sendMessageStream(chatInput1);
+    for await (const item of result1.stream) {
+      assert(
+          item.candidates[0],
+          `sys test failure on sendMessageStream, for item ${
+              item.candidates[0]}`);
+    }
+    expect(chat.history.length).toBe(2);
+  });
+});
+
+describe('countTokens', () => {
+  it('should should return a CountTokensResponse', async () => {
+    const countTokensResp = await generativeTextModel.countTokens(TEXT_REQUEST);
+    assert(
+        countTokensResp.totalTokens,
+        `sys test failure on countTokens, ${countTokensResp.totalTokens}`);
+  });
+});

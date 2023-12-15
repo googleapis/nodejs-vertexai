@@ -46,7 +46,7 @@ if [[ $KOKORO_BUILD_ARTIFACTS_SUBDIR = *"continuous"* ]] || [[ $KOKORO_BUILD_ART
   trap cleanup EXIT HUP
 fi
 
-npm run system_test
+npm run system-test
 
 # codecov combines coverage across integration and unit tests. Include
 # the logic below for any environment you wish to collect coverage for:
