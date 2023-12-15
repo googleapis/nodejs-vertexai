@@ -17,6 +17,9 @@
 
 /**
  * Params used to initialize the Vertex SDK
+ * @param{string} project - the project name of your Google Cloud project. It is not the numeric project ID.
+ * @param{string} location - the location of your project. 
+ * @param{string} apiEndpoint - Optional. If not specified, a default value will be resolved by SDK.
  */
 export declare interface VertexInit {
   project: string;
@@ -48,6 +51,8 @@ export declare interface CountTokensResponse {
 
 /**
  * Configuration for initializing a model, for example via getGenerativeModel
+ * @param {string} model - model name. 
+ * @example "gemini-pro"
  */
 export declare interface ModelParams extends BaseModelParams {
   model: string;
@@ -206,6 +211,7 @@ export enum FinishReason {
 
 /**
  * Wrapper for respones from a generateContent request
+ * @see GenerateContentResponse
  */
 export declare interface GenerateContentResult {
   // All GenerateContentResponses received so far
@@ -214,6 +220,7 @@ export declare interface GenerateContentResult {
 
 /**
  * Wrapper for respones from a streamGenerateContent request
+ * @see GenerateContentResponse
  */
 export declare interface StreamGenerateContentResult {
   // Async iterable that provides one GenerateContentResponse at a time

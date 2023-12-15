@@ -38,17 +38,15 @@ export * from './types';
 
 /**
  * Base class for authenticating to Vertex, creates the preview namespace.
- * The base class object takes the following arguments:
- * @param project The Google Cloud project to use for the request
- * @param location The Google Cloud project location to use for the
- *     request
- * @param apiEndpoint Optional. The base Vertex AI endpoint to use for the
- *     request. If not provided, the default regionalized endpoint (i.e.
- * us-central1-aiplatform.googleapis.com) will be used.
  */
 export class VertexAI {
   public preview: VertexAI_Internal;
 
+  /**
+   * @constructor
+   * @param{VertexInit} init - {@link VertexInit} 
+   *       assign authentication related information to instantiate a Vertex AI client.
+   */
   constructor(init: VertexInit) {
     this.preview = new VertexAI_Internal(
       init.project,
@@ -60,12 +58,6 @@ export class VertexAI {
 
 /**
  * VertexAI class internal implementation for authentication.
- * This class object takes the following arguments:
- * @param project The Google Cloud project to use for the request
- * @param location The Google Cloud project location to use for the request
- * @param apiEndpoint The base Vertex AI endpoint to use for the request. If
- *        not provided, the default regionalized endpoint
- *        (i.e. us-central1-aiplatform.googleapis.com) will be used.
 */
 export class VertexAI_Internal {
   protected googleAuth: GoogleAuth = new GoogleAuth({
@@ -73,6 +65,14 @@ export class VertexAI_Internal {
   });
   private tokenInternalPromise?: Promise<any>;
 
+  /**
+   * @constructor
+   * @param {string} - project The Google Cloud project to use for the request
+   * @param {string} - location The Google Cloud project location to use for the request
+   * @param {string} - apiEndpoint The base Vertex AI endpoint to use for the request. If
+   *        not provided, the default regionalized endpoint
+   *        (i.e. us-central1-aiplatform.googleapis.com) will be used.
+   */
   constructor(
     readonly project: string,
     readonly location: string,
@@ -83,6 +83,10 @@ export class VertexAI_Internal {
     this.apiEndpoint = apiEndpoint;
   }
 
+  /**
+   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * @return {Promise<any>} Promise of token
+   */
   get token(): Promise<any> {
     if (this.tokenInternalPromise) {
       return this.tokenInternalPromise;
@@ -102,6 +106,10 @@ export class VertexAI_Internal {
     return tokenPromise;
   }
 
+  /** 
+   * @param {ModelParams} modelParams - {@link ModelParams} Parameters to specify the generative model.
+   * @return {GenerativeModel} Instance of the GenerativeModel class. {@link GenerativeModel}
+   */
   getGenerativeModel(modelParams: ModelParams): GenerativeModel {
     if (modelParams.generation_config) {
       modelParams.generation_config =
@@ -133,6 +141,8 @@ export declare interface StartChatParams {
 
 /**
  * All params passed to initiate multiturn chat via startChat
+ * @see VertexAI_Internal for details on _vertex_instance parameter
+ * @see GenerativeModel for details on _model_instance parameter
  */
 export declare interface StartChatSessionRequest extends StartChatParams {
   _vertex_instance: VertexAI_Internal;
@@ -140,7 +150,10 @@ export declare interface StartChatSessionRequest extends StartChatParams {
 }
 
 /**
- * Session for a multiturn chat with the model
+ * Chat session to make multi-turn send message request.
+ * `sendMessage` method makes async call to get response of a chat message.
+ * `sendMessageStream` method makes async call to stream response of a chat message.
+ * @param {StartChatSessionRequest} request - {@link StartChatSessionRequest}
  */
 export class ChatSession {
   private project: string;
@@ -166,6 +179,11 @@ export class ChatSession {
     this._vertex_instance = request._vertex_instance;
   }
 
+  /**
+   * Make an sync call to send message.
+   * @param {string | Array<string | Part>} request - send message request. {@link Part}
+   * @return {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
+   */
   async sendMessage(
     request: string | Array<string | Part>
   ): Promise<GenerateContentResult> {
@@ -219,6 +237,11 @@ export class ChatSession {
     }
   }
 
+  /**
+   * Make an async call to stream send message. Response will be returned in stream.
+   * @param {string | Array<string | Part>} request - send message request. {@link Part}
+   * @return {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   */
   async sendMessageStream(request: string|Array<string|Part>):
       Promise<StreamGenerateContentResult> {
     const newContent: Content = formulateNewContent(request);
@@ -239,7 +262,6 @@ export class ChatSession {
 
 /**
  * Base class for generative models.
- *
  * NOTE: this class should not be instantiated directly. Use
  * `vertexai.preview.getGenerativeModel()` instead.
  */
@@ -250,6 +272,13 @@ export class GenerativeModel {
   private _vertex_instance: VertexAI_Internal;
   private _use_non_stream = false;
 
+  /**
+   * @constructor
+   * @param {VertexAI_Internal} vertex_instance - {@link VertexAI_Internal}
+   * @param {string} model - model name
+   * @param {GenerationConfig} generation_config - Optional. {@link GenerationConfig}
+   * @param {SafetySetting[]} safety_settings - Optional. {@link SafetySetting}
+   */
   constructor(
     vertex_instance: VertexAI_Internal,
     model: string,
@@ -263,7 +292,7 @@ export class GenerativeModel {
   }
 
   /**
-   * Make a generateContent request.
+   * Make a async call to generate content.
    * @param request A GenerateContentRequest object with the request contents.
    * @return The GenerateContentResponse object with the response candidates.
    */
@@ -320,9 +349,9 @@ export class GenerativeModel {
   }
 
   /**
-   * Make a generateContentStream request.
-   * @param request A GenerateContentRequest object with the request contents.
-   * @return The GenerateContentResponse object with the response candidates.
+   * Make an async stream request to generate content. The response will be returned in stream.
+   * @param {GenerateContentRequest} request - {@link GenerateContentRequest}
+   * @return {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
    */
   async generateContentStream(request: GenerateContentRequest):
       Promise<StreamGenerateContentResult> {
@@ -367,7 +396,7 @@ export class GenerativeModel {
   }
 
   /**
-   * Make a countTokens request.
+   * Make a async request to count tokens.
    * @param request A CountTokensRequest object with the request contents.
    * @return The CountTokensResponse object with the token count.
    */
@@ -400,6 +429,13 @@ export class GenerativeModel {
     }
   }
 
+  /**
+   * Instantiate a ChatSession.
+   * This method doesn't make any call to remote endpoint.
+   * Any call to remote endpoint is implemented in ChatSession class @see ChatSession
+   * @param{StartChatParams} request - {@link StartChatParams}
+   * @return {ChatSession} {@link ChatSession}
+   */
   startChat(request: StartChatParams): ChatSession {
     const startChatRequest = {
       history: request.history,
