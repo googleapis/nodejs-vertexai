@@ -58,7 +58,7 @@ export async function postRequest({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
       'User-Agent': CLIENT_INFO.user_agent,
-      'client_library_language': CLIENT_INFO.client_library_language,
+      'x-goog-api-client': CLIENT_INFO.client_library_language,
       'client_library_version': CLIENT_INFO.client_library_version,
     },
     body: JSON.stringify(data),

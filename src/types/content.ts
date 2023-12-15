@@ -269,7 +269,7 @@ export declare interface CitationSource {
 
 const USER_AGENT_PRODUCT = 'model-builder';
 
-const CLIENT_LIBRARY_LANGUAGE = 'node-js';
+const CLIENT_LIBRARY_LANGUAGE = 'gl-node/18.0.0';
 
 // TODO: update this version number using release-please
 const CLIENT_LIBRARY_VERSION = '0.1.0';
