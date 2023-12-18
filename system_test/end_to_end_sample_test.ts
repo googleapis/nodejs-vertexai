@@ -18,7 +18,7 @@
 // @ts-ignore
 import * as assert from 'assert';
 
-import {VertexAI} from '../src';
+import {VertexAI, TextPart} from '../src';
 
 // TODO: this env var isn't getting populated correctly
 const PROJECT = process.env.GCLOUD_PROJECT;
@@ -38,13 +38,13 @@ const GCS_FILE_PART = {
   },
 };
 const BASE_64_IMAGE =
-    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 const INLINE_DATA_FILE_PART = {
   inline_data: {
     data: BASE_64_IMAGE,
     mime_type: 'image/jpeg',
   },
-}
+};
 
 const MULTI_PART_GCS_REQUEST = {
   contents: [{role: 'user', parts: [TEXT_PART, GCS_FILE_PART]}],
@@ -60,7 +60,7 @@ const generativeTextModel = vertex_ai.preview.getGenerativeModel({
   model: 'gemini-pro',
   generation_config: {
     max_output_tokens: 256,
-  }
+  },
 });
 
 const generativeVisionModel = vertex_ai.preview.getGenerativeModel({
@@ -74,42 +74,67 @@ describe('generateContentStream', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
   });
 
-  it('should should return a stream and aggregated response when passed text',
-     async () => {
-       const streamingResp =
-           await generativeTextModel.generateContentStream(TEXT_REQUEST);
+  it('should should return a stream and aggregated response when passed text', async () => {
+    const streamingResp =
+      await generativeTextModel.generateContentStream(TEXT_REQUEST);
 
-       for await (const item of streamingResp.stream) {
-         assert(
-             item.candidates[0],
-             `sys test failure on generateContentStream, for item ${
-                 item.candidates[0]}`);
-       }
+    for await (const item of streamingResp.stream) {
+      assert(
+        item.candidates[0],
+        `sys test failure on generateContentStream, for item ${item.candidates[0]}`
+      );
+    }
 
-       const aggregatedResp = await streamingResp.response;
-       assert(
-           aggregatedResp.candidates[0],
-           `sys test failure on generateContentStream for aggregated response: ${
-               aggregatedResp.candidates[0]}`);
-     });
-  it('should should return a stream and aggregated response when passed multipart base64 content',
-     async () => {
-       const streamingResp = await generativeVisionModel.generateContentStream(
-           MULTI_PART_BASE64_REQUEST);
+    const aggregatedResp = await streamingResp.response;
+    assert(
+      aggregatedResp.candidates[0],
+      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp.candidates[0]}`
+    );
+  });
+  it('should not return a invalid unicode', async () => {
+    const streamingResp = await generativeTextModel.generateContentStream({
+      contents: [{role: 'user', parts: [{text: '创作一首古诗'}]}],
+    });
 
-       for await (const item of streamingResp.stream) {
-         assert(
-             item.candidates[0],
-             `sys test failure on generateContentStream, for item ${
-                 item.candidates[0]}`);
-       }
+    for await (const item of streamingResp.stream) {
+      assert(
+        item.candidates[0],
+        `sys test failure on generateContentStream, for item ${item.candidates[0]}`
+      );
+      for (const candiate of item.candidates) {
+        for (const part of candiate.content.parts as TextPart[]) {
+          assert(
+            !part.text.includes('\ufffd'),
+            `sys test failure on generateContentStream, for item ${item.candidates[0]}`
+          );
+        }
+      }
+    }
 
-       const aggregatedResp = await streamingResp.response;
-       assert(
-           aggregatedResp.candidates[0],
-           `sys test failure on generateContentStream for aggregated response: ${
-               aggregatedResp.candidates[0]}`);
-     });
+    const aggregatedResp = await streamingResp.response;
+    assert(
+      aggregatedResp.candidates[0],
+      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp.candidates[0]}`
+    );
+  });
+  it('should should return a stream and aggregated response when passed multipart base64 content', async () => {
+    const streamingResp = await generativeVisionModel.generateContentStream(
+      MULTI_PART_BASE64_REQUEST
+    );
+
+    for await (const item of streamingResp.stream) {
+      assert(
+        item.candidates[0],
+        `sys test failure on generateContentStream, for item ${item.candidates[0]}`
+      );
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    assert(
+      aggregatedResp.candidates[0],
+      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp.candidates[0]}`
+    );
+  });
   // TODO: this is returning a 500 on the system test project
   // it('should should return a stream and aggregated response when passed
   // multipart GCS content',
@@ -141,9 +166,9 @@ describe('sendMessageStream', () => {
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
       assert(
-          item.candidates[0],
-          `sys test failure on sendMessageStream, for item ${
-              item.candidates[0]}`);
+        item.candidates[0],
+        `sys test failure on sendMessageStream, for item ${item.candidates[0]}`
+      );
     }
     expect(chat.history.length).toBe(2);
   });
@@ -153,7 +178,8 @@ describe('countTokens', () => {
   it('should should return a CountTokensResponse', async () => {
     const countTokensResp = await generativeTextModel.countTokens(TEXT_REQUEST);
     assert(
-        countTokensResp.totalTokens,
-        `sys test failure on countTokens, ${countTokensResp.totalTokens}`);
+      countTokensResp.totalTokens,
+      `sys test failure on countTokens, ${countTokensResp.totalTokens}`
+    );
   });
 });

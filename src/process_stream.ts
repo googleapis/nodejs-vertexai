@@ -15,18 +15,22 @@
  * limitations under the License.
  */
 
-import {CitationSource, GenerateContentCandidate, GenerateContentResponse, GenerateContentResult, StreamGenerateContentResult,} from './types/content';
+import {
+  CitationSource,
+  GenerateContentCandidate,
+  GenerateContentResponse,
+  GenerateContentResult,
+  StreamGenerateContentResult,
+} from './types/content';
 
-// eslint-disable-next-line no-useless-escape
-const responseLineRE = /^data\: (.*)\r\n/;
+const responseLineRE = /^data: (.*)(?:\n\n|\r\r|\r\n\r\n)/;
 
-// TODO: set a better type for `reader`. Setting it to
-// `ReadableStreamDefaultReader` results in an error (diagnostic code 2304)
 async function* generateResponseSequence(
-  reader2: any
+  stream: ReadableStream<GenerateContentResponse>
 ): AsyncGenerator<GenerateContentResponse> {
+  const reader = stream.getReader();
   while (true) {
-    const {value, done} = await reader2.read();
+    const {value, done} = await reader.read();
     if (done) {
       break;
     }
@@ -35,55 +39,91 @@ async function* generateResponseSequence(
 }
 
 /**
- * Reads a raw stream from the fetch response and joins incomplete
+ * Process a response.body stream from the backend and return an
+ * iterator that provides one complete GenerateContentResponse at a time
+ * and a promise that resolves with a single aggregated
+ * GenerateContentResponse.
+ *
+ * @param response - Response from a fetch call
+ */
+export function processStream(
+  response: Response | undefined
+): StreamGenerateContentResult {
+  if (response === undefined) {
+    throw new Error('Error processing stream because response === undefined');
+  }
+  if (!response.body) {
+    throw new Error('Error processing stream because response.body not found');
+  }
+  const inputStream = response.body!.pipeThrough(
+    new TextDecoderStream('utf8', {fatal: true})
+  );
+  const responseStream =
+    getResponseStream<GenerateContentResponse>(inputStream);
+  const [stream1, stream2] = responseStream.tee();
+  return {
+    stream: generateResponseSequence(stream1),
+    response: getResponsePromise(stream2),
+  };
+}
+
+async function getResponsePromise(
+  stream: ReadableStream<GenerateContentResponse>
+): Promise<GenerateContentResponse> {
+  const allResponses: GenerateContentResponse[] = [];
+  const reader = stream.getReader();
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const {done, value} = await reader.read();
+    if (done) {
+      return aggregateResponses(allResponses);
+    }
+    allResponses.push(value);
+  }
+}
+
+/**
+ * Reads a raw stream from the fetch response and join incomplete
  * chunks, returning a new stream that provides a single complete
  * GenerateContentResponse in each iteration.
  */
-function readFromReader(
-  reader: ReadableStreamDefaultReader
-): ReadableStream<GenerateContentResponse> {
-  let currentText = '';
-  const stream = new ReadableStream<GenerateContentResponse>({
+export function getResponseStream<T>(
+  inputStream: ReadableStream<string>
+): ReadableStream<T> {
+  const reader = inputStream.getReader();
+  const stream = new ReadableStream<T>({
     start(controller) {
+      let currentText = '';
       return pump();
       function pump(): Promise<(() => Promise<void>) | undefined> {
-        let streamReader;
-        try {
-          streamReader = reader.read().then(({value, done}) => {
-            if (done) {
-              controller.close();
+        return reader.read().then(({value, done}) => {
+          if (done) {
+            if (currentText.trim()) {
+              controller.error(new Error('Failed to parse stream'));
               return;
             }
-            const chunk = new TextDecoder().decode(value);
-            currentText += chunk;
-            const match = currentText.match(responseLineRE);
-            if (match) {
-              let parsedResponse: GenerateContentResponse;
-              try {
-                parsedResponse = JSON.parse(
-                  match[1]
-                ) as GenerateContentResponse;
-              } catch (e) {
-                throw new Error(`Error parsing JSON response: "${match[1]}"`);
-              }
-              currentText = '';
-              if ('candidates' in parsedResponse) {
-                controller.enqueue(parsedResponse);
-              } else {
-                console.warn(
-                  `No candidates in this response: ${parsedResponse}`
-                );
-                controller.enqueue({
-                  candidates: [],
-                });
-              }
+            controller.close();
+            return;
+          }
+
+          currentText += value;
+          let match = currentText.match(responseLineRE);
+          let parsedResponse: T;
+          while (match) {
+            try {
+              parsedResponse = JSON.parse(match[1]) as T;
+            } catch (e) {
+              controller.error(
+                new Error(`Error parsing JSON response: "${match[1]}"`)
+              );
+              return;
             }
-            return pump();
-          });
-        } catch (e) {
-          throw new Error(`Error reading from stream ${e}.`);
-        }
-        return streamReader;
+            controller.enqueue(parsedResponse);
+            currentText = currentText.substring(match[0].length);
+            match = currentText.match(responseLineRE);
+          }
+          return pump();
+        });
       }
     },
   });
@@ -121,20 +161,21 @@ function aggregateResponses(
         } as GenerateContentCandidate;
       }
       if (response.candidates[i].citationMetadata) {
-        if (!aggregatedResponse.candidates[i]
-                 .citationMetadata?.citationSources) {
+        if (
+          !aggregatedResponse.candidates[i].citationMetadata?.citationSources
+        ) {
           aggregatedResponse.candidates[i].citationMetadata = {
             citationSources: [] as CitationSource[],
           };
         }
 
-
-        let existingMetadata = response.candidates[i].citationMetadata ?? {};
+        const existingMetadata = response.candidates[i].citationMetadata ?? {};
 
         if (aggregatedResponse.candidates[i].citationMetadata) {
           aggregatedResponse.candidates[i].citationMetadata!.citationSources =
-              aggregatedResponse.candidates[i]
-                  .citationMetadata!.citationSources.concat(existingMetadata);
+            aggregatedResponse.candidates[
+              i
+            ].citationMetadata!.citationSources.concat(existingMetadata);
         }
       }
       aggregatedResponse.candidates[i].finishReason =
@@ -155,45 +196,6 @@ function aggregateResponses(
   aggregatedResponse.promptFeedback =
     responses[responses.length - 1].promptFeedback;
   return aggregatedResponse;
-}
-
-// TODO: improve error handling throughout stream processing
-/**
- * Processes model responses from streamGenerateContent
- */
-export function processStream(
-  response: Response | undefined
-): StreamGenerateContentResult {
-  if (response === undefined) {
-    throw new Error('Error processing stream because response === undefined');
-  }
-  if (!response.body) {
-    throw new Error('Error processing stream because response.body not found');
-  }
-  const reader = response.body.getReader();
-  const responseStream = readFromReader(reader);
-  const [stream1, stream2] = responseStream.tee();
-  const reader1 = stream1.getReader();
-  const reader2 = stream2.getReader();
-  const allResponses: GenerateContentResponse[] = [];
-  const responsePromise = new Promise<GenerateContentResponse>(
-    // eslint-disable-next-line no-async-promise-executor
-    async resolve => {
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const {value, done} = await reader1.read();
-        if (done) {
-          resolve(aggregateResponses(allResponses));
-          return;
-        }
-        allResponses.push(value);
-      }
-    }
-  );
-  return {
-    response: responsePromise,
-    stream: generateResponseSequence(reader2),
-  };
 }
 
 /**

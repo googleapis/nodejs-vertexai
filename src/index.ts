@@ -44,7 +44,7 @@ export class VertexAI {
 
   /**
    * @constructor
-   * @param{VertexInit} init - {@link VertexInit} 
+   * @param{VertexInit} init - {@link VertexInit}
    *       assign authentication related information to instantiate a Vertex AI client.
    */
   constructor(init: VertexInit) {
@@ -106,7 +106,7 @@ export class VertexAI_Internal {
     return tokenPromise;
   }
 
-  /** 
+  /**
    * @param {ModelParams} modelParams - {@link ModelParams} Parameters to specify the generative model.
    * @return {GenerativeModel} Instance of the GenerativeModel class. {@link GenerativeModel}
    */
@@ -158,7 +158,6 @@ export declare interface StartChatSessionRequest extends StartChatParams {
 export class ChatSession {
   private project: string;
   private location: string;
-  private _send_stream_promise: Promise<void> = Promise.resolve();
 
   private historyInternal: Content[];
   private _vertex_instance: VertexAI_Internal;
@@ -214,7 +213,7 @@ export class ChatSession {
 
     return Promise.resolve({response: generateContentResponse});
   }
-  
+
   async appendHistory(
       streamGenerateContentResultPromise: Promise<StreamGenerateContentResult>,
       newContent: Content,
@@ -255,7 +254,7 @@ export class ChatSession {
         this._model_instance.generateContentStream(
             generateContentrequest);
 
-    this._send_stream_promise = this.appendHistory(streamGenerateContentResultPromise, newContent);
+    await this.appendHistory(streamGenerateContentResultPromise, newContent);
     return streamGenerateContentResultPromise;
   }
 }
