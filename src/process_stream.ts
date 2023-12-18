@@ -99,16 +99,15 @@ function aggregateResponses(
 ): GenerateContentResponse {
   const lastResponse = responses[responses.length - 1];
 
-  if (lastResponse === undefined) {
-    throw new Error(
-      'Error processing stream because the response is undefined'
-    );
-  }
-
   const aggregatedResponse: GenerateContentResponse = {
     candidates: [],
-    promptFeedback: lastResponse.promptFeedback,
+    promptFeedback: lastResponse && lastResponse.promptFeedback,
   };
+
+  if (responses.length === 0) {
+    return aggregatedResponse;
+  }
+
   for (const response of responses) {
     for (let i = 0; i < response.candidates.length; i++) {
       if (!aggregatedResponse.candidates[i]) {
