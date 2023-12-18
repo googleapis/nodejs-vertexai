@@ -18,7 +18,7 @@
 /**
  * Params used to initialize the Vertex SDK
  * @param{string} project - the project name of your Google Cloud project. It is not the numeric project ID.
- * @param{string} location - the location of your project. 
+ * @param{string} location - the location of your project.
  * @param{string} apiEndpoint - Optional. If not specified, a default value will be resolved by SDK.
  */
 export declare interface VertexInit {
@@ -51,7 +51,7 @@ export declare interface CountTokensResponse {
 
 /**
  * Configuration for initializing a model, for example via getGenerativeModel
- * @param {string} model - model name. 
+ * @param {string} model - model name.
  * @example "gemini-pro"
  */
 export declare interface ModelParams extends BaseModelParams {
@@ -85,7 +85,9 @@ export declare interface GenerationConfig {
   top_p?: number;
   top_k?: number;
 }
-
+/**
+ * Harm categories that would cause prompts or candidates to be blocked.
+ */
 export enum HarmCategory {
   HARM_CATEGORY_UNSPECIFIED = 'HARM_CATEGORY_UNSPECIFIED',
   HARM_CATEGORY_HATE_SPEECH = 'HARM_CATEGORY_HATE_SPEECH',
@@ -94,6 +96,9 @@ export enum HarmCategory {
   HARM_CATEGORY_SEXUALLY_EXPLICIT = 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
 }
 
+/**
+ * Threshhold above which a prompt or candidate will be blocked.
+ */
 export enum HarmBlockThreshold {
   // Unspecified harm block threshold.
   HARM_BLOCK_THRESHOLD_UNSPECIFIED = 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
@@ -108,11 +113,27 @@ export enum HarmBlockThreshold {
 }
 
 /**
+ * Probability that a prompt or candidate matches a harm category.
+ */
+export enum HarmProbability {
+  // Probability is unspecified.
+  HARM_PROBABILITY_UNSPECIFIED = 'HARM_PROBABILITY_UNSPECIFIED',
+  // Content has a negligible chance of being unsafe.
+  NEGLIGIBLE = 'NEGLIGIBLE',
+  // Content has a low chance of being unsafe.
+  LOW = 'LOW',
+  // Content has a medium chance of being unsafe.
+  MEDIUM = 'MEDIUM',
+  // Content has a high chance of being unsafe.
+  HIGH = 'HIGH',
+}
+
+/**
  * Safety rating for a piece of content
  */
 export declare interface SafetyRating {
   category: HarmCategory;
-  threshold: HarmBlockThreshold;
+  probability: HarmProbability;
 }
 
 /**

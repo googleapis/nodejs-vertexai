@@ -20,7 +20,19 @@ import 'jasmine';
 
 import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
 import * as StreamFunctions from './process_stream';
-import {CountTokensRequest, FinishReason, GenerateContentRequest, GenerateContentResponse, GenerateContentResult, HarmBlockThreshold, HarmCategory, StreamGenerateContentResult,} from './types/content';
+import {
+  CountTokensRequest,
+  FinishReason,
+  GenerateContentRequest,
+  GenerateContentResponse,
+  GenerateContentResult,
+  HarmBlockThreshold,
+  HarmCategory,
+  HarmProbability,
+  SafetyRating,
+  SafetySetting,
+  StreamGenerateContentResult,
+} from './types/content';
 import {constants} from './util';
 
 const PROJECT = 'test_project';
@@ -38,8 +50,8 @@ const TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE = [
       {
         file_data: {
           file_uri: 'gs://test_bucket/test_image.jpeg',
-          mime_type: 'image/jpeg'
-        }
+          mime_type: 'image/jpeg',
+        },
       },
     ],
   },
@@ -55,10 +67,17 @@ const TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE = [
   },
 ];
 
-const TEST_SAFETY_RATINGS = [
+const TEST_SAFETY_SETTINGS: SafetySetting[] = [
   {
     category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+  },
+];
+
+const TEST_SAFETY_RATINGS: SafetyRating[] = [
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    probability: HarmProbability.NEGLIGIBLE,
   },
 ];
 const TEST_GENERATION_CONFIG = {
@@ -76,13 +95,14 @@ const TEST_CANDIDATES = [
     finishMessage: '',
     safetyRatings: TEST_SAFETY_RATINGS,
     citationMetadata: {
-      citationSources: [{
-        startIndex: 367,
-        endIndex: 491,
-        uri:
-            'https://www.numerade.com/ask/question/why-does-the-uncertainty-principle-make-it-impossible-to-predict-a-trajectory-for-the-clectron-95172/'
-      }]
-    }
+      citationSources: [
+        {
+          startIndex: 367,
+          endIndex: 491,
+          uri: 'https://www.numerade.com/ask/question/why-does-the-uncertainty-principle-make-it-impossible-to-predict-a-trajectory-for-the-clectron-95172/',
+        },
+      ],
+    },
   },
 ];
 const TEST_MODEL_RESPONSE = {
@@ -178,8 +198,9 @@ describe('VertexAI', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedStreamResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
       const resp = await model.generateContent(req);
       expect(resp).toEqual(expectedResult);
     });
@@ -190,7 +211,9 @@ describe('VertexAI', () => {
       const req: GenerateContentRequest = {
         contents: TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE,
       };
-      await expectAsync(model.generateContent(req)).toBeRejectedWithError(URIError);
+      await expectAsync(model.generateContent(req)).toBeRejectedWithError(
+        URIError
+      );
     });
   });
 
@@ -198,7 +221,7 @@ describe('VertexAI', () => {
     it('returns a GenerateContentResponse when passed safety_settings and generation_config', async () => {
       const req: GenerateContentRequest = {
         contents: TEST_USER_CHAT_MESSAGE,
-        safety_settings: TEST_SAFETY_RATINGS,
+        safety_settings: TEST_SAFETY_SETTINGS,
         generation_config: TEST_GENERATION_CONFIG,
       };
       const expectedResult: GenerateContentResult = {
@@ -223,7 +246,8 @@ describe('VertexAI', () => {
         location: LOCATION,
         apiEndpoint: TEST_ENDPOINT_BASE_PATH,
       });
-      vertexaiWithBasePath.preview['tokenInternalPromise'] = Promise.resolve(TEST_TOKEN);
+      vertexaiWithBasePath.preview['tokenInternalPromise'] =
+        Promise.resolve(TEST_TOKEN);
       model = vertexaiWithBasePath.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
@@ -255,7 +279,8 @@ describe('VertexAI', () => {
         project: PROJECT,
         location: LOCATION,
       });
-      vertexaiWithoutBasePath.preview['tokenInternalPromise'] = Promise.resolve(TEST_TOKEN);
+      vertexaiWithoutBasePath.preview['tokenInternalPromise'] =
+        Promise.resolve(TEST_TOKEN);
       model = vertexaiWithoutBasePath.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
@@ -275,8 +300,9 @@ describe('VertexAI', () => {
         expectedStreamResult
       );
       await model.generateContent(req);
-      expect(requestSpy.calls.allArgs()[0][0].toString())
-          .toContain(`${LOCATION}-aiplatform.googleapis.com`);
+      expect(requestSpy.calls.allArgs()[0][0].toString()).toContain(
+        `${LOCATION}-aiplatform.googleapis.com`
+      );
     });
   });
 
@@ -295,11 +321,12 @@ describe('VertexAI', () => {
         stream: testGenerator(),
       };
       const requestSpy = spyOn(global, 'fetch');
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedStreamResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
       await model.generateContent(reqWithEmptyConfigs);
       const requestArgs = requestSpy.calls.allArgs()[0][1];
-      if (typeof requestArgs == 'object' && requestArgs) {
+      if (typeof requestArgs === 'object' && requestArgs) {
         expect(JSON.stringify(requestArgs['body'])).not.toContain('top_k');
       }
     });
@@ -320,11 +347,12 @@ describe('VertexAI', () => {
         stream: testGenerator(),
       };
       const requestSpy = spyOn(global, 'fetch');
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedStreamResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
       await model.generateContent(reqWithEmptyConfigs);
       const requestArgs = requestSpy.calls.allArgs()[0][1];
-      if (typeof requestArgs == 'object' && requestArgs) {
+      if (typeof requestArgs === 'object' && requestArgs) {
         expect(JSON.stringify(requestArgs['body'])).toContain('top_k');
       }
     });
@@ -342,14 +370,17 @@ describe('VertexAI', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      spyOn(StreamFunctions, 'processStream')
-          .and.returnValue(expectedStreamResult);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
       const resp = await model.generateContent(req);
       console.log(resp.response.candidates[0].citationMetadata, 'yoyoyo');
       expect(
-          resp.response.candidates[0].citationMetadata?.citationSources.length)
-          .toEqual(TEST_MODEL_RESPONSE.candidates[0]
-                       .citationMetadata.citationSources.length);
+        resp.response.candidates[0].citationMetadata?.citationSources.length
+      ).toEqual(
+        TEST_MODEL_RESPONSE.candidates[0].citationMetadata.citationSources
+          .length
+      );
     });
   });
 
