@@ -63,6 +63,10 @@ const generativeTextModel = vertex_ai.preview.getGenerativeModel({
   },
 });
 
+const textModelNoOutputLimit = vertex_ai.preview.getGenerativeModel({
+  model: 'gemini-pro',
+});
+
 const generativeVisionModel = vertex_ai.preview.getGenerativeModel({
   model: 'gemini-pro-vision',
 });
@@ -158,7 +162,7 @@ describe('generateContentStream', () => {
 
 describe('sendMessageStream', () => {
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
   it('should should return a stream and populate history', async () => {
     const chat = generativeTextModel.startChat({});
@@ -176,6 +180,27 @@ describe('sendMessageStream', () => {
       `sys test failure on sendMessageStream for aggregated response: ${resp}`
     );
     expect(chat.history.length).toBe(2);
+  });
+  it('should return chunks as they come in', async () => {
+    const chat = textModelNoOutputLimit.startChat({});
+    const chatInput1 = 'Tell me a story in 1000 words';
+    const result1 = await chat.sendMessageStream(chatInput1);
+    let firstChunkTimestamp = 0;
+    let aggregatedResultTimestamp = 0;
+
+    // To verify streaming is working correcty, we check that there is >= 2
+    // second difference between the first chunk and the aggregated result
+    const streamThreshold = 2000;
+
+    for await (const item of result1.stream) {
+      if (firstChunkTimestamp === 0) {
+        firstChunkTimestamp = Date.now();
+      }
+    }
+    await result1.response;
+    aggregatedResultTimestamp = Date.now();
+    expect(aggregatedResultTimestamp - firstChunkTimestamp)
+        .toBeGreaterThan(streamThreshold);
   });
 });
 
