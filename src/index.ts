@@ -270,6 +270,7 @@ export class GenerativeModel {
   safety_settings?: SafetySetting[];
   private _vertex_instance: VertexAI_Internal;
   private _use_non_stream = false;
+  private publisherEndpoint: string;
 
   /**
    * @constructor
@@ -288,7 +289,13 @@ export class GenerativeModel {
     this.model = model;
     this.generation_config = generation_config;
     this.safety_settings = safety_settings;
+    if (this.model.startsWith("models/")) {
+      this.publisherEndpoint = `publishers/google/${this.model}`;
+    } else {
+      this.publisherEndpoint = `publishers/google/models/${this.model}`;
+    }
   }
+  
 
   /**
    * Make a async call to generate content.
@@ -314,7 +321,6 @@ export class GenerativeModel {
       return Promise.resolve(result);
     }
 
-    const publisherModelEndpoint = `publishers/google/models/${this.model}`;
 
     const generateContentRequest: GenerateContentRequest = {
       contents: request.contents,
@@ -327,7 +333,7 @@ export class GenerativeModel {
       response = await postRequest({
         region: this._vertex_instance.location,
         project: this._vertex_instance.project,
-        resourcePath: publisherModelEndpoint,
+        resourcePath: this.publisherEndpoint,
         resourceMethod: constants.GENERATE_CONTENT_METHOD,
         token: await this._vertex_instance.token,
         data: generateContentRequest,
@@ -361,8 +367,6 @@ export class GenerativeModel {
           validateGenerationConfig(request.generation_config);
     }
 
-    const publisherModelEndpoint = `publishers/google/models/${this.model}`;
-
     const generateContentRequest: GenerateContentRequest = {
       contents: request.contents,
       generation_config: request.generation_config ?? this.generation_config,
@@ -374,7 +378,7 @@ export class GenerativeModel {
       response = await postRequest({
         region: this._vertex_instance.location,
         project: this._vertex_instance.project,
-        resourcePath: publisherModelEndpoint,
+        resourcePath: this.publisherEndpoint,
         resourceMethod: constants.STREAMING_GENERATE_CONTENT_METHOD,
         token: await this._vertex_instance.token,
         data: generateContentRequest,
@@ -405,7 +409,7 @@ export class GenerativeModel {
       response = await postRequest({
         region: this._vertex_instance.location,
         project: this._vertex_instance.project,
-        resourcePath: `publishers/google/models/${this.model}`,
+        resourcePath: this.publisherEndpoint,
         resourceMethod: 'countTokens',
         token: await this._vertex_instance.token,
         data: request,
