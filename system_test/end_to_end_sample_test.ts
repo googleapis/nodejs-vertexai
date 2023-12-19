@@ -62,13 +62,21 @@ const generativeTextModel = vertex_ai.preview.getGenerativeModel({
     max_output_tokens: 256,
   },
 });
-
+const generativeTextModelWithPrefix = vertex_ai.preview.getGenerativeModel({
+  model: 'models/gemini-pro',
+  generation_config: {
+    max_output_tokens: 256,
+  },
+});
 const textModelNoOutputLimit = vertex_ai.preview.getGenerativeModel({
   model: 'gemini-pro',
 });
 
 const generativeVisionModel = vertex_ai.preview.getGenerativeModel({
   model: 'gemini-pro-vision',
+});
+const generativeVisionModelWithPrefix = vertex_ai.preview.getGenerativeModel({
+  model: 'models/gemini-pro-vision',
 });
 
 // TODO (b/316599049): update tests to use jasmine expect syntax:
@@ -210,6 +218,49 @@ describe('countTokens', () => {
     assert(
       countTokensResp.totalTokens,
       `sys test failure on countTokens, ${countTokensResp}`
+    );
+  });
+});
+
+describe('generateContentStream using models/model-id', () => {
+  beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  });
+
+  it('should should return a stream and aggregated response when passed text', async () => {
+    const streamingResp =
+      await generativeTextModelWithPrefix.generateContentStream(TEXT_REQUEST);
+
+    for await (const item of streamingResp.stream) {
+      assert(
+        item.candidates[0],
+        `sys test failure on generateContentStream using models/geminie-pro, for item ${item}`
+      );
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    assert(
+      aggregatedResp.candidates[0],
+      `sys test failure on generateContentStream using models/geminie-pro for aggregated response: ${aggregatedResp.candidates[0]}`
+    );
+  });
+
+  it('should should return a stream and aggregated response when passed multipart base64 content using models/geminie-pro-vision', async () => {
+    const streamingResp = await generativeVisionModelWithPrefix.generateContentStream(
+      MULTI_PART_BASE64_REQUEST
+    );
+
+    for await (const item of streamingResp.stream) {
+      assert(
+        item.candidates[0],
+        `sys test failure on generateContentStream using models/geminie-pro-vision, for item ${item}`
+      );
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    assert(
+      aggregatedResp.candidates[0],
+      `sys test failure on generateContentStream  using models/geminie-pro-visionfor aggregated response: ${aggregatedResp}`
     );
   });
 });
