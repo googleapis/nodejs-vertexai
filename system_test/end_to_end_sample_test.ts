@@ -71,6 +71,17 @@ const generativeVisionModel = vertex_ai.preview.getGenerativeModel({
   model: 'gemini-pro-vision',
 });
 
+const generativeTextModelWithModelPrefix = vertex_ai.preview.getGenerativeModel({
+  model: 'models/gemini-pro',
+  generation_config: {
+    max_output_tokens: 256,
+  },
+});
+
+const generativeVisionModelWithModelPrefix = vertex_ai.preview.getGenerativeModel({
+  model: 'models/gemini-pro-vision',
+});
+
 // TODO (b/316599049): update tests to use jasmine expect syntax:
 // expect(...).toBeInstanceOf(...)
 describe('generateContentStream', () => {
