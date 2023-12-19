@@ -81,7 +81,7 @@ describe('generateContentStream', () => {
     for await (const item of streamingResp.stream) {
       assert(
         item.candidates[0],
-        `sys test failure on generateContentStream, for item ${item.candidates[0]}`
+        `sys test failure on generateContentStream, for item ${item}`
       );
     }
 
@@ -99,13 +99,13 @@ describe('generateContentStream', () => {
     for await (const item of streamingResp.stream) {
       assert(
         item.candidates[0],
-        `sys test failure on generateContentStream, for item ${item.candidates[0]}`
+        `sys test failure on generateContentStream, for item ${item}`
       );
       for (const candiate of item.candidates) {
         for (const part of candiate.content.parts as TextPart[]) {
           assert(
             !part.text.includes('\ufffd'),
-            `sys test failure on generateContentStream, for item ${item.candidates[0]}`
+            `sys test failure on generateContentStream, for item ${item}`
           );
         }
       }
@@ -114,7 +114,7 @@ describe('generateContentStream', () => {
     const aggregatedResp = await streamingResp.response;
     assert(
       aggregatedResp.candidates[0],
-      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp.candidates[0]}`
+      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
   it('should should return a stream and aggregated response when passed multipart base64 content', async () => {
@@ -125,14 +125,14 @@ describe('generateContentStream', () => {
     for await (const item of streamingResp.stream) {
       assert(
         item.candidates[0],
-        `sys test failure on generateContentStream, for item ${item.candidates[0]}`
+        `sys test failure on generateContentStream, for item ${item}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     assert(
       aggregatedResp.candidates[0],
-      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp.candidates[0]}`
+      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
   // TODO: this is returning a 500 on the system test project
@@ -167,9 +167,14 @@ describe('sendMessageStream', () => {
     for await (const item of result1.stream) {
       assert(
         item.candidates[0],
-        `sys test failure on sendMessageStream, for item ${item.candidates[0]}`
+        `sys test failure on sendMessageStream, for item ${item}`
       );
     }
+    const resp = await result1.response;
+    assert(
+      resp.candidates[0],
+      `sys test failure on sendMessageStream for aggregated response: ${resp}`
+    );
     expect(chat.history.length).toBe(2);
   });
 });
@@ -179,7 +184,7 @@ describe('countTokens', () => {
     const countTokensResp = await generativeTextModel.countTokens(TEXT_REQUEST);
     assert(
       countTokensResp.totalTokens,
-      `sys test failure on countTokens, ${countTokensResp.totalTokens}`
+      `sys test failure on countTokens, ${countTokensResp}`
     );
   });
 });
