@@ -162,7 +162,7 @@ export class ChatSession {
   private historyInternal: Content[];
   private _vertex_instance: VertexAI_Internal;
   private _model_instance: GenerativeModel;
-
+  private _send_stream_promise: Promise<void> = Promise.resolve();
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
 
@@ -254,7 +254,7 @@ export class ChatSession {
         this._model_instance.generateContentStream(
             generateContentrequest);
 
-    await this.appendHistory(streamGenerateContentResultPromise, newContent);
+    this._send_stream_promise = this.appendHistory(streamGenerateContentResultPromise, newContent);
     return streamGenerateContentResultPromise;
   }
 }
