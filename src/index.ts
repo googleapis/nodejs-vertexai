@@ -370,7 +370,6 @@ export class GenerativeModel {
       generation_config: request.generation_config ?? this.generation_config,
       safety_settings: request.safety_settings ?? this.safety_settings,
     };
-
     let response;
     try {
       response = await postRequest({

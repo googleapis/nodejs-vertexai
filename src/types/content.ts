@@ -288,19 +288,3 @@ export declare interface CitationSource {
   license?: string;
 }
 
-const USER_AGENT_PRODUCT = 'model-builder';
-
-const CLIENT_LIBRARY_LANGUAGE = 'gl-node/18.0.0';
-
-// TODO: update this version number using release-please
-const CLIENT_LIBRARY_VERSION = '0.1.0';
-
-const USER_AGENT = USER_AGENT_PRODUCT + '/' + CLIENT_LIBRARY_VERSION;
-
-const CLIENT_INFO = {
-  user_agent: USER_AGENT,
-  client_library_language: CLIENT_LIBRARY_LANGUAGE,
-  client_library_version: CLIENT_LIBRARY_VERSION,
-};
-
-export {CLIENT_INFO};

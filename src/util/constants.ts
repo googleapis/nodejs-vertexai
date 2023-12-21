@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 export const GENERATE_CONTENT_METHOD = 'generateContent';
 export const STREAMING_GENERATE_CONTENT_METHOD = 'streamGenerateContent';
 export const USER_ROLE = 'user';
 export const MODEL_ROLE = 'model';
+const USER_AGENT_PRODUCT = 'model-builder';
+const CLIENT_LIBRARY_LANGUAGE = 'grpc-node/18.0.0';
+const CLIENT_LIBRARY_VERSION = "0.1.3";
+export const USER_AGENT = `${USER_AGENT_PRODUCT}/${CLIENT_LIBRARY_VERSION} ${CLIENT_LIBRARY_LANGUAGE}`;

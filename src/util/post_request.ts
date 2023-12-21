@@ -19,7 +19,6 @@ const API_BASE_PATH = 'aiplatform.googleapis.com';
 
 import {
   GenerateContentRequest,
-  CLIENT_INFO,
   CountTokensRequest,
 } from '../types/content';
 import * as constants from './constants';
@@ -57,9 +56,7 @@ export async function postRequest({
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
-      'User-Agent': CLIENT_INFO.user_agent,
-      'x-goog-api-client': CLIENT_INFO.client_library_language,
-      'client_library_version': CLIENT_INFO.client_library_version,
+      'User-Agent': constants.USER_AGENT,
     },
     body: JSON.stringify(data),
   });
