@@ -142,6 +142,7 @@ const TEST_MULTIPART_MESSAGE = [
 ];
 /**
  * Returns a generator, used to mock the generateContentStream response
+ * @ignore
  */
 export async function* testGenerator(): AsyncGenerator<GenerateContentResponse> {
   yield {

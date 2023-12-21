@@ -45,6 +45,7 @@ async function* generateResponseSequence(
  * GenerateContentResponse.
  *
  * @param response - Response from a fetch call
+ * @ignore
  */
 export function processStream(
   response: Response | undefined
@@ -86,6 +87,7 @@ async function getResponsePromise(
  * Reads a raw stream from the fetch response and join incomplete
  * chunks, returning a new stream that provides a single complete
  * GenerateContentResponse in each iteration.
+ * @ignore
  */
 export function getResponseStream<T>(
   inputStream: ReadableStream<string>
@@ -133,6 +135,7 @@ export function getResponseStream<T>(
 /**
  * Aggregates an array of `GenerateContentResponse`s into a single
  * GenerateContentResponse.
+ * @ignore
  */
 function aggregateResponses(
   responses: GenerateContentResponse[]
@@ -200,6 +203,7 @@ function aggregateResponses(
 
 /**
  * Process model responses from generateContent
+ * @ignore
  */
 export function processNonStream(response: any): GenerateContentResult {
   if (response !== undefined) {

@@ -40,26 +40,28 @@ export * from './types';
  * Base class for authenticating to Vertex, creates the preview namespace.
  */
 export class VertexAI {
-  public preview: VertexAI_Internal;
+  public preview: VertexAI_Preview;
 
   /**
    * @constructor
-   * @param{VertexInit} init - {@link VertexInit}
-   *       assign authentication related information to instantiate a Vertex AI client.
+   * @param {VertexInit} init - assign authentication related information,
+   *     including project and location string, to instantiate a Vertex AI
+   * client.
    */
   constructor(init: VertexInit) {
-    this.preview = new VertexAI_Internal(
-      init.project,
-      init.location,
-      init.apiEndpoint
-    );
+    /**
+     * preview property is used to access any SDK methods available in public
+     * preview, currently all functionality.
+     */
+    this.preview =
+        new VertexAI_Preview(init.project, init.location, init.apiEndpoint);
   }
 }
 
 /**
  * VertexAI class internal implementation for authentication.
-*/
-export class VertexAI_Internal {
+ */
+export class VertexAI_Preview {
   protected googleAuth: GoogleAuth = new GoogleAuth({
     scopes: 'https://www.googleapis.com/auth/cloud-platform',
   });
@@ -137,15 +139,15 @@ export declare interface StartChatParams {
 
 // StartChatSessionRequest and ChatSession are defined here instead of in
 // src/types to avoid a circular dependency issue due the dep on
-// VertexAI_Internal
+// VertexAI_Preview
 
 /**
  * All params passed to initiate multiturn chat via startChat
- * @see VertexAI_Internal for details on _vertex_instance parameter
+ * @see VertexAI_Preview for details on _vertex_instance parameter
  * @see GenerativeModel for details on _model_instance parameter
  */
 export declare interface StartChatSessionRequest extends StartChatParams {
-  _vertex_instance: VertexAI_Internal;
+  _vertex_instance: VertexAI_Preview;
   _model_instance: GenerativeModel;
 }
 
@@ -160,7 +162,7 @@ export class ChatSession {
   private location: string;
 
   private historyInternal: Content[];
-  private _vertex_instance: VertexAI_Internal;
+  private _vertex_instance: VertexAI_Preview;
   private _model_instance: GenerativeModel;
   private _send_stream_promise: Promise<void> = Promise.resolve();
   generation_config?: GenerationConfig;
@@ -268,23 +270,21 @@ export class GenerativeModel {
   model: string;
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
-  private _vertex_instance: VertexAI_Internal;
+  private _vertex_instance: VertexAI_Preview;
   private _use_non_stream = false;
   private publisherModelEndpoint: string;
 
   /**
    * @constructor
-   * @param {VertexAI_Internal} vertex_instance - {@link VertexAI_Internal}
+   * @param {VertexAI_Preview} vertex_instance - {@link VertexAI_Preview}
    * @param {string} model - model name
-   * @param {GenerationConfig} generation_config - Optional. {@link GenerationConfig}
+   * @param {GenerationConfig} generation_config - Optional. {@link
+   *     GenerationConfig}
    * @param {SafetySetting[]} safety_settings - Optional. {@link SafetySetting}
    */
   constructor(
-    vertex_instance: VertexAI_Internal,
-    model: string,
-    generation_config?: GenerationConfig,
-    safety_settings?: SafetySetting[]
-  ) {
+      vertex_instance: VertexAI_Preview, model: string,
+      generation_config?: GenerationConfig, safety_settings?: SafetySetting[]) {
     this._vertex_instance = vertex_instance;
     this.model = model;
     this.generation_config = generation_config;

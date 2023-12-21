@@ -25,6 +25,7 @@ import * as constants from './constants';
 
 /**
  * Makes a POST request to a Vertex service
+ * @ignore
  */
 export async function postRequest({
   region,
