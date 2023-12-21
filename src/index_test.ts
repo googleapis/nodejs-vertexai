@@ -419,11 +419,15 @@ describe('VertexAI', () => {
   // (b64 string)
 
   describe('startChat', () => {
-    it('returns a ChatSession', () => {
+    it('returns a ChatSession when passed a request arg', () => {
       const req: StartChatParams = {
         history: TEST_USER_CHAT_MESSAGE,
       };
       const resp = model.startChat(req);
+      expect(resp).toBeInstanceOf(ChatSession);
+    });
+    it('returns a ChatSession when passed no request arg', () => {
+      const resp = model.startChat();
       expect(resp).toBeInstanceOf(ChatSession);
     });
   });
@@ -451,6 +455,7 @@ describe('VertexAI', () => {
 
 describe('ChatSession', () => {
   let chatSession: ChatSession;
+  let chatSessionWithNoArgs: ChatSession;
   let vertexai: VertexAI;
   let model: GenerativeModel;
 
@@ -461,6 +466,7 @@ describe('ChatSession', () => {
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
     });
+    chatSessionWithNoArgs = model.startChat();
   });
 
   it('should add the provided message to the session history', () => {
@@ -485,6 +491,23 @@ describe('ChatSession', () => {
       expect(resp).toEqual(expectedResult);
       expect(chatSession.history.length).toEqual(3);
     });
+
+    it('returns a GenerateContentResponse and appends to history when startChat is passed with no args',
+       async () => {
+         const req = 'How are you doing today?';
+         const expectedResult: GenerateContentResult = {
+           response: TEST_MODEL_RESPONSE,
+         };
+         const expectedStreamResult: StreamGenerateContentResult = {
+           response: Promise.resolve(TEST_MODEL_RESPONSE),
+           stream: testGenerator(),
+         };
+         spyOn(StreamFunctions, 'processStream')
+             .and.returnValue(expectedStreamResult);
+         const resp = await chatSessionWithNoArgs.sendMessage(req);
+         expect(resp).toEqual(expectedResult);
+         expect(chatSession.history.length).toEqual(3);
+       });
 
     // TODO: unbreak this test. Currently chatSession.history is saving the
     // history from the test above instead of resetting and

@@ -172,23 +172,44 @@ describe('sendMessageStream', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
-  it('should should return a stream and populate history', async () => {
-    const chat = generativeTextModel.startChat({});
-    const chatInput1 = 'How can I learn more about Node.js?';
-    const result1 = await chat.sendMessageStream(chatInput1);
-    for await (const item of result1.stream) {
-      assert(
-        item.candidates[0],
-        `sys test failure on sendMessageStream, for item ${item}`
-      );
-    }
-    const resp = await result1.response;
-    assert(
-      resp.candidates[0],
-      `sys test failure on sendMessageStream for aggregated response: ${resp}`
-    );
-    expect(chat.history.length).toBe(2);
-  });
+  it('should should return a stream and populate history when generation_config is passed to startChat',
+     async () => {
+       const chat = generativeTextModel.startChat({
+         generation_config: {
+           max_output_tokens: 256,
+         },
+       });
+       const chatInput1 = 'How can I learn more about Node.js?';
+       const result1 = await chat.sendMessageStream(chatInput1);
+       for await (const item of result1.stream) {
+         assert(
+             item.candidates[0],
+             `sys test failure on sendMessageStream, for item ${item}`);
+       }
+       const resp = await result1.response;
+       assert(
+           resp.candidates[0],
+           `sys test failure on sendMessageStream for aggregated response: ${
+               resp}`);
+       expect(chat.history.length).toBe(2);
+     });
+  it('should should return a stream and populate history when startChat is passed no request obj',
+     async () => {
+       const chat = generativeTextModel.startChat();
+       const chatInput1 = 'How can I learn more about Node.js?';
+       const result1 = await chat.sendMessageStream(chatInput1);
+       for await (const item of result1.stream) {
+         assert(
+             item.candidates[0],
+             `sys test failure on sendMessageStream, for item ${item}`);
+       }
+       const resp = await result1.response;
+       assert(
+           resp.candidates[0],
+           `sys test failure on sendMessageStream for aggregated response: ${
+               resp}`);
+       expect(chat.history.length).toBe(2);
+     });
   it('should return chunks as they come in', async () => {
     const chat = textModelNoOutputLimit.startChat({});
     const chatInput1 = 'Tell me a story in 1000 words';

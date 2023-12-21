@@ -68,7 +68,7 @@ streamGenerateContent();
 
 ```typescript
 async function streamChat() {
-  const chat = generativeModel.startChat({});
+  const chat = generativeModel.startChat();
   const chatInput1 = "How can I learn more about Node.js?";
   const result1 = await chat.sendMessageStream(chatInput1);
   for await (const item of result1.stream) {

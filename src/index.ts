@@ -433,18 +433,22 @@ export class GenerativeModel {
    * Instantiate a ChatSession.
    * This method doesn't make any call to remote endpoint.
    * Any call to remote endpoint is implemented in ChatSession class @see ChatSession
-   * @param{StartChatParams} request - {@link StartChatParams}
+   * @param{StartChatParams} [request] - {@link StartChatParams}
    * @return {ChatSession} {@link ChatSession}
    */
-  startChat(request: StartChatParams): ChatSession {
-    const startChatRequest = {
-      history: request.history,
-      generation_config: request.generation_config ?? this.generation_config,
-      safety_settings: request.safety_settings ?? this.safety_settings,
+  startChat(request?: StartChatParams): ChatSession {
+    let startChatRequest: StartChatSessionRequest = {
       _vertex_instance: this._vertex_instance,
       _model_instance: this,
     };
 
+    if (request) {
+      startChatRequest.history = request.history;
+      startChatRequest.generation_config =
+          request.generation_config ?? this.generation_config;
+      startChatRequest.safety_settings =
+          request.safety_settings ?? this.safety_settings;
+    }
     return new ChatSession(startChatRequest);
   }
 }
