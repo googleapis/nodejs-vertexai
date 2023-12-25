@@ -16,7 +16,7 @@
  */
 
 /* tslint:disable */
-import {GoogleAuth} from 'google-auth-library';
+import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
 
 import {processNonStream, processStream} from './process_stream';
 import {
@@ -47,11 +47,12 @@ export class VertexAI {
    * @param{VertexInit} init - {@link VertexInit} 
    *       assign authentication related information to instantiate a Vertex AI client.
    */
-  constructor(init: VertexInit) {
+  constructor(init: VertexInit, auth?: GoogleAuthOptions) {
     this.preview = new VertexAI_Internal(
       init.project,
       init.location,
-      init.apiEndpoint
+      init.apiEndpoint,
+      auth
     );
   }
 }
@@ -60,9 +61,7 @@ export class VertexAI {
  * VertexAI class internal implementation for authentication.
 */
 export class VertexAI_Internal {
-  protected googleAuth: GoogleAuth = new GoogleAuth({
-    scopes: 'https://www.googleapis.com/auth/cloud-platform',
-  });
+  protected googleAuth: GoogleAuth;
   private tokenInternalPromise?: Promise<any>;
 
   /**
@@ -76,11 +75,16 @@ export class VertexAI_Internal {
   constructor(
     readonly project: string,
     readonly location: string,
-    readonly apiEndpoint?: string
+    readonly apiEndpoint?: string,
+    readonly auth?: GoogleAuthOptions
   ) {
     this.project = project;
     this.location = location;
     this.apiEndpoint = apiEndpoint;
+    this.googleAuth = new GoogleAuth({
+      scopes: 'https://www.googleapis.com/auth/cloud-platform',
+      ...auth
+    });
   }
 
   /**
