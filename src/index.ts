@@ -65,7 +65,6 @@ export class VertexAI_Preview {
   protected googleAuth: GoogleAuth = new GoogleAuth({
     scopes: 'https://www.googleapis.com/auth/cloud-platform',
   });
-  private tokenInternalPromise?: Promise<any>;
 
   /**
    * @constructor
@@ -90,9 +89,6 @@ export class VertexAI_Preview {
    * @return {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
-    if (this.tokenInternalPromise) {
-      return this.tokenInternalPromise;
-    }
     const credential_error_message = "\nUnable to authenticate your request\
         \nDepending on your run time environment, you can get authentication by\
         \n- if in local instance or cloud shell: `!gcloud auth login`\
