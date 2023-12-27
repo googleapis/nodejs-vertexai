@@ -97,7 +97,7 @@ export enum HarmCategory {
 }
 
 /**
- * Threshhold above which a prompt or candidate will be blocked.
+ * Threshold above which a prompt or candidate will be blocked.
  */
 export enum HarmBlockThreshold {
   // Unspecified harm block threshold.

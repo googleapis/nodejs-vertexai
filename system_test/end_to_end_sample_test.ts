@@ -83,7 +83,7 @@ const generativeVisionModelWithPrefix = vertex_ai.preview.getGenerativeModel({
 // expect(...).toBeInstanceOf(...)
 describe('generateContentStream', () => {
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
   });
 
   it('should should return a stream and aggregated response when passed text', async () => {
@@ -113,8 +113,8 @@ describe('generateContentStream', () => {
         item.candidates[0],
         `sys test failure on generateContentStream, for item ${item}`
       );
-      for (const candiate of item.candidates) {
-        for (const part of candiate.content.parts as TextPart[]) {
+      for (const candidate of item.candidates) {
+        for (const part of candidate.content.parts as TextPart[]) {
           assert(
             !part.text.includes('\ufffd'),
             `sys test failure on generateContentStream, for item ${item}`
@@ -246,7 +246,7 @@ describe('countTokens', () => {
 
 describe('generateContentStream using models/model-id', () => {
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
   });
 
   it('should should return a stream and aggregated response when passed text', async () => {

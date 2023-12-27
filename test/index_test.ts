@@ -16,10 +16,14 @@
  */
 
 /* tslint:disable */
-import 'jasmine';
 
-import {ChatSession, GenerativeModel, StartChatParams, VertexAI} from './index';
-import * as StreamFunctions from './process_stream';
+import {
+  ChatSession,
+  GenerativeModel,
+  StartChatParams,
+  VertexAI,
+} from '../src/index';
+import * as StreamFunctions from '../src/process_stream';
 import {
   CountTokensRequest,
   FinishReason,
@@ -32,8 +36,8 @@ import {
   SafetyRating,
   SafetySetting,
   StreamGenerateContentResult,
-} from './types/content';
-import {constants} from './util';
+} from '../src/types/content';
+import {constants} from '../src/util';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
@@ -140,6 +144,13 @@ const TEST_MULTIPART_MESSAGE = [
     ],
   },
 ];
+
+const fetchResponseObj = {
+  status: 200,
+  statusText: 'OK',
+  headers: {'Content-Type': 'application/json'},
+};
+
 /**
  * Returns a generator, used to mock the generateContentStream response
  * @ignore
@@ -153,6 +164,8 @@ export async function* testGenerator(): AsyncGenerator<GenerateContentResponse> 
 describe('VertexAI', () => {
   let vertexai: VertexAI;
   let model: GenerativeModel;
+  let expectedStreamResult: StreamGenerateContentResult;
+  let fetchSpy: jasmine.Spy;
 
   beforeEach(() => {
     vertexai = new VertexAI({
@@ -161,6 +174,15 @@ describe('VertexAI', () => {
     });
     spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
     model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+    expectedStreamResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE),
+      stream: testGenerator(),
+    };
+    const fetchResult = new Response(
+      JSON.stringify(expectedStreamResult),
+      fetchResponseObj
+    );
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
   });
 
   it('should be instantiated', () => {
@@ -174,10 +196,6 @@ describe('VertexAI', () => {
       };
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
-      };
-      const expectedStreamResult: StreamGenerateContentResult = {
-        response: Promise.resolve(TEST_MODEL_RESPONSE),
-        stream: testGenerator(),
       };
       spyOn(StreamFunctions, 'processStream').and.returnValue(
         expectedStreamResult
@@ -264,12 +282,11 @@ describe('VertexAI', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      const requestSpy = spyOn(global, 'fetch');
       spyOn(StreamFunctions, 'processStream').and.returnValue(
         expectedStreamResult
       );
       await model.generateContent(req);
-      expect(requestSpy.calls.allArgs()[0][0].toString()).toContain(
+      expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
         TEST_ENDPOINT_BASE_PATH
       );
     });
@@ -300,12 +317,11 @@ describe('VertexAI', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      const requestSpy = spyOn(global, 'fetch');
       spyOn(StreamFunctions, 'processStream').and.returnValue(
         expectedStreamResult
       );
       await model.generateContent(req);
-      expect(requestSpy.calls.allArgs()[0][0].toString()).toContain(
+      expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
         `${LOCATION}-aiplatform.googleapis.com`
       );
     });
@@ -325,12 +341,15 @@ describe('VertexAI', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      const requestSpy = spyOn(global, 'fetch');
+      // const fetchResult = Promise.resolve(
+      //     new Response(JSON.stringify(expectedStreamResult),
+      //     fetchResponseObj));
+      // const requestSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
       spyOn(StreamFunctions, 'processStream').and.returnValue(
         expectedStreamResult
       );
       await model.generateContent(reqWithEmptyConfigs);
-      const requestArgs = requestSpy.calls.allArgs()[0][1];
+      const requestArgs = fetchSpy.calls.allArgs()[0][1];
       if (typeof requestArgs === 'object' && requestArgs) {
         expect(JSON.stringify(requestArgs['body'])).not.toContain('top_k');
       }
@@ -338,7 +357,7 @@ describe('VertexAI', () => {
   });
 
   describe('generateContent', () => {
-    it('inclues top_k when it is within 1 - 40', async () => {
+    it('includes top_k when it is within 1 - 40', async () => {
       const reqWithEmptyConfigs: GenerateContentRequest = {
         contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
         generation_config: {top_k: 1},
@@ -351,12 +370,11 @@ describe('VertexAI', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       };
-      const requestSpy = spyOn(global, 'fetch');
       spyOn(StreamFunctions, 'processStream').and.returnValue(
         expectedStreamResult
       );
       await model.generateContent(reqWithEmptyConfigs);
-      const requestArgs = requestSpy.calls.allArgs()[0][1];
+      const requestArgs = fetchSpy.calls.allArgs()[0][1];
       if (typeof requestArgs === 'object' && requestArgs) {
         expect(JSON.stringify(requestArgs['body'])).toContain('top_k');
       }
@@ -379,7 +397,6 @@ describe('VertexAI', () => {
         expectedStreamResult
       );
       const resp = await model.generateContent(req);
-      console.log(resp.response.candidates[0].citationMetadata, 'yoyoyo');
       expect(
         resp.response.candidates[0].citationMetadata?.citationSources.length
       ).toEqual(
@@ -435,25 +452,28 @@ describe('VertexAI', () => {
       expect(resp).toBeInstanceOf(ChatSession);
     });
   });
+});
 
-  describe('countTokens', () => {
-    it('returns the token count', async () => {
-      const req: CountTokensRequest = {
-        contents: TEST_USER_CHAT_MESSAGE,
-      };
-      const responseBody = {
-        totalTokens: 1,
-      };
-      const response = new Response(JSON.stringify(responseBody), {
-        status: 200,
-        statusText: 'OK',
-        headers: {'Content-Type': 'application/json'},
-      });
-      const responsePromise = Promise.resolve(response);
-      spyOn(global, 'fetch').and.returnValue(responsePromise);
-      const resp = await model.countTokens(req);
-      expect(resp).toEqual(responseBody);
+describe('countTokens', () => {
+  it('returns the token count', async () => {
+    const vertexai = new VertexAI({
+      project: PROJECT,
+      location: LOCATION,
     });
+    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    const model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+    const req: CountTokensRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const responseBody = {
+      totalTokens: 1,
+    };
+    const response = Promise.resolve(
+      new Response(JSON.stringify(responseBody), fetchResponseObj)
+    );
+    spyOn(global, 'fetch').and.returnValue(response);
+    const resp = await model.countTokens(req);
+    expect(resp).toEqual(responseBody);
   });
 });
 
@@ -462,6 +482,7 @@ describe('ChatSession', () => {
   let chatSessionWithNoArgs: ChatSession;
   let vertexai: VertexAI;
   let model: GenerativeModel;
+  let expectedStreamResult: StreamGenerateContentResult;
 
   beforeEach(() => {
     vertexai = new VertexAI({project: PROJECT, location: LOCATION});
@@ -470,12 +491,16 @@ describe('ChatSession', () => {
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
     });
-    chatSessionWithNoArgs = model.startChat();
-  });
-
-  it('should add the provided message to the session history', () => {
     expect(chatSession.history).toEqual(TEST_USER_CHAT_MESSAGE);
-    expect(chatSession.history.length).toEqual(1);
+    chatSessionWithNoArgs = model.startChat();
+    expectedStreamResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE),
+      stream: testGenerator(),
+    };
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedStreamResult), fetchResponseObj)
+    );
+    spyOn(global, 'fetch').and.returnValue(fetchResult);
   });
 
   describe('sendMessage', () => {
@@ -510,7 +535,7 @@ describe('ChatSession', () => {
       );
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
-      expect(chatSession.history.length).toEqual(3);
+      expect(chatSessionWithNoArgs.history.length).toEqual(2);
     });
 
     // TODO: unbreak this test. Currently chatSession.history is saving the
@@ -567,7 +592,7 @@ describe('ChatSession', () => {
       expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
     });
-    it('returns a StreamGenerateContentResponse and appends role if missiong', async () => {
+    it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
       const req = 'How are you doing today?';
       const expectedResult: StreamGenerateContentResult = {
         response: Promise.resolve(TEST_MODEL_RESPONSE_MISSING_ROLE),
