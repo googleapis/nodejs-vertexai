@@ -20,5 +20,5 @@ export const USER_ROLE = 'user';
 export const MODEL_ROLE = 'model';
 const USER_AGENT_PRODUCT = 'model-builder';
 const CLIENT_LIBRARY_LANGUAGE = 'grpc-node/18.0.0';
-const CLIENT_LIBRARY_VERSION = "0.1.3";
+const CLIENT_LIBRARY_VERSION = '0.1.3';
 export const USER_AGENT = `${USER_AGENT_PRODUCT}/${CLIENT_LIBRARY_VERSION} ${CLIENT_LIBRARY_LANGUAGE}`;

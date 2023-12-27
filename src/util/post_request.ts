@@ -17,10 +17,7 @@
 
 const API_BASE_PATH = 'aiplatform.googleapis.com';
 
-import {
-  GenerateContentRequest,
-  CountTokensRequest,
-} from '../types/content';
+import {GenerateContentRequest, CountTokensRequest} from '../types/content';
 import * as constants from './constants';
 
 /**
@@ -37,12 +34,15 @@ export async function postRequest({
   apiEndpoint,
   apiVersion = 'v1',
 }: {
-  region: string; project: string; resourcePath: string; resourceMethod: string;
+  region: string;
+  project: string;
+  resourcePath: string;
+  resourceMethod: string;
   token: string;
   data: GenerateContentRequest | CountTokensRequest;
   apiEndpoint?: string;
   apiVersion?: string;
-}): Promise<Response|undefined> {
+}): Promise<Response | undefined> {
   const vertexBaseEndpoint = apiEndpoint ?? `${region}-${API_BASE_PATH}`;
 
   let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/projects/${project}/locations/${region}/${resourcePath}:${resourceMethod}`;
@@ -55,7 +55,7 @@ export async function postRequest({
   return await fetch(vertexEndpoint, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
       'User-Agent': constants.USER_AGENT,
     },

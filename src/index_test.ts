@@ -247,7 +247,9 @@ describe('VertexAI', () => {
         location: LOCATION,
         apiEndpoint: TEST_ENDPOINT_BASE_PATH,
       });
-      spyOnProperty(vertexaiWithBasePath.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
+      spyOnProperty(vertexaiWithBasePath.preview, 'token', 'get').and.resolveTo(
+        TEST_TOKEN
+      );
       model = vertexaiWithBasePath.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
@@ -279,8 +281,11 @@ describe('VertexAI', () => {
         project: PROJECT,
         location: LOCATION,
       });
-      spyOnProperty(vertexaiWithoutBasePath.preview, 'token', 'get')
-          .and.resolveTo(TEST_TOKEN);
+      spyOnProperty(
+        vertexaiWithoutBasePath.preview,
+        'token',
+        'get'
+      ).and.resolveTo(TEST_TOKEN);
       model = vertexaiWithoutBasePath.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
@@ -491,22 +496,22 @@ describe('ChatSession', () => {
       expect(chatSession.history.length).toEqual(3);
     });
 
-    it('returns a GenerateContentResponse and appends to history when startChat is passed with no args',
-       async () => {
-         const req = 'How are you doing today?';
-         const expectedResult: GenerateContentResult = {
-           response: TEST_MODEL_RESPONSE,
-         };
-         const expectedStreamResult: StreamGenerateContentResult = {
-           response: Promise.resolve(TEST_MODEL_RESPONSE),
-           stream: testGenerator(),
-         };
-         spyOn(StreamFunctions, 'processStream')
-             .and.returnValue(expectedStreamResult);
-         const resp = await chatSessionWithNoArgs.sendMessage(req);
-         expect(resp).toEqual(expectedResult);
-         expect(chatSession.history.length).toEqual(3);
-       });
+    it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      const resp = await chatSessionWithNoArgs.sendMessage(req);
+      expect(resp).toEqual(expectedResult);
+      expect(chatSession.history.length).toEqual(3);
+    });
 
     // TODO: unbreak this test. Currently chatSession.history is saving the
     // history from the test above instead of resetting and

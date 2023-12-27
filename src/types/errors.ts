@@ -16,10 +16,10 @@
  */
 
 class GoogleAuthError extends Error {
-    constructor(message: string) {
-      super(message);
-      this.name = 'GoogleAuthError';
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'GoogleAuthError';
+  }
 }
 
 export {GoogleAuthError};

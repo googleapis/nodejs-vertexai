@@ -287,4 +287,3 @@ export declare interface CitationSource {
   uri?: string;
   license?: string;
 }
-
