@@ -23,19 +23,7 @@ import {
   processNonStream,
   processStream,
 } from './process_stream';
-import {
-  Content,
-  CountTokensRequest,
-  CountTokensResponse,
-  GenerateContentRequest,
-  GenerateContentResult,
-  GenerationConfig,
-  ModelParams,
-  Part,
-  SafetySetting,
-  StreamGenerateContentResult,
-  VertexInit,
-} from './types/content';
+import {Content, CountTokensRequest, CountTokensResponse, GenerateContentRequest, GenerateContentResult, GenerationConfig, ModelParams, Part, SafetySetting, StreamGenerateContentResult, Tool, VertexInit,} from './types/content';
 import {
   ClientError,
   GoogleAuthError,
@@ -126,11 +114,8 @@ export class VertexAI_Preview {
     }
 
     return new GenerativeModel(
-      this,
-      modelParams.model,
-      modelParams.generation_config,
-      modelParams.safety_settings
-    );
+        this, modelParams.model, modelParams.generation_config,
+        modelParams.safety_settings, modelParams.tools);
   }
 }
 
@@ -141,6 +126,7 @@ export declare interface StartChatParams {
   history?: Content[];
   safety_settings?: SafetySetting[];
   generation_config?: GenerationConfig;
+  tools?: Tool[];
   stream?: boolean;
 }
 
@@ -174,6 +160,7 @@ export class ChatSession {
   private _send_stream_promise: Promise<void> = Promise.resolve();
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
+  tools?: Tool[];
 
   get history(): Content[] {
     return this.historyInternal;
@@ -185,6 +172,9 @@ export class ChatSession {
     this._model_instance = request._model_instance;
     this.historyInternal = request.history ?? [];
     this._vertex_instance = request._vertex_instance;
+    this.generation_config = request.generation_config;
+    this.safety_settings = request.safety_settings;
+    this.tools = request.tools;
   }
 
   /**
@@ -200,6 +190,7 @@ export class ChatSession {
       contents: this.historyInternal.concat([newContent]),
       safety_settings: this.safety_settings,
       generation_config: this.generation_config,
+      tools: this.tools,
     };
 
     const generateContentResult: GenerateContentResult =
@@ -262,6 +253,7 @@ export class ChatSession {
       contents: this.historyInternal.concat([newContent]),
       safety_settings: this.safety_settings,
       generation_config: this.generation_config,
+      tools: this.tools,
     };
 
     const streamGenerateContentResultPromise = this._model_instance
@@ -289,6 +281,7 @@ export class GenerativeModel {
   model: string;
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
+  tools?: Tool[];
   private _vertex_instance: VertexAI_Preview;
   private _use_non_stream = false;
   private publisherModelEndpoint: string;
@@ -302,15 +295,14 @@ export class GenerativeModel {
    * @param {SafetySetting[]} safety_settings - Optional. {@link SafetySetting}
    */
   constructor(
-    vertex_instance: VertexAI_Preview,
-    model: string,
-    generation_config?: GenerationConfig,
-    safety_settings?: SafetySetting[]
-  ) {
+      vertex_instance: VertexAI_Preview, model: string,
+      generation_config?: GenerationConfig, safety_settings?: SafetySetting[],
+      tools?: Tool[]) {
     this._vertex_instance = vertex_instance;
     this.model = model;
     this.generation_config = generation_config;
     this.safety_settings = safety_settings;
+    this.tools = tools;
     if (model.startsWith('models/')) {
       this.publisherModelEndpoint = `publishers/google/${this.model}`;
     } else {
@@ -349,6 +341,7 @@ export class GenerativeModel {
       contents: request.contents,
       generation_config: request.generation_config ?? this.generation_config,
       safety_settings: request.safety_settings ?? this.safety_settings,
+      tools: request.tools ?? [],
     };
 
     const response: Response | undefined = await postRequest({
@@ -387,6 +380,7 @@ export class GenerativeModel {
       contents: request.contents,
       generation_config: request.generation_config ?? this.generation_config,
       safety_settings: request.safety_settings ?? this.safety_settings,
+      tools: request.tools ?? [],
     };
     const response = await postRequest({
       region: this._vertex_instance.location,
@@ -444,6 +438,7 @@ export class GenerativeModel {
         request.generation_config ?? this.generation_config;
       startChatRequest.safety_settings =
         request.safety_settings ?? this.safety_settings;
+      startChatRequest.tools = request.tools ?? this.tools;
     }
     return new ChatSession(startChatRequest);
   }
@@ -464,7 +459,16 @@ function formulateNewContent(request: string | Array<string | Part>): Content {
     }
   }
 
-  const newContent: Content = {role: constants.USER_ROLE, parts: newParts};
+  let newContent = {} as Content;
+
+  // TODO: this assumes all elements of newParts are of the same Part type
+  if ('function_response' in newParts[0]) {
+    newContent.role = constants.FUNCTION_ROLE;
+  } else {
+    newContent.role = constants.USER_ROLE;
+  }
+
+  newContent.parts = newParts;
   return newContent;
 }
 

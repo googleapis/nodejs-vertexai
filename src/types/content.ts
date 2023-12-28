@@ -64,6 +64,7 @@ export declare interface ModelParams extends BaseModelParams {
 export declare interface BaseModelParams {
   safety_settings?: SafetySetting[];
   generation_config?: GenerationConfig;
+  tools?: Tool[];
 }
 
 /**
@@ -156,24 +157,38 @@ export interface BasePart {}
 export interface TextPart extends BasePart {
   text: string;
   inline_data?: never;
+  functionResponse?: never;
+  functionCall?: never;
 }
 
 export interface InlineDataPart extends BasePart {
   text?: never;
   inline_data: GenerativeContentBlob;
+  functionResponse?: never;
+  functionCall?: never;
 }
 
 export interface FileData {
   mime_type: string;
   file_uri: string;
+  functionCall?: never;
 }
 
 export interface FileDataPart extends BasePart {
   text?: never;
   file_data: FileData;
+  functionResponse?: never;
+  functionCall?: never;
 }
 
-export declare type Part = TextPart | InlineDataPart | FileDataPart;
+export interface FunctionResponsePart extends BasePart {
+  text?: never;
+  functionResponse?: FunctionResponse;
+  functionCall?: FunctionCall;
+}
+
+export declare type Part =
+    TextPart | InlineDataPart | FileDataPart | FunctionResponsePart;
 
 /**
  * Raw media bytes sent directly in the request. Text should not be sent as
@@ -269,6 +284,12 @@ export declare interface GenerateContentCandidate {
   finishMessage?: string;
   safetyRatings?: SafetyRating[];
   citationMetadata?: CitationMetadata;
+  functionCall?: FunctionCall;
+}
+
+export declare interface FunctionCall {
+  name: string;
+  args: object;
 }
 
 /**
@@ -286,4 +307,23 @@ export declare interface CitationSource {
   endIndex?: number;
   uri?: string;
   license?: string;
+}
+
+export declare interface FunctionResponse {
+  name: string;
+  response: object;
+}
+
+export declare interface FunctionParameters {
+  properties: object;
+}
+
+export declare interface FunctionDeclaration {
+  name: string;
+  parameters: FunctionParameters;
+  description?: string;
+}
+
+export declare interface Tool {
+  function_declarations: FunctionDeclaration[];
 }
