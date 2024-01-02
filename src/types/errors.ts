@@ -15,11 +15,52 @@
  * limitations under the License.
  */
 
+/**
+ * GoogleAuthError is thrown when there is authentication issue with the request
+ */
 class GoogleAuthError extends Error {
-  constructor(message: string) {
+  public readonly stack_trace: any = undefined;
+  constructor(message: string, stack_trace: any = undefined) {
     super(message);
+    this.message = constructErrorMessage('GoogleAuthError', message);
     this.name = 'GoogleAuthError';
+    this.stack_trace = stack_trace;
   }
 }
 
-export {GoogleAuthError};
+/**
+ * ClientError is thrown when http 4XX status is received.
+ * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses
+ */
+class ClientError extends Error {
+  public readonly stack_trace: any = undefined;
+  constructor(message: string, stack_trace: any = undefined) {
+    super(message);
+    this.message = constructErrorMessage('ClientError', message);
+    this.name = 'ClientError';
+    this.stack_trace = stack_trace;
+  }
+}
+
+/**
+ * GoogleGenerativeAIError is thrown when http response is not ok and status code is not 4XX
+ * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+ */
+class GoogleGenerativeAIError extends Error {
+  public readonly stack_trace: any = undefined;
+  constructor(message: string, stack_trace: any = undefined) {
+    super(message);
+    this.message = constructErrorMessage('GoogleGenerativeAIError', message);
+    this.name = 'GoogleGenerativeAIError';
+    this.stack_trace = stack_trace;
+  }
+}
+
+function constructErrorMessage(
+  exceptionClass: string,
+  message: string
+): string {
+  return `[VertexAI.${exceptionClass}]: ${message}`;
+}
+
+export {ClientError, GoogleAuthError, GoogleGenerativeAIError};

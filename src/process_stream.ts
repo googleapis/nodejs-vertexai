@@ -17,6 +17,7 @@
 
 import {
   CitationSource,
+  CountTokensResponse,
   GenerateContentCandidate,
   GenerateContentResponse,
   GenerateContentResult,
@@ -217,4 +218,14 @@ export function processNonStream(response: any): GenerateContentResult {
   return {
     response: {candidates: []},
   };
+}
+
+/**
+ * Process model responses from countTokens
+ * @ignore
+ */
+export function processCountTokenResponse(response: any): CountTokensResponse {
+  // ts-ignore
+  const responseJson = response.json();
+  return responseJson as CountTokensResponse;
 }

@@ -18,7 +18,11 @@
 /* tslint:disable */
 import {GoogleAuth} from 'google-auth-library';
 
-import {processNonStream, processStream} from './process_stream';
+import {
+  processCountTokenResponse,
+  processNonStream,
+  processStream,
+} from './process_stream';
 import {
   Content,
   CountTokensRequest,
@@ -32,7 +36,11 @@ import {
   StreamGenerateContentResult,
   VertexInit,
 } from './types/content';
-import {GoogleAuthError} from './types/errors';
+import {
+  ClientError,
+  GoogleAuthError,
+  GoogleGenerativeAIError,
+} from './types/errors';
 import {constants, postRequest} from './util';
 export * from './types';
 
@@ -101,7 +109,7 @@ export class VertexAI_Preview {
         \n    -`auth.authenticate_user()`\
         \n- if in service account or other: please follow guidance in https://cloud.google.com/docs/authentication';
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
-      throw new GoogleAuthError(`${credential_error_message}\n${e}`);
+      throw new GoogleAuthError(credential_error_message, e);
     });
     return tokenPromise;
   }
@@ -194,10 +202,13 @@ export class ChatSession {
       generation_config: this.generation_config,
     };
 
-    const generateContentResult = await this._model_instance.generateContent(
-      generateContentrequest
-    );
-    const generateContentResponse = await generateContentResult.response;
+    const generateContentResult: GenerateContentResult =
+      await this._model_instance
+        .generateContent(generateContentrequest)
+        .catch(e => {
+          throw e;
+        });
+    const generateContentResponse = generateContentResult.response;
     // Only push the latest message to history if the response returned a result
     if (generateContentResponse.candidates.length !== 0) {
       this.historyInternal.push(newContent);
@@ -253,13 +264,18 @@ export class ChatSession {
       generation_config: this.generation_config,
     };
 
-    const streamGenerateContentResultPromise =
-      this._model_instance.generateContentStream(generateContentrequest);
+    const streamGenerateContentResultPromise = this._model_instance
+      .generateContentStream(generateContentrequest)
+      .catch(e => {
+        throw e;
+      });
 
     this._send_stream_promise = this.appendHistory(
       streamGenerateContentResultPromise,
       newContent
-    );
+    ).catch(e => {
+      throw new GoogleGenerativeAIError('exception appending chat history', e);
+    });
     return streamGenerateContentResultPromise;
   }
 }
@@ -320,7 +336,9 @@ export class GenerativeModel {
 
     if (!this._use_non_stream) {
       const streamGenerateContentResult: StreamGenerateContentResult =
-        await this.generateContentStream(request);
+        await this.generateContentStream(request).catch(e => {
+          throw e;
+        });
       const result: GenerateContentResult = {
         response: await streamGenerateContentResult.response,
       };
@@ -333,27 +351,18 @@ export class GenerativeModel {
       safety_settings: request.safety_settings ?? this.safety_settings,
     };
 
-    let response;
-    try {
-      response = await postRequest({
-        region: this._vertex_instance.location,
-        project: this._vertex_instance.project,
-        resourcePath: this.publisherModelEndpoint,
-        resourceMethod: constants.GENERATE_CONTENT_METHOD,
-        token: await this._vertex_instance.token,
-        data: generateContentRequest,
-        apiEndpoint: this._vertex_instance.apiEndpoint,
-      });
-      if (response === undefined) {
-        throw new Error('did not get a valid response.');
-      }
-      if (!response.ok) {
-        throw new Error(`${response.status} ${response.statusText}`);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-
+    const response: Response | undefined = await postRequest({
+      region: this._vertex_instance.location,
+      project: this._vertex_instance.project,
+      resourcePath: this.publisherModelEndpoint,
+      resourceMethod: constants.GENERATE_CONTENT_METHOD,
+      token: await this._vertex_instance.token,
+      data: generateContentRequest,
+      apiEndpoint: this._vertex_instance.apiEndpoint,
+    }).catch(e => {
+      throw new GoogleGenerativeAIError('exception posting request', e);
+    });
+    throwErrorIfNotOK(response);
     const result: GenerateContentResult = processNonStream(response);
     return Promise.resolve(result);
   }
@@ -379,27 +388,18 @@ export class GenerativeModel {
       generation_config: request.generation_config ?? this.generation_config,
       safety_settings: request.safety_settings ?? this.safety_settings,
     };
-    let response;
-    try {
-      response = await postRequest({
-        region: this._vertex_instance.location,
-        project: this._vertex_instance.project,
-        resourcePath: this.publisherModelEndpoint,
-        resourceMethod: constants.STREAMING_GENERATE_CONTENT_METHOD,
-        token: await this._vertex_instance.token,
-        data: generateContentRequest,
-        apiEndpoint: this._vertex_instance.apiEndpoint,
-      });
-      if (response === undefined) {
-        throw new Error('did not get a valid response.');
-      }
-      if (!response.ok) {
-        throw new Error(`${response.status} ${response.statusText}`);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-
+    const response = await postRequest({
+      region: this._vertex_instance.location,
+      project: this._vertex_instance.project,
+      resourcePath: this.publisherModelEndpoint,
+      resourceMethod: constants.STREAMING_GENERATE_CONTENT_METHOD,
+      token: await this._vertex_instance.token,
+      data: generateContentRequest,
+      apiEndpoint: this._vertex_instance.apiEndpoint,
+    }).catch(e => {
+      throw new GoogleGenerativeAIError('exception posting request', e);
+    });
+    throwErrorIfNotOK(response);
     const streamResult = processStream(response);
     return Promise.resolve(streamResult);
   }
@@ -410,32 +410,19 @@ export class GenerativeModel {
    * @return The CountTokensResponse object with the token count.
    */
   async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
-    let response;
-    try {
-      response = await postRequest({
-        region: this._vertex_instance.location,
-        project: this._vertex_instance.project,
-        resourcePath: this.publisherModelEndpoint,
-        resourceMethod: 'countTokens',
-        token: await this._vertex_instance.token,
-        data: request,
-        apiEndpoint: this._vertex_instance.apiEndpoint,
-      });
-      if (response === undefined) {
-        throw new Error('did not get a valid response.');
-      }
-      if (!response.ok) {
-        throw new Error(`${response.status} ${response.statusText}`);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-    if (response) {
-      const responseJson = await response.json();
-      return responseJson as CountTokensResponse;
-    } else {
-      throw new Error('did not get a valid response.');
-    }
+    const response = await postRequest({
+      region: this._vertex_instance.location,
+      project: this._vertex_instance.project,
+      resourcePath: this.publisherModelEndpoint,
+      resourceMethod: 'countTokens',
+      token: await this._vertex_instance.token,
+      data: request,
+      apiEndpoint: this._vertex_instance.apiEndpoint,
+    }).catch(e => {
+      throw new GoogleGenerativeAIError('exception posting request', e);
+    });
+    throwErrorIfNotOK(response);
+    return processCountTokenResponse(response);
   }
 
   /**
@@ -479,6 +466,21 @@ function formulateNewContent(request: string | Array<string | Part>): Content {
 
   const newContent: Content = {role: constants.USER_ROLE, parts: newParts};
   return newContent;
+}
+
+function throwErrorIfNotOK(response: Response | undefined) {
+  if (response === undefined) {
+    throw new GoogleGenerativeAIError('response is undefined');
+  }
+  const status: number = response.status;
+  const statusText: string = response.statusText;
+  const errorMessage = `got status: ${status} ${statusText}`;
+  if (status >= 400 && status < 500) {
+    throw new ClientError(errorMessage);
+  }
+  if (!response.ok) {
+    throw new GoogleGenerativeAIError(errorMessage);
+  }
 }
 
 function validateGcsInput(contents: Content[]) {

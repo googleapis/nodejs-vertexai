@@ -18,7 +18,7 @@
 // @ts-ignore
 import * as assert from 'assert';
 
-import {VertexAI, TextPart} from '../src';
+import {ClientError, VertexAI, TextPart} from '../src';
 
 // TODO: this env var isn't getting populated correctly
 const PROJECT = process.env.GCLOUD_PROJECT;
@@ -129,7 +129,7 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
-  it('should should return a stream and aggregated response when passed multipart base64 content', async () => {
+  it('should return a stream and aggregated response when passed multipart base64 content', async () => {
     const streamingResp = await generativeVisionModel.generateContentStream(
       MULTI_PART_BASE64_REQUEST
     );
@@ -146,6 +146,29 @@ describe('generateContentStream', () => {
       aggregatedResp.candidates[0],
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
+  });
+  it('should throw ClientError when having invalid input', async () => {
+    const badRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {text: 'describe this image:'},
+            {inline_data: {mime_type: 'image/png', data: 'invalid data'}},
+          ],
+        },
+      ],
+    };
+    await generativeVisionModel.generateContentStream(badRequest).catch(e => {
+      assert(
+        e instanceof ClientError,
+        `sys test failure on generateContentStream when having bad request should throw ClientError but actually thrown ${e}`
+      );
+      assert(
+        e.message === '[VertexAI.ClientError]: got status: 400 Bad Request',
+        `sys test failure on generateContentStream when having bad request got wrong error message: ${e.message}`
+      );
+    });
   });
   // TODO: this is returning a 500 on the system test project
   // it('should should return a stream and aggregated response when passed

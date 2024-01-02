@@ -52,7 +52,7 @@ export async function postRequest({
     vertexEndpoint += '?alt=sse';
   }
 
-  return await fetch(vertexEndpoint, {
+  return fetch(vertexEndpoint, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,

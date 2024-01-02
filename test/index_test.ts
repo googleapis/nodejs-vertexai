@@ -148,7 +148,9 @@ const TEST_MULTIPART_MESSAGE = [
 const fetchResponseObj = {
   status: 200,
   statusText: 'OK',
+  ok: true,
   headers: {'Content-Type': 'application/json'},
+  url: 'url',
 };
 
 /**
@@ -468,10 +470,11 @@ describe('countTokens', () => {
     const responseBody = {
       totalTokens: 1,
     };
-    const response = Promise.resolve(
-      new Response(JSON.stringify(responseBody), fetchResponseObj)
+    const response = new Response(
+      JSON.stringify(responseBody),
+      fetchResponseObj
     );
-    spyOn(global, 'fetch').and.returnValue(response);
+    spyOn(global, 'fetch').and.resolveTo(response);
     const resp = await model.countTokens(req);
     expect(resp).toEqual(responseBody);
   });
@@ -617,6 +620,208 @@ describe('ChatSession', () => {
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+    });
+  });
+});
+
+describe('when exception at fetch', () => {
+  const expectedErrorMessage =
+    '[VertexAI.GoogleGenerativeAIError]: exception posting request';
+  const vertexai = new VertexAI({
+    project: PROJECT,
+    location: LOCATION,
+  });
+  const model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+  const chatSession = model.startChat();
+  const message = 'hi';
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.throwError('error');
+  });
+
+  it('generateContent should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+  });
+
+  it('generateContentStream should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+  });
+
+  it('sendMessage should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+  });
+
+  it('countTokens should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+  });
+});
+
+describe('when response is undefined', () => {
+  const expectedErrorMessage =
+    '[VertexAI.GoogleGenerativeAIError]: response is undefined';
+  const vertexai = new VertexAI({
+    project: PROJECT,
+    location: LOCATION,
+  });
+  const model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const message = 'hi';
+  const chatSession = model.startChat();
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.resolveTo();
+  });
+
+  it('generateContent should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('generateContentStream should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('sendMessage should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+    await chatSession.sendMessage(message).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('countTokens should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+    await model.countTokens(countTokenReq).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
+
+describe('when response is 4XX', () => {
+  const expectedErrorMessage =
+    '[VertexAI.ClientError]: got status: 400 Bad Request';
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const vertexai = new VertexAI({
+    project: PROJECT,
+    location: LOCATION,
+  });
+  const fetch400Obj = {
+    status: 400,
+    statusText: 'Bad Request',
+    ok: false,
+  };
+  const body = {};
+  const response = new Response(JSON.stringify(body), fetch400Obj);
+  const model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+  const message = 'hi';
+  const chatSession = model.startChat();
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.resolveTo(response);
+  });
+
+  it('generateContent should throw ClientError error', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('generateContentStream should throw ClientError error', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('sendMessage should throw ClientError error', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+    await chatSession.sendMessage(message).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('countTokens should throw ClientError error', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+    await model.countTokens(countTokenReq).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
+
+describe('when response is not OK and not 4XX', () => {
+  const expectedErrorMessage =
+    '[VertexAI.GoogleGenerativeAIError]: got status: 500 Internal Server Error';
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const vertexai = new VertexAI({
+    project: PROJECT,
+    location: LOCATION,
+  });
+  const fetch500Obj = {
+    status: 500,
+    statusText: 'Internal Server Error',
+    ok: false,
+  };
+  const body = {};
+  const response = new Response(JSON.stringify(body), fetch500Obj);
+  const model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+  const message = 'hi';
+  const chatSession = model.startChat();
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.resolveTo(response);
+  });
+
+  it('generateContent should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('generateContentStream should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('sendMessage should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+    await chatSession.sendMessage(message).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('countTokens should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+    await model.countTokens(countTokenReq).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
     });
   });
 });
