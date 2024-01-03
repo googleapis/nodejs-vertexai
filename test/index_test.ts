@@ -187,8 +187,37 @@ describe('VertexAI', () => {
     fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
   });
 
-  it('should be instantiated', () => {
+  it('given undefined google auth options, should be instantiated', () => {
     expect(vertexai).toBeInstanceOf(VertexAI);
+  });
+
+  it('given specified google auth options, should be instantiated', () => {
+    const googleAuthOptions = {
+      scopes: 'test.scopes',
+    };
+    const vetexai1 = new VertexAI({
+      project: PROJECT,
+      location: LOCATION,
+      googleAuthOptions: googleAuthOptions,
+    });
+    expect(vetexai1).toBeInstanceOf(VertexAI);
+  });
+
+  it('given inconsistent project ID, should throw error', () => {
+    const googleAuthOptions = {
+      projectId: 'another_project',
+    };
+    expect(() => {
+      new VertexAI({
+        project: PROJECT,
+        location: LOCATION,
+        googleAuthOptions: googleAuthOptions,
+      });
+    }).toThrow(
+      new Error(
+        'inconsistent project ID values. argument project got value test_project but googleAuthOptions.projectId got value another_project'
+      )
+    );
   });
 
   describe('generateContent', () => {

@@ -15,16 +15,23 @@
  * limitations under the License.
  */
 
+// @ts-nocheck
+import {GoogleAuthOptions} from 'google-auth-library';
+
 /**
  * Params used to initialize the Vertex SDK
  * @param{string} project - the project name of your Google Cloud project. It is not the numeric project ID.
  * @param{string} location - the location of your project.
- * @param{string} apiEndpoint - Optional. If not specified, a default value will be resolved by SDK.
+ * @param{string} [apiEndpoint] - If not specified, a default value will be resolved by SDK.
+ * @param {GoogleAuthOptions} - [googleAuthOptions] The Authentication options provided by google-auth-library.
+ *        Complete list of authentication options is documented in the GoogleAuthOptions interface:
+ *        https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
  */
 export declare interface VertexInit {
   project: string;
   location: string;
   apiEndpoint?: string;
+  googleAuthOptions?: GoogleAuthOptions;
 }
 
 /**

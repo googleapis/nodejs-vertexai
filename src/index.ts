@@ -16,7 +16,7 @@
  */
 
 /* tslint:disable */
-import {GoogleAuth} from 'google-auth-library';
+import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
 
 import {
   processCountTokenResponse,
@@ -64,7 +64,8 @@ export class VertexAI {
     this.preview = new VertexAI_Preview(
       init.project,
       init.location,
-      init.apiEndpoint
+      init.apiEndpoint,
+      init.googleAuthOptions
     );
   }
 }
@@ -73,26 +74,48 @@ export class VertexAI {
  * VertexAI class internal implementation for authentication.
  */
 export class VertexAI_Preview {
-  protected googleAuth: GoogleAuth = new GoogleAuth({
-    scopes: 'https://www.googleapis.com/auth/cloud-platform',
-  });
+  protected googleAuth: GoogleAuth;
 
   /**
    * @constructor
    * @param {string} - project The Google Cloud project to use for the request
    * @param {string} - location The Google Cloud project location to use for the request
-   * @param {string} - apiEndpoint The base Vertex AI endpoint to use for the request. If
+   * @param {string} - [apiEndpoint] The base Vertex AI endpoint to use for the request. If
    *        not provided, the default regionalized endpoint
    *        (i.e. us-central1-aiplatform.googleapis.com) will be used.
+   * @param {GoogleAuthOptions} - [googleAuthOptions] The Authentication options provided by google-auth-library.
+   *        Complete list of authentication options is documented in the GoogleAuthOptions interface:
+   *        https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
    */
   constructor(
     readonly project: string,
     readonly location: string,
-    readonly apiEndpoint?: string
+    readonly apiEndpoint?: string,
+    readonly googleAuthOptions?: GoogleAuthOptions
   ) {
+    let opts: GoogleAuthOptions;
+    if (!googleAuthOptions) {
+      opts = {
+        scopes: 'https://www.googleapis.com/auth/cloud-platform',
+      };
+    } else {
+      if (
+        googleAuthOptions.projectId &&
+        googleAuthOptions.projectId !== project
+      ) {
+        throw new Error(
+          `inconsistent project ID values. argument project got value ${project} but googleAuthOptions.projectId got value ${googleAuthOptions.projectId}`
+        );
+      }
+      opts = googleAuthOptions;
+      if (!opts.scopes) {
+        opts.scopes = 'https://www.googleapis.com/auth/cloud-platform';
+      }
+    }
     this.project = project;
     this.location = location;
     this.apiEndpoint = apiEndpoint;
+    this.googleAuth = new GoogleAuth(opts);
   }
 
   /**
