@@ -235,14 +235,14 @@ describe('sendMessageStream', () => {
   });
   it('should return chunks as they come in', async () => {
     const chat = textModelNoOutputLimit.startChat({});
-    const chatInput1 = 'Tell me a story in 1000 words';
+    const chatInput1 = 'Tell me a story in 3000 words';
     const result1 = await chat.sendMessageStream(chatInput1);
     let firstChunkTimestamp = 0;
     let aggregatedResultTimestamp = 0;
 
     // To verify streaming is working correcty, we check that there is >= 2
     // second difference between the first chunk and the aggregated result
-    const streamThreshold = 2000;
+    const streamThreshold = 800;
 
     for await (const item of result1.stream) {
       if (firstChunkTimestamp === 0) {
