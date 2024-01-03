@@ -11,13 +11,9 @@
 
 ### Bug Fixes
 
-* fix bug on blocking streaming in send message ([a675e46](https://github.com/googleapis/nodejs-vertexai/commit/a675e465dd86249b7e8ce7ff91af1e244bcb827e))
-* fix header ([04a32e6](https://github.com/googleapis/nodejs-vertexai/commit/04a32e6466ce445e8d76a7dea6b6cc2607b93d3b))
-* fix system test messages and sendMessageStream test. ([3713903](https://github.com/googleapis/nodejs-vertexai/commit/37139030a2de798994dbd238d6d27546260fc1f2))
-* fix user agent in header ([8cee1b5](https://github.com/googleapis/nodejs-vertexai/commit/8cee1b5ae3f69cf81d8fd0e42bcb08c47c7be8a9))
 * processing of streams, including UTF ([63ce032](https://github.com/googleapis/nodejs-vertexai/commit/63ce032461a32e9e5fdf04d8ce2d4d8628d691b1))
 * remove placeholder cache attribute of access token ([3ec92e7](https://github.com/googleapis/nodejs-vertexai/commit/3ec92e71a9f7ef4a55bf64037f363ec6be6a729d))
-* safety return types ([449c7a2](https://github.com/googleapis/nodejs-vertexai/commit/449c7a2af2272add956eb44d8e617878468af344))
+* update safety return types ([449c7a2](https://github.com/googleapis/nodejs-vertexai/commit/449c7a2af2272add956eb44d8e617878468af344))
 * throw ClientError or GoogleGenerativeAIError according to response status so that users can catch them and handle them according to class name. ([ea0dcb7](https://github.com/googleapis/nodejs-vertexai/commit/ea0dcb717be8d22d98916252ccee352e9af4a09f))
 
 ## [0.1.3](https://github.com/googleapis/nodejs-vertexai/compare/v0.1.2...v0.1.3) (2023-12-13)
