@@ -193,6 +193,10 @@ function aggregateResponses(
           if (part.text) {
             aggregatedResponse.candidates[i].content.parts[0].text += part.text;
           }
+          if (part.functionCall) {
+            aggregatedResponse.candidates[i].content.parts[0].functionCall =
+                part.functionCall;
+          }
         }
       }
     }
