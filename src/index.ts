@@ -347,8 +347,14 @@ export class GenerativeModel {
    * @return The GenerateContentResponse object with the response candidates.
    */
   async generateContent(
-    request: GenerateContentRequest
+    request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
+    request = formatContentRequest(
+      request,
+      this.generation_config,
+      this.safety_settings
+    );
+
     validateGcsInput(request.contents);
 
     if (request.generation_config) {
@@ -396,8 +402,13 @@ export class GenerativeModel {
    * @return {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
    */
   async generateContentStream(
-    request: GenerateContentRequest
+    request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
+    request = formatContentRequest(
+      request,
+      this.generation_config,
+      this.safety_settings
+    );
     validateGcsInput(request.contents);
 
     if (request.generation_config) {
@@ -530,4 +541,20 @@ function validateGenerationConfig(
     }
   }
   return generation_config;
+}
+
+function formatContentRequest(
+  request: GenerateContentRequest | string,
+  generation_config?: GenerationConfig,
+  safety_settings?: SafetySetting[]
+): GenerateContentRequest {
+  if (typeof request === 'string') {
+    return {
+      contents: [{role: constants.USER_ROLE, parts: [{text: request}]}],
+      generation_config: generation_config,
+      safety_settings: safety_settings,
+    };
+  } else {
+    return request;
+  }
 }

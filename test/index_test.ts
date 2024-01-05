@@ -41,8 +41,9 @@ import {constants} from '../src/util';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
+const TEST_CHAT_MESSSAGE_TEXT = 'How are you doing today?';
 const TEST_USER_CHAT_MESSAGE = [
-  {role: constants.USER_ROLE, parts: [{text: 'How are you doing today?'}]},
+  {role: constants.USER_ROLE, parts: [{text: TEST_CHAT_MESSSAGE_TEXT}]},
 ];
 const TEST_TOKEN = 'testtoken';
 
@@ -50,7 +51,7 @@ const TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE = [
   {
     role: constants.USER_ROLE,
     parts: [
-      {text: 'How are you doing today?'},
+      {text: TEST_CHAT_MESSSAGE_TEXT},
       {
         file_data: {
           file_uri: 'gs://test_bucket/test_image.jpeg',
@@ -65,7 +66,7 @@ const TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE = [
   {
     role: constants.USER_ROLE,
     parts: [
-      {text: 'How are you doing today?'},
+      {text: TEST_CHAT_MESSSAGE_TEXT},
       {file_data: {file_uri: 'test_image.jpeg', mime_type: 'image/jpeg'}},
     ],
   },
@@ -232,6 +233,16 @@ describe('VertexAI', () => {
         expectedStreamResult
       );
       const resp = await model.generateContent(req);
+      expect(resp).toEqual(expectedResult);
+    });
+    it('returns a GenerateContentResponse when passed a string', async () => {
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      const resp = await model.generateContent(TEST_CHAT_MESSSAGE_TEXT);
       expect(resp).toEqual(expectedResult);
     });
   });
@@ -448,6 +459,15 @@ describe('VertexAI', () => {
       };
       spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
       const resp = await model.generateContentStream(req);
+      expect(resp).toEqual(expectedResult);
+    });
+    it('returns a GenerateContentResponse when passed a string', async () => {
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+      const resp = await model.generateContentStream(TEST_CHAT_MESSSAGE_TEXT);
       expect(resp).toEqual(expectedResult);
     });
   });
