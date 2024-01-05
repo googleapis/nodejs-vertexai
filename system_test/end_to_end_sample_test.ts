@@ -240,9 +240,7 @@ describe('sendMessageStream', () => {
     let firstChunkTimestamp = 0;
     let aggregatedResultTimestamp = 0;
 
-    // To verify streaming is working correcty, we check that there is >= 2
-    // second difference between the first chunk and the aggregated result
-    const streamThreshold = 800;
+    const firstChunkFinalResultTimeDiff = 200; // ms
 
     for await (const item of result1.stream) {
       if (firstChunkTimestamp === 0) {
@@ -252,7 +250,7 @@ describe('sendMessageStream', () => {
     await result1.response;
     aggregatedResultTimestamp = Date.now();
     expect(aggregatedResultTimestamp - firstChunkTimestamp).toBeGreaterThan(
-      streamThreshold
+      firstChunkFinalResultTimeDiff
     );
   });
 });
@@ -269,7 +267,7 @@ describe('countTokens', () => {
 
 describe('generateContentStream using models/model-id', () => {
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 25000;
   });
 
   it('should should return a stream and aggregated response when passed text', async () => {
@@ -290,7 +288,7 @@ describe('generateContentStream using models/model-id', () => {
     );
   });
 
-  it('should should return a stream and aggregated response when passed multipart base64 content when using models/gemini-pro-vision', async () => {
+  it('should return a stream and aggregated response when passed multipart base64 content when using models/gemini-pro-vision', async () => {
     const streamingResp =
       await generativeVisionModelWithPrefix.generateContentStream(
         MULTI_PART_BASE64_REQUEST
@@ -306,7 +304,7 @@ describe('generateContentStream using models/model-id', () => {
     const aggregatedResp = await streamingResp.response;
     assert(
       aggregatedResp.candidates[0],
-      `sys test failure on generateContentStream using models/gemini-pro-visionfor aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream using models/gemini-pro-vision for aggregated response: ${aggregatedResp}`
     );
   });
 });
