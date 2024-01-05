@@ -35,21 +35,26 @@ export declare interface VertexInit {
 }
 
 /**
- * Params used by the generateContent endpoint
+ * Params used to call the generateContent method.
+ * @property {Content[]} - contents. Array of {@link Content}
  */
 export declare interface GenerateContentRequest extends BaseModelParams {
   contents: Content[];
 }
 
 /**
- * Params used to call countTokens
+ * Params used to call the countTokens method.
+ * @property {Content[]} - contents. Array of {@link Content}
  */
 export declare interface CountTokensRequest {
   contents: Content[];
 }
 
 /**
- * Response returned from countTokens
+ * Response returned from countTokens method.
+ * @property {number} - totalTokens. The total number of tokens counted across all instances from the request.
+ * @property {number} - [totalBillableCharacters]. The total number of billable characters counted across all instances from the request.
+ *
  */
 export declare interface CountTokensResponse {
   totalTokens: number;
@@ -58,7 +63,7 @@ export declare interface CountTokensResponse {
 
 /**
  * Configuration for initializing a model, for example via getGenerativeModel
- * @param {string} model - model name.
+ * @property {string} model - model name.
  * @example "gemini-pro"
  */
 export declare interface ModelParams extends BaseModelParams {
@@ -66,7 +71,9 @@ export declare interface ModelParams extends BaseModelParams {
 }
 
 /**
- * Base params for initializing a model or calling GenerateContent
+ * Base params for initializing a model or calling GenerateContent.
+ * @property {SafetySetting[]} - [safety_settings] Array of {@link SafetySetting}
+ * @property {GenerationConfig} - [generation_config] {@link GenerationConfig}
  */
 export declare interface BaseModelParams {
   safety_settings?: SafetySetting[];
@@ -74,7 +81,9 @@ export declare interface BaseModelParams {
 }
 
 /**
- * Safety feedback for an entire request
+ * Safety feedback for an entire request.
+ * @property {HarmCategory} - category. {@link HarmCategory}
+ * @property {HarmBlockThreshold} - threshold. {@link HarmBlockThreshold}
  */
 export declare interface SafetySetting {
   category: HarmCategory;
@@ -83,6 +92,12 @@ export declare interface SafetySetting {
 
 /**
  * Configuration options for model generation and outputs
+ * @property {number} - [candidate_count] Number of candidates to generate.
+ * @property {string[]} - [stop_sequences] Stop sequences.
+ * @property {number} - [max_output_tokens] The maximum number of output tokens to generate per message.
+ * @property {number} - [temperature] Controls the randomness of predictions.
+ * @property {number} - [top_p] If specified, nucleus sampling will be used.
+ * @property {number} - [top_k] If specified, top-k sampling will be used.
  */
 export declare interface GenerationConfig {
   candidate_count?: number;
@@ -93,7 +108,20 @@ export declare interface GenerationConfig {
   top_k?: number;
 }
 /**
- * Harm categories that would cause prompts or candidates to be blocked.
+ * @enum {string}
+ * Harm categories that will block the content.
+ * Values:
+ *     HARM_CATEGORY_UNSPECIFIED:
+ *         The harm category is unspecified.
+ *     HARM_CATEGORY_HATE_SPEECH:
+ *         The harm category is hate speech.
+ *     HARM_CATEGORY_DANGEROUS_CONTENT:
+ *         The harm category is dangerous content.
+ *     HARM_CATEGORY_HARASSMENT:
+ *         The harm category is harassment.
+ *     HARM_CATEGORY_SEXUALLY_EXPLICIT:
+ *         The harm category is sexually explicit
+ *         content.
  */
 export enum HarmCategory {
   HARM_CATEGORY_UNSPECIFIED = 'HARM_CATEGORY_UNSPECIFIED',
@@ -104,39 +132,56 @@ export enum HarmCategory {
 }
 
 /**
- * Threshold above which a prompt or candidate will be blocked.
+ * @enum {string}
+ * Probability based thresholds levels for blocking.
+ * Values:
+ *      HARM_BLOCK_THRESHOLD_UNSPECIFIED:
+ *          Unspecified harm block threshold.
+ *      BLOCK_LOW_AND_ABOVE:
+ *          Block low threshold and above (i.e. block
+ *          more).
+ *      BLOCK_MEDIUM_AND_ABOVE:
+ *          Block medium threshold and above.
+ *      BLOCK_ONLY_HIGH:
+ *          Block only high threshold (i.e. block less).
+ *      BLOCK_NONE:
+ *          Block none.
  */
 export enum HarmBlockThreshold {
-  // Unspecified harm block threshold.
   HARM_BLOCK_THRESHOLD_UNSPECIFIED = 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
-  // Block low threshold and above (i.e. block more).
   BLOCK_LOW_AND_ABOVE = 'BLOCK_LOW_AND_ABOVE',
-  // Block medium threshold and above.
   BLOCK_MEDIUM_AND_ABOVE = 'BLOCK_MEDIUM_AND_ABOVE',
-  // Block only high threshold (i.e. block less).
   BLOCK_ONLY_HIGH = 'BLOCK_ONLY_HIGH',
-  // Block none.
   BLOCK_NONE = 'BLOCK_NONE',
 }
 
 /**
- * Probability that a prompt or candidate matches a harm category.
+ * @enum {string}
+ * Harm probability levels in the content.
+ * Values:
+ *     HARM_PROBABILITY_UNSPECIFIED:
+ *         Harm probability unspecified.
+ *     NEGLIGIBLE:
+ *         Negligible level of harm.
+ *     LOW:
+ *         Low level of harm.
+ *     MEDIUM:
+ *         Medium level of harm.
+ *     HIGH:
+ *         High level of harm.
  */
 export enum HarmProbability {
-  // Probability is unspecified.
   HARM_PROBABILITY_UNSPECIFIED = 'HARM_PROBABILITY_UNSPECIFIED',
-  // Content has a negligible chance of being unsafe.
   NEGLIGIBLE = 'NEGLIGIBLE',
-  // Content has a low chance of being unsafe.
   LOW = 'LOW',
-  // Content has a medium chance of being unsafe.
   MEDIUM = 'MEDIUM',
-  // Content has a high chance of being unsafe.
   HIGH = 'HIGH',
 }
 
 /**
- * Safety rating for a piece of content
+ * Safety rating corresponding to the generated content.
+ * @property {HarmCategory} - category. {@link HarmCategory}
+ * @property {HarmProbability} - probability. {@link HarmProbability}
  */
 export declare interface SafetyRating {
   category: HarmCategory;
@@ -144,7 +189,10 @@ export declare interface SafetyRating {
 }
 
 /**
- * A single turn in a conversation with the model
+ * The base structured datatype containing multi-part content of a message.
+ * @property {Part[]} -  parts. Array of {@link Part}
+ * @property {string} - [role]. The producer of the content. Must be either 'user' or 'model'.
+                            Useful to set for multi-turn conversations, otherwise can be left blank or unset.
  */
 export declare interface Content {
   parts: Part[];
@@ -153,49 +201,88 @@ export declare interface Content {
 
 /**
  * A part of a turn in a conversation with the model with a fixed MIME type.
- *
- * Exactly one of text or inline_data must be provided.
+ * It has one of the following mutually exclusive fields:
+ * 1. text
+ * 2. inline_data
+ * 3. file_data
  */
 // TODO: Adjust so one must be true.
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BasePart {}
 
+/**
+ * A text part of a conversation with the model.
+ * @property {string} - text. Only this propery is expected for TextPart.
+ * @property {never} - [inline_data]. inline_data is not expected for TextPart.
+ * @property {never} - [file_data]. file_data is not expected for TextPart.
+ *
+ */
 export interface TextPart extends BasePart {
   text: string;
   inline_data?: never;
+  file_data?: never;
 }
 
+/**
+ * An inline data part of a conversation with the model.
+ * @property {never} - [text]. text is not expected for InlineDataPart.
+ * @property {GenerativeContentBlob} - inline_data. Only this property is expected for InlineDataPart. {@link GenerativeContentBlob}
+ * @property {never} - [file_data]. file_data is not expected for InlineDataPart.
+ */
 export interface InlineDataPart extends BasePart {
   text?: never;
   inline_data: GenerativeContentBlob;
+  file_data?: never;
 }
 
+/**
+ * URI based data.
+ * @property {string} - mime_type. The IANA standard MIME type of the source data.
+ * @property {string} - file_uri. URI of the file.
+ */
 export interface FileData {
   mime_type: string;
   file_uri: string;
 }
 
+/**
+ * A file data part of a conversation with the model.
+ * @property {never} - [text]. text is not expected for FileDataPart.
+ * @property {never} - [inline_data]. inline_data is not expected for FileDataPart.
+ * @property {FileData} - file_data. Only this property is expected for FileDataPart. {@link FileData}
+ */
 export interface FileDataPart extends BasePart {
   text?: never;
+  inline_data?: never;
   file_data: FileData;
 }
 
+/**
+ * A datatype containing media that is part of a multi-part {@link Content} message.
+ * A `Part` is a union type of {@link TextPart}, {@link InlineDataPart} and {@link FileDataPart}
+ * A `Part` has one of the following mutually exclusive fields:
+ * 1. text
+ * 2. inline_data
+ * 3. file_data
+ */
 export declare type Part = TextPart | InlineDataPart | FileDataPart;
 
 /**
  * Raw media bytes sent directly in the request. Text should not be sent as
  * raw bytes.
+ * @property {string} - mime_type. The MIME type of the source data. The only accepted values: "image/png" or "image/jpeg".
+ * @property {string} - data. data must be base64 string
  */
 export declare interface GenerativeContentBlob {
-  // The MIME type of the source data. The only accepted values: "image/png",
-  // "image/jpeg".
   mime_type: string;
-  // image must be base64 string
   data: string;
 }
 
 /**
- * Metadata on token count for the request
+ * Usage metadata about response(s).
+ * @property {number} - [prompt_token_count]. Number of tokens in the request.
+ * @property {number} - [candidates_token_count]. Number of tokens in the response(s).
+ * @property {number} - [totalTokenCount]. Total number of tokens.
  */
 export declare interface UsageMetadata {
   prompt_token_count?: number;
@@ -204,8 +291,10 @@ export declare interface UsageMetadata {
 }
 
 /**
- * A set of the feedback metadata the prompt specified in
- * GenerateContentRequest.content.
+ * Content filter results for a prompt sent in the request.
+ * @property {BlockedReason} - block_reason. {@link BlockReason}
+ * @property {SafetyRating[]} - safety_ratings. Array of {@link SafetyRating}
+ * @property {string} - block_reason_message. A readable block reason message.
  */
 export declare interface PromptFeedback {
   block_reason: BlockedReason;
@@ -213,61 +302,95 @@ export declare interface PromptFeedback {
   block_reason_message: string;
 }
 
+/**
+ * @enum {string}
+ * The reason why the reponse is blocked.
+ * Values:
+ *   BLOCKED_REASON_UNSPECIFIED
+ *       Unspecified blocked reason.
+ *   SAFETY
+ *       Candidates blocked due to safety.
+ *   OTHER
+ *       Candidates blocked due to other reason.
+ */
 export enum BlockedReason {
-  // A blocked reason was not specified.
   BLOCKED_REASON_UNSPECIFIED = 'BLOCK_REASON_UNSPECIFIED',
-  // Content was blocked by safety settings.
   SAFETY = 'SAFETY',
-  // Content was blocked, but the reason is uncategorized.
   OTHER = 'OTHER',
 }
 
+/**
+ * @enum {string}
+ * The reason why the model stopped generating tokens.
+ * If empty, the model has not stopped generating the tokens.
+ * Values:
+ *   FINISH_REASON_UNSPECIFIED
+ *       The finish reason is unspecified.
+ *   STOP:
+ *       Natural stop point of the model or provided
+ *       stop sequence.
+ *   MAX_TOKENS:
+ *       The maximum number of tokens as specified in
+ *       the request was reached.
+ *   SAFETY:
+ *       The token generation was stopped as the
+ *       response was flagged for safety reasons. NOTE:
+ *       When streaming the Candidate.content will be
+ *       empty if content filters blocked the output.
+ *   RECITATION:
+ *       The token generation was stopped as the
+ *       response was flagged for unauthorized citations.
+ *   OTHER:
+ *       All other reasons that stopped the token
+ *       generation
+ */
 export enum FinishReason {
-  // Default value. This value is unused.
   FINISH_REASON_UNSPECIFIED = 'FINISH_REASON_UNSPECIFIED',
-  // Natural stop point of the model or provided stop sequence.
   STOP = 'STOP',
-  // The maximum number of tokens as specified in the request was reached.
   MAX_TOKENS = 'MAX_TOKENS',
-  // The candidate content was flagged for safety reasons.
   SAFETY = 'SAFETY',
-  // The candidate content was flagged for recitation reasons.
   RECITATION = 'RECITATION',
-  // Unknown reason.
   OTHER = 'OTHER',
 }
 
 /**
  * Wrapper for respones from a generateContent request
- * @see GenerateContentResponse
+ * @property {GenerateContentResponse} - response. All GenerateContentResponses received so far {@link GenerateContentResponse}
  */
 export declare interface GenerateContentResult {
-  // All GenerateContentResponses received so far
   response: GenerateContentResponse;
 }
 
 /**
- * Wrapper for respones from a streamGenerateContent request
- * @see GenerateContentResponse
+ * Wrapper for respones from a generateContent method when `steam` parameter is `true`
+ * @property {Promise<GenerateContentResponse>} - response. Promise of {@link GenerateContentResponse}
+ * @property {AsyncGenerator<GenerateContentResponse>} - stream. Async iterable that provides one {@link GenerateContentResponse} at a time
  */
 export declare interface StreamGenerateContentResult {
-  // Async iterable that provides one GenerateContentResponse at a time
   response: Promise<GenerateContentResponse>;
   stream: AsyncGenerator<GenerateContentResponse>;
 }
 
 /**
  * Response from the model supporting multiple candidates
+ * @property {GenerateContentCandidate} - candidates. {@link GenerateContentCandidate}
+ * @property {PromptFeedback} - [promptFeedback]. This is only populated if there are no candidates due to a safety block {@link PromptFeedback}
+ * @property {UsageMetadata} - [usageMetadata]. {@link UsageMetadata}
  */
 export declare interface GenerateContentResponse {
   candidates: GenerateContentCandidate[];
-  // This is only populated if there are no candidates due to a safety block
   promptFeedback?: PromptFeedback;
   usageMetadata?: UsageMetadata;
 }
 
 /**
- * Content candidate from the model
+ * A response candidate generated from the model.
+ * @property {Content} - content. {@link Content}
+ * @property {number} - [index]. The index of the candidate in the {@link GenerateContentResponse}
+ * @property {FinishReason} - [finishReason]. {@link FinishReason}
+ * @property {string} - [finishMessage].
+ * @property {SafetyRating[]} - [safetyRatings]. Array of {@link SafetyRating}
+ * @property {CitationMetadata} - [citationMetadata]. {@link CitationMetadata}
  */
 export declare interface GenerateContentCandidate {
   content: Content;
@@ -279,14 +402,19 @@ export declare interface GenerateContentCandidate {
 }
 
 /**
- * Citation information for model-generated canadidate.
+ * A collection of source attributions for a piece of content.
+ * @property {CitationSource[]} - citationSources. Array of {@link CitationSource}
  */
 export declare interface CitationMetadata {
   citationSources: CitationSource[];
 }
 
 /**
- * Citations to sources for a specific response
+ * Source attributions for content.
+ * @property {number} - [startIndex] Start index into the content.
+ * @property {number} - [endIndex] End index into the content.
+ * @property {string} - [url] Url reference of the attribution.
+ * @property {string} - [license] License of the attribution.
  */
 export declare interface CitationSource {
   startIndex?: number;

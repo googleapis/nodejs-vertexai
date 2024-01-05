@@ -159,12 +159,14 @@ export class VertexAI_Preview {
 
 /**
  * Params to initiate a multiturn chat with the model via startChat
+ * @property {Content[]} - [history] history of the chat session. {@link Content}
+ * @property {SafetySetting[]} - [safety_settings] Array of {@link SafetySetting}
+ * @property {GenerationConfig} - [generation_config] {@link GenerationConfig}
  */
 export declare interface StartChatParams {
   history?: Content[];
   safety_settings?: SafetySetting[];
   generation_config?: GenerationConfig;
-  stream?: boolean;
 }
 
 // StartChatSessionRequest and ChatSession are defined here instead of in
@@ -173,8 +175,8 @@ export declare interface StartChatParams {
 
 /**
  * All params passed to initiate multiturn chat via startChat
- * @see VertexAI_Preview for details on _vertex_instance parameter
- * @see GenerativeModel for details on _model_instance parameter
+ * @property {VertexAI_Preview} - _vertex_instance {@link VertexAI_Preview}
+ * @property {GenerativeModel} - _model_instance {@link GenerativeModel}
  */
 export declare interface StartChatSessionRequest extends StartChatParams {
   _vertex_instance: VertexAI_Preview;
@@ -185,7 +187,6 @@ export declare interface StartChatSessionRequest extends StartChatParams {
  * Chat session to make multi-turn send message request.
  * `sendMessage` method makes async call to get response of a chat message.
  * `sendMessageStream` method makes async call to stream response of a chat message.
- * @param {StartChatSessionRequest} request - {@link StartChatSessionRequest}
  */
 export class ChatSession {
   private project: string;
@@ -202,6 +203,10 @@ export class ChatSession {
     return this.historyInternal;
   }
 
+  /**
+   * @constructor
+   * @param {StartChatSessionRequest} request - {@link StartChatSessionRequest}
+   */
   constructor(request: StartChatSessionRequest) {
     this.project = request._vertex_instance.project;
     this.location = request._vertex_instance.location;
@@ -521,6 +526,7 @@ function validateGcsInput(contents: Content[]) {
   for (const content of contents) {
     for (const part of content.parts) {
       if ('file_data' in part) {
+        // @ts-ignore
         const uri = part['file_data']['file_uri'];
         if (!uri.startsWith('gs://')) {
           throw new URIError(
