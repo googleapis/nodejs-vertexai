@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/googleapis/nodejs-vertexai/compare/v0.2.0...v0.2.1) (2024-01-05)
+
+
+### Bug Fixes
+
+* enable passing only a string to generateContent and generateContentStream ([c50811e](https://github.com/googleapis/nodejs-vertexai/commit/c50811e5443848edb8f9ce5d88ae4c6c8b59b65b))
+
+
 ## [0.2.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.1.3...v0.2.0) (2024-01-03)
 
 
