@@ -79,8 +79,6 @@ const generativeVisionModelWithPrefix = vertex_ai.preview.getGenerativeModel({
   model: 'models/gemini-pro-vision',
 });
 
-// TODO (b/316599049): update tests to use jasmine expect syntax:
-// expect(...).toBeInstanceOf(...)
 describe('generateContentStream', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
@@ -115,8 +113,8 @@ describe('generateContentStream', () => {
       );
       for (const candidate of item.candidates) {
         for (const part of candidate.content.parts as TextPart[]) {
-          assert(
-            !part.text.includes('\ufffd'),
+          expect(part.text).not.toContain(
+            '\ufffd',
             `sys test failure on generateContentStream, for item ${item}`
           );
         }
@@ -160,36 +158,62 @@ describe('generateContentStream', () => {
       ],
     };
     await generativeVisionModel.generateContentStream(badRequest).catch(e => {
-      assert(
-        e instanceof ClientError,
-        `sys test failure on generateContentStream when having bad request should throw ClientError but actually thrown ${e}`
-      );
-      assert(
-        e.message === '[VertexAI.ClientError]: got status: 400 Bad Request',
-        `sys test failure on generateContentStream when having bad request got wrong error message: ${e.message}`
+      expect(e).toBeInstanceOf(ClientError);
+      expect(e.message).toBe(
+        '[VertexAI.ClientError]: got status: 400 Bad Request',
+        `sys test failure on generateContentStream when having bad request
+          got wrong error message: ${e.message}`
       );
     });
   });
   // TODO: this is returning a 500 on the system test project
-  // it('should should return a stream and aggregated response when passed
-  // multipart GCS content',
-  //    async () => {
-  //      const streamingResp = await
-  //      generativeVisionModel.generateContentStream(
-  //          MULTI_PART_GCS_REQUEST);
+  it('should should return a stream and aggregated response when passed multipart GCS content', async () => {
+    const streamingResp = await generativeVisionModel.generateContentStream(
+      MULTI_PART_GCS_REQUEST
+    );
 
-  //      for await (const item of streamingResp.stream) {
-  //        assert(item.candidates[0]);
-  //        console.log('stream chunk: ', item);
-  //      }
+    for await (const item of streamingResp.stream) {
+      assert(item.candidates[0]);
+      console.log('stream chunk: ', item);
+    }
 
-  //      const aggregatedResp = await streamingResp.response;
-  //      assert(aggregatedResp.candidates[0]);
-  //      console.log('aggregated response: ', aggregatedResp);
-  //    });
+    const aggregatedResp = await streamingResp.response;
+    assert(aggregatedResp.candidates[0]);
+    console.log('aggregated response: ', aggregatedResp);
+  });
 });
 
-// TODO (b/316599049): add tests for generateContent and sendMessage
+describe('generateContent', () => {
+  beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+  });
+  it('should return the aggregated response', async () => {
+    const response = await generativeTextModel.generateContent(TEXT_REQUEST);
+
+    const aggregatedResp = await response.response;
+    assert(
+      aggregatedResp.candidates[0],
+      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+    );
+  });
+});
+
+describe('sendMessage', () => {
+  beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+  });
+  it('should populate history and return a chat response', async () => {
+    const chat = generativeTextModel.startChat();
+    const chatInput1 = 'How can I learn more about Node.js?';
+    const result1 = await chat.sendMessage(chatInput1);
+    const response1 = await result1.response;
+    assert(
+      response1.candidates[0],
+      `sys test failure on sendMessage for aggregated response: ${response1}`
+    );
+    expect(chat.history.length).toBe(2);
+  });
+});
 
 describe('sendMessageStream', () => {
   beforeEach(() => {
