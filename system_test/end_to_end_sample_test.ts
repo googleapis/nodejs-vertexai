@@ -16,11 +16,8 @@
  */
 
 // @ts-ignore
-import * as assert from 'assert';
-
 import {ClientError, VertexAI, TextPart} from '../src';
 
-// TODO: this env var isn't getting populated correctly
 const PROJECT = process.env.GCLOUD_PROJECT;
 const LOCATION = 'us-central1';
 const TEXT_REQUEST = {
@@ -33,7 +30,7 @@ const TEXT_PART = {
 
 const GCS_FILE_PART = {
   file_data: {
-    file_uri: 'gs://nodejs_vertex_system_test_resources/scones.jpg',
+    file_uri: 'gs://generativeai-downloads/images/scones.jpg',
     mime_type: 'image/jpeg',
   },
 };
@@ -54,7 +51,10 @@ const MULTI_PART_BASE64_REQUEST = {
 };
 
 // Initialize Vertex with your Cloud project and location
-const vertex_ai = new VertexAI({project: 'long-door-651', location: LOCATION});
+const vertex_ai = new VertexAI({
+  project: PROJECT as string,
+  location: LOCATION,
+});
 
 const generativeTextModel = vertex_ai.preview.getGenerativeModel({
   model: 'gemini-pro',
@@ -79,11 +79,9 @@ const generativeVisionModelWithPrefix = vertex_ai.preview.getGenerativeModel({
   model: 'models/gemini-pro-vision',
 });
 
-// TODO (b/316599049): update tests to use jasmine expect syntax:
-// expect(...).toBeInstanceOf(...)
 describe('generateContentStream', () => {
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
 
   it('should should return a stream and aggregated response when passed text', async () => {
@@ -91,15 +89,13 @@ describe('generateContentStream', () => {
       await generativeTextModel.generateContentStream(TEXT_REQUEST);
 
     for await (const item of streamingResp.stream) {
-      assert(
-        item.candidates[0],
+      expect(item.candidates[0]).toBeTruthy(
         `sys test failure on generateContentStream, for item ${item}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
-    assert(
-      aggregatedResp.candidates[0],
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
@@ -109,14 +105,13 @@ describe('generateContentStream', () => {
     });
 
     for await (const item of streamingResp.stream) {
-      assert(
-        item.candidates[0],
+      expect(item.candidates[0]).toBeTruthy(
         `sys test failure on generateContentStream, for item ${item}`
       );
       for (const candidate of item.candidates) {
         for (const part of candidate.content.parts as TextPart[]) {
-          assert(
-            !part.text.includes('\ufffd'),
+          expect(part.text).not.toContain(
+            '\ufffd',
             `sys test failure on generateContentStream, for item ${item}`
           );
         }
@@ -124,8 +119,7 @@ describe('generateContentStream', () => {
     }
 
     const aggregatedResp = await streamingResp.response;
-    assert(
-      aggregatedResp.candidates[0],
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
@@ -135,15 +129,13 @@ describe('generateContentStream', () => {
     );
 
     for await (const item of streamingResp.stream) {
-      assert(
-        item.candidates[0],
+      expect(item.candidates[0]).toBeTruthy(
         `sys test failure on generateContentStream, for item ${item}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
-    assert(
-      aggregatedResp.candidates[0],
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
@@ -160,36 +152,62 @@ describe('generateContentStream', () => {
       ],
     };
     await generativeVisionModel.generateContentStream(badRequest).catch(e => {
-      assert(
-        e instanceof ClientError,
-        `sys test failure on generateContentStream when having bad request should throw ClientError but actually thrown ${e}`
-      );
-      assert(
-        e.message === '[VertexAI.ClientError]: got status: 400 Bad Request',
-        `sys test failure on generateContentStream when having bad request got wrong error message: ${e.message}`
+      expect(e).toBeInstanceOf(ClientError);
+      expect(e.message).toBe(
+        '[VertexAI.ClientError]: got status: 400 Bad Request',
+        `sys test failure on generateContentStream when having bad request
+          got wrong error message: ${e.message}`
       );
     });
   });
-  // TODO: this is returning a 500 on the system test project
-  // it('should should return a stream and aggregated response when passed
-  // multipart GCS content',
-  //    async () => {
-  //      const streamingResp = await
-  //      generativeVisionModel.generateContentStream(
-  //          MULTI_PART_GCS_REQUEST);
 
-  //      for await (const item of streamingResp.stream) {
-  //        assert(item.candidates[0]);
-  //        console.log('stream chunk: ', item);
-  //      }
+  it('should should return a stream and aggregated response when passed multipart GCS content', async () => {
+    const streamingResp = await generativeVisionModel.generateContentStream(
+      MULTI_PART_GCS_REQUEST
+    );
 
-  //      const aggregatedResp = await streamingResp.response;
-  //      assert(aggregatedResp.candidates[0]);
-  //      console.log('aggregated response: ', aggregatedResp);
-  //    });
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream, for item ${item}`
+      );
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+    );
+  });
 });
 
-// TODO (b/316599049): add tests for generateContent and sendMessage
+describe('generateContent', () => {
+  beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+  });
+  it('should return the aggregated response', async () => {
+    const response = await generativeTextModel.generateContent(TEXT_REQUEST);
+
+    const aggregatedResp = await response.response;
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+    );
+  });
+});
+
+describe('sendMessage', () => {
+  beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+  });
+  it('should populate history and return a chat response', async () => {
+    const chat = generativeTextModel.startChat();
+    const chatInput1 = 'How can I learn more about Node.js?';
+    const result1 = await chat.sendMessage(chatInput1);
+    const response1 = await result1.response;
+    expect(response1.candidates[0]).toBeTruthy(
+      `sys test failure on sendMessage for aggregated response: ${response1}`
+    );
+    expect(chat.history.length).toBe(2);
+  });
+});
 
 describe('sendMessageStream', () => {
   beforeEach(() => {
@@ -204,14 +222,12 @@ describe('sendMessageStream', () => {
     const chatInput1 = 'How can I learn more about Node.js?';
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
-      assert(
-        item.candidates[0],
+      expect(item.candidates[0]).toBeTruthy(
         `sys test failure on sendMessageStream, for item ${item}`
       );
     }
     const resp = await result1.response;
-    assert(
-      resp.candidates[0],
+    expect(resp.candidates[0]).toBeTruthy(
       `sys test failure on sendMessageStream for aggregated response: ${resp}`
     );
     expect(chat.history.length).toBe(2);
@@ -221,14 +237,12 @@ describe('sendMessageStream', () => {
     const chatInput1 = 'How can I learn more about Node.js?';
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
-      assert(
-        item.candidates[0],
+      expect(item.candidates[0]).toBeTruthy(
         `sys test failure on sendMessageStream, for item ${item}`
       );
     }
     const resp = await result1.response;
-    assert(
-      resp.candidates[0],
+    expect(resp.candidates[0]).toBeTruthy(
       `sys test failure on sendMessageStream for aggregated response: ${resp}`
     );
     expect(chat.history.length).toBe(2);
@@ -258,8 +272,7 @@ describe('sendMessageStream', () => {
 describe('countTokens', () => {
   it('should should return a CountTokensResponse', async () => {
     const countTokensResp = await generativeTextModel.countTokens(TEXT_REQUEST);
-    assert(
-      countTokensResp.totalTokens,
+    expect(countTokensResp.totalTokens).toBeTruthy(
       `sys test failure on countTokens, ${countTokensResp}`
     );
   });
@@ -267,7 +280,7 @@ describe('countTokens', () => {
 
 describe('generateContentStream using models/model-id', () => {
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 25000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
 
   it('should should return a stream and aggregated response when passed text', async () => {
@@ -275,15 +288,13 @@ describe('generateContentStream using models/model-id', () => {
       await generativeTextModelWithPrefix.generateContentStream(TEXT_REQUEST);
 
     for await (const item of streamingResp.stream) {
-      assert(
-        item.candidates[0],
+      expect(item.candidates[0]).toBeTruthy(
         `sys test failure on generateContentStream using models/gemini-pro, for item ${item}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
-    assert(
-      aggregatedResp.candidates[0],
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream using models/gemini-pro for aggregated response: ${aggregatedResp}`
     );
   });
@@ -295,15 +306,13 @@ describe('generateContentStream using models/model-id', () => {
       );
 
     for await (const item of streamingResp.stream) {
-      assert(
-        item.candidates[0],
+      expect(item.candidates[0]).toBeTruthy(
         `sys test failure on generateContentStream using models/gemini-pro-vision, for item ${item}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
-    assert(
-      aggregatedResp.candidates[0],
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream using models/gemini-pro-vision for aggregated response: ${aggregatedResp}`
     );
   });
