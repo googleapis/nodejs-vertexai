@@ -7,5 +7,6 @@
   "distribution_name": "@google-cloud/vertexai",
   "api_id": "aiplatform.googleapis.com",
   "api_shortname": "aiplatform",
-  "library_type": "GAPIC_MANUAL"
+  "library_type": "GAPIC_MANUAL",
+  "client_documentation": "https://cloud.google.com/nodejs/docs/reference/vertexai/latest"
 }
