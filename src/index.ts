@@ -93,25 +93,7 @@ export class VertexAI_Preview {
     readonly apiEndpoint?: string,
     readonly googleAuthOptions?: GoogleAuthOptions
   ) {
-    let opts: GoogleAuthOptions;
-    if (!googleAuthOptions) {
-      opts = {
-        scopes: 'https://www.googleapis.com/auth/cloud-platform',
-      };
-    } else {
-      if (
-        googleAuthOptions.projectId &&
-        googleAuthOptions.projectId !== project
-      ) {
-        throw new Error(
-          `inconsistent project ID values. argument project got value ${project} but googleAuthOptions.projectId got value ${googleAuthOptions.projectId}`
-        );
-      }
-      opts = googleAuthOptions;
-      if (!opts.scopes) {
-        opts.scopes = 'https://www.googleapis.com/auth/cloud-platform';
-      }
-    }
+    const opts = this.validateGoogleAuthOptions(project, googleAuthOptions);
     this.project = project;
     this.location = location;
     this.apiEndpoint = apiEndpoint;
@@ -154,6 +136,42 @@ export class VertexAI_Preview {
       modelParams.generation_config,
       modelParams.safety_settings
     );
+  }
+
+  validateGoogleAuthOptions(
+    project: string,
+    googleAuthOptions?: GoogleAuthOptions
+  ): GoogleAuthOptions {
+    let opts: GoogleAuthOptions;
+    const requiredScope = 'https://www.googleapis.com/auth/cloud-platform';
+    if (!googleAuthOptions) {
+      opts = {
+        scopes: requiredScope,
+      };
+      return opts;
+    }
+    if (
+      googleAuthOptions.projectId &&
+      googleAuthOptions.projectId !== project
+    ) {
+      throw new Error(
+        `inconsistent project ID values. argument project got value ${project} but googleAuthOptions.projectId got value ${googleAuthOptions.projectId}`
+      );
+    }
+    opts = googleAuthOptions;
+    if (!opts.scopes) {
+      opts.scopes = requiredScope;
+      return opts;
+    }
+    if (
+      (typeof opts.scopes === 'string' && opts.scopes !== requiredScope) ||
+      (Array.isArray(opts.scopes) && opts.scopes.indexOf(requiredScope) < 0)
+    ) {
+      throw new GoogleAuthError(
+        `input GoogleAuthOptions.scopes ${opts.scopes} doesn't contain required scope ${requiredScope}, please include ${requiredScope} into GoogleAuthOptions.scopes or leave GoogleAuthOptions.scopes undefined`
+      );
+    }
+    return opts;
   }
 }
 

@@ -37,6 +37,7 @@ import {
   SafetySetting,
   StreamGenerateContentResult,
 } from '../src/types/content';
+import {GoogleAuthError} from '../src/types/errors';
 import {constants} from '../src/util';
 
 const PROJECT = 'test_project';
@@ -214,7 +215,7 @@ describe('VertexAI', () => {
 
   it('given specified google auth options, should be instantiated', () => {
     const googleAuthOptions = {
-      scopes: 'test.scopes',
+      scopes: 'https://www.googleapis.com/auth/cloud-platform',
     };
     const vetexai1 = new VertexAI({
       project: PROJECT,
@@ -237,6 +238,41 @@ describe('VertexAI', () => {
     }).toThrow(
       new Error(
         'inconsistent project ID values. argument project got value test_project but googleAuthOptions.projectId got value another_project'
+      )
+    );
+  });
+
+  it('given scopes missing required scope, should throw GoogleAuthError', () => {
+    const invalidGoogleAuthOptionsStringScopes = {scopes: 'test.scopes'};
+    expect(() => {
+      new VertexAI({
+        project: PROJECT,
+        location: LOCATION,
+        googleAuthOptions: invalidGoogleAuthOptionsStringScopes,
+      });
+    }).toThrow(
+      new GoogleAuthError(
+        "input GoogleAuthOptions.scopes test.scopes doesn't contain required scope " +
+          'https://www.googleapis.com/auth/cloud-platform, ' +
+          'please include https://www.googleapis.com/auth/cloud-platform into GoogleAuthOptions.scopes ' +
+          'or leave GoogleAuthOptions.scopes undefined'
+      )
+    );
+    const invalidGoogleAuthOptionsArrayScopes = {
+      scopes: ['test1.scopes', 'test2.scopes'],
+    };
+    expect(() => {
+      new VertexAI({
+        project: PROJECT,
+        location: LOCATION,
+        googleAuthOptions: invalidGoogleAuthOptionsArrayScopes,
+      });
+    }).toThrow(
+      new GoogleAuthError(
+        "input GoogleAuthOptions.scopes test1.scopes,test2.scopes doesn't contain required scope " +
+          'https://www.googleapis.com/auth/cloud-platform, ' +
+          'please include https://www.googleapis.com/auth/cloud-platform into GoogleAuthOptions.scopes ' +
+          'or leave GoogleAuthOptions.scopes undefined'
       )
     );
   });
