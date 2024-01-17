@@ -216,47 +216,55 @@ const functionResponseParts = [
 ### Function calling with chat
 
 ```typescript
-// Create a chat session and pass your function declarations
-const chat = generativeModel.startChat({
-  tools: functionDeclarations,
-});
+async function functionCallingChat() {
+  // Create a chat session and pass your function declarations
+  const chat = generativeModel.startChat({
+    tools: functionDeclarations,
+  });
 
-const chatInput1 = 'What is the weather in Boston?';
+  const chatInput1 = 'What is the weather in Boston?';
 
-// This should include a functionCall response from the model
-const result1 = await chat.sendMessageStream(chatInput1);
-for await (const item of result1.stream) {
-  console.log(item.candidates[0]);
+  // This should include a functionCall response from the model
+  const result1 = await chat.sendMessageStream(chatInput1);
+  for await (const item of result1.stream) {
+    console.log(item.candidates[0]);
+  }
+  const response1 = await result1.response;
+
+  // Send a follow up message with a FunctionResponse
+  const result2 = await chat.sendMessageStream(functionResponseParts);
+  for await (const item of result2.stream) {
+    console.log(item.candidates[0]);
+  }
+
+  // This should include a text response from the model using the response content
+  // provided above
+  const response2 = await result2.response;
 }
-const response1 = await result1.response;
 
-// Send a follow up message with a FunctionResponse
-const result2 = await chat.sendMessageStream(functionResponseParts);
-for await (const item of result2.stream) {
-  console.log(item.candidates[0]);
-}
-
-// This should include a text response from the model using the response content
-// provided above
-const response2 = await result2.response;
+functionCallingChat();
 ```
 
 ### Function calling with generateContentStream
 
 ```typescript
-const request = {
-  contents: [
-    {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
-    {role: 'model', parts: [{functionCall: {name: 'get_current_weather', args: {'location': 'Boston'}}}]},
-    {role: 'function', parts: functionResponseParts}
-  ],
-  tools: functionDeclarations,
-};
-const streamingResp =
-    await generativeModel.generateContentStream(request);
-for await (const item of streamingResp.stream) {
-  console.log(item.candidates[0]);
+async function functionCallingGenerateContent() {
+  const request = {
+    contents: [
+      {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
+      {role: 'model', parts: [{functionCall: {name: 'get_current_weather', args: {'location': 'Boston'}}}]},
+      {role: 'function', parts: functionResponseParts}
+    ],
+    tools: functionDeclarations,
+  };
+  const streamingResp =
+      await generativeModel.generateContentStream(request);
+  for await (const item of streamingResp.stream) {
+    console.log(item.candidates[0]);
+  }
 }
+
+functionCallingGenerateContent();
 ```
 
 ## License
