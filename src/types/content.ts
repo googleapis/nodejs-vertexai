@@ -78,6 +78,7 @@ export declare interface ModelParams extends BaseModelParams {
 export declare interface BaseModelParams {
   safety_settings?: SafetySetting[];
   generation_config?: GenerationConfig;
+  tools?: Tool[];
 }
 
 /**
@@ -205,6 +206,8 @@ export declare interface Content {
  * 1. text
  * 2. inline_data
  * 3. file_data
+ * 4. functionResponse
+ * 5. functionCall
  */
 // TODO: Adjust so one must be true.
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -215,24 +218,39 @@ export interface BasePart {}
  * @property {string} - text. Only this propery is expected for TextPart.
  * @property {never} - [inline_data]. inline_data is not expected for TextPart.
  * @property {never} - [file_data]. file_data is not expected for TextPart.
+ * @property {never} - [functionResponse]. functionResponse is not expected for
+ * TextPart.
+ * @property {never} - [functionCall]. functionCall is not expected for
+ * TextPart.
  *
  */
 export interface TextPart extends BasePart {
   text: string;
   inline_data?: never;
   file_data?: never;
+  functionResponse?: never;
+  functionCall?: never;
 }
 
 /**
  * An inline data part of a conversation with the model.
  * @property {never} - [text]. text is not expected for InlineDataPart.
- * @property {GenerativeContentBlob} - inline_data. Only this property is expected for InlineDataPart. {@link GenerativeContentBlob}
- * @property {never} - [file_data]. file_data is not expected for InlineDataPart.
+ * @property {GenerativeContentBlob} - inline_data. Only this property is
+ * expected for InlineDataPart. {@link GenerativeContentBlob}
+ * @property {never} - [file_data]. file_data is not expected for
+ * InlineDataPart.
+ * @property {never} - [functionResponse]. functionResponse is not expected for
+ * InlineDataPart.
+ * @property {never} - [functionCall]. functionCall is not expected for
+ * InlineDataPart.
+ *
  */
 export interface InlineDataPart extends BasePart {
   text?: never;
   inline_data: GenerativeContentBlob;
   file_data?: never;
+  functionResponse?: never;
+  functionCall?: never;
 }
 
 /**
@@ -248,24 +266,82 @@ export interface FileData {
 /**
  * A file data part of a conversation with the model.
  * @property {never} - [text]. text is not expected for FileDataPart.
- * @property {never} - [inline_data]. inline_data is not expected for FileDataPart.
- * @property {FileData} - file_data. Only this property is expected for FileDataPart. {@link FileData}
+ * @property {never} - [inline_data]. inline_data is not expected for
+ * FileDataPart.
+ * @property {FileData} - file_data. Only this property is expected for
+ * FileDataPart. {@link FileData}
+ * @property {never} - [functionResponse]. functionResponse is not expected for
+ * FileDataPart.
+ * @property {never} - [functionCall]. functionCall is not expected for
+ * FileDataPart.
+ *
  */
 export interface FileDataPart extends BasePart {
   text?: never;
   inline_data?: never;
   file_data: FileData;
+  functionResponse?: never;
+  functionCall?: never;
 }
 
 /**
- * A datatype containing media that is part of a multi-part {@link Content} message.
- * A `Part` is a union type of {@link TextPart}, {@link InlineDataPart} and {@link FileDataPart}
- * A `Part` has one of the following mutually exclusive fields:
+ * A function response part of a conversation with the model.
+ * @property {never} - [text]. text is not expected for FunctionResponsePart.
+ * @property {never} - [inline_data]. inline_data is not expected for
+ * FunctionResponsePart.
+ * @property {FileData} - [file_data]. file_data is not expected for
+ * FunctionResponsePart. {@link FileData}
+ * @property {never} - functionResponse. only functionResponse is expected for
+ * FunctionResponsePart.
+ * @property {never} - [functionCall]. functionCall is not expected for
+ * FunctionResponsePart.
+ *
+ */
+export interface FunctionResponsePart extends BasePart {
+  text?: never;
+  inline_data?: never;
+  file_data?: never;
+  functionResponse: FunctionResponse;
+  functionCall?: never;
+}
+
+/**
+ * A function call part of a conversation with the model.
+ * @property {never} - [text]. text is not expected for FunctionResponsePart.
+ * @property {never} - [inline_data]. inline_data is not expected for
+ * FunctionResponsePart.
+ * @property {never} - [file_data]. file_data is not expected for
+ * FunctionResponsePart. {@link FileData}
+ * @property {never} - [functionResponse]. functionResponse is not expected for
+ * FunctionResponsePart.
+ * @property {FunctionCall} - functionCall. only functionCall is expected for
+ * FunctionCallPart.
+ *
+ */
+export interface FunctionCallPart extends BasePart {
+  text?: never;
+  inline_data?: never;
+  file_data?: never;
+  functionResponse?: never;
+  functionCall: FunctionCall;
+}
+
+/**
+ * A datatype containing media that is part of a multi-part {@link Content}
+ * message. A `Part` is a union type of {@link TextPart}, {@link
+ * InlineDataPart}, {@link FileDataPart}, and {@link FunctionResponsePart}. A
+ * `Part` has one of the following mutually exclusive fields:
  * 1. text
  * 2. inline_data
  * 3. file_data
+ * 4. functionResponse
  */
-export declare type Part = TextPart | InlineDataPart | FileDataPart;
+export declare type Part =
+  | TextPart
+  | InlineDataPart
+  | FileDataPart
+  | FunctionResponsePart
+  | FunctionCallPart;
 
 /**
  * Raw media bytes sent directly in the request. Text should not be sent as
@@ -399,6 +475,7 @@ export declare interface GenerateContentCandidate {
   finishMessage?: string;
   safetyRatings?: SafetyRating[];
   citationMetadata?: CitationMetadata;
+  functionCall?: FunctionCall;
 }
 
 /**
@@ -421,4 +498,124 @@ export declare interface CitationSource {
   endIndex?: number;
   uri?: string;
   license?: string;
+}
+
+/**
+ * A predicted FunctionCall returned from the model that contains a string
+ * representating the FunctionDeclaration.name with the parameters and their
+ * values.
+ * @property {string} - name The name of the function specified in
+ * FunctionDeclaration.name.
+ * @property {object} - args The arguments to pass to the function.
+ */
+export declare interface FunctionCall {
+  name: string;
+  args: object;
+}
+
+/**
+ * The result output of a FunctionCall that contains a string representing
+ * the FunctionDeclaration.name and a structured JSON object containing any
+ * output from the function call. It is used as context to the model.
+ * @property {string} - name The name of the function specified in
+ * FunctionDeclaration.name.
+ * @property {object} - response The expected response from the model.
+ */
+export declare interface FunctionResponse {
+  name: string;
+  response: object;
+}
+
+/**
+ * Structured representation of a function declaration as defined by the
+ * [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included
+ * in this declaration are the function name and parameters. This
+ * FunctionDeclaration is a representation of a block of code that can be used
+ * as a Tool by the model and executed by the client.
+ * @property {string} - name The name of the function to call. Must start with a
+ * letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores and
+ * dashes, with a max length of 64.
+ * @property {string} - description Description and purpose of the function.
+ * Model uses it to decide how and whether to call the function.
+ * @property {FunctionDeclarationSchema} - parameters Describes the parameters
+ * to this function in JSON Schema Object format. Reflects the Open API 3.03
+ * Parameter Object. string Key: the name of the parameter. Parameter names are
+ * case sensitive. Schema Value: the Schema defining the type used for the
+ * parameter. For function with no parameters, this can be left unset. Example
+ * with 1 required and 1 optional parameter: type: OBJECT properties:
+
+      param1:
+
+        type: STRING
+      param2:
+
+        type: INTEGER
+    required:
+
+      - param1
+ */
+export declare interface FunctionDeclaration {
+  name: string;
+  description?: string;
+  parameters?: FunctionDeclarationSchema;
+}
+
+/**
+ * A Tool is a piece of code that enables the system to interact with
+ * external systems to perform an action, or set of actions, outside of
+ * knowledge and scope of the model.
+ * @property {object} - function_declarations One or more function declarations
+ * to be passed to the model along with the current user query. Model may decide
+ * to call a subset of these functions by populating
+ * [FunctionCall][content.part.function_call] in the response. User should
+ * provide a [FunctionResponse][content.part.function_response] for each
+ * function call in the next turn. Based on the function responses, Model will
+ * generate the final response back to the user. Maximum 64 function
+ * declarations can be provided.
+ */
+export declare interface Tool {
+  function_declarations: FunctionDeclaration[];
+}
+
+/**
+ * Contains the list of OpenAPI data types
+ * as defined by https://swagger.io/docs/specification/data-models/data-types/
+ * @public
+ */
+export enum FunctionDeclarationSchemaType {
+  STRING = 'STRING',
+  NUMBER = 'NUMBER',
+  INTEGER = 'INTEGER',
+  BOOLEAN = 'BOOLEAN',
+  ARRAY = 'ARRAY',
+  OBJECT = 'OBJECT',
+}
+
+/**
+ * Schema for parameters passed to [FunctionDeclaration.parameters]
+ * @public
+ */
+export interface FunctionDeclarationSchema {
+  type: FunctionDeclarationSchemaType;
+  properties: {[k: string]: FunctionDeclarationSchemaProperty};
+  description?: string;
+  required?: string[];
+}
+
+/**
+ * Schema is used to define the format of input/output data.
+ * Represents a select subset of an OpenAPI 3.0 schema object.
+ * More fields may be added in the future as needed.
+ * @public
+ */
+export interface FunctionDeclarationSchemaProperty {
+  type?: FunctionDeclarationSchemaType;
+  format?: string;
+  description?: string;
+  nullable?: boolean;
+  items?: FunctionDeclarationSchema;
+  enum?: string[];
+  properties?: {[k: string]: FunctionDeclarationSchema};
+  required?: string[];
+  example?: unknown;
 }

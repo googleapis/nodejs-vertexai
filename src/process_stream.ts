@@ -193,6 +193,13 @@ function aggregateResponses(
           if (part.text) {
             aggregatedResponse.candidates[i].content.parts[0].text += part.text;
           }
+          if (part.functionCall) {
+            aggregatedResponse.candidates[i].content.parts[0].functionCall =
+              part.functionCall;
+            // the empty 'text' key should be removed if functionCall is in the
+            // response
+            delete aggregatedResponse.candidates[i].content.parts[0].text;
+          }
         }
       }
     }

@@ -27,6 +27,7 @@ import * as StreamFunctions from '../src/process_stream';
 import {
   CountTokensRequest,
   FinishReason,
+  FunctionDeclarationSchemaType,
   GenerateContentRequest,
   GenerateContentResponse,
   GenerateContentResult,
@@ -36,6 +37,7 @@ import {
   SafetyRating,
   SafetySetting,
   StreamGenerateContentResult,
+  Tool,
 } from '../src/types/content';
 import {GoogleAuthError} from '../src/types/errors';
 import {constants} from '../src/util';
@@ -115,6 +117,41 @@ const TEST_MODEL_RESPONSE = {
   candidates: TEST_CANDIDATES,
   usage_metadata: {prompt_token_count: 0, candidates_token_count: 0},
 };
+const TEST_FUNCTION_CALL_RESPONSE = {
+  functionCall: {
+    name: 'get_current_weather',
+    args: {
+      location: 'LA',
+      unit: 'fahrenheit',
+    },
+  },
+};
+
+const TEST_CANDIDATES_WITH_FUNCTION_CALL = [
+  {
+    index: 1,
+    content: {
+      role: constants.MODEL_ROLE,
+      parts: [TEST_FUNCTION_CALL_RESPONSE],
+    },
+    finishReason: FinishReason.STOP,
+    finishMessage: '',
+    safetyRatings: TEST_SAFETY_RATINGS,
+  },
+];
+const TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL = {
+  candidates: TEST_CANDIDATES_WITH_FUNCTION_CALL,
+};
+
+const TEST_FUNCTION_RESPONSE_PART = [
+  {
+    functionResponse: {
+      name: 'get_current_weather',
+      response: {name: 'get_current_weather', content: {weather: 'super nice'}},
+    },
+  },
+];
+
 const TEST_CANDIDATES_MISSING_ROLE = [
   {
     index: 1,
@@ -158,6 +195,28 @@ const TEST_MULTIPART_MESSAGE_BASE64 = [
   {
     role: constants.USER_ROLE,
     parts: [{text: 'What is in this picture?'}, INLINE_DATA_FILE_PART],
+  },
+];
+
+const TEST_TOOLS_WITH_FUNCTION_DECLARATION: Tool[] = [
+  {
+    function_declarations: [
+      {
+        name: 'get_current_weather',
+        description: 'get weather in a given location',
+        parameters: {
+          type: FunctionDeclarationSchemaType.OBJECT,
+          properties: {
+            location: {type: FunctionDeclarationSchemaType.STRING},
+            unit: {
+              type: FunctionDeclarationSchemaType.STRING,
+              enum: ['celsius', 'fahrenheit'],
+            },
+          },
+          required: ['location'],
+        },
+      },
+    ],
   },
 ];
 
@@ -301,188 +360,209 @@ describe('VertexAI', () => {
       const resp = await model.generateContent(TEST_CHAT_MESSSAGE_TEXT);
       expect(resp).toEqual(expectedResult);
     });
-  });
 
-  it('returns a GenerateContentResponse when passed a GCS URI', async () => {
-    const req: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
-    };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
-    };
-    const expectedStreamResult: StreamGenerateContentResult = {
-      response: Promise.resolve(TEST_MODEL_RESPONSE),
-      stream: testGenerator(),
-    };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(
-      expectedStreamResult
-    );
-    const resp = await model.generateContent(req);
-    expect(resp).toEqual(expectedResult);
-  });
-
-  it('raises an error when passed an invalid GCS URI', async () => {
-    const req: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE,
-    };
-    await expectAsync(model.generateContent(req)).toBeRejectedWithError(
-      URIError
-    );
-  });
-
-  it('returns a GenerateContentResponse when passed safety_settings and generation_config', async () => {
-    const req: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE,
-      safety_settings: TEST_SAFETY_SETTINGS,
-      generation_config: TEST_GENERATION_CONFIG,
-    };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
-    };
-    const expectedStreamResult: StreamGenerateContentResult = {
-      response: Promise.resolve(TEST_MODEL_RESPONSE),
-      stream: testGenerator(),
-    };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(
-      expectedStreamResult
-    );
-    const resp = await model.generateContent(req);
-    expect(resp).toEqual(expectedResult);
-  });
-
-  it('updates the base API endpoint when provided', async () => {
-    const vertexaiWithBasePath = new VertexAI({
-      project: PROJECT,
-      location: LOCATION,
-      apiEndpoint: TEST_ENDPOINT_BASE_PATH,
-    });
-    spyOnProperty(vertexaiWithBasePath.preview, 'token', 'get').and.resolveTo(
-      TEST_TOKEN
-    );
-    model = vertexaiWithBasePath.preview.getGenerativeModel({
-      model: 'gemini-pro',
+    it('returns a GenerateContentResponse when passed a GCS URI', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      const resp = await model.generateContent(req);
+      expect(resp).toEqual(expectedResult);
     });
 
-    const req: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE,
-    };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
-    };
-    const expectedStreamResult: StreamGenerateContentResult = {
-      response: Promise.resolve(TEST_MODEL_RESPONSE),
-      stream: testGenerator(),
-    };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(
-      expectedStreamResult
-    );
-    await model.generateContent(req);
-    expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
-      TEST_ENDPOINT_BASE_PATH
-    );
-  });
-
-  it('default the base API endpoint when base API not provided', async () => {
-    const vertexaiWithoutBasePath = new VertexAI({
-      project: PROJECT,
-      location: LOCATION,
-    });
-    spyOnProperty(
-      vertexaiWithoutBasePath.preview,
-      'token',
-      'get'
-    ).and.resolveTo(TEST_TOKEN);
-    model = vertexaiWithoutBasePath.preview.getGenerativeModel({
-      model: 'gemini-pro',
+    it('raises an error when passed an invalid GCS URI', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE,
+      };
+      await expectAsync(model.generateContent(req)).toBeRejectedWithError(
+        URIError
+      );
     });
 
-    const req: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE,
-    };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
-    };
-    const expectedStreamResult: StreamGenerateContentResult = {
-      response: Promise.resolve(TEST_MODEL_RESPONSE),
-      stream: testGenerator(),
-    };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(
-      expectedStreamResult
-    );
-    await model.generateContent(req);
-    expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
-      `${LOCATION}-aiplatform.googleapis.com`
-    );
-  });
+    it('returns a GenerateContentResponse when passed safety_settings and generation_config', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE,
+        safety_settings: TEST_SAFETY_SETTINGS,
+        generation_config: TEST_GENERATION_CONFIG,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      const resp = await model.generateContent(req);
+      expect(resp).toEqual(expectedResult);
+    });
 
-  it('removes top_k when it is set to 0', async () => {
-    const reqWithEmptyConfigs: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
-      generation_config: {top_k: 0},
-      safety_settings: [],
-    };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
-    };
-    const expectedStreamResult: StreamGenerateContentResult = {
-      response: Promise.resolve(TEST_MODEL_RESPONSE),
-      stream: testGenerator(),
-    };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(
-      expectedStreamResult
-    );
-    await model.generateContent(reqWithEmptyConfigs);
-    const requestArgs = fetchSpy.calls.allArgs()[0][1];
-    if (typeof requestArgs === 'object' && requestArgs) {
-      expect(JSON.stringify(requestArgs['body'])).not.toContain('top_k');
-    }
-  });
+    it('updates the base API endpoint when provided', async () => {
+      const vertexaiWithBasePath = new VertexAI({
+        project: PROJECT,
+        location: LOCATION,
+        apiEndpoint: TEST_ENDPOINT_BASE_PATH,
+      });
+      spyOnProperty(vertexaiWithBasePath.preview, 'token', 'get').and.resolveTo(
+        TEST_TOKEN
+      );
+      model = vertexaiWithBasePath.preview.getGenerativeModel({
+        model: 'gemini-pro',
+      });
 
-  it('includes top_k when it is within 1 - 40', async () => {
-    const reqWithEmptyConfigs: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
-      generation_config: {top_k: 1},
-      safety_settings: [],
-    };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
-    };
-    const expectedStreamResult: StreamGenerateContentResult = {
-      response: Promise.resolve(TEST_MODEL_RESPONSE),
-      stream: testGenerator(),
-    };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(
-      expectedStreamResult
-    );
-    await model.generateContent(reqWithEmptyConfigs);
-    const requestArgs = fetchSpy.calls.allArgs()[0][1];
-    if (typeof requestArgs === 'object' && requestArgs) {
-      expect(JSON.stringify(requestArgs['body'])).toContain('top_k');
-    }
-  });
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      await model.generateContent(req);
+      expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
+        TEST_ENDPOINT_BASE_PATH
+      );
+    });
 
-  it('aggregates citation metadata', async () => {
-    const req: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE,
-    };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
-    };
-    const expectedStreamResult: StreamGenerateContentResult = {
-      response: Promise.resolve(TEST_MODEL_RESPONSE),
-      stream: testGenerator(),
-    };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(
-      expectedStreamResult
-    );
-    const resp = await model.generateContent(req);
-    expect(
-      resp.response.candidates[0].citationMetadata?.citationSources.length
-    ).toEqual(
-      TEST_MODEL_RESPONSE.candidates[0].citationMetadata.citationSources.length
-    );
-  });
+    it('default the base API endpoint when base API not provided', async () => {
+      const vertexaiWithoutBasePath = new VertexAI({
+        project: PROJECT,
+        location: LOCATION,
+      });
+      spyOnProperty(
+        vertexaiWithoutBasePath.preview,
+        'token',
+        'get'
+      ).and.resolveTo(TEST_TOKEN);
+      model = vertexaiWithoutBasePath.preview.getGenerativeModel({
+        model: 'gemini-pro',
+      });
 
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      await model.generateContent(req);
+      expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
+        `${LOCATION}-aiplatform.googleapis.com`
+      );
+    });
+
+    it('removes top_k when it is set to 0', async () => {
+      const reqWithEmptyConfigs: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+        generation_config: {top_k: 0},
+        safety_settings: [],
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      await model.generateContent(reqWithEmptyConfigs);
+      const requestArgs = fetchSpy.calls.allArgs()[0][1];
+      if (typeof requestArgs === 'object' && requestArgs) {
+        expect(JSON.stringify(requestArgs['body'])).not.toContain('top_k');
+      }
+    });
+
+    it('includes top_k when it is within 1 - 40', async () => {
+      const reqWithEmptyConfigs: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+        generation_config: {top_k: 1},
+        safety_settings: [],
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      await model.generateContent(reqWithEmptyConfigs);
+      const requestArgs = fetchSpy.calls.allArgs()[0][1];
+      if (typeof requestArgs === 'object' && requestArgs) {
+        expect(JSON.stringify(requestArgs['body'])).toContain('top_k');
+      }
+    });
+
+    it('aggregates citation metadata', async () => {
+      const req: GenerateContentRequest = {
+        contents: TEST_USER_CHAT_MESSAGE,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      const resp = await model.generateContent(req);
+      expect(
+        resp.response.candidates[0].citationMetadata?.citationSources.length
+      ).toEqual(
+        TEST_MODEL_RESPONSE.candidates[0].citationMetadata.citationSources
+          .length
+      );
+    });
+
+    it('returns a FunctionCall when passed a FunctionDeclaration', async () => {
+      const req: GenerateContentRequest = {
+        contents: [
+          {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+        ],
+        tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      const resp = await model.generateContent(req);
+      expect(resp).toEqual(expectedResult);
+    });
+  });
   describe('generateContentStream', () => {
     it('returns a GenerateContentResponse when passed text content', async () => {
       const req: GenerateContentRequest = {
@@ -532,6 +612,23 @@ describe('VertexAI', () => {
       const resp = await model.generateContentStream(req);
       expect(resp).toEqual(expectedResult);
     });
+    it('returns a FunctionCall when passed a FunctionDeclaration', async () => {
+      const req: GenerateContentRequest = {
+        contents: [
+          {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+        ],
+        tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
+        stream: testGenerator(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.returnValue(
+        expectedStreamResult
+      );
+      const resp = await model.generateContentStream(req);
+      expect(resp).toEqual(expectedStreamResult);
+    });
   });
 
   describe('startChat', () => {
@@ -577,6 +674,7 @@ describe('ChatSession', () => {
   let chatSession: ChatSession;
   let chatSessionWithNoArgs: ChatSession;
   let chatSessionWithEmptyResponse: ChatSession;
+  let chatSessionWithFunctionCall: ChatSession;
   let vertexai: VertexAI;
   let model: GenerativeModel;
   let expectedStreamResult: StreamGenerateContentResult;
@@ -591,6 +689,9 @@ describe('ChatSession', () => {
     expect(chatSession.history).toEqual(TEST_USER_CHAT_MESSAGE);
     chatSessionWithNoArgs = model.startChat();
     chatSessionWithEmptyResponse = model.startChat();
+    chatSessionWithFunctionCall = model.startChat({
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    });
     expectedStreamResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
@@ -667,7 +768,42 @@ describe('ChatSession', () => {
       );
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
+      console.log(chatSessionWithNoArgs.history, 'hihii');
       expect(chatSessionWithNoArgs.history.length).toEqual(2);
+    });
+    it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
+      const functionCallChatMessage = 'What is the weather in LA?';
+      const expectedFunctionCallResponse: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
+      };
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
+        stream: testGenerator(),
+      };
+
+      const streamSpy = spyOn(StreamFunctions, 'processStream');
+
+      streamSpy.and.returnValue(expectedStreamResult);
+      const response1 = await chatSessionWithFunctionCall.sendMessage(
+        functionCallChatMessage
+      );
+      expect(response1).toEqual(expectedFunctionCallResponse);
+      expect(chatSessionWithFunctionCall.history.length).toEqual(2);
+
+      // Send a follow-up message with a FunctionResponse
+      const expectedFollowUpResponse: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedFollowUpStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      streamSpy.and.returnValue(expectedFollowUpStreamResult);
+      const response2 = await chatSessionWithFunctionCall.sendMessage(
+        TEST_FUNCTION_RESPONSE_PART
+      );
+      expect(response2).toEqual(expectedFollowUpResponse);
+      expect(chatSessionWithFunctionCall.history.length).toEqual(4);
     });
   });
 
@@ -723,6 +859,35 @@ describe('ChatSession', () => {
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+    });
+
+    it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
+      const functionCallChatMessage = 'What is the weather in LA?';
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
+        stream: testGenerator(),
+      };
+
+      const streamSpy = spyOn(StreamFunctions, 'processStream');
+
+      streamSpy.and.returnValue(expectedStreamResult);
+      const response1 = await chatSessionWithFunctionCall.sendMessageStream(
+        functionCallChatMessage
+      );
+      expect(response1).toEqual(expectedStreamResult);
+      expect(chatSessionWithFunctionCall.history.length).toEqual(2);
+
+      // Send a follow-up message with a FunctionResponse
+      const expectedFollowUpStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      streamSpy.and.returnValue(expectedFollowUpStreamResult);
+      const response2 = await chatSessionWithFunctionCall.sendMessageStream(
+        TEST_FUNCTION_RESPONSE_PART
+      );
+      expect(response2).toEqual(expectedFollowUpStreamResult);
+      expect(chatSessionWithFunctionCall.history.length).toEqual(4);
     });
   });
 });

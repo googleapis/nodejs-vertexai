@@ -34,6 +34,7 @@ import {
   Part,
   SafetySetting,
   StreamGenerateContentResult,
+  Tool,
   VertexInit,
 } from './types/content';
 import {
@@ -134,7 +135,8 @@ export class VertexAI_Preview {
       this,
       modelParams.model,
       modelParams.generation_config,
-      modelParams.safety_settings
+      modelParams.safety_settings,
+      modelParams.tools
     );
   }
 
@@ -185,6 +187,7 @@ export declare interface StartChatParams {
   history?: Content[];
   safety_settings?: SafetySetting[];
   generation_config?: GenerationConfig;
+  tools?: Tool[];
 }
 
 // StartChatSessionRequest and ChatSession are defined here instead of in
@@ -216,6 +219,7 @@ export class ChatSession {
   private _send_stream_promise: Promise<void> = Promise.resolve();
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
+  tools?: Tool[];
 
   get history(): Content[] {
     return this.historyInternal;
@@ -231,6 +235,9 @@ export class ChatSession {
     this._model_instance = request._model_instance;
     this.historyInternal = request.history ?? [];
     this._vertex_instance = request._vertex_instance;
+    this.generation_config = request.generation_config;
+    this.safety_settings = request.safety_settings;
+    this.tools = request.tools;
   }
 
   /**
@@ -241,11 +248,12 @@ export class ChatSession {
   async sendMessage(
     request: string | Array<string | Part>
   ): Promise<GenerateContentResult> {
-    const newContent: Content = formulateNewContent(request);
+    const newContent: Content[] = formulateNewContent(request);
     const generateContentrequest: GenerateContentRequest = {
-      contents: this.historyInternal.concat([newContent]),
+      contents: this.historyInternal.concat(newContent),
       safety_settings: this.safety_settings,
       generation_config: this.generation_config,
+      tools: this.tools,
     };
 
     const generateContentResult: GenerateContentResult =
@@ -257,7 +265,7 @@ export class ChatSession {
     const generateContentResponse = generateContentResult.response;
     // Only push the latest message to history if the response returned a result
     if (generateContentResponse.candidates.length !== 0) {
-      this.historyInternal.push(newContent);
+      this.historyInternal = this.historyInternal.concat(newContent);
       const contentFromAssistant =
         generateContentResponse.candidates[0].content;
       if (!contentFromAssistant.role) {
@@ -274,7 +282,7 @@ export class ChatSession {
 
   async appendHistory(
     streamGenerateContentResultPromise: Promise<StreamGenerateContentResult>,
-    newContent: Content
+    newContent: Content[]
   ): Promise<void> {
     const streamGenerateContentResult =
       await streamGenerateContentResultPromise;
@@ -282,7 +290,7 @@ export class ChatSession {
       await streamGenerateContentResult.response;
     // Only push the latest message to history if the response returned a result
     if (streamGenerateContentResponse.candidates.length !== 0) {
-      this.historyInternal.push(newContent);
+      this.historyInternal = this.historyInternal.concat(newContent);
       const contentFromAssistant =
         streamGenerateContentResponse.candidates[0].content;
       if (!contentFromAssistant.role) {
@@ -303,11 +311,12 @@ export class ChatSession {
   async sendMessageStream(
     request: string | Array<string | Part>
   ): Promise<StreamGenerateContentResult> {
-    const newContent: Content = formulateNewContent(request);
+    const newContent: Content[] = formulateNewContent(request);
     const generateContentrequest: GenerateContentRequest = {
-      contents: this.historyInternal.concat([newContent]),
+      contents: this.historyInternal.concat(newContent),
       safety_settings: this.safety_settings,
       generation_config: this.generation_config,
+      tools: this.tools,
     };
 
     const streamGenerateContentResultPromise = this._model_instance
@@ -335,6 +344,7 @@ export class GenerativeModel {
   model: string;
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
+  tools?: Tool[];
   private _vertex_instance: VertexAI_Preview;
   private _use_non_stream = false;
   private publisherModelEndpoint: string;
@@ -351,12 +361,14 @@ export class GenerativeModel {
     vertex_instance: VertexAI_Preview,
     model: string,
     generation_config?: GenerationConfig,
-    safety_settings?: SafetySetting[]
+    safety_settings?: SafetySetting[],
+    tools?: Tool[]
   ) {
     this._vertex_instance = vertex_instance;
     this.model = model;
     this.generation_config = generation_config;
     this.safety_settings = safety_settings;
+    this.tools = tools;
     if (model.startsWith('models/')) {
       this.publisherModelEndpoint = `publishers/google/${this.model}`;
     } else {
@@ -401,6 +413,7 @@ export class GenerativeModel {
       contents: request.contents,
       generation_config: request.generation_config ?? this.generation_config,
       safety_settings: request.safety_settings ?? this.safety_settings,
+      tools: request.tools ?? [],
     };
 
     const response: Response | undefined = await postRequest({
@@ -444,6 +457,7 @@ export class GenerativeModel {
       contents: request.contents,
       generation_config: request.generation_config ?? this.generation_config,
       safety_settings: request.safety_settings ?? this.safety_settings,
+      tools: request.tools ?? [],
     };
     const response = await postRequest({
       region: this._vertex_instance.location,
@@ -501,12 +515,15 @@ export class GenerativeModel {
         request.generation_config ?? this.generation_config;
       startChatRequest.safety_settings =
         request.safety_settings ?? this.safety_settings;
+      startChatRequest.tools = request.tools ?? this.tools;
     }
     return new ChatSession(startChatRequest);
   }
 }
 
-function formulateNewContent(request: string | Array<string | Part>): Content {
+function formulateNewContent(
+  request: string | Array<string | Part>
+): Content[] {
   let newParts: Part[] = [];
 
   if (typeof request === 'string') {
@@ -521,8 +538,38 @@ function formulateNewContent(request: string | Array<string | Part>): Content {
     }
   }
 
-  const newContent: Content = {role: constants.USER_ROLE, parts: newParts};
-  return newContent;
+  return formatPartsByRole(newParts);
+}
+
+/**
+ * When multiple Part types (i.e. FunctionResponsePart and TextPart) are
+ * passed in a single Part array, we may need to assign different roles to each
+ * part. Currently only FunctionResponsePart requires a role other than 'user'.
+ * @ignore
+ * @param {Array<Part>} parts Array of parts to pass to the model
+ * @return {Content[]} Array of content items
+ */
+function formatPartsByRole(parts: Array<Part>): Content[] {
+  const partsByRole: Content[] = [];
+  const userContent: Content = {role: constants.USER_ROLE, parts: []};
+  const functionContent: Content = {role: constants.FUNCTION_ROLE, parts: []};
+
+  for (const part of parts) {
+    if ('functionResponse' in part) {
+      functionContent.parts.push(part);
+    } else {
+      userContent.parts.push(part);
+    }
+  }
+
+  if (userContent.parts.length > 0) {
+    partsByRole.push(userContent);
+  }
+  if (functionContent.parts.length > 0) {
+    partsByRole.push(functionContent);
+  }
+
+  return partsByRole;
 }
 
 function throwErrorIfNotOK(response: Response | undefined) {

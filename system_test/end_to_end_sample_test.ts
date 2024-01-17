@@ -16,7 +16,8 @@
  */
 
 // @ts-ignore
-import {ClientError, VertexAI, TextPart} from '../src';
+import {ClientError, TextPart, VertexAI} from '../src';
+import {FunctionDeclarationSchemaType} from '../src/types';
 
 const PROJECT = process.env.GCLOUD_PROJECT;
 const LOCATION = 'us-central1';
@@ -49,6 +50,47 @@ const MULTI_PART_GCS_REQUEST = {
 const MULTI_PART_BASE64_REQUEST = {
   contents: [{role: 'user', parts: [TEXT_PART, INLINE_DATA_FILE_PART]}],
 };
+
+const FUNCTION_CALL_NAME = 'get_current_weather';
+
+const TOOLS_WITH_FUNCTION_DECLARATION = [
+  {
+    function_declarations: [
+      {
+        name: FUNCTION_CALL_NAME,
+        description: 'get weather in a given location',
+        parameters: {
+          type: FunctionDeclarationSchemaType.OBJECT,
+          properties: {
+            location: {type: FunctionDeclarationSchemaType.STRING},
+            unit: {
+              type: FunctionDeclarationSchemaType.STRING,
+              enum: ['celsius', 'fahrenheit'],
+            },
+          },
+          required: ['location'],
+        },
+      },
+    ],
+  },
+];
+
+const WEATHER_FORECAST = 'super nice';
+const FUNCTION_RESPONSE_PART = [
+  {
+    functionResponse: {
+      name: FUNCTION_CALL_NAME,
+      response: {
+        name: FUNCTION_CALL_NAME,
+        content: {weather: WEATHER_FORECAST},
+      },
+    },
+  },
+];
+
+const FUNCTION_CALL = [
+  {functionCall: {name: FUNCTION_CALL_NAME, args: {location: 'boston'}}},
+];
 
 // Initialize Vertex with your Cloud project and location
 const vertex_ai = new VertexAI({
@@ -177,6 +219,26 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
+  it('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
+    const request = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
+        {role: 'model', parts: FUNCTION_CALL},
+        {role: 'function', parts: FUNCTION_RESPONSE_PART},
+      ],
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const streamingResp =
+      await generativeTextModel.generateContentStream(request);
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream, for item ${item}`
+      );
+      expect(item.candidates[0].content.parts[0].text?.toLowerCase()).toContain(
+        WEATHER_FORECAST
+      );
+    }
+  });
 });
 
 describe('generateContent', () => {
@@ -266,6 +328,37 @@ describe('sendMessageStream', () => {
     expect(aggregatedResultTimestamp - firstChunkTimestamp).toBeGreaterThan(
       firstChunkFinalResultTimeDiff
     );
+  });
+  it('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
+    const chat = generativeTextModel.startChat({
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    const chatInput1 = 'What is the weather in Boston?';
+    const result1 = await chat.sendMessageStream(chatInput1);
+    for await (const item of result1.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on sendMessageStream with function calling, for item ${item}`
+      );
+    }
+    const response1 = await result1.response;
+    expect(
+      JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
+    ).toContain(FUNCTION_CALL_NAME);
+    expect(
+      JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
+    ).toContain('location');
+
+    // Send a follow up message with a FunctionResponse
+    const result2 = await chat.sendMessageStream(FUNCTION_RESPONSE_PART);
+    for await (const item of result2.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on sendMessageStream with function calling, for item ${item}`
+      );
+    }
+    const response2 = await result2.response;
+    expect(
+      JSON.stringify(response2.candidates[0].content.parts[0].text)
+    ).toContain(WEATHER_FORECAST);
   });
 });
 
