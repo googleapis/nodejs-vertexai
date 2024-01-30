@@ -20,6 +20,6 @@ export const USER_ROLE = 'user';
 export const MODEL_ROLE = 'model';
 export const FUNCTION_ROLE = 'function';
 const USER_AGENT_PRODUCT = 'model-builder';
-const CLIENT_LIBRARY_VERSION = '0.2.1'; // x-release-please-version
+const CLIENT_LIBRARY_VERSION = '0.3.0'; // x-release-please-version
 const CLIENT_LIBRARY_LANGUAGE = `grpc-node/${CLIENT_LIBRARY_VERSION}`;
 export const USER_AGENT = `${USER_AGENT_PRODUCT}/${CLIENT_LIBRARY_VERSION} ${CLIENT_LIBRARY_LANGUAGE}`;
