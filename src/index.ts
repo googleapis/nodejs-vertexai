@@ -248,7 +248,8 @@ export class ChatSession {
   async sendMessage(
     request: string | Array<string | Part>
   ): Promise<GenerateContentResult> {
-    const newContent: Content[] = formulateNewContent(request);
+    const newContent: Content[] =
+      formulateNewContentFromSendMessageRequest(request);
     const generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
       safety_settings: this.safety_settings,
@@ -311,7 +312,8 @@ export class ChatSession {
   async sendMessageStream(
     request: string | Array<string | Part>
   ): Promise<StreamGenerateContentResult> {
-    const newContent: Content[] = formulateNewContent(request);
+    const newContent: Content[] =
+      formulateNewContentFromSendMessageRequest(request);
     const generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
       safety_settings: this.safety_settings,
@@ -390,7 +392,7 @@ export class GenerativeModel {
       this.safety_settings
     );
 
-    validateGcsInput(request.contents);
+    validateGenerateContentRequest(request);
 
     if (request.generation_config) {
       request.generation_config = validateGenerationConfig(
@@ -445,7 +447,7 @@ export class GenerativeModel {
       this.generation_config,
       this.safety_settings
     );
-    validateGcsInput(request.contents);
+    validateGenerateContentRequest(request);
 
     if (request.generation_config) {
       request.generation_config = validateGenerationConfig(
@@ -521,7 +523,7 @@ export class GenerativeModel {
   }
 }
 
-function formulateNewContent(
+function formulateNewContentFromSendMessageRequest(
   request: string | Array<string | Part>
 ): Content[] {
   let newParts: Part[] = [];
@@ -538,7 +540,7 @@ function formulateNewContent(
     }
   }
 
-  return formatPartsByRole(newParts);
+  return assignRoleToPartsAndValidateSendMessageRequest(newParts);
 }
 
 /**
@@ -549,27 +551,38 @@ function formulateNewContent(
  * @param {Array<Part>} parts Array of parts to pass to the model
  * @return {Content[]} Array of content items
  */
-function formatPartsByRole(parts: Array<Part>): Content[] {
-  const partsByRole: Content[] = [];
+function assignRoleToPartsAndValidateSendMessageRequest(
+  parts: Array<Part>
+): Content[] {
   const userContent: Content = {role: constants.USER_ROLE, parts: []};
   const functionContent: Content = {role: constants.FUNCTION_ROLE, parts: []};
-
+  let hasUserContent = false;
+  let hasFunctionContent = false;
   for (const part of parts) {
     if ('functionResponse' in part) {
       functionContent.parts.push(part);
+      hasFunctionContent = true;
     } else {
       userContent.parts.push(part);
+      hasUserContent = true;
     }
   }
 
-  if (userContent.parts.length > 0) {
-    partsByRole.push(userContent);
-  }
-  if (functionContent.parts.length > 0) {
-    partsByRole.push(functionContent);
+  if (hasUserContent && hasFunctionContent) {
+    throw new ClientError(
+      'Within a single message, FunctionResponse cannot be mixed with other type of part in the request for sending chat message.'
+    );
   }
 
-  return partsByRole;
+  if (!hasUserContent && !hasFunctionContent) {
+    throw new ClientError('No content is provided for sending chat message.');
+  }
+
+  if (hasUserContent) {
+    return [userContent];
+  }
+
+  return [functionContent];
 }
 
 function throwErrorIfNotOK(response: Response | undefined) {
@@ -601,6 +614,27 @@ function validateGcsInput(contents: Content[]) {
       }
     }
   }
+}
+
+function validateFunctionResponseRequest(contents: Content[]) {
+  const lastestContentPart = contents[contents.length - 1].parts[0];
+  if (!('functionResponse' in lastestContentPart)) {
+    return;
+  }
+  const errorMessage =
+    'Please ensure that function response turn comes immediately after a function call turn.';
+  if (contents.length < 2) {
+    throw new ClientError(errorMessage);
+  }
+  const secondLastestContentPart = contents[contents.length - 2].parts[0];
+  if (!('functionCall' in secondLastestContentPart)) {
+    throw new ClientError(errorMessage);
+  }
+}
+
+function validateGenerateContentRequest(request: GenerateContentRequest) {
+  validateGcsInput(request.contents);
+  validateFunctionResponseRequest(request.contents);
 }
 
 function validateGenerationConfig(

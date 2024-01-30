@@ -562,6 +562,42 @@ describe('VertexAI', () => {
       const resp = await model.generateContent(req);
       expect(resp).toEqual(expectedResult);
     });
+
+    it('throws ClientError when functionResponse is not immedidately following functionCall case1', async () => {
+      const req: GenerateContentRequest = {
+        contents: [
+          {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+          {
+            role: 'function',
+            parts: TEST_FUNCTION_RESPONSE_PART,
+          },
+        ],
+        tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+      };
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
+      await model.generateContent(req).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
+    });
+
+    it('throws ClientError when functionResponse is not immedidately following functionCall case2', async () => {
+      const req: GenerateContentRequest = {
+        contents: [
+          {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+          {
+            role: 'function',
+            parts: TEST_FUNCTION_RESPONSE_PART,
+          },
+        ],
+        tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+      };
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
+      await model.generateContent(req).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
+    });
   });
   describe('generateContentStream', () => {
     it('returns a GenerateContentResponse when passed text content', async () => {
@@ -628,6 +664,41 @@ describe('VertexAI', () => {
       );
       const resp = await model.generateContentStream(req);
       expect(resp).toEqual(expectedStreamResult);
+    });
+    it('throws ClientError when functionResponse is not immedidately following functionCall case1', async () => {
+      const req: GenerateContentRequest = {
+        contents: [
+          {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+          {
+            role: 'function',
+            parts: TEST_FUNCTION_RESPONSE_PART,
+          },
+        ],
+        tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+      };
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
+      await model.generateContentStream(req).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
+    });
+
+    it('throws ClientError when functionResponse is not immedidately following functionCall case2', async () => {
+      const req: GenerateContentRequest = {
+        contents: [
+          {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+          {
+            role: 'function',
+            parts: TEST_FUNCTION_RESPONSE_PART,
+          },
+        ],
+        tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+      };
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
+      await model.generateContentStream(req).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
     });
   });
 
@@ -805,6 +876,26 @@ describe('ChatSession', () => {
       expect(response2).toEqual(expectedFollowUpResponse);
       expect(chatSessionWithFunctionCall.history.length).toEqual(4);
     });
+
+    it('throw ClientError when request has no content', async () => {
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: No content is provided for sending chat message.';
+      await chatSessionWithNoArgs.sendMessage([]).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
+    });
+
+    it('throw ClientError when request mix functionCall part with other types of part', async () => {
+      const chatRequest = [
+        'what is the weather like in LA',
+        TEST_FUNCTION_RESPONSE_PART[0],
+      ];
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: Within a single message, FunctionResponse cannot be mixed with other type of part in the request for sending chat message.';
+      await chatSessionWithNoArgs.sendMessage(chatRequest).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
+    });
   });
 
   describe('sendMessageStream', () => {
@@ -888,6 +979,26 @@ describe('ChatSession', () => {
       );
       expect(response2).toEqual(expectedFollowUpStreamResult);
       expect(chatSessionWithFunctionCall.history.length).toEqual(4);
+    });
+
+    it('throw ClientError when request has no content', async () => {
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: No content is provided for sending chat message.';
+      await chatSessionWithNoArgs.sendMessageStream([]).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
+    });
+
+    it('throw ClientError when request mix functionCall part with other types of part', async () => {
+      const chatRequest = [
+        'what is the weather like in LA',
+        TEST_FUNCTION_RESPONSE_PART[0],
+      ];
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: Within a single message, FunctionResponse cannot be mixed with other type of part in the request for sending chat message.';
+      await chatSessionWithNoArgs.sendMessageStream(chatRequest).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
     });
   });
 });
