@@ -263,7 +263,7 @@ export class ChatSession {
         .catch(e => {
           throw e;
         });
-    const generateContentResponse = generateContentResult.response;
+    const generateContentResponse = await generateContentResult.response;
     // Only push the latest message to history if the response returned a result
     if (generateContentResponse.candidates.length !== 0) {
       this.historyInternal = this.historyInternal.concat(newContent);
@@ -348,7 +348,6 @@ export class GenerativeModel {
   safety_settings?: SafetySetting[];
   tools?: Tool[];
   private _vertex_instance: VertexAI_Preview;
-  private _use_non_stream = false;
   private publisherModelEndpoint: string;
 
   /**
@@ -398,17 +397,6 @@ export class GenerativeModel {
       request.generation_config = validateGenerationConfig(
         request.generation_config
       );
-    }
-
-    if (!this._use_non_stream) {
-      const streamGenerateContentResult: StreamGenerateContentResult =
-        await this.generateContentStream(request).catch(e => {
-          throw e;
-        });
-      const result: GenerateContentResult = {
-        response: await streamGenerateContentResult.response,
-      };
-      return Promise.resolve(result);
     }
 
     const generateContentRequest: GenerateContentRequest = {

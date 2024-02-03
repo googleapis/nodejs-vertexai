@@ -1,18 +1,5 @@
 # Changelog
 
-## [0.3.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.2.1...v0.3.0) (2024-01-30)
-
-
-### Features
-
-* add function calling support ([1deb4e9](https://github.com/googleapis/nodejs-vertexai/commit/1deb4e920205d2fff6da780175de6045bd853885))
-
-
-### Bug Fixes
-
-* throw error when GoogleAuthOptions.scopes doesn't include required scope. ([558aee9](https://github.com/googleapis/nodejs-vertexai/commit/558aee98d76192b4a63b3d28abba3f3d4cda1762))
-* throws instructive client side error message when bad request happens for function calling ([c90203d](https://github.com/googleapis/nodejs-vertexai/commit/c90203d153407daa08763c273a827a5e9db54a70))
-
 ## [0.2.1](https://github.com/googleapis/nodejs-vertexai/compare/v0.2.0...v0.2.1) (2024-01-05)
 
 
