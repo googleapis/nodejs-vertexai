@@ -23,6 +23,7 @@ import {
   processNonStream,
   processStream,
 } from './process_stream';
+import {countTokens} from './functions';
 import {
   Content,
   CountTokensRequest,
@@ -494,19 +495,14 @@ export class GenerativeModel {
    * @return The CountTokensResponse object with the token count.
    */
   async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
-    const response = await postRequest({
-      region: this.location,
-      project: this.project,
-      resourcePath: this.publisherModelEndpoint,
-      resourceMethod: 'countTokens',
-      token: await this.token,
-      data: request,
-      apiEndpoint: this.apiEndpoint,
-    }).catch(e => {
-      throw new GoogleGenerativeAIError('exception posting request', e);
-    });
-    throwErrorIfNotOK(response);
-    return processCountTokenResponse(response);
+    return countTokens(
+      this.location,
+      this.project,
+      this.publisherModelEndpoint,
+      this.token,
+      request,
+      this.apiEndpoint
+    );
   }
 
   /**

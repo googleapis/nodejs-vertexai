@@ -33,8 +33,8 @@ export async function countTokens(
   project: string,
   publisherModelEndpoint: string,
   token: Promise<any>,
-  apiEndpoint: string,
-  request: CountTokensRequest
+  request: CountTokensRequest,
+  apiEndpoint?: string
 ): Promise<CountTokensResponse> {
   const response = await postRequest({
     region: location,
@@ -48,5 +48,6 @@ export async function countTokens(
     throw new GoogleGenerativeAIError('exception posting request', e);
   });
   throwErrorIfNotOK(response);
-  return processCountTokenResponse(response);
+  const processedResponse = processCountTokenResponse(response);
+  return Promise.resolve(processedResponse);
 }

@@ -55,8 +55,8 @@ describe('countTokens', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
 
     expect(resp).toEqual(expectedResponseBody);
@@ -80,8 +80,8 @@ describe('countTokens', () => {
         TEST_PROJECT,
         TEST_PUBLISHER_MODEL_ENDPOINT,
         TEST_TOKEN_PROMISE,
-        TEST_API_ENDPOINT,
-        req
+        req,
+        TEST_API_ENDPOINT
       )
     ).toBeRejected();
     await countTokens(
@@ -89,8 +89,8 @@ describe('countTokens', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     ).catch(e => {
       expect(e.message).toEqual(expectedErrorMessage);
     });
@@ -114,8 +114,8 @@ describe('countTokens', () => {
         TEST_PROJECT,
         TEST_PUBLISHER_MODEL_ENDPOINT,
         TEST_TOKEN_PROMISE,
-        TEST_API_ENDPOINT,
-        req
+        req,
+        TEST_API_ENDPOINT
       )
     ).toBeRejected();
     await countTokens(
@@ -123,8 +123,8 @@ describe('countTokens', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     ).catch(e => {
       expect(e.message).toEqual(expectedErrorMessage);
     });
