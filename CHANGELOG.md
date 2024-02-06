@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/googleapis/nodejs-vertexai/compare/v0.3.0...v0.3.1) (2024-02-06)
+
+
+### Bug Fixes
+
+* decouple dependency between VertexAI_Preivew and GenerativeModel classes ([6762c99](https://github.com/googleapis/nodejs-vertexai/commit/6762c995bfa1bfdb740ed01a2eb4385126b0e36a))
+* Switch NodeJS generateContent to call Unary API endpoint ([e4edb59](https://github.com/googleapis/nodejs-vertexai/commit/e4edb599863c23a896e263ba2639c80481a65543))
+
 ## [0.3.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.2.1...v0.3.0) (2024-01-30)
 
 
