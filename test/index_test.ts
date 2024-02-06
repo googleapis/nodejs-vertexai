@@ -255,8 +255,8 @@ describe('VertexAI', () => {
       project: PROJECT,
       location: LOCATION,
     });
-    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
     model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     expectedStreamResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
@@ -406,13 +406,10 @@ describe('VertexAI', () => {
         location: LOCATION,
         apiEndpoint: TEST_ENDPOINT_BASE_PATH,
       });
-      spyOnProperty(vertexaiWithBasePath.preview, 'token', 'get').and.resolveTo(
-        TEST_TOKEN
-      );
       model = vertexaiWithBasePath.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
-
+      spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
       const req: GenerateContentRequest = {
         contents: TEST_USER_CHAT_MESSAGE,
       };
@@ -433,15 +430,10 @@ describe('VertexAI', () => {
         project: PROJECT,
         location: LOCATION,
       });
-      spyOnProperty(
-        vertexaiWithoutBasePath.preview,
-        'token',
-        'get'
-      ).and.resolveTo(TEST_TOKEN);
       model = vertexaiWithoutBasePath.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
-
+      spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
       const req: GenerateContentRequest = {
         contents: TEST_USER_CHAT_MESSAGE,
       };
@@ -691,8 +683,8 @@ describe('countTokens', () => {
       project: PROJECT,
       location: LOCATION,
     });
-    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
     const model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     const req: CountTokensRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
@@ -720,7 +712,6 @@ describe('ChatSession', () => {
 
   beforeEach(() => {
     vertexai = new VertexAI({project: PROJECT, location: LOCATION});
-    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
     model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
@@ -739,6 +730,7 @@ describe('ChatSession', () => {
       new Response(JSON.stringify(expectedStreamResult), fetchResponseObj)
     );
     spyOn(global, 'fetch').and.returnValue(fetchResult);
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
   });
 
   describe('sendMessage', () => {
@@ -970,7 +962,7 @@ describe('when exception at fetch', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.throwError('error');
   });
 
@@ -1008,8 +1000,8 @@ describe('when response is undefined', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.resolveTo();
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
   });
 
   it('generateContent should throw GoogleGenerativeAI error', async () => {
@@ -1065,7 +1057,7 @@ describe('when response is 4XX', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.resolveTo(response);
   });
 
@@ -1122,7 +1114,7 @@ describe('when response is not OK and not 4XX', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(vertexai.preview, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.resolveTo(response);
   });
 

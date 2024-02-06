@@ -102,42 +102,26 @@ export class VertexAI_Preview {
   }
 
   /**
-   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @return {Promise<any>} Promise of token
-   */
-  get token(): Promise<any> {
-    const credential_error_message =
-      '\nUnable to authenticate your request\
-        \nDepending on your run time environment, you can get authentication by\
-        \n- if in local instance or cloud shell: `!gcloud auth login`\
-        \n- if in Colab:\
-        \n    -`from google.colab import auth`\
-        \n    -`auth.authenticate_user()`\
-        \n- if in service account or other: please follow guidance in https://cloud.google.com/docs/authentication';
-    const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
-      throw new GoogleAuthError(credential_error_message, e);
-    });
-    return tokenPromise;
-  }
-
-  /**
    * @param {ModelParams} modelParams - {@link ModelParams} Parameters to specify the generative model.
    * @return {GenerativeModel} Instance of the GenerativeModel class. {@link GenerativeModel}
    */
   getGenerativeModel(modelParams: ModelParams): GenerativeModel {
+    const getGenerativeModelParams: GetGenerativeModelParams = {
+      model: modelParams.model,
+      project: this.project,
+      location: this.location,
+      googleAuth: this.googleAuth,
+      apiEndpoint: this.apiEndpoint,
+      safety_settings: modelParams.safety_settings,
+      tools: modelParams.tools,
+    };
     if (modelParams.generation_config) {
-      modelParams.generation_config = validateGenerationConfig(
+      getGenerativeModelParams.generation_config = validateGenerationConfig(
         modelParams.generation_config
       );
     }
 
-    return new GenerativeModel(
-      this,
-      modelParams.model,
-      modelParams.generation_config,
-      modelParams.safety_settings,
-      modelParams.tools
-    );
+    return new GenerativeModel(getGenerativeModelParams);
   }
 
   validateGoogleAuthOptions(
@@ -200,8 +184,34 @@ export declare interface StartChatParams {
  * @property {GenerativeModel} - _model_instance {@link GenerativeModel}
  */
 export declare interface StartChatSessionRequest extends StartChatParams {
-  _vertex_instance: VertexAI_Preview;
+  project: string;
+  location: string;
   _model_instance: GenerativeModel;
+}
+
+/**
+ * @property {string} model - model name
+ * @property {string} project - project The Google Cloud project to use for the request
+ * @property {string} location - The Google Cloud project location to use for the request
+ * @property {GoogleAuth} googleAuth - GoogleAuth class instance that handles authentication.
+ *        Details about GoogleAuth is referred to https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
+ * @property {string} - [apiEndpoint] The base Vertex AI endpoint to use for the request. If
+ *        not provided, the default regionalized endpoint
+ *        (i.e. us-central1-aiplatform.googleapis.com) will be used.
+ * @property {GenerationConfig} [generation_config] - {@link
+ *     GenerationConfig}
+ * @property {SafetySetting[]} [safety_settings] - {@link SafetySetting}
+ * @property {Tool[]} [tools] - {@link Tool}
+ */
+export declare interface GetGenerativeModelParams extends ModelParams {
+  model: string;
+  project: string;
+  location: string;
+  googleAuth: GoogleAuth;
+  apiEndpoint?: string;
+  generation_config?: GenerationConfig;
+  safety_settings?: SafetySetting[];
+  tools?: Tool[];
 }
 
 /**
@@ -214,7 +224,6 @@ export class ChatSession {
   private location: string;
 
   private historyInternal: Content[];
-  private _vertex_instance: VertexAI_Preview;
   private _model_instance: GenerativeModel;
   private _send_stream_promise: Promise<void> = Promise.resolve();
   generation_config?: GenerationConfig;
@@ -230,11 +239,10 @@ export class ChatSession {
    * @param {StartChatSessionRequest} request - {@link StartChatSessionRequest}
    */
   constructor(request: StartChatSessionRequest) {
-    this.project = request._vertex_instance.project;
-    this.location = request._vertex_instance.location;
+    this.project = request.project;
+    this.location = request.location;
     this._model_instance = request._model_instance;
     this.historyInternal = request.history ?? [];
-    this._vertex_instance = request._vertex_instance;
     this.generation_config = request.generation_config;
     this.safety_settings = request.safety_settings;
     this.tools = request.tools;
@@ -347,34 +355,49 @@ export class GenerativeModel {
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
   tools?: Tool[];
-  private _vertex_instance: VertexAI_Preview;
+  private project: string;
+  private location: string;
+  private googleAuth: GoogleAuth;
   private publisherModelEndpoint: string;
+  private apiEndpoint?: string;
 
   /**
    * @constructor
-   * @param {VertexAI_Preview} vertex_instance - {@link VertexAI_Preview}
-   * @param {string} model - model name
-   * @param {GenerationConfig} generation_config - Optional. {@link
-   *     GenerationConfig}
-   * @param {SafetySetting[]} safety_settings - Optional. {@link SafetySetting}
+   * @param {GetGenerativeModelParams} getGenerativeModelParams - {@link GetGenerativeModelParams}
    */
-  constructor(
-    vertex_instance: VertexAI_Preview,
-    model: string,
-    generation_config?: GenerationConfig,
-    safety_settings?: SafetySetting[],
-    tools?: Tool[]
-  ) {
-    this._vertex_instance = vertex_instance;
-    this.model = model;
-    this.generation_config = generation_config;
-    this.safety_settings = safety_settings;
-    this.tools = tools;
-    if (model.startsWith('models/')) {
+  constructor(getGenerativeModelParams: GetGenerativeModelParams) {
+    this.project = getGenerativeModelParams.project;
+    this.location = getGenerativeModelParams.location;
+    this.apiEndpoint = getGenerativeModelParams.apiEndpoint;
+    this.googleAuth = getGenerativeModelParams.googleAuth;
+    this.model = getGenerativeModelParams.model;
+    this.generation_config = getGenerativeModelParams.generation_config;
+    this.safety_settings = getGenerativeModelParams.safety_settings;
+    this.tools = getGenerativeModelParams.tools;
+    if (this.model.startsWith('models/')) {
       this.publisherModelEndpoint = `publishers/google/${this.model}`;
     } else {
       this.publisherModelEndpoint = `publishers/google/models/${this.model}`;
     }
+  }
+
+  /**
+   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * @return {Promise<any>} Promise of token
+   */
+  get token(): Promise<any> {
+    const credential_error_message =
+      '\nUnable to authenticate your request\
+        \nDepending on your run time environment, you can get authentication by\
+        \n- if in local instance or cloud shell: `!gcloud auth login`\
+        \n- if in Colab:\
+        \n    -`from google.colab import auth`\
+        \n    -`auth.authenticate_user()`\
+        \n- if in service account or other: please follow guidance in https://cloud.google.com/docs/authentication';
+    const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
+      throw new GoogleAuthError(credential_error_message, e);
+    });
+    return tokenPromise;
   }
 
   /**
@@ -407,13 +430,13 @@ export class GenerativeModel {
     };
 
     const response: Response | undefined = await postRequest({
-      region: this._vertex_instance.location,
-      project: this._vertex_instance.project,
+      region: this.location,
+      project: this.project,
       resourcePath: this.publisherModelEndpoint,
       resourceMethod: constants.GENERATE_CONTENT_METHOD,
-      token: await this._vertex_instance.token,
+      token: await this.token,
       data: generateContentRequest,
-      apiEndpoint: this._vertex_instance.apiEndpoint,
+      apiEndpoint: this.apiEndpoint,
     }).catch(e => {
       throw new GoogleGenerativeAIError('exception posting request', e);
     });
@@ -450,13 +473,13 @@ export class GenerativeModel {
       tools: request.tools ?? [],
     };
     const response = await postRequest({
-      region: this._vertex_instance.location,
-      project: this._vertex_instance.project,
+      region: this.location,
+      project: this.project,
       resourcePath: this.publisherModelEndpoint,
       resourceMethod: constants.STREAMING_GENERATE_CONTENT_METHOD,
-      token: await this._vertex_instance.token,
+      token: await this.token,
       data: generateContentRequest,
-      apiEndpoint: this._vertex_instance.apiEndpoint,
+      apiEndpoint: this.apiEndpoint,
     }).catch(e => {
       throw new GoogleGenerativeAIError('exception posting request', e);
     });
@@ -472,13 +495,13 @@ export class GenerativeModel {
    */
   async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
     const response = await postRequest({
-      region: this._vertex_instance.location,
-      project: this._vertex_instance.project,
+      region: this.location,
+      project: this.project,
       resourcePath: this.publisherModelEndpoint,
       resourceMethod: 'countTokens',
-      token: await this._vertex_instance.token,
+      token: await this.token,
       data: request,
-      apiEndpoint: this._vertex_instance.apiEndpoint,
+      apiEndpoint: this.apiEndpoint,
     }).catch(e => {
       throw new GoogleGenerativeAIError('exception posting request', e);
     });
@@ -495,7 +518,8 @@ export class GenerativeModel {
    */
   startChat(request?: StartChatParams): ChatSession {
     const startChatRequest: StartChatSessionRequest = {
-      _vertex_instance: this._vertex_instance,
+      project: this.project,
+      location: this.location,
       _model_instance: this,
     };
 
