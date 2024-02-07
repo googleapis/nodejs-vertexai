@@ -62,6 +62,31 @@ export declare interface CountTokensResponse {
 }
 
 /**
+ * @property {string} model - model name
+ * @property {string} project - project The Google Cloud project to use for the request
+ * @property {string} location - The Google Cloud project location to use for the request
+ * @property {GoogleAuth} googleAuth - GoogleAuth class instance that handles authentication.
+ *        Details about GoogleAuth is referred to https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
+ * @property {string} - [apiEndpoint] The base Vertex AI endpoint to use for the request. If
+ *        not provided, the default regionalized endpoint
+ *        (i.e. us-central1-aiplatform.googleapis.com) will be used.
+ * @property {GenerationConfig} [generation_config] - {@link
+ *     GenerationConfig}
+ * @property {SafetySetting[]} [safety_settings] - {@link SafetySetting}
+ * @property {Tool[]} [tools] - {@link Tool}
+ */
+export declare interface GetGenerativeModelParams extends ModelParams {
+  model: string;
+  project: string;
+  location: string;
+  googleAuth: GoogleAuth;
+  apiEndpoint?: string;
+  generation_config?: GenerationConfig;
+  safety_settings?: SafetySetting[];
+  tools?: Tool[];
+}
+
+/**
  * Configuration for initializing a model, for example via getGenerativeModel
  * @property {string} model - model name.
  * @example "gemini-pro"
@@ -618,4 +643,27 @@ export interface FunctionDeclarationSchemaProperty {
   properties?: {[k: string]: FunctionDeclarationSchema};
   required?: string[];
   example?: unknown;
+}
+
+/**
+ * Params to initiate a multiturn chat with the model via startChat
+ * @property {Content[]} - [history] history of the chat session. {@link Content}
+ * @property {SafetySetting[]} - [safety_settings] Array of {@link SafetySetting}
+ * @property {GenerationConfig} - [generation_config] {@link GenerationConfig}
+ */
+export declare interface StartChatParams {
+  history?: Content[];
+  safety_settings?: SafetySetting[];
+  generation_config?: GenerationConfig;
+  tools?: Tool[];
+}
+
+/**
+ * All params passed to initiate multiturn chat via startChat
+ * @property {string} project - project The Google Cloud project to use for the request
+ * @property {string} location - The Google Cloud project location to use for the request
+ */
+export declare interface StartChatSessionRequest extends StartChatParams {
+  project: string;
+  location: string;
 }

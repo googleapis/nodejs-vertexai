@@ -18,11 +18,7 @@
 /* tslint:disable */
 import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
 
-import {
-  processCountTokenResponse,
-  processNonStream,
-  processStream,
-} from './process_stream';
+import {processNonStream, processStream} from './process_stream';
 import {countTokens} from './functions';
 import {
   Content,
@@ -31,6 +27,7 @@ import {
   GenerateContentRequest,
   GenerateContentResult,
   GenerationConfig,
+  GetGenerativeModelParams,
   ModelParams,
   Part,
   SafetySetting,
@@ -188,31 +185,6 @@ export declare interface StartChatSessionRequest extends StartChatParams {
   project: string;
   location: string;
   _model_instance: GenerativeModel;
-}
-
-/**
- * @property {string} model - model name
- * @property {string} project - project The Google Cloud project to use for the request
- * @property {string} location - The Google Cloud project location to use for the request
- * @property {GoogleAuth} googleAuth - GoogleAuth class instance that handles authentication.
- *        Details about GoogleAuth is referred to https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
- * @property {string} - [apiEndpoint] The base Vertex AI endpoint to use for the request. If
- *        not provided, the default regionalized endpoint
- *        (i.e. us-central1-aiplatform.googleapis.com) will be used.
- * @property {GenerationConfig} [generation_config] - {@link
- *     GenerationConfig}
- * @property {SafetySetting[]} [safety_settings] - {@link SafetySetting}
- * @property {Tool[]} [tools] - {@link Tool}
- */
-export declare interface GetGenerativeModelParams extends ModelParams {
-  model: string;
-  project: string;
-  location: string;
-  googleAuth: GoogleAuth;
-  apiEndpoint?: string;
-  generation_config?: GenerationConfig;
-  safety_settings?: SafetySetting[];
-  tools?: Tool[];
 }
 
 /**
