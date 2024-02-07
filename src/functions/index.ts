@@ -17,3 +17,4 @@
 
 export {countTokens} from './count_tokens';
 export {postRequest} from './post_request';
+export {generateContent, generateContentStream} from './generate_content';
