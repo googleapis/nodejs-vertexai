@@ -164,11 +164,14 @@ export class GenerativeModelPreview {
 
     if (request) {
       startChatRequest.history = request.history;
+      startChatRequest.publisher_model_endpoint = this.publisherModelEndpoint;
+      startChatRequest.token = this.token;
       startChatRequest.generation_config =
         request.generation_config ?? this.generation_config;
       startChatRequest.safety_settings =
         request.safety_settings ?? this.safety_settings;
       startChatRequest.tools = request.tools ?? this.tools;
+      startChatRequest.api_endpoint = request.api_endpoint ?? this.apiEndpoint;
     }
     return new ChatSessionPreview(startChatRequest);
   }

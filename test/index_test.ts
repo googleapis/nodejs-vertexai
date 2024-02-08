@@ -713,6 +713,7 @@ describe('ChatSession', () => {
   beforeEach(() => {
     vertexai = new VertexAI({project: PROJECT, location: LOCATION});
     model = vertexai.preview.getGenerativeModel({model: 'gemini-pro'});
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
     });
@@ -730,7 +731,6 @@ describe('ChatSession', () => {
       new Response(JSON.stringify(expectedStreamResult), fetchResponseObj)
     );
     spyOn(global, 'fetch').and.returnValue(fetchResult);
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
   });
 
   describe('sendMessage', () => {

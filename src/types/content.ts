@@ -656,6 +656,9 @@ export declare interface StartChatParams {
   safety_settings?: SafetySetting[];
   generation_config?: GenerationConfig;
   tools?: Tool[];
+  api_endpoint?: string;
+  publisher_model_endpoint?: string;
+  token?: Promise<any>;
 }
 
 /**

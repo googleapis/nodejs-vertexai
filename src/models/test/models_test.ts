@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
-import {constants} from '../../util';
-import {GenerativeModelPreview} from '../generative_models';
+import {GoogleAuth} from 'google-auth-library';
+
+import * as StreamFunctions from '../../functions/post_fetch_processing';
 import {
   FinishReason,
   FunctionDeclarationSchemaType,
@@ -32,7 +32,8 @@ import {
   StreamGenerateContentResult,
   Tool,
 } from '../../types/content';
-import * as StreamFunctions from '../../functions/post_fetch_processing';
+import {constants} from '../../util';
+import {GenerativeModelPreview} from '../generative_models';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';

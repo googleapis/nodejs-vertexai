@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import {generateContent, generateContentStream} from '../functions';
 import {
   Content,
   GenerateContentRequest,
@@ -27,6 +29,7 @@ import {
 } from '../types/content';
 import {ClientError, GoogleGenerativeAIError} from '../types/errors';
 import {constants} from '../util';
+
 /**
  * Chat session to make multi-turn send message request.
  * `sendMessage` method makes async call to get response of a chat message.
@@ -35,12 +38,14 @@ import {constants} from '../util';
 export class ChatSessionPreview {
   private project: string;
   private location: string;
-
   private historyInternal: Content[];
   private _send_stream_promise: Promise<void> = Promise.resolve();
+  private publisher_model_endpoint: string;
+  private token: Promise<any>;
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
   tools?: Tool[];
+  private api_endpoint?: string;
 
   get history(): Content[] {
     return this.historyInternal;
@@ -57,6 +62,9 @@ export class ChatSessionPreview {
     this.generation_config = request.generation_config;
     this.safety_settings = request.safety_settings;
     this.tools = request.tools;
+    this.api_endpoint = request.api_endpoint;
+    this.token = request.token ?? Promise.resolve();
+    this.publisher_model_endpoint = request.publisher_model_endpoint ?? '';
   }
 
   /**
@@ -76,8 +84,18 @@ export class ChatSessionPreview {
       tools: this.tools,
     };
 
-    // TODO: invoke generateContent function in functions package
-    const generateContentResult = {} as GenerateContentResult;
+    const generateContentResult: GenerateContentResult = await generateContent(
+      this.location,
+      this.project,
+      this.publisher_model_endpoint,
+      this.token,
+      generateContentrequest,
+      this.api_endpoint,
+      this.generation_config,
+      this.safety_settings
+    ).catch(e => {
+      throw e;
+    });
 
     const generateContentResponse = await generateContentResult.response;
     // Only push the latest message to history if the response returned a result
@@ -137,9 +155,18 @@ export class ChatSessionPreview {
       tools: this.tools,
     };
 
-    // TODO: invoke generateContentStream function in functions package
-    const streamGenerateContentResultPromise =
-      {} as Promise<StreamGenerateContentResult>;
+    const streamGenerateContentResultPromise = generateContentStream(
+      this.location,
+      this.project,
+      this.publisher_model_endpoint,
+      this.token,
+      generateContentrequest,
+      this.api_endpoint,
+      this.generation_config,
+      this.safety_settings
+    ).catch(e => {
+      throw e;
+    });
 
     this._send_stream_promise = this.appendHistory(
       streamGenerateContentResultPromise,
