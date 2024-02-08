@@ -48,8 +48,8 @@ export async function generateContent(
   project: string,
   publisherModelEndpoint: string,
   token: Promise<any>,
-  apiEndpoint: string,
   request: GenerateContentRequest | string,
+  apiEndpoint?: string,
   generation_config?: GenerationConfig,
   safety_settings?: SafetySetting[]
 ): Promise<GenerateContentResult> {
@@ -98,8 +98,8 @@ export async function generateContentStream(
   project: string,
   publisherModelEndpoint: string,
   token: Promise<any>,
-  apiEndpoint: string,
   request: GenerateContentRequest | string,
+  apiEndpoint?: string,
   generation_config?: GenerationConfig,
   safety_settings?: SafetySetting[]
 ): Promise<StreamGenerateContentResult> {

@@ -17,13 +17,13 @@
 
 /* tslint:disable */
 
+import * as StreamFunctions from '../src/functions/post_fetch_processing';
 import {
   ChatSession,
   GenerativeModel,
   StartChatParams,
   VertexAI,
 } from '../src/index';
-import * as StreamFunctions from '../src/process_stream';
 import {
   CountTokensRequest,
   FinishReason,

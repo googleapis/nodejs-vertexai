@@ -18,8 +18,12 @@
 /* tslint:disable */
 import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
 
-import {processNonStream, processStream} from './process_stream';
-import {countTokens} from './functions';
+import {countTokens, generateContent, generateContentStream} from './functions';
+import {
+  processNonStream,
+  processStream,
+} from './functions/post_fetch_processing';
+import {validateGenerationConfig} from './functions/pre_fetch_processing';
 import {
   Content,
   CountTokensRequest,
@@ -40,7 +44,8 @@ import {
   GoogleAuthError,
   GoogleGenerativeAIError,
 } from './types/errors';
-import {constants, postRequest} from './util';
+import {constants} from './util';
+
 export * from './types';
 
 /**
@@ -381,41 +386,16 @@ export class GenerativeModel {
   async generateContent(
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
-    request = formatContentRequest(
+    return generateContent(
+      this.location,
+      this.project,
+      this.publisherModelEndpoint,
+      this.token,
       request,
+      this.apiEndpoint,
       this.generation_config,
       this.safety_settings
     );
-
-    validateGenerateContentRequest(request);
-
-    if (request.generation_config) {
-      request.generation_config = validateGenerationConfig(
-        request.generation_config
-      );
-    }
-
-    const generateContentRequest: GenerateContentRequest = {
-      contents: request.contents,
-      generation_config: request.generation_config ?? this.generation_config,
-      safety_settings: request.safety_settings ?? this.safety_settings,
-      tools: request.tools ?? [],
-    };
-
-    const response: Response | undefined = await postRequest({
-      region: this.location,
-      project: this.project,
-      resourcePath: this.publisherModelEndpoint,
-      resourceMethod: constants.GENERATE_CONTENT_METHOD,
-      token: await this.token,
-      data: generateContentRequest,
-      apiEndpoint: this.apiEndpoint,
-    }).catch(e => {
-      throw new GoogleGenerativeAIError('exception posting request', e);
-    });
-    throwErrorIfNotOK(response);
-    const result: GenerateContentResult = processNonStream(response);
-    return Promise.resolve(result);
   }
 
   /**
@@ -426,39 +406,16 @@ export class GenerativeModel {
   async generateContentStream(
     request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
-    request = formatContentRequest(
+    return generateContentStream(
+      this.location,
+      this.project,
+      this.publisherModelEndpoint,
+      this.token,
       request,
+      this.apiEndpoint,
       this.generation_config,
       this.safety_settings
     );
-    validateGenerateContentRequest(request);
-
-    if (request.generation_config) {
-      request.generation_config = validateGenerationConfig(
-        request.generation_config
-      );
-    }
-
-    const generateContentRequest: GenerateContentRequest = {
-      contents: request.contents,
-      generation_config: request.generation_config ?? this.generation_config,
-      safety_settings: request.safety_settings ?? this.safety_settings,
-      tools: request.tools ?? [],
-    };
-    const response = await postRequest({
-      region: this.location,
-      project: this.project,
-      resourcePath: this.publisherModelEndpoint,
-      resourceMethod: constants.STREAMING_GENERATE_CONTENT_METHOD,
-      token: await this.token,
-      data: generateContentRequest,
-      apiEndpoint: this.apiEndpoint,
-    }).catch(e => {
-      throw new GoogleGenerativeAIError('exception posting request', e);
-    });
-    throwErrorIfNotOK(response);
-    const streamResult = processStream(response);
-    return Promise.resolve(streamResult);
   }
 
   /**
@@ -563,83 +520,4 @@ function assignRoleToPartsAndValidateSendMessageRequest(
   }
 
   return [functionContent];
-}
-
-function throwErrorIfNotOK(response: Response | undefined) {
-  if (response === undefined) {
-    throw new GoogleGenerativeAIError('response is undefined');
-  }
-  const status: number = response.status;
-  const statusText: string = response.statusText;
-  const errorMessage = `got status: ${status} ${statusText}`;
-  if (status >= 400 && status < 500) {
-    throw new ClientError(errorMessage);
-  }
-  if (!response.ok) {
-    throw new GoogleGenerativeAIError(errorMessage);
-  }
-}
-
-function validateGcsInput(contents: Content[]) {
-  for (const content of contents) {
-    for (const part of content.parts) {
-      if ('file_data' in part) {
-        // @ts-ignore
-        const uri = part['file_data']['file_uri'];
-        if (!uri.startsWith('gs://')) {
-          throw new URIError(
-            `Found invalid Google Cloud Storage URI ${uri}, Google Cloud Storage URIs must start with gs://`
-          );
-        }
-      }
-    }
-  }
-}
-
-function validateFunctionResponseRequest(contents: Content[]) {
-  const lastestContentPart = contents[contents.length - 1].parts[0];
-  if (!('functionResponse' in lastestContentPart)) {
-    return;
-  }
-  const errorMessage =
-    'Please ensure that function response turn comes immediately after a function call turn.';
-  if (contents.length < 2) {
-    throw new ClientError(errorMessage);
-  }
-  const secondLastestContentPart = contents[contents.length - 2].parts[0];
-  if (!('functionCall' in secondLastestContentPart)) {
-    throw new ClientError(errorMessage);
-  }
-}
-
-function validateGenerateContentRequest(request: GenerateContentRequest) {
-  validateGcsInput(request.contents);
-  validateFunctionResponseRequest(request.contents);
-}
-
-function validateGenerationConfig(
-  generation_config: GenerationConfig
-): GenerationConfig {
-  if ('top_k' in generation_config) {
-    if (!(generation_config.top_k! > 0) || !(generation_config.top_k! <= 40)) {
-      delete generation_config.top_k;
-    }
-  }
-  return generation_config;
-}
-
-function formatContentRequest(
-  request: GenerateContentRequest | string,
-  generation_config?: GenerationConfig,
-  safety_settings?: SafetySetting[]
-): GenerateContentRequest {
-  if (typeof request === 'string') {
-    return {
-      contents: [{role: constants.USER_ROLE, parts: [{text: request}]}],
-      generation_config: generation_config,
-      safety_settings: safety_settings,
-    };
-  } else {
-    return request;
-  }
 }

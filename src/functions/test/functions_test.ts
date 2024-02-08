@@ -41,16 +41,16 @@ const TEST_PUBLISHER_MODEL_ENDPOINT = 'test-publisher-model-endpoint';
 const TEST_TOKEN = 'testtoken';
 const TEST_TOKEN_PROMISE = Promise.resolve(TEST_TOKEN);
 const TEST_API_ENDPOINT = 'test-api-endpoint';
-const TEST_CHAT_MESSSAGE_TEXT = 'How are you doing today?';
+const TEST_CHAT_MESSAGE_TEXT = 'How are you doing today?';
 const TEST_USER_CHAT_MESSAGE = [
-  {role: constants.USER_ROLE, parts: [{text: TEST_CHAT_MESSSAGE_TEXT}]},
+  {role: constants.USER_ROLE, parts: [{text: TEST_CHAT_MESSAGE_TEXT}]},
 ];
 
 const TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE = [
   {
     role: constants.USER_ROLE,
     parts: [
-      {text: TEST_CHAT_MESSSAGE_TEXT},
+      {text: TEST_CHAT_MESSAGE_TEXT},
       {
         file_data: {
           file_uri: 'gs://test_bucket/test_image.jpeg',
@@ -65,7 +65,7 @@ const TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE = [
   {
     role: constants.USER_ROLE,
     parts: [
-      {text: TEST_CHAT_MESSSAGE_TEXT},
+      {text: TEST_CHAT_MESSAGE_TEXT},
       {file_data: {file_uri: 'test_image.jpeg', mime_type: 'image/jpeg'}},
     ],
   },
@@ -352,8 +352,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
     expect(resp).toEqual(expectedResult);
   });
@@ -367,8 +367,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      TEST_CHAT_MESSSAGE_TEXT
+      TEST_CHAT_MESSAGE_TEXT,
+      TEST_API_ENDPOINT
     );
     expect(resp).toEqual(expectedResult);
   });
@@ -386,8 +386,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
     expect(resp).toEqual(expectedResult);
   });
@@ -402,8 +402,8 @@ describe('generateContent', () => {
         TEST_PROJECT,
         TEST_PUBLISHER_MODEL_ENDPOINT,
         TEST_TOKEN_PROMISE,
-        TEST_API_ENDPOINT,
-        req
+        req,
+        TEST_API_ENDPOINT
       )
     ).toBeRejectedWithError(URIError);
   });
@@ -423,8 +423,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
     expect(resp).toEqual(expectedResult);
   });
@@ -441,8 +441,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_ENDPOINT_BASE_PATH,
-      req
+      req,
+      TEST_ENDPOINT_BASE_PATH
     );
     expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
       TEST_ENDPOINT_BASE_PATH
@@ -464,8 +464,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      reqWithEmptyConfigs
+      reqWithEmptyConfigs,
+      TEST_API_ENDPOINT
     );
     const requestArgs = fetchSpy.calls.allArgs()[0][1];
     if (typeof requestArgs === 'object' && requestArgs) {
@@ -488,8 +488,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      reqWithEmptyConfigs
+      reqWithEmptyConfigs,
+      TEST_API_ENDPOINT
     );
     const requestArgs = fetchSpy.calls.allArgs()[0][1];
     if (typeof requestArgs === 'object' && requestArgs) {
@@ -510,8 +510,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
     expect(
       resp.response.candidates[0].citationMetadata?.citationSources.length
@@ -536,8 +536,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
     expect(resp).toEqual(expectedResult);
   });
@@ -563,8 +563,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     ).catch(e => {
       expect(e.message).toEqual(expectedErrorMessage);
     });
@@ -591,8 +591,8 @@ describe('generateContent', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     ).catch(e => {
       expect(e.message).toEqual(expectedErrorMessage);
     });
@@ -629,8 +629,8 @@ describe('generateContentStream', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
     expect(resp).toEqual(expectedResult);
   });
@@ -647,7 +647,7 @@ describe('generateContentStream', () => {
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
       TEST_API_ENDPOINT,
-      TEST_CHAT_MESSSAGE_TEXT
+      TEST_CHAT_MESSAGE_TEXT
     );
     expect(resp).toEqual(expectedResult);
   });
@@ -666,8 +666,8 @@ describe('generateContentStream', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
     expect(resp).toEqual(expectedResult);
   });
@@ -686,8 +686,8 @@ describe('generateContentStream', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
     expect(resp).toEqual(expectedResult);
   });
@@ -710,8 +710,8 @@ describe('generateContentStream', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     );
     expect(resp).toEqual(expectedStreamResult);
   });
@@ -736,8 +736,8 @@ describe('generateContentStream', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     ).catch(e => {
       expect(e.message).toEqual(expectedErrorMessage);
     });
@@ -764,8 +764,8 @@ describe('generateContentStream', () => {
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
       TEST_TOKEN_PROMISE,
-      TEST_API_ENDPOINT,
-      req
+      req,
+      TEST_API_ENDPOINT
     ).catch(e => {
       expect(e.message).toEqual(expectedErrorMessage);
     });
