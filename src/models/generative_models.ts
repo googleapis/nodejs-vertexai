@@ -32,6 +32,10 @@ import {
 } from '../types/content';
 import {GoogleAuthError} from '../types/errors';
 import {countTokens} from '../functions/count_tokens';
+import {
+  generateContent,
+  generateContentStream,
+} from '../functions/generate_content';
 import {ChatSessionPreview} from './chat_session';
 
 /**
@@ -97,10 +101,16 @@ export class GenerativeModelPreview {
   async generateContent(
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
-    // TODO: invoke generateContent function in functions
-    const dummyGenerateContentResult: GenerateContentResult =
-      {} as GenerateContentResult;
-    return Promise.resolve(dummyGenerateContentResult);
+    return generateContent(
+      this.location,
+      this.project,
+      this.publisherModelEndpoint,
+      this.token,
+      request,
+      this.apiEndpoint,
+      this.generation_config,
+      this.safety_settings
+    );
   }
 
   /**
@@ -111,10 +121,16 @@ export class GenerativeModelPreview {
   async generateContentStream(
     request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
-    // TODO: invoke generateContentStream function in functions
-    const dummyStreamGenerateContentResult: StreamGenerateContentResult =
-      {} as StreamGenerateContentResult;
-    return Promise.resolve(dummyStreamGenerateContentResult);
+    return generateContentStream(
+      this.location,
+      this.project,
+      this.publisherModelEndpoint,
+      this.token,
+      request,
+      this.apiEndpoint,
+      this.generation_config,
+      this.safety_settings
+    );
   }
 
   /**
