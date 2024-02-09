@@ -19,10 +19,6 @@
 import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
 
 import {countTokens, generateContent, generateContentStream} from './functions';
-import {
-  processNonStream,
-  processStream,
-} from './functions/post_fetch_processing';
 import {validateGenerationConfig} from './functions/pre_fetch_processing';
 import {
   Content,
@@ -35,6 +31,8 @@ import {
   ModelParams,
   Part,
   SafetySetting,
+  StartChatParams,
+  StartChatSessionRequest,
   StreamGenerateContentResult,
   Tool,
   VertexInit,
@@ -165,48 +163,22 @@ export class VertexAI_Preview {
 }
 
 /**
- * Params to initiate a multiturn chat with the model via startChat
- * @property {Content[]} - [history] history of the chat session. {@link Content}
- * @property {SafetySetting[]} - [safety_settings] Array of {@link SafetySetting}
- * @property {GenerationConfig} - [generation_config] {@link GenerationConfig}
- */
-export declare interface StartChatParams {
-  history?: Content[];
-  safety_settings?: SafetySetting[];
-  generation_config?: GenerationConfig;
-  tools?: Tool[];
-}
-
-// StartChatSessionRequest and ChatSession are defined here instead of in
-// src/types to avoid a circular dependency issue due the dep on
-// VertexAI_Preview
-
-/**
- * All params passed to initiate multiturn chat via startChat
- * @property {VertexAI_Preview} - _vertex_instance {@link VertexAI_Preview}
- * @property {GenerativeModel} - _model_instance {@link GenerativeModel}
- */
-export declare interface StartChatSessionRequest extends StartChatParams {
-  project: string;
-  location: string;
-  _model_instance: GenerativeModel;
-}
-
-/**
  * Chat session to make multi-turn send message request.
+ * Users can instantiate this using startChat method in GenerativeModel class.
  * `sendMessage` method makes async call to get response of a chat message.
  * `sendMessageStream` method makes async call to stream response of a chat message.
  */
 export class ChatSession {
   private project: string;
   private location: string;
-
   private historyInternal: Content[];
-  private _model_instance: GenerativeModel;
   private _send_stream_promise: Promise<void> = Promise.resolve();
+  private publisher_model_endpoint: string;
+  private googleAuth: GoogleAuth;
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
   tools?: Tool[];
+  private api_endpoint?: string;
 
   get history(): Content[] {
     return this.historyInternal;
@@ -219,11 +191,24 @@ export class ChatSession {
   constructor(request: StartChatSessionRequest) {
     this.project = request.project;
     this.location = request.location;
-    this._model_instance = request._model_instance;
+    this.googleAuth = request.googleAuth;
+    this.publisher_model_endpoint = request.publisher_model_endpoint;
     this.historyInternal = request.history ?? [];
     this.generation_config = request.generation_config;
     this.safety_settings = request.safety_settings;
     this.tools = request.tools;
+    this.api_endpoint = request.api_endpoint;
+  }
+
+  /**
+   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * @return {Promise<any>} Promise of token
+   */
+  get token(): Promise<any> {
+    const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
+      throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
+    });
+    return tokenPromise;
   }
 
   /**
@@ -243,12 +228,18 @@ export class ChatSession {
       tools: this.tools,
     };
 
-    const generateContentResult: GenerateContentResult =
-      await this._model_instance
-        .generateContent(generateContentrequest)
-        .catch(e => {
-          throw e;
-        });
+    const generateContentResult: GenerateContentResult = await generateContent(
+      this.location,
+      this.project,
+      this.publisher_model_endpoint,
+      this.token,
+      generateContentrequest,
+      this.api_endpoint,
+      this.generation_config,
+      this.safety_settings
+    ).catch(e => {
+      throw e;
+    });
     const generateContentResponse = await generateContentResult.response;
     // Only push the latest message to history if the response returned a result
     if (generateContentResponse.candidates.length !== 0) {
@@ -264,7 +255,7 @@ export class ChatSession {
       throw new Error('Did not get a candidate from the model');
     }
 
-    return Promise.resolve({response: generateContentResponse});
+    return Promise.resolve(generateContentResult);
   }
 
   async appendHistory(
@@ -307,11 +298,18 @@ export class ChatSession {
       tools: this.tools,
     };
 
-    const streamGenerateContentResultPromise = this._model_instance
-      .generateContentStream(generateContentrequest)
-      .catch(e => {
-        throw e;
-      });
+    const streamGenerateContentResultPromise = generateContentStream(
+      this.location,
+      this.project,
+      this.publisher_model_endpoint,
+      this.token,
+      generateContentrequest,
+      this.api_endpoint,
+      this.generation_config,
+      this.safety_settings
+    ).catch(e => {
+      throw e;
+    });
 
     this._send_stream_promise = this.appendHistory(
       streamGenerateContentResultPromise,
@@ -364,16 +362,8 @@ export class GenerativeModel {
    * @return {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
-    const credential_error_message =
-      '\nUnable to authenticate your request\
-        \nDepending on your run time environment, you can get authentication by\
-        \n- if in local instance or cloud shell: `!gcloud auth login`\
-        \n- if in Colab:\
-        \n    -`from google.colab import auth`\
-        \n    -`auth.authenticate_user()`\
-        \n- if in service account or other: please follow guidance in https://cloud.google.com/docs/authentication';
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
-      throw new GoogleAuthError(credential_error_message, e);
+      throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
     });
     return tokenPromise;
   }
@@ -445,7 +435,8 @@ export class GenerativeModel {
     const startChatRequest: StartChatSessionRequest = {
       project: this.project,
       location: this.location,
-      _model_instance: this,
+      googleAuth: this.googleAuth,
+      publisher_model_endpoint: this.publisherModelEndpoint,
     };
 
     if (request) {
@@ -455,6 +446,7 @@ export class GenerativeModel {
       startChatRequest.safety_settings =
         request.safety_settings ?? this.safety_settings;
       startChatRequest.tools = request.tools ?? this.tools;
+      startChatRequest.api_endpoint = request.api_endpoint ?? this.apiEndpoint;
     }
     return new ChatSession(startChatRequest);
   }
