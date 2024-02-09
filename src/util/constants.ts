@@ -23,3 +23,11 @@ const USER_AGENT_PRODUCT = 'model-builder';
 const CLIENT_LIBRARY_VERSION = '0.3.1'; // x-release-please-version
 const CLIENT_LIBRARY_LANGUAGE = `grpc-node/${CLIENT_LIBRARY_VERSION}`;
 export const USER_AGENT = `${USER_AGENT_PRODUCT}/${CLIENT_LIBRARY_VERSION} ${CLIENT_LIBRARY_LANGUAGE}`;
+export const CREDENTIAL_ERROR_MESSAGE =
+  '\nUnable to authenticate your request\
+        \nDepending on your run time environment, you can get authentication by\
+        \n- if in local instance or cloud shell: `!gcloud auth login`\
+        \n- if in Colab:\
+        \n    -`from google.colab import auth`\
+        \n    -`auth.authenticate_user()`\
+        \n- if in service account or other: please follow guidance in https://cloud.google.com/docs/authentication';

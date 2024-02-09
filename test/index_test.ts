@@ -716,12 +716,22 @@ describe('ChatSession', () => {
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
     });
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     expect(chatSession.history).toEqual(TEST_USER_CHAT_MESSAGE);
     chatSessionWithNoArgs = model.startChat();
+    spyOnProperty(chatSessionWithNoArgs, 'token', 'get').and.resolveTo(
+      TEST_TOKEN
+    );
     chatSessionWithEmptyResponse = model.startChat();
+    spyOnProperty(chatSessionWithEmptyResponse, 'token', 'get').and.resolveTo(
+      TEST_TOKEN
+    );
     chatSessionWithFunctionCall = model.startChat({
       tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
     });
+    spyOnProperty(chatSessionWithFunctionCall, 'token', 'get').and.resolveTo(
+      TEST_TOKEN
+    );
     expectedStreamResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
@@ -730,7 +740,6 @@ describe('ChatSession', () => {
       new Response(JSON.stringify(expectedStreamResult), fetchResponseObj)
     );
     spyOn(global, 'fetch').and.returnValue(fetchResult);
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
   });
 
   describe('sendMessage', () => {
@@ -855,6 +864,7 @@ describe('ChatSession', () => {
           },
         ],
       });
+      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
       spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
@@ -881,6 +891,7 @@ describe('ChatSession', () => {
           },
         ],
       });
+      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
       spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
@@ -963,6 +974,7 @@ describe('when exception at fetch', () => {
   };
   beforeEach(() => {
     spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.throwError('error');
   });
 
@@ -1002,6 +1014,7 @@ describe('when response is undefined', () => {
   beforeEach(() => {
     spyOn(global, 'fetch').and.resolveTo();
     spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
   });
 
   it('generateContent should throw GoogleGenerativeAI error', async () => {
@@ -1058,6 +1071,7 @@ describe('when response is 4XX', () => {
   };
   beforeEach(() => {
     spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.resolveTo(response);
   });
 
@@ -1115,6 +1129,7 @@ describe('when response is not OK and not 4XX', () => {
   };
   beforeEach(() => {
     spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.resolveTo(response);
   });
 

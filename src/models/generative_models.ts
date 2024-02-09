@@ -160,6 +160,8 @@ export class GenerativeModelPreview {
     const startChatRequest: StartChatSessionRequest = {
       project: this.project,
       location: this.location,
+      googleAuth: this.googleAuth,
+      publisher_model_endpoint: this.publisherModelEndpoint,
     };
 
     if (request) {

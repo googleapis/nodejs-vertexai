@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* tslint:disable */
+import {GoogleAuth} from 'google-auth-library';
 import {
   Content,
   GenerateContentRequest,
@@ -25,7 +28,15 @@ import {
   StreamGenerateContentResult,
   Tool,
 } from '../types/content';
-import {ClientError, GoogleGenerativeAIError} from '../types/errors';
+import {
+  generateContent,
+  generateContentStream,
+} from '../functions/generate_content';
+import {
+  ClientError,
+  GoogleAuthError,
+  GoogleGenerativeAIError,
+} from '../types/errors';
 import {constants} from '../util';
 /**
  * Chat session to make multi-turn send message request.
@@ -35,12 +46,14 @@ import {constants} from '../util';
 export class ChatSessionPreview {
   private project: string;
   private location: string;
-
   private historyInternal: Content[];
   private _send_stream_promise: Promise<void> = Promise.resolve();
+  private publisher_model_endpoint: string;
+  private googleAuth: GoogleAuth;
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
   tools?: Tool[];
+  private api_endpoint?: string;
 
   get history(): Content[] {
     return this.historyInternal;
@@ -53,10 +66,24 @@ export class ChatSessionPreview {
   constructor(request: StartChatSessionRequest) {
     this.project = request.project;
     this.location = request.location;
+    this.googleAuth = request.googleAuth;
+    this.publisher_model_endpoint = request.publisher_model_endpoint;
     this.historyInternal = request.history ?? [];
     this.generation_config = request.generation_config;
     this.safety_settings = request.safety_settings;
     this.tools = request.tools;
+    this.api_endpoint = request.api_endpoint;
+  }
+
+  /**
+   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * @return {Promise<any>} Promise of token
+   */
+  get token(): Promise<any> {
+    const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
+      throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
+    });
+    return tokenPromise;
   }
 
   /**
@@ -76,10 +103,19 @@ export class ChatSessionPreview {
       tools: this.tools,
     };
 
-    // TODO: invoke generateContent function in functions package
-    const generateContentResult = {} as GenerateContentResult;
-
-    const generateContentResponse = await generateContentResult.response;
+    const generateContentResult: GenerateContentResult = await generateContent(
+      this.location,
+      this.project,
+      this.publisher_model_endpoint,
+      this.token,
+      generateContentrequest,
+      this.api_endpoint,
+      this.generation_config,
+      this.safety_settings
+    ).catch(e => {
+      throw e;
+    });
+    const generateContentResponse = generateContentResult.response;
     // Only push the latest message to history if the response returned a result
     if (generateContentResponse.candidates.length !== 0) {
       this.historyInternal = this.historyInternal.concat(newContent);
@@ -94,7 +130,7 @@ export class ChatSessionPreview {
       throw new Error('Did not get a candidate from the model');
     }
 
-    return Promise.resolve({response: generateContentResponse});
+    return Promise.resolve(generateContentResult);
   }
 
   async appendHistory(
@@ -137,9 +173,18 @@ export class ChatSessionPreview {
       tools: this.tools,
     };
 
-    // TODO: invoke generateContentStream function in functions package
-    const streamGenerateContentResultPromise =
-      {} as Promise<StreamGenerateContentResult>;
+    const streamGenerateContentResultPromise = generateContentStream(
+      this.location,
+      this.project,
+      this.publisher_model_endpoint,
+      this.token,
+      generateContentrequest,
+      this.api_endpoint,
+      this.generation_config,
+      this.safety_settings
+    ).catch(e => {
+      throw e;
+    });
 
     this._send_stream_promise = this.appendHistory(
       streamGenerateContentResultPromise,

@@ -656,6 +656,7 @@ export declare interface StartChatParams {
   safety_settings?: SafetySetting[];
   generation_config?: GenerationConfig;
   tools?: Tool[];
+  api_endpoint?: string;
 }
 
 /**
@@ -666,4 +667,6 @@ export declare interface StartChatParams {
 export declare interface StartChatSessionRequest extends StartChatParams {
   project: string;
   location: string;
+  googleAuth: GoogleAuth;
+  publisher_model_endpoint: string;
 }
