@@ -1,5 +1,5 @@
 import {VertexAI} from '../src/vertex_ai';
-import {GenerativeModelPreview} from '../src/models';
+import {GenerativeModelPreview, GenerativeModel} from '../src/models';
 import {GoogleAuthError} from '../src/types/errors';
 
 const PROJECT = 'test_project';
@@ -88,5 +88,12 @@ describe('VertexAI', () => {
     });
 
     expect(generativeModelPreview).toBeInstanceOf(GenerativeModelPreview);
+  });
+  it('VertexAI should generate GenerativatModel', () => {
+    const generativeModel = vertexai.getGenerativeModel({
+      model: 'gemini-pro',
+    });
+
+    expect(generativeModel).toBeInstanceOf(GenerativeModel);
   });
 });

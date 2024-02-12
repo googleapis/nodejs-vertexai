@@ -18,7 +18,7 @@
 /* tslint:disable */
 import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
 
-import {GenerativeModelPreview} from './models';
+import {GenerativeModelPreview, GenerativeModel} from './models';
 import {
   GetGenerativeModelParams,
   ModelParams,
@@ -60,7 +60,23 @@ export class VertexAI {
     );
   }
 
-  // TODO: write getGenerativeModel method when GenerativeModel class is available in models package
+  /**
+   * @param {ModelParams} modelParams - {@link ModelParams} Parameters to specify the generative model.
+   * @return {GenerativeModel} Instance of the GenerativeModel class. {@link GenerativeModel}
+   */
+  getGenerativeModel(modelParams: ModelParams): GenerativeModel {
+    const getGenerativeModelParams: GetGenerativeModelParams = {
+      model: modelParams.model,
+      project: this.project,
+      location: this.location,
+      googleAuth: this.googleAuth,
+      apiEndpoint: this.apiEndpoint,
+      safety_settings: modelParams.safety_settings,
+      generation_config: modelParams.generation_config,
+      tools: modelParams.tools,
+    };
+    return new GenerativeModel(getGenerativeModelParams);
+  }
 }
 
 /**
@@ -97,7 +113,7 @@ class VertexAI_Preview {
 
   /**
    * @param {ModelParams} modelParams - {@link ModelParams} Parameters to specify the generative model.
-   * @return {GenerativeModel} Instance of the GenerativeModel class. {@link GenerativeModel}
+   * @return {GenerativeModelPreview} Instance of the GenerativeModelPreview class. {@link GenerativeModelPreview}
    */
   getGenerativeModel(modelParams: ModelParams): GenerativeModelPreview {
     const getGenerativeModelParams: GetGenerativeModelParams = {
