@@ -15,5 +15,5 @@
  * limitations under the License.
  */
 
-export {ChatSessionPreview} from './chat_session';
-export {GenerativeModelPreview} from './generative_models';
+export {ChatSession, ChatSessionPreview} from './chat_session';
+export {GenerativeModel, GenerativeModelPreview} from './generative_models';

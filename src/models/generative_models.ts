@@ -36,7 +36,139 @@ import {
   generateContent,
   generateContentStream,
 } from '../functions/generate_content';
-import {ChatSessionPreview} from './chat_session';
+import {ChatSession, ChatSessionPreview} from './chat_session';
+import {constants} from '../util';
+
+/**
+ * Base class for generative models.
+ * NOTE: this class should not be instantiated directly. Use
+ * `vertexai.preview.getGenerativeModel()` instead.
+ */
+export class GenerativeModel {
+  model: string;
+  generation_config?: GenerationConfig;
+  safety_settings?: SafetySetting[];
+  tools?: Tool[];
+  private project: string;
+  private location: string;
+  private googleAuth: GoogleAuth;
+  private publisherModelEndpoint: string;
+  private apiEndpoint?: string;
+
+  /**
+   * @constructor
+   * @param {GetGenerativeModelParams} getGenerativeModelParams - {@link GetGenerativeModelParams}
+   */
+  constructor(getGenerativeModelParams: GetGenerativeModelParams) {
+    this.project = getGenerativeModelParams.project;
+    this.location = getGenerativeModelParams.location;
+    this.apiEndpoint = getGenerativeModelParams.apiEndpoint;
+    this.googleAuth = getGenerativeModelParams.googleAuth;
+    this.model = getGenerativeModelParams.model;
+    this.generation_config = getGenerativeModelParams.generation_config;
+    this.safety_settings = getGenerativeModelParams.safety_settings;
+    this.tools = getGenerativeModelParams.tools;
+    if (this.model.startsWith('models/')) {
+      this.publisherModelEndpoint = `publishers/google/${this.model}`;
+    } else {
+      this.publisherModelEndpoint = `publishers/google/models/${this.model}`;
+    }
+  }
+
+  /**
+   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * @return {Promise<any>} Promise of token
+   */
+  get token(): Promise<any> {
+    const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
+      throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
+    });
+    return tokenPromise;
+  }
+
+  /**
+   * Make a async call to generate content.
+   * @param request A GenerateContentRequest object with the request contents.
+   * @return The GenerateContentResponse object with the response candidates.
+   */
+  async generateContent(
+    request: GenerateContentRequest | string
+  ): Promise<GenerateContentResult> {
+    return generateContent(
+      this.location,
+      this.project,
+      this.publisherModelEndpoint,
+      this.token,
+      request,
+      this.apiEndpoint,
+      this.generation_config,
+      this.safety_settings
+    );
+  }
+
+  /**
+   * Make an async stream request to generate content. The response will be returned in stream.
+   * @param {GenerateContentRequest} request - {@link GenerateContentRequest}
+   * @return {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   */
+  async generateContentStream(
+    request: GenerateContentRequest | string
+  ): Promise<StreamGenerateContentResult> {
+    return generateContentStream(
+      this.location,
+      this.project,
+      this.publisherModelEndpoint,
+      this.token,
+      request,
+      this.apiEndpoint,
+      this.generation_config,
+      this.safety_settings
+    );
+  }
+
+  /**
+   * Make a async request to count tokens.
+   * @param request A CountTokensRequest object with the request contents.
+   * @return The CountTokensResponse object with the token count.
+   */
+  async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
+    return countTokens(
+      this.location,
+      this.project,
+      this.publisherModelEndpoint,
+      this.token,
+      request,
+      this.apiEndpoint
+    );
+  }
+
+  /**
+   * Instantiate a ChatSession.
+   * This method doesn't make any call to remote endpoint.
+   * Any call to remote endpoint is implemented in ChatSession class @see ChatSession
+   * @param{StartChatParams} [request] - {@link StartChatParams}
+   * @return {ChatSession} {@link ChatSession}
+   */
+  startChat(request?: StartChatParams): ChatSession {
+    const startChatRequest: StartChatSessionRequest = {
+      project: this.project,
+      location: this.location,
+      googleAuth: this.googleAuth,
+      publisher_model_endpoint: this.publisherModelEndpoint,
+    };
+
+    if (request) {
+      startChatRequest.history = request.history;
+      startChatRequest.generation_config =
+        request.generation_config ?? this.generation_config;
+      startChatRequest.safety_settings =
+        request.safety_settings ?? this.safety_settings;
+      startChatRequest.tools = request.tools ?? this.tools;
+      startChatRequest.api_endpoint = request.api_endpoint ?? this.apiEndpoint;
+    }
+    return new ChatSession(startChatRequest);
+  }
+}
 
 /**
  * Base class for generative models in preview.
@@ -79,16 +211,8 @@ export class GenerativeModelPreview {
    * @return {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
-    const credential_error_message =
-      '\nUnable to authenticate your request\
-        \nDepending on your run time environment, you can get authentication by\
-        \n- if in local instance or cloud shell: `!gcloud auth login`\
-        \n- if in Colab:\
-        \n    -`from google.colab import auth`\
-        \n    -`auth.authenticate_user()`\
-        \n- if in service account or other: please follow guidance in https://cloud.google.com/docs/authentication';
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
-      throw new GoogleAuthError(credential_error_message, e);
+      throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
     });
     return tokenPromise;
   }

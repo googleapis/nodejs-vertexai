@@ -38,6 +38,166 @@ import {
   GoogleGenerativeAIError,
 } from '../types/errors';
 import {constants} from '../util';
+
+/**
+ * Chat session to make multi-turn send message request.
+ * Users can instantiate this using startChat method in GenerativeModel class.
+ * `sendMessage` method makes async call to get response of a chat message.
+ * `sendMessageStream` method makes async call to stream response of a chat message.
+ */
+export class ChatSession {
+  private project: string;
+  private location: string;
+  private historyInternal: Content[];
+  private _send_stream_promise: Promise<void> = Promise.resolve();
+  private publisher_model_endpoint: string;
+  private googleAuth: GoogleAuth;
+  generation_config?: GenerationConfig;
+  safety_settings?: SafetySetting[];
+  tools?: Tool[];
+  private api_endpoint?: string;
+
+  get history(): Content[] {
+    return this.historyInternal;
+  }
+
+  /**
+   * @constructor
+   * @param {StartChatSessionRequest} request - {@link StartChatSessionRequest}
+   */
+  constructor(request: StartChatSessionRequest) {
+    this.project = request.project;
+    this.location = request.location;
+    this.googleAuth = request.googleAuth;
+    this.publisher_model_endpoint = request.publisher_model_endpoint;
+    this.historyInternal = request.history ?? [];
+    this.generation_config = request.generation_config;
+    this.safety_settings = request.safety_settings;
+    this.tools = request.tools;
+    this.api_endpoint = request.api_endpoint;
+  }
+
+  /**
+   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * @return {Promise<any>} Promise of token
+   */
+  get token(): Promise<any> {
+    const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
+      throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
+    });
+    return tokenPromise;
+  }
+
+  /**
+   * Make an sync call to send message.
+   * @param {string | Array<string | Part>} request - send message request. {@link Part}
+   * @return {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
+   */
+  async sendMessage(
+    request: string | Array<string | Part>
+  ): Promise<GenerateContentResult> {
+    const newContent: Content[] =
+      formulateNewContentFromSendMessageRequest(request);
+    const generateContentrequest: GenerateContentRequest = {
+      contents: this.historyInternal.concat(newContent),
+      safety_settings: this.safety_settings,
+      generation_config: this.generation_config,
+      tools: this.tools,
+    };
+
+    const generateContentResult: GenerateContentResult = await generateContent(
+      this.location,
+      this.project,
+      this.publisher_model_endpoint,
+      this.token,
+      generateContentrequest,
+      this.api_endpoint,
+      this.generation_config,
+      this.safety_settings
+    ).catch(e => {
+      throw e;
+    });
+    const generateContentResponse = await generateContentResult.response;
+    // Only push the latest message to history if the response returned a result
+    if (generateContentResponse.candidates.length !== 0) {
+      this.historyInternal = this.historyInternal.concat(newContent);
+      const contentFromAssistant =
+        generateContentResponse.candidates[0].content;
+      if (!contentFromAssistant.role) {
+        contentFromAssistant.role = constants.MODEL_ROLE;
+      }
+      this.historyInternal.push(contentFromAssistant);
+    } else {
+      // TODO: handle promptFeedback in the response
+      throw new Error('Did not get a candidate from the model');
+    }
+
+    return Promise.resolve(generateContentResult);
+  }
+
+  async appendHistory(
+    streamGenerateContentResultPromise: Promise<StreamGenerateContentResult>,
+    newContent: Content[]
+  ): Promise<void> {
+    const streamGenerateContentResult =
+      await streamGenerateContentResultPromise;
+    const streamGenerateContentResponse =
+      await streamGenerateContentResult.response;
+    // Only push the latest message to history if the response returned a result
+    if (streamGenerateContentResponse.candidates.length !== 0) {
+      this.historyInternal = this.historyInternal.concat(newContent);
+      const contentFromAssistant =
+        streamGenerateContentResponse.candidates[0].content;
+      if (!contentFromAssistant.role) {
+        contentFromAssistant.role = constants.MODEL_ROLE;
+      }
+      this.historyInternal.push(contentFromAssistant);
+    } else {
+      // TODO: handle promptFeedback in the response
+      throw new Error('Did not get a candidate from the model');
+    }
+  }
+
+  /**
+   * Make an async call to stream send message. Response will be returned in stream.
+   * @param {string | Array<string | Part>} request - send message request. {@link Part}
+   * @return {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   */
+  async sendMessageStream(
+    request: string | Array<string | Part>
+  ): Promise<StreamGenerateContentResult> {
+    const newContent: Content[] =
+      formulateNewContentFromSendMessageRequest(request);
+    const generateContentrequest: GenerateContentRequest = {
+      contents: this.historyInternal.concat(newContent),
+      safety_settings: this.safety_settings,
+      generation_config: this.generation_config,
+      tools: this.tools,
+    };
+
+    const streamGenerateContentResultPromise = generateContentStream(
+      this.location,
+      this.project,
+      this.publisher_model_endpoint,
+      this.token,
+      generateContentrequest,
+      this.api_endpoint,
+      this.generation_config,
+      this.safety_settings
+    ).catch(e => {
+      throw e;
+    });
+
+    this._send_stream_promise = this.appendHistory(
+      streamGenerateContentResultPromise,
+      newContent
+    ).catch(e => {
+      throw new GoogleGenerativeAIError('exception appending chat history', e);
+    });
+    return streamGenerateContentResultPromise;
+  }
+}
+
 /**
  * Chat session to make multi-turn send message request.
  * `sendMessage` method makes async call to get response of a chat message.

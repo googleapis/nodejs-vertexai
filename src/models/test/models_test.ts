@@ -17,8 +17,8 @@
 
 import {GoogleAuth} from 'google-auth-library';
 import {constants} from '../../util';
-import {GenerativeModelPreview} from '../generative_models';
-import {ChatSessionPreview} from '../chat_session';
+import {GenerativeModel, GenerativeModelPreview} from '../generative_models';
+import {ChatSession, ChatSessionPreview} from '../chat_session';
 import {
   FinishReason,
   FunctionDeclarationSchemaType,
@@ -219,6 +219,250 @@ async function* testGenerator(): AsyncGenerator<GenerateContentResponse> {
     candidates: TEST_CANDIDATES,
   };
 }
+
+describe('GenerativeModel startChat', () => {
+  it('returns ChatSession', () => {
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+    });
+    const chat = model.startChat();
+
+    expect(chat).toBeInstanceOf(ChatSession);
+  });
+});
+
+describe('GenerativeModelPreview startChat', () => {
+  it('returns ChatSessionPreview', () => {
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+    });
+    const chat = model.startChat();
+
+    expect(chat).toBeInstanceOf(ChatSessionPreview);
+  });
+});
+
+describe('GenerativeModel generateContent', () => {
+  let model: GenerativeModel;
+  let fetchSpy: jasmine.Spy;
+  let expectedResult: GenerateContentResult;
+
+  beforeEach(() => {
+    model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+    });
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    expectedResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    const fetchResult = new Response(
+      JSON.stringify(expectedResult),
+      fetchResponseObj
+    );
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
+  });
+
+  it('returns a GenerateContentResponse', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    const resp = await model.generateContent(req);
+    expect(resp).toEqual(expectedResult);
+  });
+  it('returns a GenerateContentResponse when passed a string', async () => {
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    const resp = await model.generateContent(TEST_CHAT_MESSSAGE_TEXT);
+    expect(resp).toEqual(expectedResult);
+  });
+
+  it('returns a GenerateContentResponse when passed a GCS URI', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    const resp = await model.generateContent(req);
+    expect(resp).toEqual(expectedResult);
+  });
+
+  it('raises an error when passed an invalid GCS URI', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE,
+    };
+    await expectAsync(model.generateContent(req)).toBeRejectedWithError(
+      URIError
+    );
+  });
+
+  it('returns a GenerateContentResponse when passed safety_settings and generation_config', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+      safety_settings: TEST_SAFETY_SETTINGS,
+      generation_config: TEST_GENERATION_CONFIG,
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    const resp = await model.generateContent(req);
+    expect(resp).toEqual(expectedResult);
+  });
+
+  it('updates the base API endpoint when provided', async () => {
+    model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+      apiEndpoint: TEST_ENDPOINT_BASE_PATH,
+    });
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    await model.generateContent(req);
+    expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
+      TEST_ENDPOINT_BASE_PATH
+    );
+  });
+
+  it('default the base API endpoint when base API not provided', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    await model.generateContent(req);
+    expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
+      `${LOCATION}-aiplatform.googleapis.com`
+    );
+  });
+
+  it('removes top_k when it is set to 0', async () => {
+    const reqWithEmptyConfigs: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+      generation_config: {top_k: 0},
+      safety_settings: [],
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    await model.generateContent(reqWithEmptyConfigs);
+    const requestArgs = fetchSpy.calls.allArgs()[0][1];
+    if (typeof requestArgs === 'object' && requestArgs) {
+      expect(JSON.stringify(requestArgs['body'])).not.toContain('top_k');
+    }
+  });
+
+  it('includes top_k when it is within 1 - 40', async () => {
+    const reqWithEmptyConfigs: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+      generation_config: {top_k: 1},
+      safety_settings: [],
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    await model.generateContent(reqWithEmptyConfigs);
+    const requestArgs = fetchSpy.calls.allArgs()[0][1];
+    if (typeof requestArgs === 'object' && requestArgs) {
+      expect(JSON.stringify(requestArgs['body'])).toContain('top_k');
+    }
+  });
+
+  it('aggregates citation metadata', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    const resp = await model.generateContent(req);
+    expect(
+      resp.response.candidates[0].citationMetadata?.citationSources.length
+    ).toEqual(
+      TEST_MODEL_RESPONSE.candidates[0].citationMetadata.citationSources.length
+    );
+  });
+
+  it('returns a FunctionCall when passed a FunctionDeclaration', async () => {
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+      ],
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
+    };
+    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    const resp = await model.generateContent(req);
+    expect(resp).toEqual(expectedResult);
+  });
+
+  it('throws ClientError when functionResponse is not immedidately following functionCall case1', async () => {
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+        {
+          role: 'function',
+          parts: TEST_FUNCTION_RESPONSE_PART,
+        },
+      ],
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const expectedErrorMessage =
+      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('throws ClientError when functionResponse is not immedidately following functionCall case2', async () => {
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+        {
+          role: 'function',
+          parts: TEST_FUNCTION_RESPONSE_PART,
+        },
+      ],
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const expectedErrorMessage =
+      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
 
 describe('GenerativeModelPreview generateContent', () => {
   let model: GenerativeModelPreview;
@@ -436,6 +680,130 @@ describe('GenerativeModelPreview generateContent', () => {
   });
 });
 
+describe('GenerativeModel generateContentStream', () => {
+  let model: GenerativeModel;
+  let expectedStreamResult: StreamGenerateContentResult;
+  let fetchSpy: jasmine.Spy;
+
+  beforeEach(() => {
+    model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+    });
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    expectedStreamResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE),
+      stream: testGenerator(),
+    };
+    const fetchResult = new Response(
+      JSON.stringify(expectedStreamResult),
+      fetchResponseObj
+    );
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
+  });
+
+  it('returns a GenerateContentResponse when passed text content', async () => {
+    const req: GenerateContentRequest = {contents: TEST_USER_CHAT_MESSAGE};
+    const expectedResult: StreamGenerateContentResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE),
+      stream: testGenerator(),
+    };
+    spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+    const resp = await model.generateContentStream(req);
+    expect(resp).toEqual(expectedResult);
+  });
+
+  it('returns a GenerateContentResponse when passed a string', async () => {
+    const expectedResult: StreamGenerateContentResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE),
+      stream: testGenerator(),
+    };
+    spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+    const resp = await model.generateContentStream(TEST_CHAT_MESSSAGE_TEXT);
+    expect(resp).toEqual(expectedResult);
+  });
+
+  it('returns a GenerateContentResponse when passed multi-part content with a GCS URI', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_MULTIPART_MESSAGE,
+    };
+    const expectedResult: StreamGenerateContentResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE),
+      stream: testGenerator(),
+    };
+    spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+    const resp = await model.generateContentStream(req);
+    expect(resp).toEqual(expectedResult);
+  });
+
+  it('returns a GenerateContentResponse when passed multi-part content with base64 data', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_MULTIPART_MESSAGE_BASE64,
+    };
+    const expectedResult: StreamGenerateContentResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE),
+      stream: testGenerator(),
+    };
+    spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+    const resp = await model.generateContentStream(req);
+    expect(resp).toEqual(expectedResult);
+  });
+  it('returns a FunctionCall when passed a FunctionDeclaration', async () => {
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+      ],
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const expectedStreamResult: StreamGenerateContentResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
+      stream: testGenerator(),
+    };
+    spyOn(StreamFunctions, 'processStream').and.returnValue(
+      expectedStreamResult
+    );
+    const resp = await model.generateContentStream(req);
+    expect(resp).toEqual(expectedStreamResult);
+  });
+  it('throws ClientError when functionResponse is not immedidately following functionCall case1', async () => {
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+        {
+          role: 'function',
+          parts: TEST_FUNCTION_RESPONSE_PART,
+        },
+      ],
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const expectedErrorMessage =
+      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('throws ClientError when functionResponse is not immedidately following functionCall case2', async () => {
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+        {
+          role: 'function',
+          parts: TEST_FUNCTION_RESPONSE_PART,
+        },
+      ],
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const expectedErrorMessage =
+      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
+
 describe('GenerativeModelPreview generateContentStream', () => {
   let model: GenerativeModelPreview;
   let expectedStreamResult: StreamGenerateContentResult;
@@ -556,6 +924,264 @@ describe('GenerativeModelPreview generateContentStream', () => {
       '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
     await model.generateContentStream(req).catch(e => {
       expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
+
+describe('ChatSession', () => {
+  let chatSession: ChatSession;
+  let chatSessionWithNoArgs: ChatSession;
+  let chatSessionWithEmptyResponse: ChatSession;
+  let chatSessionWithFunctionCall: ChatSession;
+  let model: GenerativeModel;
+  let expectedStreamResult: StreamGenerateContentResult;
+
+  beforeEach(() => {
+    model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+    });
+    chatSession = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    expect(chatSession.history).toEqual(TEST_USER_CHAT_MESSAGE);
+    chatSessionWithNoArgs = model.startChat();
+    spyOnProperty(chatSessionWithNoArgs, 'token', 'get').and.resolveTo(
+      TEST_TOKEN
+    );
+    chatSessionWithEmptyResponse = model.startChat();
+    spyOnProperty(chatSessionWithEmptyResponse, 'token', 'get').and.resolveTo(
+      TEST_TOKEN
+    );
+    chatSessionWithFunctionCall = model.startChat({
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    spyOnProperty(chatSessionWithFunctionCall, 'token', 'get').and.resolveTo(
+      TEST_TOKEN
+    );
+    expectedStreamResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE),
+      stream: testGenerator(),
+    };
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedStreamResult), fetchResponseObj)
+    );
+    spyOn(global, 'fetch').and.returnValue(fetchResult);
+  });
+
+  describe('sendMessage', () => {
+    it('returns a GenerateContentResponse and appends to history', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(StreamFunctions, 'processNonStream').and.returnValue(
+        expectedResult
+      );
+      const resp = await chatSession.sendMessage(req);
+      expect(resp).toEqual(expectedResult);
+      expect(chatSession.history.length).toEqual(3);
+    });
+
+    it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(StreamFunctions, 'processNonStream').and.returnValue(
+        expectedResult
+      );
+      const resp = await chatSessionWithNoArgs.sendMessage(req);
+      expect(resp).toEqual(expectedResult);
+      expect(chatSessionWithNoArgs.history.length).toEqual(2);
+    });
+
+    it('throws an error when the model returns an empty response', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: GenerateContentResult = {
+        response: TEST_EMPTY_MODEL_RESPONSE,
+      };
+      spyOn(StreamFunctions, 'processNonStream').and.returnValue(
+        expectedResult
+      );
+      await expectAsync(
+        chatSessionWithEmptyResponse.sendMessage(req)
+      ).toBeRejected();
+      expect(chatSessionWithEmptyResponse.history.length).toEqual(0);
+    });
+    it('returns a GenerateContentResponse when passed multi-part content', async () => {
+      const req = TEST_MULTIPART_MESSAGE[0]['parts'];
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(StreamFunctions, 'processNonStream').and.returnValue(
+        expectedResult
+      );
+      const resp = await chatSessionWithNoArgs.sendMessage(req);
+      expect(resp).toEqual(expectedResult);
+      console.log(chatSessionWithNoArgs.history, 'hihii');
+      expect(chatSessionWithNoArgs.history.length).toEqual(2);
+    });
+    it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
+      const functionCallChatMessage = 'What is the weather in LA?';
+      const expectedFunctionCallResponse: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
+      };
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
+      };
+
+      const streamSpy = spyOn(StreamFunctions, 'processNonStream');
+
+      streamSpy.and.returnValue(expectedResult);
+      const response1 = await chatSessionWithFunctionCall.sendMessage(
+        functionCallChatMessage
+      );
+      expect(response1).toEqual(expectedFunctionCallResponse);
+      expect(chatSessionWithFunctionCall.history.length).toEqual(2);
+
+      // Send a follow-up message with a FunctionResponse
+      const expectedFollowUpResponse: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      const expectedFollowUpResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      streamSpy.and.returnValue(expectedFollowUpResult);
+      const response2 = await chatSessionWithFunctionCall.sendMessage(
+        TEST_FUNCTION_RESPONSE_PART
+      );
+      expect(response2).toEqual(expectedFollowUpResponse);
+      expect(chatSessionWithFunctionCall.history.length).toEqual(4);
+    });
+
+    it('throw ClientError when request has no content', async () => {
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: No content is provided for sending chat message.';
+      await chatSessionWithNoArgs.sendMessage([]).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
+    });
+
+    it('throw ClientError when request mix functionCall part with other types of part', async () => {
+      const chatRequest = [
+        'what is the weather like in LA',
+        TEST_FUNCTION_RESPONSE_PART[0],
+      ];
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: Within a single message, FunctionResponse cannot be mixed with other type of part in the request for sending chat message.';
+      await chatSessionWithNoArgs.sendMessage(chatRequest).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
+    });
+  });
+
+  describe('sendMessageStream', () => {
+    it('returns a StreamGenerateContentResponse and appends to history', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      const chatSession = model.startChat({
+        history: [
+          {
+            role: constants.USER_ROLE,
+            parts: [{text: 'How are you doing today?'}],
+          },
+        ],
+      });
+      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+      expect(chatSession.history.length).toEqual(1);
+      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
+      const result = await chatSession.sendMessageStream(req);
+      const response = await result.response;
+      const expectedResponse = await expectedResult.response;
+      expect(response).toEqual(expectedResponse);
+      expect(chatSession.history.length).toEqual(3);
+      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
+      expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
+      expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+    });
+    it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE_MISSING_ROLE),
+        stream: testGenerator(),
+      };
+      const chatSession = model.startChat({
+        history: [
+          {
+            role: constants.USER_ROLE,
+            parts: [{text: 'How are you doing today?'}],
+          },
+        ],
+      });
+      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+      spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+      expect(chatSession.history.length).toEqual(1);
+      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
+      const result = await chatSession.sendMessageStream(req);
+      const response = await result.response;
+      const expectedResponse = await expectedResult.response;
+      expect(response).toEqual(expectedResponse);
+      expect(chatSession.history.length).toEqual(3);
+      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
+      expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
+      expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+    });
+
+    it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
+      const functionCallChatMessage = 'What is the weather in LA?';
+      const expectedStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
+        stream: testGenerator(),
+      };
+
+      const streamSpy = spyOn(StreamFunctions, 'processStream');
+
+      streamSpy.and.returnValue(expectedStreamResult);
+      const response1 = await chatSessionWithFunctionCall.sendMessageStream(
+        functionCallChatMessage
+      );
+      expect(response1).toEqual(expectedStreamResult);
+      expect(chatSessionWithFunctionCall.history.length).toEqual(2);
+
+      // Send a follow-up message with a FunctionResponse
+      const expectedFollowUpStreamResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      };
+      streamSpy.and.returnValue(expectedFollowUpStreamResult);
+      const response2 = await chatSessionWithFunctionCall.sendMessageStream(
+        TEST_FUNCTION_RESPONSE_PART
+      );
+      expect(response2).toEqual(expectedFollowUpStreamResult);
+      expect(chatSessionWithFunctionCall.history.length).toEqual(4);
+    });
+
+    it('throw ClientError when request has no content', async () => {
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: No content is provided for sending chat message.';
+      await chatSessionWithNoArgs.sendMessageStream([]).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
+    });
+
+    it('throw ClientError when request mix functionCall part with other types of part', async () => {
+      const chatRequest = [
+        'what is the weather like in LA',
+        TEST_FUNCTION_RESPONSE_PART[0],
+      ];
+      const expectedErrorMessage =
+        '[VertexAI.ClientError]: Within a single message, FunctionResponse cannot be mixed with other type of part in the request for sending chat message.';
+      await chatSessionWithNoArgs.sendMessageStream(chatRequest).catch(e => {
+        expect(e.message).toEqual(expectedErrorMessage);
+      });
     });
   });
 });
