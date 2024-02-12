@@ -275,7 +275,7 @@ export class ChatSessionPreview {
     ).catch(e => {
       throw e;
     });
-    const generateContentResponse = generateContentResult.response;
+    const generateContentResponse = await generateContentResult.response;
     // Only push the latest message to history if the response returned a result
     if (generateContentResponse.candidates.length !== 0) {
       this.historyInternal = this.historyInternal.concat(newContent);

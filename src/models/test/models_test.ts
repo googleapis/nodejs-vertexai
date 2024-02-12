@@ -20,6 +20,7 @@ import {constants} from '../../util';
 import {GenerativeModel, GenerativeModelPreview} from '../generative_models';
 import {ChatSession, ChatSessionPreview} from '../chat_session';
 import {
+  CountTokensRequest,
   FinishReason,
   FunctionDeclarationSchemaType,
   GenerateContentRequest,
@@ -221,7 +222,7 @@ async function* testGenerator(): AsyncGenerator<GenerateContentResponse> {
 }
 
 describe('GenerativeModel startChat', () => {
-  it('returns ChatSession', () => {
+  it('returns ChatSession when pass no arg', () => {
     const model = new GenerativeModel({
       model: 'gemini-pro',
       project: PROJECT,
@@ -232,10 +233,23 @@ describe('GenerativeModel startChat', () => {
 
     expect(chat).toBeInstanceOf(ChatSession);
   });
+  it('returns ChatSession when pass an arg', () => {
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+
+    expect(chat).toBeInstanceOf(ChatSession);
+  });
 });
 
 describe('GenerativeModelPreview startChat', () => {
-  it('returns ChatSessionPreview', () => {
+  it('returns ChatSessionPreview when pass no arg', () => {
     const model = new GenerativeModelPreview({
       model: 'gemini-pro',
       project: PROJECT,
@@ -243,6 +257,19 @@ describe('GenerativeModelPreview startChat', () => {
       googleAuth: googleAuth,
     });
     const chat = model.startChat();
+
+    expect(chat).toBeInstanceOf(ChatSessionPreview);
+  });
+  it('returns ChatSessionPreview when pass an arg', () => {
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
 
     expect(chat).toBeInstanceOf(ChatSessionPreview);
   });
@@ -1440,6 +1467,472 @@ describe('ChatSessionPreview', () => {
       await chatSessionWithNoArgs.sendMessageStream(chatRequest).catch(e => {
         expect(e.message).toEqual(expectedErrorMessage);
       });
+    });
+  });
+});
+
+describe('GenerativeModel countTokens', () => {
+  it('returns the token count', async () => {
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+    });
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    const req: CountTokensRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const responseBody = {
+      totalTokens: 1,
+    };
+    const response = new Response(
+      JSON.stringify(responseBody),
+      fetchResponseObj
+    );
+    spyOn(global, 'fetch').and.resolveTo(response);
+    const resp = await model.countTokens(req);
+    expect(resp).toEqual(responseBody);
+  });
+});
+
+describe('GenerativeModelPreview countTokens', () => {
+  it('returns the token count', async () => {
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+    });
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    const req: CountTokensRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const responseBody = {
+      totalTokens: 1,
+    };
+    const response = new Response(
+      JSON.stringify(responseBody),
+      fetchResponseObj
+    );
+    spyOn(global, 'fetch').and.resolveTo(response);
+    const resp = await model.countTokens(req);
+    expect(resp).toEqual(responseBody);
+  });
+});
+
+describe('GenerativeModel when exception at fetch', () => {
+  const model = new GenerativeModel({
+    model: 'gemini-pro',
+    project: PROJECT,
+    location: LOCATION,
+    googleAuth: googleAuth,
+  });
+  const chatSession = model.startChat();
+  const message = 'hi';
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.throwError('error');
+  });
+
+  it('generateContent should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+  });
+
+  it('generateContentStream should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+  });
+
+  it('sendMessage should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+  });
+
+  it('countTokens should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+  });
+});
+
+describe('GenerativeModelPreview when exception at fetch', () => {
+  const model = new GenerativeModelPreview({
+    model: 'gemini-pro',
+    project: PROJECT,
+    location: LOCATION,
+    googleAuth: googleAuth,
+  });
+  const chatSession = model.startChat();
+  const message = 'hi';
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.throwError('error');
+  });
+
+  it('generateContent should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+  });
+
+  it('generateContentStream should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+  });
+
+  it('sendMessage should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+  });
+
+  it('countTokens should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+  });
+});
+
+describe('GenerativeModel when response is undefined', () => {
+  const expectedErrorMessage =
+    '[VertexAI.GoogleGenerativeAIError]: response is undefined';
+  const model = new GenerativeModel({
+    model: 'gemini-pro',
+    project: PROJECT,
+    location: LOCATION,
+    googleAuth: googleAuth,
+  });
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const message = 'hi';
+  const chatSession = model.startChat();
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOn(global, 'fetch').and.resolveTo();
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+  });
+
+  it('generateContent should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('generateContentStream should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('sendMessage should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+    await chatSession.sendMessage(message).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('countTokens should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+    await model.countTokens(countTokenReq).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
+
+describe('GenerativeModelPreview when response is undefined', () => {
+  const expectedErrorMessage =
+    '[VertexAI.GoogleGenerativeAIError]: response is undefined';
+  const model = new GenerativeModelPreview({
+    model: 'gemini-pro',
+    project: PROJECT,
+    location: LOCATION,
+    googleAuth: googleAuth,
+  });
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const message = 'hi';
+  const chatSession = model.startChat();
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOn(global, 'fetch').and.resolveTo();
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+  });
+
+  it('generateContent should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('generateContentStream should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('sendMessage should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+    await chatSession.sendMessage(message).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('countTokens should throw GoogleGenerativeAI error', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+    await model.countTokens(countTokenReq).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
+
+describe('GeneratvieModel when response is 4XX', () => {
+  const expectedErrorMessage =
+    '[VertexAI.ClientError]: got status: 400 Bad Request';
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const fetch400Obj = {
+    status: 400,
+    statusText: 'Bad Request',
+    ok: false,
+  };
+  const body = {};
+  const response = new Response(JSON.stringify(body), fetch400Obj);
+  const model = new GenerativeModel({
+    model: 'gemini-pro',
+    project: PROJECT,
+    location: LOCATION,
+    googleAuth: googleAuth,
+  });
+  const message = 'hi';
+  const chatSession = model.startChat();
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.resolveTo(response);
+  });
+
+  it('generateContent should throw ClientError error', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('generateContentStream should throw ClientError error', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('sendMessage should throw ClientError error', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+    await chatSession.sendMessage(message).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('countTokens should throw ClientError error', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+    await model.countTokens(countTokenReq).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
+
+describe('GeneratvieModelPreview when response is 4XX', () => {
+  const expectedErrorMessage =
+    '[VertexAI.ClientError]: got status: 400 Bad Request';
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const fetch400Obj = {
+    status: 400,
+    statusText: 'Bad Request',
+    ok: false,
+  };
+  const body = {};
+  const response = new Response(JSON.stringify(body), fetch400Obj);
+  const model = new GenerativeModelPreview({
+    model: 'gemini-pro',
+    project: PROJECT,
+    location: LOCATION,
+    googleAuth: googleAuth,
+  });
+  const message = 'hi';
+  const chatSession = model.startChat();
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.resolveTo(response);
+  });
+
+  it('generateContent should throw ClientError error', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('generateContentStream should throw ClientError error', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('sendMessage should throw ClientError error', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+    await chatSession.sendMessage(message).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('countTokens should throw ClientError error', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+    await model.countTokens(countTokenReq).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
+
+describe('GenerativeModel when response is not OK and not 4XX', () => {
+  const expectedErrorMessage =
+    '[VertexAI.GoogleGenerativeAIError]: got status: 500 Internal Server Error';
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const fetch500Obj = {
+    status: 500,
+    statusText: 'Internal Server Error',
+    ok: false,
+  };
+  const body = {};
+  const response = new Response(JSON.stringify(body), fetch500Obj);
+  const model = new GenerativeModel({
+    model: 'gemini-pro',
+    project: PROJECT,
+    location: LOCATION,
+    googleAuth: googleAuth,
+  });
+  const message = 'hi';
+  const chatSession = model.startChat();
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.resolveTo(response);
+  });
+
+  it('generateContent should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('generateContentStream should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('sendMessage should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+    await chatSession.sendMessage(message).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('countTokens should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+    await model.countTokens(countTokenReq).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+});
+
+describe('GenerativeModelPreview when response is not OK and not 4XX', () => {
+  const expectedErrorMessage =
+    '[VertexAI.GoogleGenerativeAIError]: got status: 500 Internal Server Error';
+  const req: GenerateContentRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  const fetch500Obj = {
+    status: 500,
+    statusText: 'Internal Server Error',
+    ok: false,
+  };
+  const body = {};
+  const response = new Response(JSON.stringify(body), fetch500Obj);
+  const model = new GenerativeModelPreview({
+    model: 'gemini-pro',
+    project: PROJECT,
+    location: LOCATION,
+    googleAuth: googleAuth,
+  });
+  const message = 'hi';
+  const chatSession = model.startChat();
+  const countTokenReq: CountTokensRequest = {
+    contents: TEST_USER_CHAT_MESSAGE,
+  };
+  beforeEach(() => {
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    spyOn(global, 'fetch').and.resolveTo(response);
+  });
+
+  it('generateContent should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(model.generateContent(req)).toBeRejected();
+    await model.generateContent(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('generateContentStream should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(model.generateContentStream(req)).toBeRejected();
+    await model.generateContentStream(req).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('sendMessage should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(chatSession.sendMessage(message)).toBeRejected();
+    await chatSession.sendMessage(message).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
+    });
+  });
+
+  it('countTokens should throws GoogleGenerativeAIError', async () => {
+    await expectAsync(model.countTokens(countTokenReq)).toBeRejected();
+    await model.countTokens(countTokenReq).catch(e => {
+      expect(e.message).toEqual(expectedErrorMessage);
     });
   });
 });
