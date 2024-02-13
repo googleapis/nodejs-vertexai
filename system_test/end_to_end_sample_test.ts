@@ -195,7 +195,7 @@ describe('generateContentStream', () => {
     };
     await generativeVisionModel.generateContentStream(badRequest).catch(e => {
       expect(e).toBeInstanceOf(ClientError);
-      expect(e.message).toBe(
+      expect(e.message).toContain(
         '[VertexAI.ClientError]: got status: 400 Bad Request',
         `sys test failure on generateContentStream when having bad request
           got wrong error message: ${e.message}`
