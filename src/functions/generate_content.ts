@@ -81,9 +81,10 @@ export async function generateContent(
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request', e);
   });
-  throwErrorIfNotOK(response);
-  const result: GenerateContentResult = processNonStream(response);
-  return Promise.resolve(result);
+  await throwErrorIfNotOK(response).catch(e => {
+    throw e;
+  });
+  return processNonStream(response);
 }
 
 /**
@@ -129,7 +130,8 @@ export async function generateContentStream(
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request', e);
   });
-  throwErrorIfNotOK(response);
-  const streamResult = processStream(response);
-  return Promise.resolve(streamResult);
+  await throwErrorIfNotOK(response).catch(e => {
+    throw e;
+  });
+  return processStream(response);
 }

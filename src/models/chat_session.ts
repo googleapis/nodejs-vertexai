@@ -349,9 +349,7 @@ export class ChatSessionPreview {
     this._send_stream_promise = this.appendHistory(
       streamGenerateContentResultPromise,
       newContent
-    ).catch(e => {
-      throw new GoogleGenerativeAIError('exception appending chat history', e);
-    });
+    );
     return streamGenerateContentResultPromise;
   }
 }

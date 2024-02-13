@@ -25,17 +25,20 @@ import {
 } from '../types/content';
 import {ClientError, GoogleGenerativeAIError} from '../types/errors';
 
-export function throwErrorIfNotOK(response: Response | undefined) {
+export async function throwErrorIfNotOK(response: Response | undefined) {
   if (response === undefined) {
     throw new GoogleGenerativeAIError('response is undefined');
   }
-  const status: number = response.status;
-  const statusText: string = response.statusText;
-  const errorMessage = `got status: ${status} ${statusText}`;
-  if (status >= 400 && status < 500) {
-    throw new ClientError(errorMessage);
-  }
   if (!response.ok) {
+    const status: number = response.status;
+    const statusText: string = response.statusText;
+    const errorBody = await response.json();
+    const errorMessage = `got status: ${status} ${statusText}. ${JSON.stringify(
+      errorBody
+    )}`;
+    if (status >= 400 && status < 500) {
+      throw new ClientError(errorMessage);
+    }
     throw new GoogleGenerativeAIError(errorMessage);
   }
 }
@@ -64,9 +67,9 @@ async function* generateResponseSequence(
  * @param response - Response from a fetch call
  * @ignore
  */
-export function processStream(
+export async function processStream(
   response: Response | undefined
-): StreamGenerateContentResult {
+): Promise<StreamGenerateContentResult> {
   if (response === undefined) {
     throw new Error('Error processing stream because response === undefined');
   }
@@ -79,10 +82,10 @@ export function processStream(
   const responseStream =
     getResponseStream<GenerateContentResponse>(inputStream);
   const [stream1, stream2] = responseStream.tee();
-  return {
+  return Promise.resolve({
     stream: generateResponseSequence(stream1),
     response: getResponsePromise(stream2),
-  };
+  });
 }
 
 async function getResponsePromise(
@@ -229,7 +232,9 @@ function aggregateResponses(
  * Process model responses from generateContent
  * @ignore
  */
-export function processNonStream(response: any): GenerateContentResult {
+export async function processNonStream(
+  response: any
+): Promise<GenerateContentResult> {
   if (response !== undefined) {
     // ts-ignore
     const responseJson = response.json();
@@ -238,17 +243,18 @@ export function processNonStream(response: any): GenerateContentResult {
     };
   }
 
-  return {
+  return Promise.resolve({
     response: {candidates: []},
-  };
+  });
 }
 
 /**
  * Process model responses from countTokens
  * @ignore
  */
-export function processCountTokenResponse(response: any): CountTokensResponse {
+export async function processCountTokenResponse(
+  response: any
+): Promise<CountTokensResponse> {
   // ts-ignore
-  const responseJson = response.json();
-  return responseJson as CountTokensResponse;
+  return response.json();
 }

@@ -47,7 +47,8 @@ export async function countTokens(
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request', e);
   });
-  throwErrorIfNotOK(response);
-  const processedResponse = processCountTokenResponse(response);
-  return Promise.resolve(processedResponse);
+  await throwErrorIfNotOK(response).catch(e => {
+    throw e;
+  });
+  return processCountTokenResponse(response);
 }

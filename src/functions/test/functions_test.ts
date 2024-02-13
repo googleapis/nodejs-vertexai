@@ -260,10 +260,14 @@ describe('countTokens', () => {
       statusText: 'Internal Server Error',
       ok: false,
     };
-    const body = {};
+    const body = {
+      code: 500,
+      message: 'service is having downtime',
+      status: 'INTERNAL_SERVER_ERROR',
+    };
     const response = new Response(JSON.stringify(body), fetch500Obj);
     const expectedErrorMessage =
-      '[VertexAI.GoogleGenerativeAIError]: got status: 500 Internal Server Error';
+      '[VertexAI.GoogleGenerativeAIError]: got status: 500 Internal Server Error. {"code":500,"message":"service is having downtime","status":"INTERNAL_SERVER_ERROR"}';
     spyOn(global, 'fetch').and.resolveTo(response);
 
     await expectAsync(
@@ -294,10 +298,14 @@ describe('countTokens', () => {
       statusText: 'Bad Request',
       ok: false,
     };
-    const body = {};
+    const body = {
+      code: 400,
+      message: 'request is invalid',
+      status: 'INVALID_ARGUMENT',
+    };
     const response = new Response(JSON.stringify(body), fetch400Obj);
     const expectedErrorMessage =
-      '[VertexAI.ClientError]: got status: 400 Bad Request';
+      '[VertexAI.ClientError]: got status: 400 Bad Request. {"code":400,"message":"request is invalid","status":"INVALID_ARGUMENT"}';
     spyOn(global, 'fetch').and.resolveTo(response);
 
     await expectAsync(
@@ -346,7 +354,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -361,7 +369,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -380,7 +388,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -417,7 +425,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -435,7 +443,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -458,7 +466,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -482,7 +490,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -504,7 +512,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -530,7 +538,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -623,7 +631,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -640,7 +648,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -660,7 +668,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -680,7 +688,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(expectedResult);
+    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -702,9 +710,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.returnValue(
-      expectedStreamResult
-    );
+    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
       TEST_PROJECT,
