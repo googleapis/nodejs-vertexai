@@ -98,29 +98,50 @@ const vertex_ai = new VertexAI({
   location: LOCATION,
 });
 
-const generativeTextModel = vertex_ai.preview.getGenerativeModel({
+const generativeTextModel = vertex_ai.getGenerativeModel({
   model: 'gemini-pro',
   generation_config: {
     max_output_tokens: 256,
   },
 });
-const generativeTextModelWithPrefix = vertex_ai.preview.getGenerativeModel({
+const generativeTextModelPreview = vertex_ai.preview.getGenerativeModel({
+  model: 'gemini-pro',
+  generation_config: {
+    max_output_tokens: 256,
+  },
+});
+const generativeTextModelWithPrefix = vertex_ai.getGenerativeModel({
   model: 'models/gemini-pro',
   generation_config: {
     max_output_tokens: 256,
   },
 });
-const textModelNoOutputLimit = vertex_ai.preview.getGenerativeModel({
+const generativeTextModelWithPrefixPreview =
+  vertex_ai.preview.getGenerativeModel({
+    model: 'models/gemini-pro',
+    generation_config: {
+      max_output_tokens: 256,
+    },
+  });
+const textModelNoOutputLimit = vertex_ai.getGenerativeModel({
   model: 'gemini-pro',
 });
-
-const generativeVisionModel = vertex_ai.preview.getGenerativeModel({
+const textModelNoOutputLimitPreview = vertex_ai.preview.getGenerativeModel({
+  model: 'gemini-pro',
+});
+const generativeVisionModel = vertex_ai.getGenerativeModel({
   model: 'gemini-pro-vision',
 });
-const generativeVisionModelWithPrefix = vertex_ai.preview.getGenerativeModel({
+const generativeVisionModelPreview = vertex_ai.preview.getGenerativeModel({
+  model: 'gemini-pro-vision',
+});
+const generativeVisionModelWithPrefix = vertex_ai.getGenerativeModel({
   model: 'models/gemini-pro-vision',
 });
-
+const generativeVisionModelWithPrefixPreview =
+  vertex_ai.preview.getGenerativeModel({
+    model: 'models/gemini-pro-vision',
+  });
 describe('generateContentStream', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
@@ -141,6 +162,22 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
+  it('in preview should should return a stream and aggregated response when passed text', async () => {
+    const streamingResp =
+      await generativeTextModelPreview.generateContentStream(TEXT_REQUEST);
+
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream, for item ${item}`
+      );
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
+    );
+  });
+
   it('should not return a invalid unicode', async () => {
     const streamingResp = await generativeTextModel.generateContentStream({
       contents: [{role: 'user', parts: [{text: '创作一首古诗'}]}],
@@ -165,6 +202,32 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
+  it('in preview should not return a invalid unicode', async () => {
+    const streamingResp =
+      await generativeTextModelPreview.generateContentStream({
+        contents: [{role: 'user', parts: [{text: '创作一首古诗'}]}],
+      });
+
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream, for item ${item}`
+      );
+      for (const candidate of item.candidates) {
+        for (const part of candidate.content.parts as TextPart[]) {
+          expect(part.text).not.toContain(
+            '\ufffd',
+            `sys test failure on generateContentStream in preview, for item ${item}`
+          );
+        }
+      }
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+    );
+  });
+
   it('should return a stream and aggregated response when passed multipart base64 content', async () => {
     const streamingResp = await generativeVisionModel.generateContentStream(
       MULTI_PART_BASE64_REQUEST
@@ -181,6 +244,24 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
+  it('in preview should return a stream and aggregated response when passed multipart base64 content', async () => {
+    const streamingResp =
+      await generativeVisionModelPreview.generateContentStream(
+        MULTI_PART_BASE64_REQUEST
+      );
+
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream, for item ${item}`
+      );
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
+    );
+  });
+
   it('should throw ClientError when having invalid input', async () => {
     const badRequest = {
       contents: [
@@ -202,6 +283,29 @@ describe('generateContentStream', () => {
       );
     });
   });
+  it('in preview should throw ClientError when having invalid input', async () => {
+    const badRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {text: 'describe this image:'},
+            {inline_data: {mime_type: 'image/png', data: 'invalid data'}},
+          ],
+        },
+      ],
+    };
+    await generativeVisionModelPreview
+      .generateContentStream(badRequest)
+      .catch(e => {
+        expect(e).toBeInstanceOf(ClientError);
+        expect(e.message).toContain(
+          '[VertexAI.ClientError]: got status: 400 Bad Request',
+          `sys test failure on generateContentStream in preview when having bad request
+          got wrong error message: ${e.message}`
+        );
+      });
+  });
 
   it('should should return a stream and aggregated response when passed multipart GCS content', async () => {
     const streamingResp = await generativeVisionModel.generateContentStream(
@@ -219,6 +323,24 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
   });
+  it('in preview should should return a stream and aggregated response when passed multipart GCS content', async () => {
+    const streamingResp =
+      await generativeVisionModelPreview.generateContentStream(
+        MULTI_PART_GCS_REQUEST
+      );
+
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream, for item ${item}`
+      );
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
+    );
+  });
+
   it('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const request = {
       contents: [
@@ -239,6 +361,26 @@ describe('generateContentStream', () => {
       );
     }
   });
+  it('in preview should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
+    const request = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
+        {role: 'model', parts: FUNCTION_CALL},
+        {role: 'function', parts: FUNCTION_RESPONSE_PART},
+      ],
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const streamingResp =
+      await generativeTextModelPreview.generateContentStream(request);
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream in preview, for item ${item}`
+      );
+      expect(item.candidates[0].content.parts[0].text?.toLowerCase()).toContain(
+        WEATHER_FORECAST
+      );
+    }
+  });
 });
 
 describe('generateContent', () => {
@@ -251,6 +393,15 @@ describe('generateContent', () => {
     const aggregatedResp = await response.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+    );
+  });
+  it('in preview should return the aggregated response', async () => {
+    const response =
+      await generativeTextModelPreview.generateContent(TEXT_REQUEST);
+
+    const aggregatedResp = await response.response;
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
     );
   });
 });
@@ -266,6 +417,16 @@ describe('sendMessage', () => {
     const response1 = await result1.response;
     expect(response1.candidates[0]).toBeTruthy(
       `sys test failure on sendMessage for aggregated response: ${response1}`
+    );
+    expect(chat.history.length).toBe(2);
+  });
+  it('in preview should populate history and return a chat response', async () => {
+    const chat = generativeTextModelPreview.startChat();
+    const chatInput1 = 'How can I learn more about Node.js?';
+    const result1 = await chat.sendMessage(chatInput1);
+    const response1 = await result1.response;
+    expect(response1.candidates[0]).toBeTruthy(
+      `sys test failure on sendMessage in preview for aggregated response: ${response1}`
     );
     expect(chat.history.length).toBe(2);
   });
@@ -294,6 +455,26 @@ describe('sendMessageStream', () => {
     );
     expect(chat.history.length).toBe(2);
   });
+  it('in preview should should return a stream and populate history when generation_config is passed to startChat', async () => {
+    const chat = generativeTextModelPreview.startChat({
+      generation_config: {
+        max_output_tokens: 256,
+      },
+    });
+    const chatInput1 = 'How can I learn more about Node.js?';
+    const result1 = await chat.sendMessageStream(chatInput1);
+    for await (const item of result1.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on sendMessageStream in preview, for item ${item}`
+      );
+    }
+    const resp = await result1.response;
+    expect(resp.candidates[0]).toBeTruthy(
+      `sys test failure on sendMessageStream in preview for aggregated response: ${resp}`
+    );
+    expect(chat.history.length).toBe(2);
+  });
+
   it('should should return a stream and populate history when startChat is passed no request obj', async () => {
     const chat = generativeTextModel.startChat();
     const chatInput1 = 'How can I learn more about Node.js?';
@@ -309,6 +490,22 @@ describe('sendMessageStream', () => {
     );
     expect(chat.history.length).toBe(2);
   });
+  it('in preview should should return a stream and populate history when startChat is passed no request obj', async () => {
+    const chat = generativeTextModelPreview.startChat();
+    const chatInput1 = 'How can I learn more about Node.js?';
+    const result1 = await chat.sendMessageStream(chatInput1);
+    for await (const item of result1.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on sendMessageStream in preview, for item ${item}`
+      );
+    }
+    const resp = await result1.response;
+    expect(resp.candidates[0]).toBeTruthy(
+      `sys test failure on sendMessageStream in preview for aggregated response: ${resp}`
+    );
+    expect(chat.history.length).toBe(2);
+  });
+
   it('should return chunks as they come in', async () => {
     const chat = textModelNoOutputLimit.startChat({});
     const chatInput1 = 'Tell me a story in 3000 words';
@@ -329,6 +526,27 @@ describe('sendMessageStream', () => {
       firstChunkFinalResultTimeDiff
     );
   });
+  it('in preview should return chunks as they come in', async () => {
+    const chat = textModelNoOutputLimitPreview.startChat({});
+    const chatInput1 = 'Tell me a story in 3000 words';
+    const result1 = await chat.sendMessageStream(chatInput1);
+    let firstChunkTimestamp = 0;
+    let aggregatedResultTimestamp = 0;
+
+    const firstChunkFinalResultTimeDiff = 200; // ms
+
+    for await (const item of result1.stream) {
+      if (firstChunkTimestamp === 0) {
+        firstChunkTimestamp = Date.now();
+      }
+    }
+    await result1.response;
+    aggregatedResultTimestamp = Date.now();
+    expect(aggregatedResultTimestamp - firstChunkTimestamp).toBeGreaterThan(
+      firstChunkFinalResultTimeDiff
+    );
+  });
+
   it('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const chat = generativeTextModel.startChat({
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
@@ -360,6 +578,37 @@ describe('sendMessageStream', () => {
       JSON.stringify(response2.candidates[0].content.parts[0].text)
     ).toContain(WEATHER_FORECAST);
   });
+  it('in preview should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
+    const chat = generativeTextModelPreview.startChat({
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    const chatInput1 = 'What is the weather in Boston?';
+    const result1 = await chat.sendMessageStream(chatInput1);
+    for await (const item of result1.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on sendMessageStream in preview with function calling, for item ${item}`
+      );
+    }
+    const response1 = await result1.response;
+    expect(
+      JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
+    ).toContain(FUNCTION_CALL_NAME);
+    expect(
+      JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
+    ).toContain('location');
+
+    // Send a follow up message with a FunctionResponse
+    const result2 = await chat.sendMessageStream(FUNCTION_RESPONSE_PART);
+    for await (const item of result2.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on sendMessageStream in preview with function calling, for item ${item}`
+      );
+    }
+    const response2 = await result2.response;
+    expect(
+      JSON.stringify(response2.candidates[0].content.parts[0].text)
+    ).toContain(WEATHER_FORECAST);
+  });
 });
 
 describe('countTokens', () => {
@@ -367,6 +616,13 @@ describe('countTokens', () => {
     const countTokensResp = await generativeTextModel.countTokens(TEXT_REQUEST);
     expect(countTokensResp.totalTokens).toBeTruthy(
       `sys test failure on countTokens, ${countTokensResp}`
+    );
+  });
+  it('in preview should should return a CountTokensResponse', async () => {
+    const countTokensResp =
+      await generativeTextModelPreview.countTokens(TEXT_REQUEST);
+    expect(countTokensResp.totalTokens).toBeTruthy(
+      `sys test failure on countTokens in preview, ${countTokensResp}`
     );
   });
 });
@@ -391,6 +647,23 @@ describe('generateContentStream using models/model-id', () => {
       `sys test failure on generateContentStream using models/gemini-pro for aggregated response: ${aggregatedResp}`
     );
   });
+  it('in preview should should return a stream and aggregated response when passed text', async () => {
+    const streamingResp =
+      await generativeTextModelWithPrefixPreview.generateContentStream(
+        TEXT_REQUEST
+      );
+
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream in preview using models/gemini-pro, for item ${item}`
+      );
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream using models/gemini-pro for aggregated response: ${aggregatedResp}`
+    );
+  });
 
   it('should return a stream and aggregated response when passed multipart base64 content when using models/gemini-pro-vision', async () => {
     const streamingResp =
@@ -407,6 +680,23 @@ describe('generateContentStream using models/model-id', () => {
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream using models/gemini-pro-vision for aggregated response: ${aggregatedResp}`
+    );
+  });
+  it('in preview should return a stream and aggregated response when passed multipart base64 content when using models/gemini-pro-vision', async () => {
+    const streamingResp =
+      await generativeVisionModelWithPrefixPreview.generateContentStream(
+        MULTI_PART_BASE64_REQUEST
+      );
+
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream in preview using models/gemini-pro-vision, for item ${item}`
+      );
+    }
+
+    const aggregatedResp = await streamingResp.response;
+    expect(aggregatedResp.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream in preview using models/gemini-pro-vision for aggregated response: ${aggregatedResp}`
     );
   });
 });
