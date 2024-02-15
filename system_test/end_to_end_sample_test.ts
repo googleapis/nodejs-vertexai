@@ -516,11 +516,14 @@ describe('sendMessageStream', () => {
     const firstChunkFinalResultTimeDiff = 200; // ms
 
     for await (const item of result1.stream) {
+      console.log("stream chunk timestamp: ", Date.now());
+      console.log("stream chunk n", JSON.stringify(item))
       if (firstChunkTimestamp === 0) {
         firstChunkTimestamp = Date.now();
       }
     }
     await result1.response;
+    console.log("final response timestamp: ", Date.now());
     aggregatedResultTimestamp = Date.now();
     expect(aggregatedResultTimestamp - firstChunkTimestamp).toBeGreaterThan(
       firstChunkFinalResultTimeDiff
@@ -536,11 +539,14 @@ describe('sendMessageStream', () => {
     const firstChunkFinalResultTimeDiff = 200; // ms
 
     for await (const item of result1.stream) {
+      console.log("preview stream chunk timestamp: ", Date.now());
+      console.log("preview stream chunk n", JSON.stringify(item))
       if (firstChunkTimestamp === 0) {
         firstChunkTimestamp = Date.now();
       }
     }
     await result1.response;
+    console.log("in preview final response timestamp: ", Date.now());
     aggregatedResultTimestamp = Date.now();
     expect(aggregatedResultTimestamp - firstChunkTimestamp).toBeGreaterThan(
       firstChunkFinalResultTimeDiff
