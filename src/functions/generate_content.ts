@@ -69,7 +69,7 @@ export async function generateContent(
     safety_settings: request.safety_settings ?? safety_settings,
     tools: request.tools ?? [],
   };
-
+  const apiVersion = request.tools ? 'v1beta1' : 'v1';
   const response: Response | undefined = await postRequest({
     region: location,
     project: project,
@@ -78,6 +78,7 @@ export async function generateContent(
     token: await token,
     data: generateContentRequest,
     apiEndpoint: apiEndpoint,
+    apiVersion: apiVersion,
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request', e);
   });
@@ -119,6 +120,7 @@ export async function generateContentStream(
     safety_settings: request.safety_settings ?? safety_settings,
     tools: request.tools ?? [],
   };
+  const apiVersion = request.tools ? 'v1beta1' : 'v1';
   const response = await postRequest({
     region: location,
     project: project,
@@ -127,6 +129,7 @@ export async function generateContentStream(
     token: await token,
     data: generateContentRequest,
     apiEndpoint: apiEndpoint,
+    apiVersion: apiVersion,
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request', e);
   });

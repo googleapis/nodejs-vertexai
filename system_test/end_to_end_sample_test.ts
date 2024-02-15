@@ -16,7 +16,13 @@
  */
 
 // @ts-ignore
-import {ClientError, TextPart, VertexAI} from '../src';
+import {
+  ClientError,
+  FunctionDeclarationsTool,
+  GoogleSearchRetrievalTool,
+  TextPart,
+  VertexAI,
+} from '../src';
 import {FunctionDeclarationSchemaType} from '../src/types';
 
 const PROJECT = process.env.GCLOUD_PROJECT;
@@ -53,7 +59,7 @@ const MULTI_PART_BASE64_REQUEST = {
 
 const FUNCTION_CALL_NAME = 'get_current_weather';
 
-const TOOLS_WITH_FUNCTION_DECLARATION = [
+const TOOLS_WITH_FUNCTION_DECLARATION: FunctionDeclarationsTool[] = [
   {
     function_declarations: [
       {
@@ -72,6 +78,14 @@ const TOOLS_WITH_FUNCTION_DECLARATION = [
         },
       },
     ],
+  },
+];
+
+const TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL: GoogleSearchRetrievalTool[] = [
+  {
+    googleSearchRetrieval: {
+      disableAttribution: false,
+    },
   },
 ];
 
@@ -403,6 +417,23 @@ describe('generateContent', () => {
     expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
     );
+  });
+  xit('should return grounding metadata when passed GoogleSearchRetriever or Retriever', async () => {
+    const generativeTextModel = vertex_ai.getGenerativeModel({
+      model: 'gemini-pro',
+      //tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const result = await generativeTextModel.generateContent({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const response = result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(groundingMetadata).toBeDefined();
+    if (groundingMetadata) {
+      // expect(groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(groundingMetadata.webSearchQueries).toBeTruthy();
+    }
   });
 });
 

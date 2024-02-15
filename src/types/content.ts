@@ -487,11 +487,14 @@ export declare interface GenerateContentResponse {
 /**
  * A response candidate generated from the model.
  * @property {Content} - content. {@link Content}
- * @property {number} - [index]. The index of the candidate in the {@link GenerateContentResponse}
+ * @property {number} - [index]. The index of the candidate in the {@link
+ * GenerateContentResponse}
  * @property {FinishReason} - [finishReason]. {@link FinishReason}
  * @property {string} - [finishMessage].
  * @property {SafetyRating[]} - [safetyRatings]. Array of {@link SafetyRating}
  * @property {CitationMetadata} - [citationMetadata]. {@link CitationMetadata}
+ * @property {GroundingMetadata} - [groundingMetadata]. {@link
+ * GroundingMetadata}
  */
 export declare interface GenerateContentCandidate {
   content: Content;
@@ -500,6 +503,7 @@ export declare interface GenerateContentCandidate {
   finishMessage?: string;
   safetyRatings?: SafetyRating[];
   citationMetadata?: CitationMetadata;
+  groundingMetadata?: GroundingMetadata;
   functionCall?: FunctionCall;
 }
 
@@ -523,6 +527,57 @@ export declare interface CitationSource {
   endIndex?: number;
   uri?: string;
   license?: string;
+}
+
+/**
+ * A collection of grounding attributions for a piece of content.
+ * @property {string[]} - [webSearchQueries]. Web search queries for the
+ * following-up web search.
+ * @property {GroundingAttribution[]} - [groundingAttributions]. Array of {@link
+ * GroundingAttribution}
+ */
+export declare interface GroundingMetadata {
+  webSearchQueries?: string[];
+  groundingAttributions?: GroundingAttribution[];
+}
+
+/**
+ * Grounding attribution.
+ * @property {GroundingAttributionWeb} - [web] Attribution from the web.
+ * @property {GroundingAttributionSegment} - [segment] Segment of the content
+ * this attribution belongs to.
+ * @property {number} - [confidenceScore]  Confidence score of the attribution.
+ * Ranges from 0 to 1. 1 is the most confident.
+ */
+export declare interface GroundingAttribution {
+  web?: GroundingAttributionWeb;
+  segment?: GroundingAttributionSegment;
+  confidenceScore?: number;
+}
+
+/**
+ * Segment of the content this attribution belongs to.
+ * @property {number} - [part_index] The index of a Part object within its
+ * parent Content object.
+ * @property {number} - [startIndex] Start index in the given Part, measured in
+ * bytes. Offset from the start of the Part, inclusive, starting at zero.
+ * @property {number} - [endIndex] End index in the given Part, measured in
+ * bytes. Offset from the start of the Part, exclusive, starting at zero.
+ */
+export declare interface GroundingAttributionSegment {
+  partIndex?: number;
+  startIndex?: number;
+  endIndex?: number;
+}
+
+/**
+ * Attribution from the web.
+ * @property {string} - [uri] URI reference of the attribution.
+ * @property {string} - [title] Title of the attribution.
+ */
+export declare interface GroundingAttributionWeb {
+  uri?: string;
+  title?: string;
 }
 
 /**
@@ -586,9 +641,9 @@ export declare interface FunctionDeclaration {
 }
 
 /**
- * A Tool is a piece of code that enables the system to interact with
- * external systems to perform an action, or set of actions, outside of
- * knowledge and scope of the model.
+ * A FunctionDeclarationsTool is a piece of code that enables the system to
+ * interact with external systems to perform an action, or set of actions,
+ * outside of knowledge and scope of the model.
  * @property {object} - function_declarations One or more function declarations
  * to be passed to the model along with the current user query. Model may decide
  * to call a subset of these functions by populating
@@ -598,8 +653,54 @@ export declare interface FunctionDeclaration {
  * generate the final response back to the user. Maximum 64 function
  * declarations can be provided.
  */
-export declare interface Tool {
-  function_declarations: FunctionDeclaration[];
+export declare interface FunctionDeclarationsTool {
+  function_declarations?: FunctionDeclaration[];
+}
+
+export declare interface RetrievalTool {
+  retrieval?: Retrieval;
+}
+
+export declare interface GoogleSearchRetrievalTool {
+  googleSearchRetrieval?: GoogleSearchRetrieval;
+}
+
+export declare type Tool =
+  | FunctionDeclarationsTool
+  | RetrievalTool
+  | GoogleSearchRetrievalTool;
+
+/**
+ * Defines a retrieval tool that model can call to access external knowledge.
+ * @property {VertexAISearch} - [vertexAiSearch] Set to use data source powered
+ by Vertex AI Search.
+  * @property {boolean} - [disableAttribution] Disable using the result from
+ this tool in detecting grounding attribution. This does not affect how the
+ result is given to the model for generation.
+ */
+export declare interface Retrieval {
+  vertexAiSearch?: VertexAISearch;
+  disableAttribution?: boolean;
+}
+
+/**
+ * Tool to retrieve public web data for grounding, powered by Google.
+ * @property {boolean} - [disableAttribution] Disable using the result from this
+ * tool in detecting grounding attribution. This does not affect how the result
+ * is given to the model for generation.
+ */
+export declare interface GoogleSearchRetrieval {
+  disableAttribution?: boolean;
+}
+
+/**
+ * Retrieve from Vertex AI Search datastore for grounding. See
+ https://cloud.google.com/vertex-ai-search-and-conversation
+ * @property {string} - [datastore] Fully-qualified Vertex AI Search's datastore
+ resource ID. projects/<>/locations/<>/collections/<>/dataStores/<>
+ */
+export declare interface VertexAISearch {
+  datastore: string;
 }
 
 /**
