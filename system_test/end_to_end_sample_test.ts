@@ -390,7 +390,7 @@ describe('generateContent', () => {
   it('should return the aggregated response', async () => {
     const response = await generativeTextModel.generateContent(TEXT_REQUEST);
 
-    const aggregatedResp = await response.response;
+    const aggregatedResp = response.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
     );
@@ -399,7 +399,7 @@ describe('generateContent', () => {
     const response =
       await generativeTextModelPreview.generateContent(TEXT_REQUEST);
 
-    const aggregatedResp = await response.response;
+    const aggregatedResp = response.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
       `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
     );
@@ -414,7 +414,7 @@ describe('sendMessage', () => {
     const chat = generativeTextModel.startChat();
     const chatInput1 = 'How can I learn more about Node.js?';
     const result1 = await chat.sendMessage(chatInput1);
-    const response1 = await result1.response;
+    const response1 = result1.response;
     expect(response1.candidates[0]).toBeTruthy(
       `sys test failure on sendMessage for aggregated response: ${response1}`
     );
@@ -424,7 +424,7 @@ describe('sendMessage', () => {
     const chat = generativeTextModelPreview.startChat();
     const chatInput1 = 'How can I learn more about Node.js?';
     const result1 = await chat.sendMessage(chatInput1);
-    const response1 = await result1.response;
+    const response1 = result1.response;
     expect(response1.candidates[0]).toBeTruthy(
       `sys test failure on sendMessage in preview for aggregated response: ${response1}`
     );

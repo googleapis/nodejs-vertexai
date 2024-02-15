@@ -237,10 +237,10 @@ export async function processNonStream(
 ): Promise<GenerateContentResult> {
   if (response !== undefined) {
     // ts-ignore
-    const responseJson = response.json();
-    return {
+    const responseJson = await response.json();
+    return Promise.resolve({
       response: responseJson,
-    };
+    });
   }
 
   return Promise.resolve({
