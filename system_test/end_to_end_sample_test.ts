@@ -113,48 +113,48 @@ const vertex_ai = new VertexAI({
 });
 
 const generativeTextModel = vertex_ai.getGenerativeModel({
-  model: 'gemini-pro',
+  model: 'gemini-1.0-pro',
   generation_config: {
     max_output_tokens: 256,
   },
 });
 const generativeTextModelPreview = vertex_ai.preview.getGenerativeModel({
-  model: 'gemini-pro',
+  model: 'gemini-1.0-pro',
   generation_config: {
     max_output_tokens: 256,
   },
 });
 const generativeTextModelWithPrefix = vertex_ai.getGenerativeModel({
-  model: 'models/gemini-pro',
+  model: 'models/gemini-1.0-pro',
   generation_config: {
     max_output_tokens: 256,
   },
 });
 const generativeTextModelWithPrefixPreview =
   vertex_ai.preview.getGenerativeModel({
-    model: 'models/gemini-pro',
+    model: 'models/gemini-1.0-pro',
     generation_config: {
       max_output_tokens: 256,
     },
   });
 const textModelNoOutputLimit = vertex_ai.getGenerativeModel({
-  model: 'gemini-pro',
+  model: 'gemini-1.0-pro',
 });
 const textModelNoOutputLimitPreview = vertex_ai.preview.getGenerativeModel({
-  model: 'gemini-pro',
+  model: 'gemini-1.0-pro',
 });
 const generativeVisionModel = vertex_ai.getGenerativeModel({
-  model: 'gemini-pro-vision',
+  model: 'gemini-1.0-pro-vision',
 });
 const generativeVisionModelPreview = vertex_ai.preview.getGenerativeModel({
-  model: 'gemini-pro-vision',
+  model: 'gemini-1.0-pro-vision',
 });
 const generativeVisionModelWithPrefix = vertex_ai.getGenerativeModel({
-  model: 'models/gemini-pro-vision',
+  model: 'models/gemini-1.0-pro-vision',
 });
 const generativeVisionModelWithPrefixPreview =
   vertex_ai.preview.getGenerativeModel({
-    model: 'models/gemini-pro-vision',
+    model: 'models/gemini-1.0-pro-vision',
   });
 describe('generateContentStream', () => {
   beforeEach(() => {
