@@ -1,19 +1,5 @@
 # Changelog
 
-## [0.4.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.3.1...v0.4.0) (2024-02-15)
-
-
-### Features
-
-* Added support for Grounding ([929df39](https://github.com/googleapis/nodejs-vertexai/commit/929df39f19f423bcfaf35ef113ce04886345a6ab))
-* enable both GA and preview namespaces. ([1c2aca6](https://github.com/googleapis/nodejs-vertexai/commit/1c2aca6b776784a5b51d1654ffa41dc36f600874))
-
-
-### Bug Fixes
-
-* throw more details on error message. ([5dba79c](https://github.com/googleapis/nodejs-vertexai/commit/5dba79c3648203b9a66b6098f9f1fa0280e6e67d))
-* unary api should only need to `await` once. ([67a2e96](https://github.com/googleapis/nodejs-vertexai/commit/67a2e9649c69a2cf9868a074527efd93d2c800c9))
-
 ## [0.3.1](https://github.com/googleapis/nodejs-vertexai/compare/v0.3.0...v0.3.1) (2024-02-06)
 
 

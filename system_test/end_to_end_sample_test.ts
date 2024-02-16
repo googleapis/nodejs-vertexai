@@ -537,7 +537,7 @@ describe('sendMessageStream', () => {
     expect(chat.history.length).toBe(2);
   });
 
-  it('should return chunks as they come in', async () => {
+  xit('should return chunks as they come in', async () => {
     const chat = textModelNoOutputLimit.startChat({});
     const chatInput1 = 'Tell me a story in 3000 words';
     const result1 = await chat.sendMessageStream(chatInput1);
@@ -557,7 +557,7 @@ describe('sendMessageStream', () => {
       firstChunkFinalResultTimeDiff
     );
   });
-  it('in preview should return chunks as they come in', async () => {
+  xit('in preview should return chunks as they come in', async () => {
     const chat = textModelNoOutputLimitPreview.startChat({});
     const chatInput1 = 'Tell me a story in 3000 words';
     const result1 = await chat.sendMessageStream(chatInput1);

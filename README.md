@@ -33,8 +33,9 @@ const location = 'us-central1';
 const vertex_ai = new VertexAI({project: project, location: location});
 
 // Instantiate models
+// For the latest complete list of available models, please refer to https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models#gemini-models
 const generativeModel = vertex_ai.getGenerativeModel({
-    model: 'gemini-pro',
+    model: 'gemini-1.0-pro',
     // The following parameters are optional
     // They can also be passed to individual content generation requests
     safety_settings: [{category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE}],
@@ -42,7 +43,7 @@ const generativeModel = vertex_ai.getGenerativeModel({
   });
 
 const generativeVisionModel = vertex_ai.getGenerativeModel({
-    model: 'gemini-pro-vision',
+    model: 'gemini-1.0-pro-vision',
 });
 
 ```
