@@ -173,7 +173,10 @@ describe('generateContentStream', () => {
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream for testing candidates in aggregated response: ${aggregatedResp}`
+    );
+    expect(aggregatedResp.usageMetadata).toBeTruthy(
+      `sys test failure on generateContentStream for testing usageMetadata in aggregated response: ${aggregatedResp}`
     );
   });
   it('in preview should should return a stream and aggregated response when passed text', async () => {
@@ -188,7 +191,10 @@ describe('generateContentStream', () => {
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream in preview for testing candidates in aggregated response: ${aggregatedResp}`
+    );
+    expect(aggregatedResp.usageMetadata).toBeTruthy(
+      `sys test failure on generateContentStream in preview for testing usageMetadata in aggregated response: ${aggregatedResp}`
     );
   });
 

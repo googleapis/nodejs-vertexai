@@ -171,6 +171,7 @@ function aggregateResponses(
   const aggregatedResponse: GenerateContentResponse = {
     candidates: [],
     promptFeedback: lastResponse.promptFeedback,
+    usageMetadata: lastResponse.usageMetadata,
   };
   for (const response of responses) {
     for (let i = 0; i < response.candidates.length; i++) {
