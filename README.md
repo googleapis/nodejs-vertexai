@@ -20,6 +20,9 @@ Install this SDK via NPM.
 npm install @google-cloud/vertexai
 ```
 
+## Available Gemini models in Vertex
+For the latest list of available Gemini models in Vertex, please refer to [Google Cloud Generative AI page](https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models#gemini-models)
+
 ## Setup
 
 To use the SDK, create an instance of `VertexAI` by passing it your Google Cloud project ID and location. Then create a reference to a generative model.
@@ -29,13 +32,15 @@ const {VertexAI, HarmCategory, HarmBlockThreshold} = require('@google-cloud/vert
 
 const project = 'your-cloud-project';
 const location = 'us-central1';
+// For the latest list of available Gemini models in Vertex, please refer to https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models#gemini-models
+const textModel =  'gemini-1.0-pro';
+const visionModel = 'gemini-1.0-pro-vision';
 
 const vertex_ai = new VertexAI({project: project, location: location});
 
 // Instantiate models
-// For the latest complete list of available models, please refer to https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models#gemini-models
 const generativeModel = vertex_ai.getGenerativeModel({
-    model: 'gemini-1.0-pro',
+    model: textModel,
     // The following parameters are optional
     // They can also be passed to individual content generation requests
     safety_settings: [{category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE}],
@@ -43,7 +48,7 @@ const generativeModel = vertex_ai.getGenerativeModel({
   });
 
 const generativeVisionModel = vertex_ai.getGenerativeModel({
-    model: 'gemini-1.0-pro-vision',
+    model: visionModel,
 });
 
 ```
