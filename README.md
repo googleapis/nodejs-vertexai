@@ -249,7 +249,7 @@ functionCallingChat();
 ### Function calling with generateContentStream
 
 ```typescript
-async function functionCallingGenerateContent() {
+async function functionCallingGenerateContentStream() {
   const request = {
     contents: [
       {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -265,7 +265,7 @@ async function functionCallingGenerateContent() {
   }
 }
 
-functionCallingGenerateContent();
+functionCallingGenerateContentStream();
 ```
 
 ## License
