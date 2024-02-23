@@ -79,7 +79,7 @@ export class ChatSession {
 
   /**
    * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @return {Promise<any>} Promise of token
+   * @returns {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -91,7 +91,7 @@ export class ChatSession {
   /**
    * Make an sync call to send message.
    * @param {string | Array<string | Part>} request - send message request. {@link Part}
-   * @return {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
+   * @returns {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
    */
   async sendMessage(
     request: string | Array<string | Part>
@@ -161,7 +161,7 @@ export class ChatSession {
   /**
    * Make an async call to stream send message. Response will be returned in stream.
    * @param {string | Array<string | Part>} request - send message request. {@link Part}
-   * @return {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
    */
   async sendMessageStream(
     request: string | Array<string | Part>
@@ -237,7 +237,7 @@ export class ChatSessionPreview {
 
   /**
    * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @return {Promise<any>} Promise of token
+   * @returns {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -249,7 +249,7 @@ export class ChatSessionPreview {
   /**
    * Make an sync call to send message.
    * @param {string | Array<string | Part>} request - send message request. {@link Part}
-   * @return {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
+   * @returns {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
    */
   async sendMessage(
     request: string | Array<string | Part>
@@ -319,7 +319,7 @@ export class ChatSessionPreview {
   /**
    * Make an async call to stream send message. Response will be returned in stream.
    * @param {string | Array<string | Part>} request - send message request. {@link Part}
-   * @return {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
    */
   async sendMessageStream(
     request: string | Array<string | Part>
@@ -380,7 +380,7 @@ function formulateNewContentFromSendMessageRequest(
  * part. Currently only FunctionResponsePart requires a role other than 'user'.
  * @ignore
  * @param {Array<Part>} parts Array of parts to pass to the model
- * @return {Content[]} Array of content items
+ * @returns {Content[]} Array of content items
  */
 function assignRoleToPartsAndValidateSendMessageRequest(
   parts: Array<Part>

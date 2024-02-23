@@ -18,7 +18,7 @@
 /**
  * Make a async call to generate content.
  * @param request A GenerateContentRequest object with the request contents.
- * @return The GenerateContentResponse object with the response candidates.
+ * @returns The GenerateContentResponse object with the response candidates.
  */
 
 import {
@@ -92,7 +92,7 @@ export async function generateContent(
  * Make an async stream request to generate content. The response will be
  * returned in stream.
  * @param {GenerateContentRequest} request - {@link GenerateContentRequest}
- * @return {Promise<StreamGenerateContentResult>} Promise of {@link
+ * @returns {Promise<StreamGenerateContentResult>} Promise of {@link
  *     StreamGenerateContentResult}
  */
 export async function generateContentStream(

@@ -77,7 +77,7 @@ export class GenerativeModel {
 
   /**
    * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @return {Promise<any>} Promise of token
+   * @returns {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -89,7 +89,7 @@ export class GenerativeModel {
   /**
    * Make a async call to generate content.
    * @param request A GenerateContentRequest object with the request contents.
-   * @return The GenerateContentResponse object with the response candidates.
+   * @returns The GenerateContentResponse object with the response candidates.
    */
   async generateContent(
     request: GenerateContentRequest | string
@@ -109,7 +109,7 @@ export class GenerativeModel {
   /**
    * Make an async stream request to generate content. The response will be returned in stream.
    * @param {GenerateContentRequest} request - {@link GenerateContentRequest}
-   * @return {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
    */
   async generateContentStream(
     request: GenerateContentRequest | string
@@ -129,7 +129,7 @@ export class GenerativeModel {
   /**
    * Make a async request to count tokens.
    * @param request A CountTokensRequest object with the request contents.
-   * @return The CountTokensResponse object with the token count.
+   * @returns The CountTokensResponse object with the token count.
    */
   async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
     return countTokens(
@@ -147,7 +147,7 @@ export class GenerativeModel {
    * This method doesn't make any call to remote endpoint.
    * Any call to remote endpoint is implemented in ChatSession class @see ChatSession
    * @param{StartChatParams} [request] - {@link StartChatParams}
-   * @return {ChatSession} {@link ChatSession}
+   * @returns {ChatSession} {@link ChatSession}
    */
   startChat(request?: StartChatParams): ChatSession {
     const startChatRequest: StartChatSessionRequest = {
@@ -208,7 +208,7 @@ export class GenerativeModelPreview {
 
   /**
    * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @return {Promise<any>} Promise of token
+   * @returns {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -220,7 +220,7 @@ export class GenerativeModelPreview {
   /**
    * Make a async call to generate content.
    * @param request A GenerateContentRequest object with the request contents.
-   * @return The GenerateContentResponse object with the response candidates.
+   * @returns The GenerateContentResponse object with the response candidates.
    */
   async generateContent(
     request: GenerateContentRequest | string
@@ -240,7 +240,7 @@ export class GenerativeModelPreview {
   /**
    * Make an async stream request to generate content. The response will be returned in stream.
    * @param {GenerateContentRequest} request - {@link GenerateContentRequest}
-   * @return {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
    */
   async generateContentStream(
     request: GenerateContentRequest | string
@@ -260,7 +260,7 @@ export class GenerativeModelPreview {
   /**
    * Make a async request to count tokens.
    * @param request A CountTokensRequest object with the request contents.
-   * @return The CountTokensResponse object with the token count.
+   * @returns The CountTokensResponse object with the token count.
    */
   async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
     return countTokens(
@@ -278,7 +278,7 @@ export class GenerativeModelPreview {
    * This method doesn't make any call to remote endpoint.
    * Any call to remote endpoint is implemented in ChatSessionPreview class @see ChatSessionPreview
    * @param{StartChatParams} [request] - {@link StartChatParams}
-   * @return {ChatSessionPrevew} {@link ChatSessionPrevew}
+   * @returns {ChatSessionPrevew} {@link ChatSessionPrevew}
    */
   startChat(request?: StartChatParams): ChatSessionPreview {
     const startChatRequest: StartChatSessionRequest = {

@@ -61,8 +61,10 @@ export class VertexAI {
   }
 
   /**
-   * @param {ModelParams} modelParams - {@link ModelParams} Parameters to specify the generative model.
-   * @return {GenerativeModel} Instance of the GenerativeModel class. {@link GenerativeModel}
+   * @param {ModelParams} modelParams - {@link ModelParams} Parameters to
+   *     specify the generative model.
+   * @returns {GenerativeModel} Instance of the GenerativeModel class. {@link
+   *     GenerativeModel}
    */
   getGenerativeModel(modelParams: ModelParams): GenerativeModel {
     const getGenerativeModelParams: GetGenerativeModelParams = {
@@ -112,8 +114,10 @@ class VertexAI_Preview {
   }
 
   /**
-   * @param {ModelParams} modelParams - {@link ModelParams} Parameters to specify the generative model.
-   * @return {GenerativeModelPreview} Instance of the GenerativeModelPreview class. {@link GenerativeModelPreview}
+   * @param {ModelParams} modelParams - {@link ModelParams} Parameters to
+   *     specify the generative model.
+   * @returns {GenerativeModelPreview} Instance of the GenerativeModelPreview
+   *     class. {@link GenerativeModelPreview}
    */
   getGenerativeModel(modelParams: ModelParams): GenerativeModelPreview {
     const getGenerativeModelParams: GetGenerativeModelParams = {

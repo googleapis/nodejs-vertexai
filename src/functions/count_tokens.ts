@@ -26,7 +26,7 @@ import {postRequest} from './post_request';
 /**
  * Make a async request to count tokens.
  * @param request A CountTokensRequest object with the request contents.
- * @return The CountTokensResponse object with the token count.
+ * @returns The CountTokensResponse object with the token count.
  */
 export async function countTokens(
   location: string,
