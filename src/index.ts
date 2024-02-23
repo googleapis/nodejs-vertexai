@@ -17,3 +17,4 @@
 
 export {VertexAI} from './vertex_ai';
 export * from './types';
+export * from './models';
