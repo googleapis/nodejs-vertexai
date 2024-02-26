@@ -19,70 +19,86 @@
 import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
 
 /**
- * Params used to initialize the Vertex SDK
- * @param{string} project - the project name of your Google Cloud project. It is not the numeric project ID.
- * @param{string} location - the location of your project.
- * @param{string} [apiEndpoint] - If not specified, a default value will be resolved by SDK.
- * @param {GoogleAuthOptions} - [googleAuthOptions] The Authentication options provided by google-auth-library.
- *        Complete list of authentication options is documented in the GoogleAuthOptions interface:
- *        https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
+ * Params used to initialize the Vertex SDK.
  */
 export declare interface VertexInit {
+  /** The Google Cloud project name. It is not the numeric project ID. */
   project: string;
+  /** The Google Cloud project location. */
   location: string;
+  /**
+   * Optional. The base Vertex AI endpoint to use for the request. If not
+   * provided, the default regionalized endpoint (i.e.
+   * us-central1-aiplatform.googleapis.com) will be used.
+   */
   apiEndpoint?: string;
+  /**
+   * Optional. The Authentication options provided by google-auth-library.
+   * Complete list of authentication options is documented in the
+   * GoogleAuthOptions interface:
+   * https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts.
+   */
   googleAuthOptions?: GoogleAuthOptions;
 }
 
 /**
  * Params used to call the generateContent method.
- * @property {Content[]} - contents. Array of {@link Content}
  */
 export declare interface GenerateContentRequest extends BaseModelParams {
+  /** Array of {@link Content}.*/
   contents: Content[];
 }
 
 /**
  * Params used to call the countTokens method.
- * @property {Content[]} - contents. Array of {@link Content}
  */
 export declare interface CountTokensRequest {
+  /** Array of {@link Content}. */
   contents: Content[];
 }
 
 /**
  * Response returned from countTokens method.
- * @property {number} - totalTokens. The total number of tokens counted across all instances from the request.
- * @property {number} - [totalBillableCharacters]. The total number of billable characters counted across all instances from the request.
- *
  */
 export declare interface CountTokensResponse {
+  /**
+   * The total number of tokens counted across all instances from the request.
+   */
   totalTokens: number;
+  /**
+   * Optional. The total number of billable characters counted across all
+   * instances from the request.
+   */
   totalBillableCharacters?: number;
 }
 
 /**
- * @property {string} model - model name
- * @property {string} project - project The Google Cloud project to use for the request
- * @property {string} location - The Google Cloud project location to use for the request
- * @property {GoogleAuth} googleAuth - GoogleAuth class instance that handles authentication.
- *        Details about GoogleAuth is referred to https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
- * @property {string} - [apiEndpoint] The base Vertex AI endpoint to use for the request. If
- *        not provided, the default regionalized endpoint
- *        (i.e. us-central1-aiplatform.googleapis.com) will be used.
- * @property {GenerationConfig} [generation_config] - {@link
- *     GenerationConfig}
- * @property {SafetySetting[]} [safety_settings] - {@link SafetySetting}
- * @property {Tool[]} [tools] - {@link Tool}
+ * Params used to call the getGenerativeModel method.
  */
 export declare interface GetGenerativeModelParams extends ModelParams {
+  /** The name of the model to get. */
   model: string;
+  /** The Google Cloud project to use for the request. */
   project: string;
+  /** The Google Cloud project location to use for the request. */
   location: string;
+  /**
+   * GoogleAuth class instance that handles authentication.
+   * Details about GoogleAuth is referred to
+   * https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
+   */
   googleAuth: GoogleAuth;
+  /**
+   * Optional. The base Vertex AI endpoint to use for the request. If not
+   * provided, the default regionalized endpoint (i.e.
+   * us-central1-aiplatform.googleapis.com) will be used.
+   */
   apiEndpoint?: string;
+  /** Optional. The configuration to use for generation. */
   generation_config?: GenerationConfig;
+  /** Optional. The safety settings to use for generation. */
   safety_settings?: SafetySetting[];
+  /** Optional. The tools to use for generation. */
   tools?: Tool[];
 }
 
