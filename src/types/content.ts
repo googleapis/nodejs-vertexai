@@ -604,12 +604,11 @@ export declare interface GroundingAttributionWeb {
  * A predicted FunctionCall returned from the model that contains a string
  * representating the FunctionDeclaration.name with the parameters and their
  * values.
- * @property {string} - name The name of the function specified in
- * FunctionDeclaration.name.
- * @property {object} - args The arguments to pass to the function.
  */
 export declare interface FunctionCall {
+  /** The name of the function specified in FunctionDeclaration.name. */
   name: string;
+  /** The arguments to pass to the function. */
   args: object;
 }
 
@@ -617,12 +616,11 @@ export declare interface FunctionCall {
  * The result output of a FunctionCall that contains a string representing
  * the FunctionDeclaration.name and a structured JSON object containing any
  * output from the function call. It is used as context to the model.
- * @property {string} - name The name of the function specified in
- * FunctionDeclaration.name.
- * @property {object} - response The expected response from the model.
  */
 export declare interface FunctionResponse {
+  /** The name of the function specified in FunctionDeclaration.name. */
   name: string;
+  /** The expected response from the model. */
   response: object;
 }
 
@@ -632,31 +630,39 @@ export declare interface FunctionResponse {
  * in this declaration are the function name and parameters. This
  * FunctionDeclaration is a representation of a block of code that can be used
  * as a Tool by the model and executed by the client.
- * @property {string} - name The name of the function to call. Must start with a
- * letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores and
- * dashes, with a max length of 64.
- * @property {string} - description Description and purpose of the function.
- * Model uses it to decide how and whether to call the function.
- * @property {FunctionDeclarationSchema} - parameters Describes the parameters
- * to this function in JSON Schema Object format. Reflects the Open API 3.03
- * Parameter Object. string Key: the name of the parameter. Parameter names are
- * case sensitive. Schema Value: the Schema defining the type used for the
- * parameter. For function with no parameters, this can be left unset. Example
- * with 1 required and 1 optional parameter: type: OBJECT properties:
-
-      param1:
-
-        type: STRING
-      param2:
-
-        type: INTEGER
-    required:
-
-      - param1
  */
 export declare interface FunctionDeclaration {
+  /**
+   * The name of the function to call. Must start with a letter or an
+   * underscore. Must be a-z, A-Z, 0-9, or contain underscores and dashes, with
+   * a max length of 64.
+   */
   name: string;
+  /**
+   * Optional. Description and purpose of the function. Model uses it to decide
+   * how and whether to call the function.
+   */
   description?: string;
+  /**
+   * Optional. Describes the parameters to this function in JSON Schema Object
+   * format. Reflects the Open API 3.03 Parameter Object. string Key: the name
+   * of the parameter. Parameter names are case sensitive. Schema Value: the
+   * Schema defining the type used for the parameter. For function with no
+   * parameters, this can be left unset.
+   *
+   * @example with 1 required and 1 optional parameter: type: OBJECT properties:
+   * ```
+   * param1:
+   *
+   *   type: STRING
+   * param2:
+   *
+   *  type: INTEGER
+   * required:
+   *
+   *   - param1
+   * ```
+   */
   parameters?: FunctionDeclarationSchema;
 }
 
@@ -664,27 +670,38 @@ export declare interface FunctionDeclaration {
  * A FunctionDeclarationsTool is a piece of code that enables the system to
  * interact with external systems to perform an action, or set of actions,
  * outside of knowledge and scope of the model.
- * @property {object} - function_declarations One or more function declarations
- * to be passed to the model along with the current user query. Model may decide
- * to call a subset of these functions by populating
- * [FunctionCall][content.part.function_call] in the response. User should
- * provide a [FunctionResponse][content.part.function_response] for each
- * function call in the next turn. Based on the function responses, Model will
- * generate the final response back to the user. Maximum 64 function
- * declarations can be provided.
  */
 export declare interface FunctionDeclarationsTool {
+  /**
+   * Optional. One or more function declarations
+   * to be passed to the model along with the current user query. Model may
+   * decide to call a subset of these functions by populating
+   * [FunctionCall][content.part.function_call] in the response. User should
+   * provide a [FunctionResponse][content.part.function_response] for each
+   * function call in the next turn. Based on the function responses, Model will
+   * generate the final response back to the user. Maximum 64 function
+   * declarations can be provided.
+   */
   function_declarations?: FunctionDeclaration[];
 }
 
+/**
+ * Defines a retrieval tool that model can call to access external knowledge.
+ */
 export declare interface RetrievalTool {
+  /** Optional. {@link Retrieval}. */
   retrieval?: Retrieval;
 }
 
+/**
+ * Defines a retrieval tool that model can call to access external knowledge.
+ */
 export declare interface GoogleSearchRetrievalTool {
+  /** Optional. {@link GoogleSearchRetrieval}. */
   googleSearchRetrieval?: GoogleSearchRetrieval;
 }
 
+/** Defines a tool that model can call to access external knowledge. */
 export declare type Tool =
   | FunctionDeclarationsTool
   | RetrievalTool
@@ -692,34 +709,42 @@ export declare type Tool =
 
 /**
  * Defines a retrieval tool that model can call to access external knowledge.
- * @property {VertexAISearch} - [vertexAiSearch] Set to use data source powered
- by Vertex AI Search.
-  * @property {boolean} - [disableAttribution] Disable using the result from
- this tool in detecting grounding attribution. This does not affect how the
- result is given to the model for generation.
  */
 export declare interface Retrieval {
+  /**
+   * Optional. Set to use data source powered by Vertex AI Search. {@link
+   * VertexAISearch}.
+   */
   vertexAiSearch?: VertexAISearch;
+  /**
+   * Optional. Disable using the result from this tool in detecting grounding
+   * attribution. This does not affect how the result is given to the model for
+   * generation.
+   */
   disableAttribution?: boolean;
 }
 
 /**
  * Tool to retrieve public web data for grounding, powered by Google.
- * @property {boolean} - [disableAttribution] Disable using the result from this
- * tool in detecting grounding attribution. This does not affect how the result
- * is given to the model for generation.
  */
 export declare interface GoogleSearchRetrieval {
+  /**
+   * Optional. Disable using the result from this tool in detecting grounding
+   * attribution. This does not affect how the result is given to the model for
+   * generation.
+   */
   disableAttribution?: boolean;
 }
 
 /**
- * Retrieve from Vertex AI Search datastore for grounding. See
- https://cloud.google.com/vertex-ai-search-and-conversation
- * @property {string} - [datastore] Fully-qualified Vertex AI Search's datastore
- resource ID. projects/<>/locations/<>/collections/<>/dataStores/<>
+ * Retrieve from Vertex AI Search datastore for grounding.
  */
 export declare interface VertexAISearch {
+  /**
+   * Fully-qualified Vertex AI Search's datastore resource ID. See
+   * https://cloud.google.com/vertex-ai-search-and-conversation
+   * @example: "projects/<>/locations/<>/collections/<>/dataStores/<>"
+   */
   datastore: string;
 }
 
@@ -738,13 +763,16 @@ export enum FunctionDeclarationSchemaType {
 }
 
 /**
- * Schema for parameters passed to [FunctionDeclaration.parameters]
- * @public
+ * Schema for parameters passed to {@link FunctionDeclaration.parameters}.
  */
 export interface FunctionDeclarationSchema {
+  /** The type of the parameter. */
   type: FunctionDeclarationSchemaType;
+  /** The format of the parameter. */
   properties: {[k: string]: FunctionDeclarationSchemaProperty};
+  /** Optional. Description of the parameter. */
   description?: string;
+  /** Optional. Array of required parameters. */
   required?: string[];
 }
 
@@ -752,42 +780,57 @@ export interface FunctionDeclarationSchema {
  * Schema is used to define the format of input/output data.
  * Represents a select subset of an OpenAPI 3.0 schema object.
  * More fields may be added in the future as needed.
- * @public
  */
 export interface FunctionDeclarationSchemaProperty {
+  /**
+   * Optional. The type of the property. {@link
+   * FunctionDeclarationSchemaType}.
+   */
   type?: FunctionDeclarationSchemaType;
+  /** Optional. The format of the property. */
   format?: string;
+  /** Optional. The description of the property. */
   description?: string;
+  /** Optional. Whether the property is nullable. */
   nullable?: boolean;
+  /** Optional. The items of the property. {@link FunctionDeclarationSchema} */
   items?: FunctionDeclarationSchema;
+  /** Optional. The enum of the property. */
   enum?: string[];
+  /** Optional. Map of {@link FunctionDeclarationSchema}. */
   properties?: {[k: string]: FunctionDeclarationSchema};
+  /** Optional. Array of required property. */
   required?: string[];
+  /** Optional. The example of the property. */
   example?: unknown;
 }
 
 /**
- * Params to initiate a multiturn chat with the model via startChat
- * @property {Content[]} - [history] history of the chat session. {@link Content}
- * @property {SafetySetting[]} - [safety_settings] Array of {@link SafetySetting}
- * @property {GenerationConfig} - [generation_config] {@link GenerationConfig}
+ * Params to initiate a multiturn chat with the model via startChat.
  */
 export declare interface StartChatParams {
+  /** Optional. History of the chat session. {@link Content} */
   history?: Content[];
+  /** Optional. Array of {@link SafetySetting}. */
   safety_settings?: SafetySetting[];
+  /** Optional. {@link GenerationConfig}. */
   generation_config?: GenerationConfig;
+  /** Optional. Array of {@link Tool}. */
   tools?: Tool[];
+  /** Optional. The base Vertex AI endpoint to use for the request. */
   api_endpoint?: string;
 }
 
 /**
- * All params passed to initiate multiturn chat via startChat
- * @property {string} project - project The Google Cloud project to use for the request
- * @property {string} location - The Google Cloud project location to use for the request
+ * All params passed to initiate multiturn chat via startChat.
  */
 export declare interface StartChatSessionRequest extends StartChatParams {
+  /** The Google Cloud project to use for the request. */
   project: string;
+  /** The Google Cloud project location to use for the request. */
   location: string;
+  /** The Google Auth to use for the request. */
   googleAuth: GoogleAuth;
+  /** The publisher model endpoint to use for the request. */
   publisher_model_endpoint: string;
 }
