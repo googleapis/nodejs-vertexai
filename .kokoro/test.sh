@@ -49,3 +49,25 @@ if npx check-node-version@3.3.0 --silent --node $COVERAGE_NODE; then
 else
   echo "coverage is only reported for Node $COVERAGE_NODE"
 fi
+
+if [[ -n "${KOKORO_ARTIFACTS_DIR:-}" ]]; then
+    if [[ $KOKORO_BUILD_ARTIFACTS_SUBDIR = *"continuous"* ]]; then
+      echo "====.  continuous"
+      SPONGE_FILE_NAME = "system_3.10_sponge_log.xml"
+    fi
+
+    if [[ $KOKORO_BUILD_ARTIFACTS_SUBDIR = *"presubmit"* ]]; then
+      echo "====.  presubmit"
+      SPONGE_FILE_NAME = "unit_3.10_sponge_log.xml"
+    fi
+
+    if [[ -n "${SPONGE_FILE_NAME:-}" ]]; then
+      export XML_OUTPUT_FILE="${KOKORO_ARTIFACTS_DIR}/${PROJECT_ROOT}/${SPONGE_FILE_NAME}"
+      echo "XML_OUTPUT_FILE=${XML_OUTPUT_FILE}"
+    fi
+fi
+
+echo "===== TEST KOKORO_ARTIFACTS_DIR ======"
+pwd
+echo "===== ls -R $KOKORO_ARTIFACTS_DIR ======"
+ls -R $KOKORO_ARTIFACTS_DIR
