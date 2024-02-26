@@ -381,25 +381,25 @@ export declare interface GenerativeContentBlob {
 
 /**
  * Usage metadata about response(s).
- * @property {number} - [prompt_token_count]. Number of tokens in the request.
- * @property {number} - [candidates_token_count]. Number of tokens in the response(s).
- * @property {number} - [totalTokenCount]. Total number of tokens.
  */
 export declare interface UsageMetadata {
+  /** Optional. Number of tokens in the request. */
   prompt_token_count?: number;
+  /** Optional. Number of tokens in the response(s). */
   candidates_token_count?: number;
+  /** Optional. Total number of tokens. */
   totalTokenCount?: number;
 }
 
 /**
  * Content filter results for a prompt sent in the request.
- * @property {BlockedReason} - block_reason. {@link BlockReason}
- * @property {SafetyRating[]} - safety_ratings. Array of {@link SafetyRating}
- * @property {string} - block_reason_message. A readable block reason message.
  */
 export declare interface PromptFeedback {
+  /** The reason why the response is blocked. {@link BlockReason}. */
   block_reason: BlockedReason;
+  /** Array of {@link SafetyRating} */
   safety_ratings: SafetyRating[];
+  /** A readable block reason message. */
   block_reason_message: string;
 }
 
@@ -455,128 +455,148 @@ export enum FinishReason {
 }
 
 /**
- * Wrapper for respones from a generateContent request
- * @property {GenerateContentResponse} - response. All GenerateContentResponses received so far {@link GenerateContentResponse}
+ * Wrapper for respones from a generateContent request.
  */
 export declare interface GenerateContentResult {
+  /**
+   * All GenerateContentResponses received so far. {@link
+   * GenerateContentResponse}
+   */
   response: GenerateContentResponse;
 }
 
 /**
- * Wrapper for respones from a generateContent method when `steam` parameter is `true`
- * @property {Promise<GenerateContentResponse>} - response. Promise of {@link GenerateContentResponse}
- * @property {AsyncGenerator<GenerateContentResponse>} - stream. Async iterable that provides one {@link GenerateContentResponse} at a time
+ * Wrapper for respones from a generateContent method when `steam` parameter is
+ * `true`.
  */
 export declare interface StreamGenerateContentResult {
+  /** Promise of {@link GenerateContentResponse}. */
   response: Promise<GenerateContentResponse>;
+  /**
+   * Async iterable that provides one {@link GenerateContentResponse} at a
+   * time.
+   */
   stream: AsyncGenerator<GenerateContentResponse>;
 }
 
 /**
- * Response from the model supporting multiple candidates
- * @property {GenerateContentCandidate} - candidates. {@link GenerateContentCandidate}
- * @property {PromptFeedback} - [promptFeedback]. This is only populated if there are no candidates due to a safety block {@link PromptFeedback}
- * @property {UsageMetadata} - [usageMetadata]. {@link UsageMetadata}
+ * Response from the model supporting multiple candidates.
  */
 export declare interface GenerateContentResponse {
+  /** Array of {@link GenerateContentCandidate}. */
   candidates: GenerateContentCandidate[];
+  /**
+   * Optional. This is only populated if there are no candidates due to a
+   * safety block. {@link PromptFeedback}.
+   */
   promptFeedback?: PromptFeedback;
+  /** Optional. {@link UsageMetadata}. */
   usageMetadata?: UsageMetadata;
 }
 
 /**
  * A response candidate generated from the model.
- * @property {Content} - content. {@link Content}
- * @property {number} - [index]. The index of the candidate in the {@link
- * GenerateContentResponse}
- * @property {FinishReason} - [finishReason]. {@link FinishReason}
- * @property {string} - [finishMessage].
- * @property {SafetyRating[]} - [safetyRatings]. Array of {@link SafetyRating}
- * @property {CitationMetadata} - [citationMetadata]. {@link CitationMetadata}
- * @property {GroundingMetadata} - [groundingMetadata]. {@link
- * GroundingMetadata}
  */
 export declare interface GenerateContentCandidate {
+  /** {@link Content}. */
   content: Content;
+  /**
+   * Optional. The index of the candidate in the {@link
+   * GenerateContentResponse}.
+   */
   index?: number;
+  /**
+   * Optional. The reason why the model stopped generating tokens. {@link
+   * FinishReason}.
+   */
   finishReason?: FinishReason;
+  /**
+   * Optional. A readable message describing why the model stopped generating
+   * tokens.
+   */
   finishMessage?: string;
+  /** Optional. Array of {@link SafetyRating}. */
   safetyRatings?: SafetyRating[];
+  /** Optional. {@link CitationMetadata}. */
   citationMetadata?: CitationMetadata;
+  /** Optional. {@link GroundingMetadata}. */
   groundingMetadata?: GroundingMetadata;
+  /** Optional. {@link FunctionResponse}. */
   functionCall?: FunctionCall;
 }
 
 /**
  * A collection of source attributions for a piece of content.
- * @property {CitationSource[]} - citationSources. Array of {@link CitationSource}
  */
 export declare interface CitationMetadata {
+  /** Array of {@link CitationSource}. */
   citationSources: CitationSource[];
 }
 
 /**
  * Source attributions for content.
- * @property {number} - [startIndex] Start index into the content.
- * @property {number} - [endIndex] End index into the content.
- * @property {string} - [url] Url reference of the attribution.
- * @property {string} - [license] License of the attribution.
  */
 export declare interface CitationSource {
+  /** Optional. Start index into the content. */
   startIndex?: number;
+  /** Optional. End index into the content. */
   endIndex?: number;
+  /** Optional. Url reference of the attribution. */
   uri?: string;
+  /** Optional. License of the attribution. */
   license?: string;
 }
 
 /**
  * A collection of grounding attributions for a piece of content.
- * @property {string[]} - [webSearchQueries]. Web search queries for the
- * following-up web search.
- * @property {GroundingAttribution[]} - [groundingAttributions]. Array of {@link
- * GroundingAttribution}
  */
 export declare interface GroundingMetadata {
+  /** Optional. Web search queries for the following-up web search. */
   webSearchQueries?: string[];
+  /** Optional. Array of {@link GroundingAttribution}. */
   groundingAttributions?: GroundingAttribution[];
 }
 
 /**
  * Grounding attribution.
- * @property {GroundingAttributionWeb} - [web] Attribution from the web.
- * @property {GroundingAttributionSegment} - [segment] Segment of the content
- * this attribution belongs to.
- * @property {number} - [confidenceScore]  Confidence score of the attribution.
- * Ranges from 0 to 1. 1 is the most confident.
  */
 export declare interface GroundingAttribution {
+  /** Optional. Attribution from the web. */
   web?: GroundingAttributionWeb;
+  /** Optional. Segment of the content this attribution belongs to. */
   segment?: GroundingAttributionSegment;
+  /**
+   * Optional. Confidence score of the attribution. Ranges from 0 to 1. 1 is
+   * the most confident.
+   */
   confidenceScore?: number;
 }
 
 /**
  * Segment of the content this attribution belongs to.
- * @property {number} - [part_index] The index of a Part object within its
- * parent Content object.
- * @property {number} - [startIndex] Start index in the given Part, measured in
- * bytes. Offset from the start of the Part, inclusive, starting at zero.
- * @property {number} - [endIndex] End index in the given Part, measured in
- * bytes. Offset from the start of the Part, exclusive, starting at zero.
  */
 export declare interface GroundingAttributionSegment {
+  /** Optional. The index of a Part object within its parent Content object. */
   partIndex?: number;
+  /**
+   * Optional. Start index in the given Part, measured in bytes. Offset from the
+   * start of the Part, inclusive, starting at zero.
+   */
   startIndex?: number;
+  /**
+   * Optional. End index in the given Part, measured in bytes. Offset from the
+   * start of the Part, exclusive, starting at zero.
+   */
   endIndex?: number;
 }
 
 /**
  * Attribution from the web.
- * @property {string} - [uri] URI reference of the attribution.
- * @property {string} - [title] Title of the attribution.
  */
 export declare interface GroundingAttributionWeb {
+  /** Optional. URI reference of the attribution. */
   uri?: string;
+  /** Optional. Title of the attribution. */
   title?: string;
 }
 
