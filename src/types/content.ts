@@ -155,73 +155,49 @@ export declare interface GenerationConfig {
 }
 
 /**
- * @enum {string}
  * Harm categories that will block the content.
- * Values:
- *     HARM_CATEGORY_UNSPECIFIED:
- *         The harm category is unspecified.
- *     HARM_CATEGORY_HATE_SPEECH:
- *         The harm category is hate speech.
- *     HARM_CATEGORY_DANGEROUS_CONTENT:
- *         The harm category is dangerous content.
- *     HARM_CATEGORY_HARASSMENT:
- *         The harm category is harassment.
- *     HARM_CATEGORY_SEXUALLY_EXPLICIT:
- *         The harm category is sexually explicit
- *         content.
  */
 export enum HarmCategory {
+  /** The harm category is unspecified. */
   HARM_CATEGORY_UNSPECIFIED = 'HARM_CATEGORY_UNSPECIFIED',
+  /** The harm category is hate speech. */
   HARM_CATEGORY_HATE_SPEECH = 'HARM_CATEGORY_HATE_SPEECH',
+  /** The harm category is dangerous content. */
   HARM_CATEGORY_DANGEROUS_CONTENT = 'HARM_CATEGORY_DANGEROUS_CONTENT',
+  /** The harm category is harassment. */
   HARM_CATEGORY_HARASSMENT = 'HARM_CATEGORY_HARASSMENT',
+  /** The harm category is sexually explicit content. */
   HARM_CATEGORY_SEXUALLY_EXPLICIT = 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
 }
 
 /**
- * @enum {string}
  * Probability based thresholds levels for blocking.
- * Values:
- *      HARM_BLOCK_THRESHOLD_UNSPECIFIED:
- *          Unspecified harm block threshold.
- *      BLOCK_LOW_AND_ABOVE:
- *          Block low threshold and above (i.e. block
- *          more).
- *      BLOCK_MEDIUM_AND_ABOVE:
- *          Block medium threshold and above.
- *      BLOCK_ONLY_HIGH:
- *          Block only high threshold (i.e. block less).
- *      BLOCK_NONE:
- *          Block none.
  */
 export enum HarmBlockThreshold {
+  /** Unspecified harm block threshold. */
   HARM_BLOCK_THRESHOLD_UNSPECIFIED = 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+  /** Block low threshold and above (i.e. block more). */
   BLOCK_LOW_AND_ABOVE = 'BLOCK_LOW_AND_ABOVE',
+  /** Block medium threshold and above. */
   BLOCK_MEDIUM_AND_ABOVE = 'BLOCK_MEDIUM_AND_ABOVE',
+  /** Block only high threshold (i.e. block less). */
   BLOCK_ONLY_HIGH = 'BLOCK_ONLY_HIGH',
+  /** Block none. */
   BLOCK_NONE = 'BLOCK_NONE',
 }
 
 /**
- * @enum {string}
  * Harm probability levels in the content.
- * Values:
- *     HARM_PROBABILITY_UNSPECIFIED:
- *         Harm probability unspecified.
- *     NEGLIGIBLE:
- *         Negligible level of harm.
- *     LOW:
- *         Low level of harm.
- *     MEDIUM:
- *         Medium level of harm.
- *     HIGH:
- *         High level of harm.
  */
 export enum HarmProbability {
+  /** Harm probability unspecified. */
   HARM_PROBABILITY_UNSPECIFIED = 'HARM_PROBABILITY_UNSPECIFIED',
   NEGLIGIBLE = 'NEGLIGIBLE',
+  /** Low level of harm. */
   LOW = 'LOW',
+  /** Medium level of harm. */
   MEDIUM = 'MEDIUM',
+  /** High level of harm. */
   HIGH = 'HIGH',
 }
 
@@ -404,53 +380,39 @@ export declare interface PromptFeedback {
 }
 
 /**
- * @enum {string}
  * The reason why the reponse is blocked.
- * Values:
- *   BLOCKED_REASON_UNSPECIFIED
- *       Unspecified blocked reason.
- *   SAFETY
- *       Candidates blocked due to safety.
- *   OTHER
- *       Candidates blocked due to other reason.
  */
 export enum BlockedReason {
+  /** Unspecified blocked reason. */
   BLOCKED_REASON_UNSPECIFIED = 'BLOCK_REASON_UNSPECIFIED',
+  /** Candidates blocked due to safety. */
   SAFETY = 'SAFETY',
+  /** Candidates blocked due to other reason. */
   OTHER = 'OTHER',
 }
 
 /**
- * @enum {string}
  * The reason why the model stopped generating tokens.
  * If empty, the model has not stopped generating the tokens.
- * Values:
- *   FINISH_REASON_UNSPECIFIED
- *       The finish reason is unspecified.
- *   STOP:
- *       Natural stop point of the model or provided
- *       stop sequence.
- *   MAX_TOKENS:
- *       The maximum number of tokens as specified in
- *       the request was reached.
- *   SAFETY:
- *       The token generation was stopped as the
- *       response was flagged for safety reasons. NOTE:
- *       When streaming the Candidate.content will be
- *       empty if content filters blocked the output.
- *   RECITATION:
- *       The token generation was stopped as the
- *       response was flagged for unauthorized citations.
- *   OTHER:
- *       All other reasons that stopped the token
- *       generation
  */
 export enum FinishReason {
+  /** The finish reason is unspecified. */
   FINISH_REASON_UNSPECIFIED = 'FINISH_REASON_UNSPECIFIED',
+  /** Natural stop point of the model or provided stop sequence. */
   STOP = 'STOP',
+  /** The maximum number of tokens as specified in the request was reached. */
   MAX_TOKENS = 'MAX_TOKENS',
+  /**
+   * The token generation was stopped as the response was flagged for safety
+   * reasons.
+   */
   SAFETY = 'SAFETY',
+  /**
+   * The token generation was stopped as the response was flagged for
+   * unauthorized citations.
+   */
   RECITATION = 'RECITATION',
+  /** All other reasons that stopped the token generation. */
   OTHER = 'OTHER',
 }
 
@@ -751,14 +713,19 @@ export declare interface VertexAISearch {
 /**
  * Contains the list of OpenAPI data types
  * as defined by https://swagger.io/docs/specification/data-models/data-types/
- * @public
  */
 export enum FunctionDeclarationSchemaType {
+  /** String type. */
   STRING = 'STRING',
+  /** Number type. */
   NUMBER = 'NUMBER',
+  /** Integer type. */
   INTEGER = 'INTEGER',
+  /** Boolean type. */
   BOOLEAN = 'BOOLEAN',
+  /** Array type. */
   ARRAY = 'ARRAY',
+  /** Object type. */
   OBJECT = 'OBJECT',
 }
 
