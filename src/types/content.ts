@@ -103,52 +103,57 @@ export declare interface GetGenerativeModelParams extends ModelParams {
 }
 
 /**
- * Configuration for initializing a model, for example via getGenerativeModel
- * @property {string} model - model name.
- * @example "gemini-pro"
+ * Configuration for initializing a model, for example via getGenerativeModel in
+ * VertexAI class.
  */
 export declare interface ModelParams extends BaseModelParams {
+  /**
+   * The name of the model.
+   * @example "gemini-1.0-pro".
+   */
   model: string;
 }
 
 /**
  * Base params for initializing a model or calling GenerateContent.
- * @property {SafetySetting[]} - [safety_settings] Array of {@link SafetySetting}
- * @property {GenerationConfig} - [generation_config] {@link GenerationConfig}
  */
 export declare interface BaseModelParams {
+  /** Optional. Array of {@link SafetySetting}. */
   safety_settings?: SafetySetting[];
+  /** Optional.  {@link GenerationConfig}. */
   generation_config?: GenerationConfig;
+  /** Optional. Array of {@link Tool}. */
   tools?: Tool[];
 }
 
 /**
  * Safety feedback for an entire request.
- * @property {HarmCategory} - category. {@link HarmCategory}
- * @property {HarmBlockThreshold} - threshold. {@link HarmBlockThreshold}
  */
 export declare interface SafetySetting {
+  /** The harm category. {@link HarmCategory} */
   category: HarmCategory;
+  /** The harm threshold. {@link HarmBlockThreshold} */
   threshold: HarmBlockThreshold;
 }
 
 /**
- * Configuration options for model generation and outputs
- * @property {number} - [candidate_count] Number of candidates to generate.
- * @property {string[]} - [stop_sequences] Stop sequences.
- * @property {number} - [max_output_tokens] The maximum number of output tokens to generate per message.
- * @property {number} - [temperature] Controls the randomness of predictions.
- * @property {number} - [top_p] If specified, nucleus sampling will be used.
- * @property {number} - [top_k] If specified, top-k sampling will be used.
+ * Configuration options for model generation and outputs.
  */
 export declare interface GenerationConfig {
+  /** Optional. Number of candidates to generate. */
   candidate_count?: number;
+  /** Optional. Stop sequences. */
   stop_sequences?: string[];
+  /** Optional. The maximum number of output tokens to generate per message. */
   max_output_tokens?: number;
+  /** Optional. Controls the randomness of predictions. */
   temperature?: number;
+  /** Optional. If specified, nucleus sampling will be used. */
   top_p?: number;
+  /** Optional. If specified, top-k sampling will be used. */
   top_k?: number;
 }
+
 /**
  * @enum {string}
  * Harm categories that will block the content.
@@ -222,22 +227,21 @@ export enum HarmProbability {
 
 /**
  * Safety rating corresponding to the generated content.
- * @property {HarmCategory} - category. {@link HarmCategory}
- * @property {HarmProbability} - probability. {@link HarmProbability}
  */
 export declare interface SafetyRating {
+  /** The harm category. {@link HarmCategory} */
   category: HarmCategory;
+  /** The harm probability. {@link HarmProbability} */
   probability: HarmProbability;
 }
 
 /**
  * The base structured datatype containing multi-part content of a message.
- * @property {Part[]} -  parts. Array of {@link Part}
- * @property {string} - [role]. The producer of the content. Must be either 'user' or 'model'.
-                            Useful to set for multi-turn conversations, otherwise can be left blank or unset.
  */
 export declare interface Content {
+  /** Array of {@link Part}. */
   parts: Part[];
+  /** The producer of the content. */
   role?: string;
 }
 
@@ -256,114 +260,91 @@ export interface BasePart {}
 
 /**
  * A text part of a conversation with the model.
- * @property {string} - text. Only this propery is expected for TextPart.
- * @property {never} - [inline_data]. inline_data is not expected for TextPart.
- * @property {never} - [file_data]. file_data is not expected for TextPart.
- * @property {never} - [functionResponse]. functionResponse is not expected for
- * TextPart.
- * @property {never} - [functionCall]. functionCall is not expected for
- * TextPart.
- *
  */
 export interface TextPart extends BasePart {
+  /** Only this property is expected for TextPart. */
   text: string;
+  /** inline_data is not expected for TextPart. */
   inline_data?: never;
+  /** file_data is not expected for TextPart. */
   file_data?: never;
+  /** functionResponse is not expected for TextPart. */
   functionResponse?: never;
+  /** functionCall is not expected for TextPart. */
   functionCall?: never;
 }
 
 /**
  * An inline data part of a conversation with the model.
- * @property {never} - [text]. text is not expected for InlineDataPart.
- * @property {GenerativeContentBlob} - inline_data. Only this property is
- * expected for InlineDataPart. {@link GenerativeContentBlob}
- * @property {never} - [file_data]. file_data is not expected for
- * InlineDataPart.
- * @property {never} - [functionResponse]. functionResponse is not expected for
- * InlineDataPart.
- * @property {never} - [functionCall]. functionCall is not expected for
- * InlineDataPart.
- *
  */
 export interface InlineDataPart extends BasePart {
+  /** text is not expected for InlineDataPart. */
   text?: never;
+  /** Only this property is expected for InlineDataPart. */
   inline_data: GenerativeContentBlob;
+  /** file_data is not expected for InlineDataPart. */
   file_data?: never;
+  /** functionResponse is not expected for InlineDataPart. */
   functionResponse?: never;
+  /** functionCall is not expected for InlineDataPart. */
   functionCall?: never;
 }
 
 /**
  * URI based data.
- * @property {string} - mime_type. The IANA standard MIME type of the source data.
- * @property {string} - file_uri. URI of the file.
  */
 export interface FileData {
+  /** The IANA standard MIME type of the source data. */
   mime_type: string;
+  /** URI of the file. */
   file_uri: string;
 }
 
 /**
  * A file data part of a conversation with the model.
- * @property {never} - [text]. text is not expected for FileDataPart.
- * @property {never} - [inline_data]. inline_data is not expected for
- * FileDataPart.
- * @property {FileData} - file_data. Only this property is expected for
- * FileDataPart. {@link FileData}
- * @property {never} - [functionResponse]. functionResponse is not expected for
- * FileDataPart.
- * @property {never} - [functionCall]. functionCall is not expected for
- * FileDataPart.
- *
  */
 export interface FileDataPart extends BasePart {
+  /** text is not expected for FileDataPart. */
   text?: never;
+  /** inline_data is not expected for FileDataPart. */
   inline_data?: never;
+  /** Only this property is expected for FileDataPart. */
   file_data: FileData;
+  /** functionResponse is not expected for FileDataPart. */
   functionResponse?: never;
+  /** functionCall is not expected for FileDataPart. */
   functionCall?: never;
 }
 
 /**
  * A function response part of a conversation with the model.
- * @property {never} - [text]. text is not expected for FunctionResponsePart.
- * @property {never} - [inline_data]. inline_data is not expected for
- * FunctionResponsePart.
- * @property {FileData} - [file_data]. file_data is not expected for
- * FunctionResponsePart. {@link FileData}
- * @property {never} - functionResponse. only functionResponse is expected for
- * FunctionResponsePart.
- * @property {never} - [functionCall]. functionCall is not expected for
- * FunctionResponsePart.
- *
  */
 export interface FunctionResponsePart extends BasePart {
+  /** text is not expected for FunctionResponsePart. */
   text?: never;
+  /** inline_data is not expected for FunctionResponsePart. */
   inline_data?: never;
+  /** file_data is not expected for FunctionResponsePart. */
   file_data?: never;
+  /** Only this property is expected for FunctionResponsePart. */
   functionResponse: FunctionResponse;
+  /** functionCall is not expected for FunctionResponsePart. */
   functionCall?: never;
 }
 
 /**
  * A function call part of a conversation with the model.
- * @property {never} - [text]. text is not expected for FunctionResponsePart.
- * @property {never} - [inline_data]. inline_data is not expected for
- * FunctionResponsePart.
- * @property {never} - [file_data]. file_data is not expected for
- * FunctionResponsePart. {@link FileData}
- * @property {never} - [functionResponse]. functionResponse is not expected for
- * FunctionResponsePart.
- * @property {FunctionCall} - functionCall. only functionCall is expected for
- * FunctionCallPart.
- *
  */
 export interface FunctionCallPart extends BasePart {
+  /** text is not expected for FunctionCallPart. */
   text?: never;
+  /** inline_data is not expected for FunctionCallPart. */
   inline_data?: never;
+  /** file_data is not expected for FunctionCallPart. */
   file_data?: never;
+  /** functionResponse is not expected for FunctionCallPart. */
   functionResponse?: never;
+  /** Only this property is expected for FunctionCallPart. */
   functionCall: FunctionCall;
 }
 
@@ -387,11 +368,14 @@ export declare type Part =
 /**
  * Raw media bytes sent directly in the request. Text should not be sent as
  * raw bytes.
- * @property {string} - mime_type. The MIME type of the source data. The only accepted values: "image/png" or "image/jpeg".
- * @property {string} - data. data must be base64 string
  */
 export declare interface GenerativeContentBlob {
+  /**
+   * The MIME type of the source data. The only accepted values: "image/png" or
+   * "image/jpeg".
+   */
   mime_type: string;
+  /** Base64 encoded data. */
   data: string;
 }
 
