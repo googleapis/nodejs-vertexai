@@ -360,9 +360,9 @@ export declare interface GenerativeContentBlob {
  */
 export declare interface UsageMetadata {
   /** Optional. Number of tokens in the request. */
-  prompt_token_count?: number;
+  promptTokenCount?: number;
   /** Optional. Number of tokens in the response(s). */
-  candidates_token_count?: number;
+  candidatesTokenCount?: number;
   /** Optional. Total number of tokens. */
   totalTokenCount?: number;
 }
