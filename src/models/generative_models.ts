@@ -42,7 +42,7 @@ import {constants} from '../util';
 /**
  * Base class for generative models.
  * NOTE: this class should not be instantiated directly. Use
- * `vertexai.preview.getGenerativeModel()` instead.
+ * `vertexai.getGenerativeModel()` instead.
  */
 export class GenerativeModel {
   model: string;
@@ -76,7 +76,7 @@ export class GenerativeModel {
   }
 
   /**
-   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
    * @returns {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
@@ -87,7 +87,7 @@ export class GenerativeModel {
   }
 
   /**
-   * Make a async call to generate content.
+   * Makes a async call to generate content.
    * @param request A GenerateContentRequest object with the request contents.
    * @returns The GenerateContentResponse object with the response candidates.
    */
@@ -107,9 +107,11 @@ export class GenerativeModel {
   }
 
   /**
-   * Make an async stream request to generate content. The response will be returned in stream.
+   * Makes an async stream request to generate content. The response will be
+   * returned in stream.
    * @param {GenerateContentRequest} request - {@link GenerateContentRequest}
-   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link
+   *     StreamGenerateContentResult}
    */
   async generateContentStream(
     request: GenerateContentRequest | string
@@ -127,7 +129,7 @@ export class GenerativeModel {
   }
 
   /**
-   * Make a async request to count tokens.
+   * Makes a async request to count tokens.
    * @param request A CountTokensRequest object with the request contents.
    * @returns The CountTokensResponse object with the token count.
    */
@@ -143,7 +145,7 @@ export class GenerativeModel {
   }
 
   /**
-   * Instantiate a ChatSession.
+   * Instantiates a ChatSession.
    * This method doesn't make any call to remote endpoint.
    * Any call to remote endpoint is implemented in ChatSession class @see ChatSession
    * @param{StartChatParams} [request] - {@link StartChatParams}
@@ -173,7 +175,7 @@ export class GenerativeModel {
 /**
  * Base class for generative models in preview.
  * NOTE: this class should not be instantiated directly. Use
- * `vertexai.preview.getGenerativeModel()` instead.
+ * `vertexai.getGenerativeModel()` instead.
  */
 export class GenerativeModelPreview {
   model: string;
@@ -207,7 +209,7 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
    * @returns {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
@@ -218,7 +220,7 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Make a async call to generate content.
+   * Makes a async call to generate content.
    * @param request A GenerateContentRequest object with the request contents.
    * @returns The GenerateContentResponse object with the response candidates.
    */
@@ -238,9 +240,11 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Make an async stream request to generate content. The response will be returned in stream.
+   * Makes an async stream request to generate content. The response will be
+   * returned in stream.
    * @param {GenerateContentRequest} request - {@link GenerateContentRequest}
-   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link
+   *     StreamGenerateContentResult}
    */
   async generateContentStream(
     request: GenerateContentRequest | string
@@ -258,7 +262,7 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Make a async request to count tokens.
+   * Makes a async request to count tokens.
    * @param request A CountTokensRequest object with the request contents.
    * @returns The CountTokensResponse object with the token count.
    */
@@ -274,7 +278,7 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Instantiate a ChatSessionPreview.
+   * Instantiates a ChatSessionPreview.
    * This method doesn't make any call to remote endpoint.
    * Any call to remote endpoint is implemented in ChatSessionPreview class @see ChatSessionPreview
    * @param{StartChatParams} [request] - {@link StartChatParams}

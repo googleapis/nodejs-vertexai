@@ -78,7 +78,7 @@ export class ChatSession {
   }
 
   /**
-   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
    * @returns {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
@@ -89,7 +89,7 @@ export class ChatSession {
   }
 
   /**
-   * Make an sync call to send message.
+   * Makes an sync call to send message.
    * @param {string | Array<string | Part>} request - send message request. {@link Part}
    * @returns {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
    */
@@ -159,7 +159,7 @@ export class ChatSession {
   }
 
   /**
-   * Make an async call to stream send message. Response will be returned in stream.
+   * Makes an async call to stream send message. Response will be returned in stream.
    * @param {string | Array<string | Part>} request - send message request. {@link Part}
    * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
    */
@@ -236,7 +236,7 @@ export class ChatSessionPreview {
   }
 
   /**
-   * Get access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
    * @returns {Promise<any>} Promise of token
    */
   get token(): Promise<any> {
@@ -247,7 +247,7 @@ export class ChatSessionPreview {
   }
 
   /**
-   * Make an sync call to send message.
+   * Makes an sync call to send message.
    * @param {string | Array<string | Part>} request - send message request. {@link Part}
    * @returns {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
    */
@@ -317,7 +317,7 @@ export class ChatSessionPreview {
   }
 
   /**
-   * Make an async call to stream send message. Response will be returned in stream.
+   * Makes an async call to stream send message. Response will be returned in stream.
    * @param {string | Array<string | Part>} request - send message request. {@link Part}
    * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
    */
