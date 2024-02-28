@@ -22,6 +22,7 @@ import {GenerativeModelPreview, GenerativeModel} from './models';
 import {
   GetGenerativeModelParams,
   ModelParams,
+  RequestOptions,
   VertexInit,
 } from './types/content';
 import {GoogleAuthError} from './types/errors';
@@ -63,10 +64,14 @@ export class VertexAI {
   /**
    * @param {ModelParams} modelParams - {@link ModelParams} Parameters to
    *     specify the generative model.
+   * @param {RequestOptions} [requestOptions] - {@link RequestOptions} Parameters to specify request options
    * @returns {GenerativeModel} Instance of the GenerativeModel class. {@link
    *     GenerativeModel}
    */
-  getGenerativeModel(modelParams: ModelParams): GenerativeModel {
+  getGenerativeModel(
+    modelParams: ModelParams,
+    requestOptions?: RequestOptions
+  ): GenerativeModel {
     const getGenerativeModelParams: GetGenerativeModelParams = {
       model: modelParams.model,
       project: this.project,
@@ -76,6 +81,7 @@ export class VertexAI {
       safety_settings: modelParams.safety_settings,
       generation_config: modelParams.generation_config,
       tools: modelParams.tools,
+      requestOptions: requestOptions,
     };
     return new GenerativeModel(getGenerativeModelParams);
   }
@@ -119,7 +125,10 @@ class VertexAI_Preview {
    * @returns {GenerativeModelPreview} Instance of the GenerativeModelPreview
    *     class. {@link GenerativeModelPreview}
    */
-  getGenerativeModel(modelParams: ModelParams): GenerativeModelPreview {
+  getGenerativeModel(
+    modelParams: ModelParams,
+    requestOptions?: RequestOptions
+  ): GenerativeModelPreview {
     const getGenerativeModelParams: GetGenerativeModelParams = {
       model: modelParams.model,
       project: this.project,
@@ -129,6 +138,7 @@ class VertexAI_Preview {
       safety_settings: modelParams.safety_settings,
       generation_config: modelParams.generation_config,
       tools: modelParams.tools,
+      requestOptions: requestOptions,
     };
     return new GenerativeModelPreview(getGenerativeModelParams);
   }

@@ -15,7 +15,11 @@
  * limitations under the License.
  */
 
-import {CountTokensRequest, CountTokensResponse} from '../types/content';
+import {
+  CountTokensRequest,
+  CountTokensResponse,
+  RequestOptions,
+} from '../types/content';
 import {GoogleGenerativeAIError} from '../types/errors';
 import {
   throwErrorIfNotOK,
@@ -34,7 +38,8 @@ export async function countTokens(
   publisherModelEndpoint: string,
   token: Promise<any>,
   request: CountTokensRequest,
-  apiEndpoint?: string
+  apiEndpoint?: string,
+  requestOptions?: RequestOptions
 ): Promise<CountTokensResponse> {
   const response = await postRequest({
     region: location,
@@ -44,6 +49,7 @@ export async function countTokens(
     token: await token,
     data: request,
     apiEndpoint: apiEndpoint,
+    requestOptions: requestOptions,
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request', e);
   });

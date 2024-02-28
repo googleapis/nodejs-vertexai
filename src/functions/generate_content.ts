@@ -25,6 +25,7 @@ import {
   GenerateContentRequest,
   GenerateContentResult,
   GenerationConfig,
+  RequestOptions,
   SafetySetting,
   StreamGenerateContentResult,
 } from '../types/content';
@@ -51,7 +52,8 @@ export async function generateContent(
   request: GenerateContentRequest | string,
   apiEndpoint?: string,
   generation_config?: GenerationConfig,
-  safety_settings?: SafetySetting[]
+  safety_settings?: SafetySetting[],
+  requestOptions?: RequestOptions
 ): Promise<GenerateContentResult> {
   request = formatContentRequest(request, generation_config, safety_settings);
 
@@ -78,6 +80,7 @@ export async function generateContent(
     token: await token,
     data: generateContentRequest,
     apiEndpoint: apiEndpoint,
+    requestOptions: requestOptions,
     apiVersion: apiVersion,
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request', e);
@@ -103,7 +106,8 @@ export async function generateContentStream(
   request: GenerateContentRequest | string,
   apiEndpoint?: string,
   generation_config?: GenerationConfig,
-  safety_settings?: SafetySetting[]
+  safety_settings?: SafetySetting[],
+  requestOptions?: RequestOptions
 ): Promise<StreamGenerateContentResult> {
   request = formatContentRequest(request, generation_config, safety_settings);
   validateGenerateContentRequest(request);
@@ -129,6 +133,7 @@ export async function generateContentStream(
     token: await token,
     data: generateContentRequest,
     apiEndpoint: apiEndpoint,
+    requestOptions: requestOptions,
     apiVersion: apiVersion,
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request', e);
