@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.4.0...v0.5.0) (2024-02-29)
+
+
+### Features
+
+* Introduce Request Timeout Configuration ([1b37f40](https://github.com/googleapis/nodejs-vertexai/commit/1b37f4045f604dac10c91ba800b34c6beadd113a))
+
+
+### Bug Fixes
+
+* correct UsageMetadata schema ([10bc676](https://github.com/googleapis/nodejs-vertexai/commit/10bc67666a64d6ea7dd103c3dae678b8080735c1))
+* include usageMetadata in stream aggregated response ([a1154c9](https://github.com/googleapis/nodejs-vertexai/commit/a1154c9a91bb5d9cd988a00be4b462ee013fa704))
+
 ## [0.4.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.3.1...v0.4.0) (2024-02-15)
 
 
