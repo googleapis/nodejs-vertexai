@@ -28,7 +28,7 @@ For the latest list of available Gemini models in Vertex, please refer to [Googl
 To use the SDK, create an instance of `VertexAI` by passing it your Google Cloud project ID and location. Then create a reference to a generative model.
 
 ```typescript
-const {VertexAI, HarmCategory, HarmBlockThreshold} = require('@google-cloud/vertexai');
+const {VertexAI, HarmCategory, HarmBlockThreshold, GoogleSearchRetrievalTool, GoogleSearchRetrievalTool, RetrievalTool} = require('@google-cloud/vertexai');
 
 const project = 'your-cloud-project';
 const location = 'us-central1';
@@ -271,6 +271,40 @@ async function functionCallingGenerateContentStream() {
 }
 
 functionCallingGenerateContentStream();
+```
+
+### Grounding using Google Search
+
+```typescript
+const googleSearchRetrievalTool: GoogleSearchRetrievalTool = {
+  googleSearchRetrieval: {
+    disableAttribution: false,
+  },
+};
+const response = await generativeModel.generateContent({
+  contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+  tools: [googleSearchRetrievalTool],
+}).response;
+const groundingMetadata = response.candidates[0].groundingMetadata;
+```
+
+
+### Grounding using Vertex AI Search
+
+```typescript
+const vertexAiRetrievalTool: RetrievalTool = {
+  retrieval: {
+    vertexAiSearch: {
+      datastore='projects/.../locations/.../collections/.../dataStores/...',
+    }
+    disableAttribution: false,
+  },
+};
+const response = await generativeModel.generateContent({
+  contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+  tools: [googleSearchRetrievalTool],
+}).response;
+const groundingMetadata = response.candidates[0].groundingMetadata;
 ```
 
 ## License
