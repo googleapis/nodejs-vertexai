@@ -23,6 +23,7 @@ import {
   GenerateContentResult,
   GenerationConfig,
   Part,
+  RequestOptions,
   SafetySetting,
   StartChatSessionRequest,
   StreamGenerateContentResult,
@@ -52,6 +53,7 @@ export class ChatSession {
   private _send_stream_promise: Promise<void> = Promise.resolve();
   private publisher_model_endpoint: string;
   private googleAuth: GoogleAuth;
+  requestOptions?: RequestOptions;
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
   tools?: Tool[];
@@ -65,7 +67,10 @@ export class ChatSession {
    * @constructor
    * @param {StartChatSessionRequest} request - {@link StartChatSessionRequest}
    */
-  constructor(request: StartChatSessionRequest) {
+  constructor(
+    request: StartChatSessionRequest,
+    requestOptions?: RequestOptions
+  ) {
     this.project = request.project;
     this.location = request.location;
     this.googleAuth = request.googleAuth;
@@ -75,6 +80,7 @@ export class ChatSession {
     this.safety_settings = request.safety_settings;
     this.tools = request.tools;
     this.api_endpoint = request.api_endpoint;
+    this.requestOptions = requestOptions ?? {};
   }
 
   /**
@@ -113,7 +119,8 @@ export class ChatSession {
       generateContentrequest,
       this.api_endpoint,
       this.generation_config,
-      this.safety_settings
+      this.safety_settings,
+      this.requestOptions
     ).catch(e => {
       throw e;
     });
@@ -183,7 +190,8 @@ export class ChatSession {
       generateContentrequest,
       this.api_endpoint,
       this.generation_config,
-      this.safety_settings
+      this.safety_settings,
+      this.requestOptions
     ).catch(e => {
       throw e;
     });
@@ -210,6 +218,7 @@ export class ChatSessionPreview {
   private _send_stream_promise: Promise<void> = Promise.resolve();
   private publisher_model_endpoint: string;
   private googleAuth: GoogleAuth;
+  requestOptions?: RequestOptions;
   generation_config?: GenerationConfig;
   safety_settings?: SafetySetting[];
   tools?: Tool[];
@@ -223,7 +232,10 @@ export class ChatSessionPreview {
    * @constructor
    * @param {StartChatSessionRequest} request - {@link StartChatSessionRequest}
    */
-  constructor(request: StartChatSessionRequest) {
+  constructor(
+    request: StartChatSessionRequest,
+    requestOptions?: RequestOptions
+  ) {
     this.project = request.project;
     this.location = request.location;
     this.googleAuth = request.googleAuth;
@@ -233,6 +245,7 @@ export class ChatSessionPreview {
     this.safety_settings = request.safety_settings;
     this.tools = request.tools;
     this.api_endpoint = request.api_endpoint;
+    this.requestOptions = requestOptions ?? {};
   }
 
   /**
@@ -271,7 +284,8 @@ export class ChatSessionPreview {
       generateContentrequest,
       this.api_endpoint,
       this.generation_config,
-      this.safety_settings
+      this.safety_settings,
+      this.requestOptions
     ).catch(e => {
       throw e;
     });
@@ -341,7 +355,8 @@ export class ChatSessionPreview {
       generateContentrequest,
       this.api_endpoint,
       this.generation_config,
-      this.safety_settings
+      this.safety_settings,
+      this.requestOptions
     ).catch(e => {
       throw e;
     });

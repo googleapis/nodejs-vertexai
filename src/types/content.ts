@@ -100,6 +100,8 @@ export declare interface GetGenerativeModelParams extends ModelParams {
   safety_settings?: SafetySetting[];
   /** Optional. The tools to use for generation. */
   tools?: Tool[];
+  /** Optional. The request options to use for generation. */
+  requestOptions?: RequestOptions;
 }
 
 /**
@@ -800,4 +802,12 @@ export declare interface StartChatSessionRequest extends StartChatParams {
   googleAuth: GoogleAuth;
   /** The publisher model endpoint to use for the request. */
   publisher_model_endpoint: string;
+}
+
+/**
+ * Request options params passed to getGenerativeModel method in VertexAI class.
+ */
+export interface RequestOptions {
+  /** time out in milli seconds. time out value needs to be non negative. */
+  timeoutMillis?: number;
 }

@@ -25,6 +25,7 @@ import {
   HarmBlockThreshold,
   HarmCategory,
   HarmProbability,
+  RequestOptions,
   SafetyRating,
   SafetySetting,
   StreamGenerateContentResult,
@@ -78,6 +79,9 @@ const TEST_SAFETY_SETTINGS: SafetySetting[] = [
   },
 ];
 
+const TEST_REQUEST_OPTIONS: RequestOptions = {
+  timeoutMillis: 0,
+};
 const TEST_SAFETY_RATINGS: SafetyRating[] = [
   {
     category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
@@ -111,7 +115,7 @@ const TEST_CANDIDATES = [
 ];
 const TEST_MODEL_RESPONSE = {
   candidates: TEST_CANDIDATES,
-  usage_metadata: {prompt_token_count: 0, candidates_token_count: 0},
+  usageMetadata: {promptTokenCount: 0, candidatesTokenCount: 0},
 };
 const TEST_FUNCTION_CALL_RESPONSE = {
   functionCall: {
@@ -231,6 +235,7 @@ describe('countTokens', () => {
   const req: CountTokensRequest = {
     contents: TEST_USER_CHAT_MESSAGE,
   };
+  let fetchSpy: jasmine.Spy;
 
   it('return expected response when OK', async () => {
     const expectedResponseBody = {
@@ -240,7 +245,7 @@ describe('countTokens', () => {
       JSON.stringify(expectedResponseBody),
       fetchResponseObj
     );
-    spyOn(global, 'fetch').and.resolveTo(response);
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(response);
 
     const resp = await countTokens(
       TEST_LOCATION,
@@ -252,6 +257,26 @@ describe('countTokens', () => {
     );
 
     expect(resp).toEqual(expectedResponseBody);
+  });
+
+  it('request rejected when timeout', async () => {
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo({
+      ok: false,
+      status: 500,
+      statusText: 'AbortError',
+    } as Response);
+    await expectAsync(
+      countTokens(
+        TEST_LOCATION,
+        TEST_PROJECT,
+        TEST_PUBLISHER_MODEL_ENDPOINT,
+        TEST_TOKEN_PROMISE,
+        req,
+        TEST_API_ENDPOINT,
+        TEST_REQUEST_OPTIONS
+      )
+    ).toBeRejected();
+    expect(fetchSpy.calls.allArgs()[0][1].signal).toBeInstanceOf(AbortSignal);
   });
 
   it('throw GoogleGenerativeError when not OK and not 4XX', async () => {
@@ -336,19 +361,43 @@ describe('countTokens', () => {
 describe('generateContent', () => {
   let expectedStreamResult: StreamGenerateContentResult;
   let fetchSpy: jasmine.Spy;
+  let fetchResult: Response;
 
   beforeEach(() => {
     expectedStreamResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    const fetchResult = new Response(
+    fetchResult = new Response(
       JSON.stringify(expectedStreamResult),
       fetchResponseObj
     );
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
   });
 
+  it('request rejected when timeout', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo({
+      ok: false,
+      status: 500,
+      statusText: 'AbortError',
+    } as Response);
+    await expectAsync(
+      generateContent(
+        TEST_LOCATION,
+        TEST_PROJECT,
+        TEST_PUBLISHER_MODEL_ENDPOINT,
+        TEST_TOKEN_PROMISE,
+        req,
+        TEST_API_ENDPOINT,
+        TEST_GENERATION_CONFIG,
+        TEST_SAFETY_SETTINGS,
+        TEST_REQUEST_OPTIONS
+      )
+    ).toBeRejected();
+    expect(fetchSpy.calls.allArgs()[0][1].signal).toBeInstanceOf(AbortSignal);
+  });
   it('returns a GenerateContentResponse', async () => {
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
@@ -356,6 +405,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
@@ -371,6 +421,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
@@ -390,6 +441,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
@@ -427,6 +479,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
@@ -445,6 +498,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     await generateContent(
       TEST_LOCATION,
@@ -468,6 +522,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     await generateContent(
       TEST_LOCATION,
@@ -492,6 +547,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     await generateContent(
       TEST_LOCATION,
@@ -514,6 +570,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
@@ -540,6 +597,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await generateContent(
       TEST_LOCATION,
@@ -612,19 +670,43 @@ describe('generateContent', () => {
 describe('generateContentStream', () => {
   let expectedStreamResult: StreamGenerateContentResult;
   let fetchSpy: jasmine.Spy;
+  let fetchResult: Response;
 
   beforeEach(() => {
     expectedStreamResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    const fetchResult = new Response(
+    fetchResult = new Response(
       JSON.stringify(expectedStreamResult),
       fetchResponseObj
     );
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
   });
 
+  it('request rejected when timeout', async () => {
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo({
+      ok: false,
+      status: 500,
+      statusText: 'AbortError',
+    } as Response);
+    await expectAsync(
+      generateContentStream(
+        TEST_LOCATION,
+        TEST_PROJECT,
+        TEST_PUBLISHER_MODEL_ENDPOINT,
+        TEST_TOKEN_PROMISE,
+        req,
+        TEST_API_ENDPOINT,
+        TEST_GENERATION_CONFIG,
+        TEST_SAFETY_SETTINGS,
+        TEST_REQUEST_OPTIONS
+      )
+    ).toBeRejected();
+    expect(fetchSpy.calls.allArgs()[0][1].signal).toBeInstanceOf(AbortSignal);
+  });
   it('returns a GenerateContentResponse when passed text content', async () => {
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
@@ -633,6 +715,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
@@ -650,6 +733,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
@@ -670,6 +754,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
@@ -690,6 +775,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
@@ -712,6 +798,7 @@ describe('generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
       stream: testGenerator(),
     };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
     const resp = await generateContentStream(
       TEST_LOCATION,

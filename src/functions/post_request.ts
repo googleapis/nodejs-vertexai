@@ -17,7 +17,11 @@
 
 const API_BASE_PATH = 'aiplatform.googleapis.com';
 
-import {GenerateContentRequest, CountTokensRequest} from '../types/content';
+import {
+  GenerateContentRequest,
+  CountTokensRequest,
+  RequestOptions,
+} from '../types/content';
 import * as constants from '../util/constants';
 
 /**
@@ -32,6 +36,7 @@ export async function postRequest({
   token,
   data,
   apiEndpoint,
+  requestOptions,
   apiVersion = 'v1',
 }: {
   region: string;
@@ -41,6 +46,7 @@ export async function postRequest({
   token: string;
   data: GenerateContentRequest | CountTokensRequest;
   apiEndpoint?: string;
+  requestOptions?: RequestOptions;
   apiVersion?: string;
 }): Promise<Response | undefined> {
   const vertexBaseEndpoint = apiEndpoint ?? `${region}-${API_BASE_PATH}`;
@@ -53,6 +59,7 @@ export async function postRequest({
   }
 
   return fetch(vertexEndpoint, {
+    ...getFetchOptions(requestOptions),
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -61,4 +68,20 @@ export async function postRequest({
     },
     body: JSON.stringify(data),
   });
+}
+
+function getFetchOptions(requestOptions?: RequestOptions): RequestInit {
+  const fetchOptions = {} as RequestInit;
+  if (
+    !requestOptions ||
+    requestOptions.timeoutMillis === undefined ||
+    requestOptions.timeoutMillis < 0
+  ) {
+    return fetchOptions;
+  }
+  const abortController = new AbortController();
+  const signal = abortController.signal;
+  setTimeout(() => abortController.abort, requestOptions.timeoutMillis);
+  fetchOptions.signal = signal;
+  return fetchOptions;
 }

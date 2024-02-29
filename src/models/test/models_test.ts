@@ -35,6 +35,8 @@ import {
   Tool,
 } from '../../types/content';
 import * as StreamFunctions from '../../functions/post_fetch_processing';
+import * as GenerateContentFunctions from '../../functions/generate_content';
+import * as CountTokensFunctions from '../../functions/count_tokens';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
@@ -211,10 +213,9 @@ const TEST_MODEL_RESPONSE_MISSING_ROLE = {
   candidates: TEST_CANDIDATES_MISSING_ROLE,
   usage_metadata: {prompt_token_count: 0, candidates_token_count: 0},
 };
-/**
- * Returns a generator, used to mock the generateContentStream response
- * @ignore
- */
+const TEST_REQUEST_OPTIONS = {
+  timeoutMillis: 0,
+};
 async function* testGenerator(): AsyncGenerator<GenerateContentResponse> {
   yield {
     candidates: TEST_CANDIDATES,
@@ -246,6 +247,20 @@ describe('GenerativeModel startChat', () => {
 
     expect(chat).toBeInstanceOf(ChatSession);
   });
+  it('set timeout info in ChatSession', () => {
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+      requestOptions: TEST_REQUEST_OPTIONS,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+
+    expect(chat.requestOptions).toEqual(TEST_REQUEST_OPTIONS);
+  });
 });
 
 describe('GenerativeModelPreview startChat', () => {
@@ -272,6 +287,20 @@ describe('GenerativeModelPreview startChat', () => {
     });
 
     expect(chat).toBeInstanceOf(ChatSessionPreview);
+  });
+  it('set timeout info in ChatSession', () => {
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+      requestOptions: TEST_REQUEST_OPTIONS,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+
+    expect(chat.requestOptions).toEqual(TEST_REQUEST_OPTIONS);
   });
 });
 
@@ -308,6 +337,28 @@ describe('GenerativeModel generateContent', () => {
     spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
+  });
+  it('send timeout options to functions', async () => {
+    const modelWithRequestOptions = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+      requestOptions: TEST_REQUEST_OPTIONS,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    spyOnProperty(modelWithRequestOptions, 'token', 'get').and.resolveTo(
+      TEST_TOKEN
+    );
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    await modelWithRequestOptions.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
@@ -525,6 +576,28 @@ describe('GenerativeModelPreview generateContent', () => {
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
+  it('send timeout options to functions', async () => {
+    const modelWithRequestOptions = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+      requestOptions: TEST_REQUEST_OPTIONS,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    spyOnProperty(modelWithRequestOptions, 'token', 'get').and.resolveTo(
+      TEST_TOKEN
+    );
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    await modelWithRequestOptions.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+  });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
@@ -741,7 +814,25 @@ describe('GenerativeModel generateContentStream', () => {
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedResult);
   });
-
+  it('send timeout options to functions', async () => {
+    const modelWithRequestOptions = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+      requestOptions: TEST_REQUEST_OPTIONS,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    await modelWithRequestOptions.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+  });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: StreamGenerateContentResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
@@ -862,6 +953,26 @@ describe('GenerativeModelPreview generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedResult);
+  });
+
+  it('send timeout options to functions', async () => {
+    const modelWithRequestOptions = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+      requestOptions: TEST_REQUEST_OPTIONS,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    await modelWithRequestOptions.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
   });
 
   it('returns a GenerateContentResponse when passed a string', async () => {
@@ -1006,6 +1117,35 @@ describe('ChatSession', () => {
       expect(resp).toEqual(expectedResult);
       expect(chatSession.history.length).toEqual(3);
     });
+    it('send timeout to functions', async () => {
+      const modelWithRequestOptions = new GenerativeModel({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: googleAuth,
+        requestOptions: TEST_REQUEST_OPTIONS,
+      });
+      const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
+        history: TEST_USER_CHAT_MESSAGE,
+      });
+      const req = 'How are you doing today?';
+      const generateContentSpy: jasmine.Spy = spyOn(
+        GenerateContentFunctions,
+        'generateContent'
+      ).and.resolveTo({
+        response: TEST_MODEL_RESPONSE,
+      });
+      spyOnProperty(
+        chatSessionWithRequestOptions,
+        'token',
+        'get'
+      ).and.resolveTo(TEST_TOKEN);
+      await chatSessionWithRequestOptions.sendMessage(req);
+      expect(chatSessionWithRequestOptions.requestOptions).toEqual(
+        TEST_REQUEST_OPTIONS
+      );
+      expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+    });
 
     it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
       const req = 'How are you doing today?';
@@ -1121,6 +1261,36 @@ describe('ChatSession', () => {
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+    });
+    it('send timeout to functions', async () => {
+      const modelWithRequestOptions = new GenerativeModel({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: googleAuth,
+        requestOptions: TEST_REQUEST_OPTIONS,
+      });
+      const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
+        history: TEST_USER_CHAT_MESSAGE,
+      });
+      const req = 'How are you doing today?';
+      const generateContentSpy: jasmine.Spy = spyOn(
+        GenerateContentFunctions,
+        'generateContentStream'
+      ).and.resolveTo({
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      });
+      spyOnProperty(
+        chatSessionWithRequestOptions,
+        'token',
+        'get'
+      ).and.resolveTo(TEST_TOKEN);
+      await chatSessionWithRequestOptions.sendMessageStream(req);
+      expect(chatSessionWithRequestOptions.requestOptions).toEqual(
+        TEST_REQUEST_OPTIONS
+      );
+      expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
     });
     it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
       const req = 'How are you doing today?';
@@ -1257,6 +1427,36 @@ describe('ChatSessionPreview', () => {
       expect(chatSession.history.length).toEqual(3);
     });
 
+    it('send timeout to functions', async () => {
+      const modelWithRequestOptions = new GenerativeModelPreview({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: googleAuth,
+        requestOptions: TEST_REQUEST_OPTIONS,
+      });
+      const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
+        history: TEST_USER_CHAT_MESSAGE,
+      });
+      const req = 'How are you doing today?';
+      const generateContentSpy: jasmine.Spy = spyOn(
+        GenerateContentFunctions,
+        'generateContent'
+      ).and.resolveTo({
+        response: TEST_MODEL_RESPONSE,
+      });
+      spyOnProperty(
+        chatSessionWithRequestOptions,
+        'token',
+        'get'
+      ).and.resolveTo(TEST_TOKEN);
+      await chatSessionWithRequestOptions.sendMessage(req);
+      expect(chatSessionWithRequestOptions.requestOptions).toEqual(
+        TEST_REQUEST_OPTIONS
+      );
+      expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+    });
+
     it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
       const req = 'How are you doing today?';
       const expectedResult: GenerateContentResult = {
@@ -1372,6 +1572,36 @@ describe('ChatSessionPreview', () => {
       expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
     });
+    it('send timeout to functions', async () => {
+      const modelWithRequestOptions = new GenerativeModelPreview({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: googleAuth,
+        requestOptions: TEST_REQUEST_OPTIONS,
+      });
+      const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
+        history: TEST_USER_CHAT_MESSAGE,
+      });
+      const req = 'How are you doing today?';
+      const generateContentSpy: jasmine.Spy = spyOn(
+        GenerateContentFunctions,
+        'generateContentStream'
+      ).and.resolveTo({
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGenerator(),
+      });
+      spyOnProperty(
+        chatSessionWithRequestOptions,
+        'token',
+        'get'
+      ).and.resolveTo(TEST_TOKEN);
+      await chatSessionWithRequestOptions.sendMessageStream(req);
+      expect(chatSessionWithRequestOptions.requestOptions).toEqual(
+        TEST_REQUEST_OPTIONS
+      );
+      expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+    });
     it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
       const req = 'How are you doing today?';
       const expectedResult: StreamGenerateContentResult = {
@@ -1474,6 +1704,23 @@ describe('GenerativeModel countTokens', () => {
     const resp = await model.countTokens(req);
     expect(resp).toEqual(responseBody);
   });
+  it('send timeout to functions', async () => {
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+      requestOptions: TEST_REQUEST_OPTIONS,
+    });
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    const req: CountTokensRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const countTokenSpy = spyOn(CountTokensFunctions, 'countTokens');
+    await model.countTokens(req);
+    // @ts-ignore
+    expect(countTokenSpy.calls.allArgs()[0][6].timeoutMillis).toEqual(0);
+  });
 });
 
 describe('GenerativeModelPreview countTokens', () => {
@@ -1498,6 +1745,23 @@ describe('GenerativeModelPreview countTokens', () => {
     spyOn(global, 'fetch').and.resolveTo(response);
     const resp = await model.countTokens(req);
     expect(resp).toEqual(responseBody);
+  });
+  it('send timeout to functions', async () => {
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: googleAuth,
+      requestOptions: TEST_REQUEST_OPTIONS,
+    });
+    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+    const req: CountTokensRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const countTokenSpy = spyOn(CountTokensFunctions, 'countTokens');
+    await model.countTokens(req);
+    // @ts-ignore
+    expect(countTokenSpy.calls.allArgs()[0][6].timeoutMillis).toEqual(0);
   });
 });
 
