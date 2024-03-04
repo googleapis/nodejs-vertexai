@@ -28,7 +28,7 @@ For the latest list of available Gemini models in Vertex, please refer to [Googl
 To use the SDK, create an instance of `VertexAI` by passing it your Google Cloud project ID and location. Then create a reference to a generative model.
 
 ```typescript
-const {VertexAI, HarmCategory, HarmBlockThreshold, GoogleSearchRetrievalTool, GoogleSearchRetrievalTool, RetrievalTool} = require('@google-cloud/vertexai');
+const {VertexAI, HarmCategory, HarmBlockThreshold, GoogleSearchRetrievalTool, RetrievalTool} = require('@google-cloud/vertexai');
 
 const project = 'your-cloud-project';
 const location = 'us-central1';
