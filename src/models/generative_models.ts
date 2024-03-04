@@ -59,7 +59,7 @@ export class GenerativeModel {
 
   /**
    * @constructor
-   * @param {GetGenerativeModelParams} getGenerativeModelParams - {@link GetGenerativeModelParams}
+   * @param getGenerativeModelParams - {@link GetGenerativeModelParams}
    */
   constructor(getGenerativeModelParams: GetGenerativeModelParams) {
     this.project = getGenerativeModelParams.project;
@@ -80,7 +80,7 @@ export class GenerativeModel {
 
   /**
    * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @returns {Promise<any>} Promise of token
+   * @returns Promise of token
    */
   get token(): Promise<any> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -91,7 +91,7 @@ export class GenerativeModel {
 
   /**
    * Makes a async call to generate content.
-   * @param request A GenerateContentRequest object with the request contents.
+   * @param request - A GenerateContentRequest object with the request contents.
    * @returns The GenerateContentResponse object with the response candidates.
    */
   async generateContent(
@@ -113,9 +113,8 @@ export class GenerativeModel {
   /**
    * Makes an async stream request to generate content. The response will be
    * returned in stream.
-   * @param {GenerateContentRequest} request - {@link GenerateContentRequest}
-   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link
-   *     StreamGenerateContentResult}
+   * @param request - {@link GenerateContentRequest}
+   * @returns Promise of {@link StreamGenerateContentResult}
    */
   async generateContentStream(
     request: GenerateContentRequest | string
@@ -154,8 +153,8 @@ export class GenerativeModel {
    * Instantiates a ChatSession.
    * This method doesn't make any call to remote endpoint.
    * Any call to remote endpoint is implemented in ChatSession class @see ChatSession
-   * @param{StartChatParams} [request] - {@link StartChatParams}
-   * @returns {ChatSession} {@link ChatSession}
+   * @param request - {@link StartChatParams}
+   * @returns {@link ChatSession}
    */
   startChat(request?: StartChatParams): ChatSession {
     const startChatRequest: StartChatSessionRequest = {
@@ -181,7 +180,7 @@ export class GenerativeModel {
 /**
  * Base class for generative models in preview.
  * NOTE: this class should not be instantiated directly. Use
- * `vertexai.getGenerativeModel()` instead.
+ * `vertexai.preview.getGenerativeModel()` instead.
  */
 export class GenerativeModelPreview {
   model: string;
@@ -197,7 +196,7 @@ export class GenerativeModelPreview {
 
   /**
    * @constructor
-   * @param {GetGenerativeModelParams} getGenerativeModelParams - {@link GetGenerativeModelParams}
+   * @param getGenerativeModelParams - {@link GetGenerativeModelParams}
    */
   constructor(getGenerativeModelParams: GetGenerativeModelParams) {
     this.project = getGenerativeModelParams.project;
@@ -218,7 +217,7 @@ export class GenerativeModelPreview {
 
   /**
    * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @returns {Promise<any>} Promise of token
+   * @returns Promise of token.
    */
   get token(): Promise<any> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -251,9 +250,8 @@ export class GenerativeModelPreview {
   /**
    * Makes an async stream request to generate content. The response will be
    * returned in stream.
-   * @param {GenerateContentRequest} request - {@link GenerateContentRequest}
-   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link
-   *     StreamGenerateContentResult}
+   * @param request - {@link GenerateContentRequest}
+   * @returns Promise of {@link StreamGenerateContentResult}
    */
   async generateContentStream(
     request: GenerateContentRequest | string
@@ -292,8 +290,8 @@ export class GenerativeModelPreview {
    * Instantiates a ChatSessionPreview.
    * This method doesn't make any call to remote endpoint.
    * Any call to remote endpoint is implemented in ChatSessionPreview class @see ChatSessionPreview
-   * @param{StartChatParams} [request] - {@link StartChatParams}
-   * @returns {ChatSessionPrevew} {@link ChatSessionPrevew}
+   * @param request - {@link StartChatParams}
+   * @returns {@link ChatSessionPrevew}
    */
   startChat(request?: StartChatParams): ChatSessionPreview {
     const startChatRequest: StartChatSessionRequest = {

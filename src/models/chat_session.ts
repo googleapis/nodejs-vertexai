@@ -65,7 +65,7 @@ export class ChatSession {
 
   /**
    * @constructor
-   * @param {StartChatSessionRequest} request - {@link StartChatSessionRequest}
+   * @param request - {@link StartChatSessionRequest}
    */
   constructor(
     request: StartChatSessionRequest,
@@ -85,7 +85,7 @@ export class ChatSession {
 
   /**
    * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @returns {Promise<any>} Promise of token
+   * @returns Promise of token.
    */
   get token(): Promise<any> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -96,8 +96,8 @@ export class ChatSession {
 
   /**
    * Makes an sync call to send message.
-   * @param {string | Array<string | Part>} request - send message request. {@link Part}
-   * @returns {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
+   * @param request - send message request.
+   * @returns Promise of {@link GenerateContentResult}.
    */
   async sendMessage(
     request: string | Array<string | Part>
@@ -166,9 +166,10 @@ export class ChatSession {
   }
 
   /**
-   * Makes an async call to stream send message. Response will be returned in stream.
-   * @param {string | Array<string | Part>} request - send message request. {@link Part}
-   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   * Makes an async call to stream send message. Response will be returned in
+   * stream.
+   * @param request - send message request.
+   * @returns Promise of {@link StreamGenerateContentResult}.
    */
   async sendMessageStream(
     request: string | Array<string | Part>
@@ -230,7 +231,7 @@ export class ChatSessionPreview {
 
   /**
    * @constructor
-   * @param {StartChatSessionRequest} request - {@link StartChatSessionRequest}
+   * @param request - {@link StartChatSessionRequest}
    */
   constructor(
     request: StartChatSessionRequest,
@@ -250,7 +251,7 @@ export class ChatSessionPreview {
 
   /**
    * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @returns {Promise<any>} Promise of token
+   * @returns Promise of token.
    */
   get token(): Promise<any> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -261,8 +262,8 @@ export class ChatSessionPreview {
 
   /**
    * Makes an sync call to send message.
-   * @param {string | Array<string | Part>} request - send message request. {@link Part}
-   * @returns {Promise<GenerateContentResult>} Promise of {@link GenerateContentResult}
+   * @param request - send message request.
+   * @returns Promise of {@link GenerateContentResult}.
    */
   async sendMessage(
     request: string | Array<string | Part>
@@ -331,9 +332,10 @@ export class ChatSessionPreview {
   }
 
   /**
-   * Makes an async call to stream send message. Response will be returned in stream.
-   * @param {string | Array<string | Part>} request - send message request. {@link Part}
-   * @returns {Promise<StreamGenerateContentResult>} Promise of {@link StreamGenerateContentResult}
+   * Makes an async call to stream send message. Response will be returned in
+   * stream.
+   * @param request - send message request.
+   * @returns Promise of {@link StreamGenerateContentResult}.
    */
   async sendMessageStream(
     request: string | Array<string | Part>
@@ -394,8 +396,8 @@ function formulateNewContentFromSendMessageRequest(
  * passed in a single Part array, we may need to assign different roles to each
  * part. Currently only FunctionResponsePart requires a role other than 'user'.
  * @ignore
- * @param {Array<Part>} parts Array of parts to pass to the model
- * @returns {Content[]} Array of content items
+ * @param parts Array of parts to pass to the model
+ * @returns Array of content items
  */
 function assignRoleToPartsAndValidateSendMessageRequest(
   parts: Array<Part>

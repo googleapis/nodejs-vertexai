@@ -40,7 +40,7 @@ export class VertexAI {
 
   /**
    * @constructor
-   * @param {VertexInit} init - assign authentication related information,
+   * @param init - assign authentication related information,
    *     including project and location string, to instantiate a Vertex AI
    * client.
    */
@@ -62,11 +62,11 @@ export class VertexAI {
   }
 
   /**
-   * @param {ModelParams} modelParams - {@link ModelParams} Parameters to
+   * @param modelParams - {@link ModelParams} Parameters to
    *     specify the generative model.
-   * @param {RequestOptions} [requestOptions] - {@link RequestOptions} Parameters to specify request options
-   * @returns {GenerativeModel} Instance of the GenerativeModel class. {@link
-   *     GenerativeModel}
+   * @param requestOptions - {@link RequestOptions} Parameters to specify
+   *     request options
+   * @returns Instance of the GenerativeModel class.
    */
   getGenerativeModel(
     modelParams: ModelParams,
@@ -98,12 +98,16 @@ class VertexAI_Preview {
 
   /**
    * @constructor
-   * @param {string} - project The Google Cloud project to use for the request
-   * @param {string} - location The Google Cloud project location to use for the request
-   * @param {GoogleAuth} - googleAuth The GoogleAuthen class instance from google-auth-library.
-   *        Complete list of authentication options is documented in the GoogleAuthOptions interface:
+   * @param project - The Google Cloud project to use for the request
+   * @param location - location The Google Cloud project location to use for the
+   *     request
+   * @param googleAuth - googleAuth The GoogleAuthen class instance from
+   *     google-auth-library.
+   *        Complete list of authentication options is documented in the
+   * GoogleAuthOptions interface:
    *        https://github.com/googleapis/google-auth-library-nodejs/blob/main/src/auth/googleauth.ts
-   * @param {string} - [apiEndpoint] The base Vertex AI endpoint to use for the request. If
+   * @param apiEndpoint - [apiEndpoint] The base Vertex AI endpoint to use for
+   *     the request. If
    *        not provided, the default regionalized endpoint
    *        (i.e. us-central1-aiplatform.googleapis.com) will be used.
    */
@@ -120,10 +124,9 @@ class VertexAI_Preview {
   }
 
   /**
-   * @param {ModelParams} modelParams - {@link ModelParams} Parameters to
+   * @param modelParams - {@link ModelParams} Parameters to
    *     specify the generative model.
-   * @returns {GenerativeModelPreview} Instance of the GenerativeModelPreview
-   *     class. {@link GenerativeModelPreview}
+   * @returns Instance of the GenerativeModelPreview class.
    */
   getGenerativeModel(
     modelParams: ModelParams,
