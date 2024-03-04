@@ -142,7 +142,7 @@ export class ChatSession {
     return Promise.resolve(generateContentResult);
   }
 
-  async appendHistory(
+  private async appendHistory(
     streamGenerateContentResultPromise: Promise<StreamGenerateContentResult>,
     newContent: Content[]
   ): Promise<void> {
@@ -308,7 +308,7 @@ export class ChatSessionPreview {
     return Promise.resolve(generateContentResult);
   }
 
-  async appendHistory(
+  private async appendHistory(
     streamGenerateContentResultPromise: Promise<StreamGenerateContentResult>,
     newContent: Content[]
   ): Promise<void> {
