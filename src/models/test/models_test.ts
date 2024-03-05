@@ -75,6 +75,15 @@ const TEST_CANDIDATES = [
     },
   },
 ];
+const TEST_CANDIDATES2 = [
+  {
+    index: 1,
+    content: {
+      role: constants.MODEL_ROLE,
+      parts: [{text: 'Goodbye. Wish you the best.'}],
+    },
+  },
+];
 const TEST_MODEL_RESPONSE = {
   candidates: TEST_CANDIDATES,
   usage_metadata: {prompt_token_count: 0, candidates_token_count: 0},
@@ -219,6 +228,16 @@ const TEST_REQUEST_OPTIONS = {
 async function* testGenerator(): AsyncGenerator<GenerateContentResponse> {
   yield {
     candidates: TEST_CANDIDATES,
+  };
+}
+const DATE_NOW_PRECISION_MILLIS = 2;
+async function* testGeneratorMultiStream(): AsyncGenerator<GenerateContentResponse> {
+  yield {
+    candidates: TEST_CANDIDATES,
+  };
+  await new Promise(resolve => setTimeout(resolve, 200));
+  yield {
+    candidates: TEST_CANDIDATES2,
   };
 }
 
@@ -808,11 +827,19 @@ describe('GenerativeModel generateContentStream', () => {
     const req: GenerateContentRequest = {contents: TEST_USER_CHAT_MESSAGE};
     const expectedResult: StreamGenerateContentResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
-      stream: testGenerator(),
+      stream: testGeneratorMultiStream(),
     };
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
-    expect(resp).toEqual(expectedResult);
+    let firstChunkTimestamp = 0;
+    for await (const item of resp.stream) {
+      if (firstChunkTimestamp === 0) {
+        firstChunkTimestamp = Date.now();
+      }
+    }
+    expect(Date.now() - firstChunkTimestamp).toBeGreaterThanOrEqual(
+      200 - DATE_NOW_PRECISION_MILLIS
+    );
   });
   it('send timeout options to functions', async () => {
     const modelWithRequestOptions = new GenerativeModel({
@@ -953,6 +980,24 @@ describe('GenerativeModelPreview generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedResult);
+  });
+  it('returns a GenerateContentResponse when passed text content', async () => {
+    const req: GenerateContentRequest = {contents: TEST_USER_CHAT_MESSAGE};
+    const expectedResult: StreamGenerateContentResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE),
+      stream: testGeneratorMultiStream(),
+    };
+    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    const resp = await model.generateContentStream(req);
+    let firstChunkTimestamp = 0;
+    for await (const item of resp.stream) {
+      if (firstChunkTimestamp === 0) {
+        firstChunkTimestamp = Date.now();
+      }
+    }
+    expect(Date.now() - firstChunkTimestamp).toBeGreaterThanOrEqual(
+      200 - DATE_NOW_PRECISION_MILLIS
+    );
   });
 
   it('send timeout options to functions', async () => {
@@ -1261,6 +1306,35 @@ describe('ChatSession', () => {
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+    });
+    it('returns a StreamGenerateContentResponse in streaming mode', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGeneratorMultiStream(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+
+      const chatSession = model.startChat({
+        history: [
+          {
+            role: constants.USER_ROLE,
+            parts: [{text: 'How are you doing today?'}],
+          },
+        ],
+      });
+      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+      const resp = await chatSession.sendMessageStream(req);
+
+      let firstChunkTimestamp = 0;
+      for await (const item of resp.stream) {
+        if (firstChunkTimestamp === 0) {
+          firstChunkTimestamp = Date.now();
+        }
+      }
+      expect(Date.now() - firstChunkTimestamp).toBeGreaterThanOrEqual(
+        200 - DATE_NOW_PRECISION_MILLIS
+      );
     });
     it('send timeout to functions', async () => {
       const modelWithRequestOptions = new GenerativeModel({
@@ -1571,6 +1645,35 @@ describe('ChatSessionPreview', () => {
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
       expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+    });
+    it('returns a StreamGenerateContentResponse in streaming mode', async () => {
+      const req = 'How are you doing today?';
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGeneratorMultiStream(),
+      };
+      spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+
+      const chatSession = model.startChat({
+        history: [
+          {
+            role: constants.USER_ROLE,
+            parts: [{text: 'How are you doing today?'}],
+          },
+        ],
+      });
+      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
+      const resp = await chatSession.sendMessageStream(req);
+
+      let firstChunkTimestamp = 0;
+      for await (const item of resp.stream) {
+        if (firstChunkTimestamp === 0) {
+          firstChunkTimestamp = Date.now();
+        }
+      }
+      expect(Date.now() - firstChunkTimestamp).toBeGreaterThanOrEqual(
+        200 - DATE_NOW_PRECISION_MILLIS
+      );
     });
     it('send timeout to functions', async () => {
       const modelWithRequestOptions = new GenerativeModelPreview({
