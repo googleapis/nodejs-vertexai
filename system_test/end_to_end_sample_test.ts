@@ -543,47 +543,6 @@ describe('sendMessageStream', () => {
     expect(chat.history.length).toBe(2);
   });
 
-  xit('should return chunks as they come in', async () => {
-    const chat = textModelNoOutputLimit.startChat({});
-    const chatInput1 = 'Tell me a story in 3000 words';
-    const result1 = await chat.sendMessageStream(chatInput1);
-    let firstChunkTimestamp = 0;
-    let aggregatedResultTimestamp = 0;
-
-    const firstChunkFinalResultTimeDiff = 200; // ms
-
-    for await (const item of result1.stream) {
-      if (firstChunkTimestamp === 0) {
-        firstChunkTimestamp = Date.now();
-      }
-    }
-    await result1.response;
-    aggregatedResultTimestamp = Date.now();
-    expect(aggregatedResultTimestamp - firstChunkTimestamp).toBeGreaterThan(
-      firstChunkFinalResultTimeDiff
-    );
-  });
-  xit('in preview should return chunks as they come in', async () => {
-    const chat = textModelNoOutputLimitPreview.startChat({});
-    const chatInput1 = 'Tell me a story in 3000 words';
-    const result1 = await chat.sendMessageStream(chatInput1);
-    let firstChunkTimestamp = 0;
-    let aggregatedResultTimestamp = 0;
-
-    const firstChunkFinalResultTimeDiff = 200; // ms
-
-    for await (const item of result1.stream) {
-      if (firstChunkTimestamp === 0) {
-        firstChunkTimestamp = Date.now();
-      }
-    }
-    await result1.response;
-    aggregatedResultTimestamp = Date.now();
-    expect(aggregatedResultTimestamp - firstChunkTimestamp).toBeGreaterThan(
-      firstChunkFinalResultTimeDiff
-    );
-  });
-
   it('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const chat = generativeTextModel.startChat({
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
