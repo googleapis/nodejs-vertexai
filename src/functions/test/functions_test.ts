@@ -191,6 +191,8 @@ const TEST_MULTIPART_MESSAGE_BASE64 = [
   },
 ];
 
+const TEST_EMPTY_TOOLS: Tool[] = [];
+
 const TEST_TOOLS_WITH_FUNCTION_DECLARATION: Tool[] = [
   {
     function_declarations: [
@@ -393,6 +395,7 @@ describe('generateContent', () => {
         TEST_API_ENDPOINT,
         TEST_GENERATION_CONFIG,
         TEST_SAFETY_SETTINGS,
+        TEST_EMPTY_TOOLS,
         TEST_REQUEST_OPTIONS
       )
     ).toBeRejected();
@@ -702,6 +705,7 @@ describe('generateContentStream', () => {
         TEST_API_ENDPOINT,
         TEST_GENERATION_CONFIG,
         TEST_SAFETY_SETTINGS,
+        TEST_EMPTY_TOOLS,
         TEST_REQUEST_OPTIONS
       )
     ).toBeRejected();

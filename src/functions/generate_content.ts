@@ -28,6 +28,7 @@ import {
   RequestOptions,
   SafetySetting,
   StreamGenerateContentResult,
+  Tool,
 } from '../types/content';
 import {GoogleGenerativeAIError} from '../types/errors';
 import * as constants from '../util/constants';
@@ -53,6 +54,7 @@ export async function generateContent(
   apiEndpoint?: string,
   generation_config?: GenerationConfig,
   safety_settings?: SafetySetting[],
+  tools?: Tool[],
   requestOptions?: RequestOptions
 ): Promise<GenerateContentResult> {
   request = formatContentRequest(request, generation_config, safety_settings);
@@ -69,9 +71,9 @@ export async function generateContent(
     contents: request.contents,
     generation_config: request.generation_config ?? generation_config,
     safety_settings: request.safety_settings ?? safety_settings,
-    tools: request.tools ?? [],
+    tools: request.tools ?? tools,
   };
-  const apiVersion = request.tools ? 'v1beta1' : 'v1';
+  const apiVersion = generateContentRequest.tools ? 'v1beta1' : 'v1';
   const response: Response | undefined = await postRequest({
     region: location,
     project: project,
@@ -107,6 +109,7 @@ export async function generateContentStream(
   apiEndpoint?: string,
   generation_config?: GenerationConfig,
   safety_settings?: SafetySetting[],
+  tools?: Tool[],
   requestOptions?: RequestOptions
 ): Promise<StreamGenerateContentResult> {
   request = formatContentRequest(request, generation_config, safety_settings);
@@ -122,9 +125,9 @@ export async function generateContentStream(
     contents: request.contents,
     generation_config: request.generation_config ?? generation_config,
     safety_settings: request.safety_settings ?? safety_settings,
-    tools: request.tools ?? [],
+    tools: request.tools ?? tools,
   };
-  const apiVersion = request.tools ? 'v1beta1' : 'v1';
+  const apiVersion = generateContentRequest.tools ? 'v1beta1' : 'v1';
   const response = await postRequest({
     region: location,
     project: project,

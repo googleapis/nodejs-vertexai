@@ -424,10 +424,25 @@ describe('generateContent', () => {
       `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
     );
   });
-  xit('should return grounding metadata when passed GoogleSearchRetriever or Retriever', async () => {
+  it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertex_ai.getGenerativeModel({
       model: 'gemini-pro',
-      //tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const result = await generativeTextModel.generateContent({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(groundingMetadata).toBeDefined();
+    if (groundingMetadata) {
+      expect(groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+    const generativeTextModel = vertex_ai.getGenerativeModel({
+      model: 'gemini-pro',
     });
     const result = await generativeTextModel.generateContent({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
@@ -437,7 +452,39 @@ describe('generateContent', () => {
     const groundingMetadata = response.candidates[0].groundingMetadata;
     expect(groundingMetadata).toBeDefined();
     if (groundingMetadata) {
-      // expect(groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertex_ai.preview.getGenerativeModel({
+      model: 'gemini-pro',
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const result = await generativeTextModel.generateContent({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(groundingMetadata).toBeDefined();
+    if (groundingMetadata) {
+      expect(groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+    const generativeTextModel = vertex_ai.preview.getGenerativeModel({
+      model: 'gemini-pro',
+    });
+    const result = await generativeTextModel.generateContent({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const response = result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(groundingMetadata).toBeDefined();
+    if (groundingMetadata) {
+      expect(groundingMetadata.groundingAttributions).toBeTruthy();
       expect(groundingMetadata.webSearchQueries).toBeTruthy();
     }
   });

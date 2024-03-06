@@ -106,6 +106,7 @@ export class GenerativeModel {
       this.apiEndpoint,
       this.generation_config,
       this.safety_settings,
+      this.tools,
       this.requestOptions
     );
   }
@@ -128,6 +129,7 @@ export class GenerativeModel {
       this.apiEndpoint,
       this.generation_config,
       this.safety_settings,
+      this.tools,
       this.requestOptions
     );
   }
@@ -162,6 +164,7 @@ export class GenerativeModel {
       location: this.location,
       googleAuth: this.googleAuth,
       publisher_model_endpoint: this.publisherModelEndpoint,
+      tools: this.tools,
     };
 
     if (request) {
@@ -243,6 +246,7 @@ export class GenerativeModelPreview {
       this.apiEndpoint,
       this.generation_config,
       this.safety_settings,
+      this.tools,
       this.requestOptions
     );
   }
@@ -265,6 +269,7 @@ export class GenerativeModelPreview {
       this.apiEndpoint,
       this.generation_config,
       this.safety_settings,
+      this.tools,
       this.requestOptions
     );
   }

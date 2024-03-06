@@ -120,6 +120,7 @@ export class ChatSession {
       this.api_endpoint,
       this.generation_config,
       this.safety_settings,
+      this.tools,
       this.requestOptions
     ).catch(e => {
       throw e;
@@ -192,6 +193,7 @@ export class ChatSession {
       this.api_endpoint,
       this.generation_config,
       this.safety_settings,
+      this.tools,
       this.requestOptions
     ).catch(e => {
       throw e;
@@ -286,6 +288,7 @@ export class ChatSessionPreview {
       this.api_endpoint,
       this.generation_config,
       this.safety_settings,
+      this.tools,
       this.requestOptions
     ).catch(e => {
       throw e;
@@ -358,6 +361,7 @@ export class ChatSessionPreview {
       this.api_endpoint,
       this.generation_config,
       this.safety_settings,
+      this.tools,
       this.requestOptions
     ).catch(e => {
       throw e;

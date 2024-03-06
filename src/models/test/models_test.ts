@@ -377,7 +377,7 @@ describe('GenerativeModel generateContent', () => {
     );
     await modelWithRequestOptions.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
@@ -615,7 +615,7 @@ describe('GenerativeModelPreview generateContent', () => {
     );
     await modelWithRequestOptions.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
@@ -858,7 +858,7 @@ describe('GenerativeModel generateContentStream', () => {
     );
     await modelWithRequestOptions.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: StreamGenerateContentResult = {
@@ -1017,7 +1017,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
     );
     await modelWithRequestOptions.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
   });
 
   it('returns a GenerateContentResponse when passed a string', async () => {
@@ -1189,7 +1189,7 @@ describe('ChatSession', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
     });
 
     it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
@@ -1364,7 +1364,7 @@ describe('ChatSession', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
     });
     it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
       const req = 'How are you doing today?';
@@ -1528,7 +1528,7 @@ describe('ChatSessionPreview', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
     });
 
     it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
@@ -1703,7 +1703,7 @@ describe('ChatSessionPreview', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][8].timeoutMillis).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
     });
     it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
       const req = 'How are you doing today?';
