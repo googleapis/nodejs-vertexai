@@ -304,6 +304,7 @@ export class GenerativeModelPreview {
       location: this.location,
       googleAuth: this.googleAuth,
       publisher_model_endpoint: this.publisherModelEndpoint,
+      tools: this.tools,
     };
 
     if (request) {

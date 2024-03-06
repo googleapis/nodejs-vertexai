@@ -434,10 +434,10 @@ describe('generateContent', () => {
     });
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(groundingMetadata).toBeDefined();
+    expect(!!groundingMetadata).toBeTruthy();
     if (groundingMetadata) {
-      expect(groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
     }
   });
   it('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
@@ -450,10 +450,10 @@ describe('generateContent', () => {
     });
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(groundingMetadata).toBeDefined();
+    expect(!!groundingMetadata).toBeTruthy();
     if (groundingMetadata) {
-      expect(groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
     }
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
@@ -466,10 +466,10 @@ describe('generateContent', () => {
     });
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(groundingMetadata).toBeDefined();
+    expect(!!groundingMetadata).toBeTruthy();
     if (groundingMetadata) {
-      expect(groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
     }
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
@@ -482,10 +482,10 @@ describe('generateContent', () => {
     });
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(groundingMetadata).toBeDefined();
+    expect(!!groundingMetadata).toBeTruthy();
     if (groundingMetadata) {
-      expect(groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
     }
   });
 });
@@ -513,6 +513,68 @@ describe('sendMessage', () => {
       `sys test failure on sendMessage in preview for aggregated response: ${response1}`
     );
     expect(chat.history.length).toBe(2);
+  });
+  it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertex_ai.getGenerativeModel({
+      model: 'gemini-pro',
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessage('Why is the sky blue?');
+    const response = result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
+    const generativeTextModel = vertex_ai.getGenerativeModel({
+      model: 'gemini-pro',
+    });
+    const chat = generativeTextModel.startChat({
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const result = await chat.sendMessage('Why is the sky blue?');
+    const response = result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertex_ai.preview.getGenerativeModel({
+      model: 'gemini-pro',
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessage('Why is the sky blue?');
+    const response = result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
+    const generativeTextModel = vertex_ai.preview.getGenerativeModel({
+      model: 'gemini-pro',
+    });
+    const chat = generativeTextModel.startChat({
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const result = await chat.sendMessage('Why is the sky blue?');
+    const response = result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
   });
 });
 
