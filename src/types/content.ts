@@ -485,8 +485,8 @@ export declare interface GenerateContentCandidate {
   citationMetadata?: CitationMetadata;
   /** Optional. {@link GroundingMetadata}. */
   groundingMetadata?: GroundingMetadata;
-  /** Optional. {@link FunctionResponse}. */
-  functionCall?: FunctionCall;
+  /* Optional. Array of {@link FunctionCall}. */
+  functionCalls?: FunctionCall[];
 }
 
 /**

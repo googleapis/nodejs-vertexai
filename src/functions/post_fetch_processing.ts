@@ -17,10 +17,12 @@
 
 import {
   CitationSource,
+  Content,
   CountTokensResponse,
   GenerateContentCandidate,
   GenerateContentResponse,
   GenerateContentResult,
+  Part,
   StreamGenerateContentResult,
 } from '../types/content';
 import {ClientError, GoogleGenerativeAIError} from '../types/errors';
@@ -54,7 +56,7 @@ async function* generateResponseSequence(
     if (done) {
       break;
     }
-    yield value;
+    yield addCandidateFunctionCalls(value);
   }
 }
 
@@ -229,6 +231,27 @@ function aggregateResponses(
   return aggregatedResponse;
 }
 
+function addCandidateFunctionCalls(
+  response: GenerateContentResponse
+): GenerateContentResponse {
+  for (const candidate of response.candidates) {
+    if (
+      !candidate.content ||
+      !candidate.content.parts ||
+      candidate.content.parts.length === 0
+    ) {
+      continue;
+    }
+    const functionCalls = candidate.content.parts
+      .filter((part: Part) => !!part.functionCall)
+      .map((part: Part) => part.functionCall!);
+    if (functionCalls.length > 0) {
+      candidate.functionCalls = functionCalls;
+    }
+  }
+  return response;
+}
+
 /**
  * Process model responses from generateContent
  * @ignore
@@ -240,7 +263,7 @@ export async function processNonStream(
     // ts-ignore
     const responseJson = await response.json();
     return Promise.resolve({
-      response: responseJson,
+      response: addCandidateFunctionCalls(responseJson),
     });
   }
 

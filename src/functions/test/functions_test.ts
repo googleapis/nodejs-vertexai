@@ -31,6 +31,7 @@ import {
   StreamGenerateContentResult,
   Tool,
 } from '../../types';
+import {FunctionCall} from '../../types/content';
 import {constants} from '../../util';
 import {countTokens} from '../count_tokens';
 import {generateContent, generateContentStream} from '../generate_content';
@@ -117,6 +118,18 @@ const TEST_MODEL_RESPONSE = {
   candidates: TEST_CANDIDATES,
   usageMetadata: {promptTokenCount: 0, candidatesTokenCount: 0},
 };
+const TEST_CANDIDATE_WITH_INVALID_DATA = [
+  {
+    index: 1,
+    content: {
+      role: constants.MODEL_ROLE,
+      parts: [],
+    },
+  },
+];
+const TEST_MODEL_RESPONSE_WITH_INVALID_DATA = {
+  candidates: TEST_CANDIDATE_WITH_INVALID_DATA,
+};
 const TEST_FUNCTION_CALL_RESPONSE = {
   functionCall: {
     name: 'get_current_weather',
@@ -137,6 +150,7 @@ const TEST_CANDIDATES_WITH_FUNCTION_CALL = [
     finishReason: FinishReason.STOP,
     finishMessage: '',
     safetyRatings: TEST_SAFETY_RATINGS,
+    functionCalls: [TEST_FUNCTION_CALL_RESPONSE.functionCall],
   },
 ];
 const TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL = {
@@ -588,9 +602,13 @@ describe('generateContent', () => {
       response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
     };
     fetchSpy.and.resolveTo(
-      buildFetchResponse(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL)
+      new Response(
+        JSON.stringify(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
+        fetchResponseObj
+      )
     );
-    const resp = await generateContent(
+
+    const actualResult = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
@@ -598,7 +616,43 @@ describe('generateContent', () => {
       req,
       TEST_API_ENDPOINT
     );
-    expect(resp).toEqual(expectedResult);
+    expect(actualResult).toEqual(expectedResult);
+    expect(actualResult.response.candidates[0].functionCalls).toHaveSize(1);
+    expect(actualResult.response.candidates[0].functionCalls).toEqual([
+      expectedResult.response.candidates[0].content.parts[0].functionCall!,
+    ]);
+  });
+
+  it('returns a empty FunctionCall list when response contains invalid data', async () => {
+    const req: GenerateContentRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [{text: 'What is the weater like in Boston?'}],
+        },
+      ],
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const expectedResult: GenerateContentResult = {
+      response: TEST_MODEL_RESPONSE_WITH_INVALID_DATA,
+    };
+    fetchSpy.and.resolveTo(
+      new Response(
+        JSON.stringify(TEST_MODEL_RESPONSE_WITH_INVALID_DATA),
+        fetchResponseObj
+      )
+    );
+
+    const actualResult = await generateContent(
+      TEST_LOCATION,
+      TEST_PROJECT,
+      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_TOKEN_PROMISE,
+      req,
+      TEST_API_ENDPOINT
+    );
+    expect(actualResult).toEqual(expectedResult);
+    expect(actualResult.response.candidates[0].functionCalls).not.toBeDefined();
   });
 
   it('throws ClientError when functionResponse is not immedidately following functionCall case1', async () => {

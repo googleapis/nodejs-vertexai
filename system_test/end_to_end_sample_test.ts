@@ -20,6 +20,7 @@ import {
   ClientError,
   FunctionDeclarationsTool,
   GoogleSearchRetrievalTool,
+  Part,
   TextPart,
   VertexAI,
 } from '../src';
@@ -361,7 +362,7 @@ describe('generateContentStream', () => {
     );
   });
 
-  it('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
+  it('should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -381,7 +382,7 @@ describe('generateContentStream', () => {
       );
     }
   });
-  it('in preview should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
+  it('in preview should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -399,6 +400,46 @@ describe('generateContentStream', () => {
       expect(item.candidates[0].content.parts[0].text?.toLowerCase()).toContain(
         WEATHER_FORECAST
       );
+    }
+  });
+  it('should return a FunctionCall when passed a FunctionDeclaration', async () => {
+    const request = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
+      ],
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const streamingResp =
+      await generativeTextModel.generateContentStream(request);
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream, for item ${item}`
+      );
+      const functionCalls = item.candidates[0].content.parts
+        .filter(part => !!part.functionCall)
+        .map(part => part.functionCall!);
+      expect(functionCalls).toHaveSize(1);
+      expect(item.candidates[0].functionCalls!).toEqual(functionCalls!);
+    }
+  });
+  it('in preview should return a FunctionCall when passed a FunctionDeclaration', async () => {
+    const request = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
+      ],
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const streamingResp =
+      await generativeTextModelPreview.generateContentStream(request);
+    for await (const item of streamingResp.stream) {
+      expect(item.candidates[0]).toBeTruthy(
+        `sys test failure on generateContentStream in preview, for item ${item}`
+      );
+      const functionCalls = item.candidates[0].content.parts
+        .filter(part => !!part.functionCall)
+        .map(part => part.functionCall!);
+      expect(functionCalls).toHaveSize(1);
+      expect(item.candidates[0].functionCalls!).toEqual(functionCalls!);
     }
   });
 });
@@ -487,6 +528,79 @@ describe('generateContent', () => {
       expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
     }
+  });
+  it('should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
+    const request = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
+        {role: 'model', parts: FUNCTION_CALL},
+        {role: 'function', parts: FUNCTION_RESPONSE_PART},
+      ],
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const resp = await generativeTextModel.generateContent(request);
+
+    expect(resp.response.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream, for resp ${resp}`
+    );
+    expect(
+      resp.response.candidates[0].content.parts[0].text?.toLowerCase()
+    ).toContain(WEATHER_FORECAST);
+  });
+  it('in preview should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
+    const request = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
+        {role: 'model', parts: FUNCTION_CALL},
+        {role: 'function', parts: FUNCTION_RESPONSE_PART},
+      ],
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const resp = await generativeTextModelPreview.generateContent(request);
+    expect(resp.response.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream in preview, for resp ${resp}`
+    );
+    const functionCalls = resp.response.candidates[0].content.parts
+      .filter((part: Part) => !!part.functionCall)
+      .map((part: Part) => part.functionCall!);
+    expect(
+      resp.response.candidates[0].content.parts[0].text?.toLowerCase()
+    ).toContain(WEATHER_FORECAST);
+  });
+  it('should return a FunctionCall when passed a FunctionDeclaration', async () => {
+    const request = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
+      ],
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const resp = await generativeTextModel.generateContent(request);
+
+    expect(resp.response.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream, for resp ${resp}`
+    );
+    const functionCalls = resp.response.candidates[0].content.parts
+      .filter((part: Part) => !!part.functionCall)
+      .map((part: Part) => part.functionCall!);
+    expect(functionCalls).toHaveSize(1);
+    expect(resp.response.candidates[0].functionCalls!).toEqual(functionCalls!);
+  });
+  it('in preview should return a FunctionCall when passed a FunctionDeclaration', async () => {
+    const request = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
+      ],
+      tools: TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const resp = await generativeTextModelPreview.generateContent(request);
+    expect(resp.response.candidates[0]).toBeTruthy(
+      `sys test failure on generateContentStream in preview, for resp ${resp}`
+    );
+    const functionCalls = resp.response.candidates[0].content.parts
+      .filter((part: Part) => !!part.functionCall)
+      .map((part: Part) => part.functionCall!);
+    expect(functionCalls).toHaveSize(1);
+    expect(resp.response.candidates[0].functionCalls!).toEqual(functionCalls!);
   });
 });
 
