@@ -26,14 +26,14 @@ import * as constants from '../util/constants';
 
 export function formatContentRequest(
   request: GenerateContentRequest | string,
-  generation_config?: GenerationConfig,
-  safety_settings?: SafetySetting[]
+  generationConfig?: GenerationConfig,
+  safetySettings?: SafetySetting[]
 ): GenerateContentRequest {
   if (typeof request === 'string') {
     return {
       contents: [{role: constants.USER_ROLE, parts: [{text: request}]}],
-      generation_config: generation_config,
-      safety_settings: safety_settings,
+      generationConfig: generationConfig,
+      safetySettings: safetySettings,
     };
   } else {
     return request;
@@ -48,22 +48,22 @@ export function validateGenerateContentRequest(
 }
 
 export function validateGenerationConfig(
-  generation_config: GenerationConfig
+  generationConfig: GenerationConfig
 ): GenerationConfig {
-  if ('top_k' in generation_config) {
-    if (!(generation_config.top_k! > 0) || !(generation_config.top_k! <= 40)) {
-      delete generation_config.top_k;
+  if ('topK' in generationConfig) {
+    if (!(generationConfig.topK! > 0) || !(generationConfig.topK! <= 40)) {
+      delete generationConfig.topK;
     }
   }
-  return generation_config;
+  return generationConfig;
 }
 
 function validateGcsInput(contents: Content[]) {
   for (const content of contents) {
     for (const part of content.parts) {
-      if ('file_data' in part) {
+      if ('fileData' in part) {
         // @ts-ignore
-        const uri = part['file_data']['file_uri'];
+        const uri = part['fileData']['fileUri'];
         if (!uri.startsWith('gs://')) {
           throw new URIError(
             `Found invalid Google Cloud Storage URI ${uri}, Google Cloud Storage URIs must start with gs://`

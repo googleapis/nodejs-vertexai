@@ -53,9 +53,9 @@ const TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE = [
     parts: [
       {text: TEST_CHAT_MESSAGE_TEXT},
       {
-        file_data: {
-          file_uri: 'gs://test_bucket/test_image.jpeg',
-          mime_type: 'image/jpeg',
+        fileData: {
+          fileUri: 'gs://test_bucket/test_image.jpeg',
+          mimeType: 'image/jpeg',
         },
       },
     ],
@@ -67,7 +67,7 @@ const TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE = [
     role: constants.USER_ROLE,
     parts: [
       {text: TEST_CHAT_MESSAGE_TEXT},
-      {file_data: {file_uri: 'test_image.jpeg', mime_type: 'image/jpeg'}},
+      {fileData: {fileUri: 'test_image.jpeg', mimeType: 'image/jpeg'}},
     ],
   },
 ];
@@ -89,8 +89,8 @@ const TEST_SAFETY_RATINGS: SafetyRating[] = [
   },
 ];
 const TEST_GENERATION_CONFIG = {
-  candidate_count: 1,
-  stop_sequences: ['hello'],
+  candidateCount: 1,
+  stopSequences: ['hello'],
 };
 const TEST_CANDIDATES = [
   {
@@ -170,7 +170,7 @@ const TEST_MULTIPART_MESSAGE = [
     role: constants.USER_ROLE,
     parts: [
       {text: 'What is in this picture?'},
-      {file_data: {file_uri: TEST_GCS_FILENAME, mime_type: 'image/jpeg'}},
+      {fileData: {fileUri: TEST_GCS_FILENAME, mimeType: 'image/jpeg'}},
     ],
   },
 ];
@@ -178,9 +178,9 @@ const TEST_MULTIPART_MESSAGE = [
 const BASE_64_IMAGE =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 const INLINE_DATA_FILE_PART = {
-  inline_data: {
+  inlineData: {
     data: BASE_64_IMAGE,
-    mime_type: 'image/jpeg',
+    mimeType: 'image/jpeg',
   },
 };
 
@@ -195,7 +195,7 @@ const TEST_EMPTY_TOOLS: Tool[] = [];
 
 const TEST_TOOLS_WITH_FUNCTION_DECLARATION: Tool[] = [
   {
-    function_declarations: [
+    functionDeclarations: [
       {
         name: 'get_current_weather',
         description: 'get weather in a given location',
@@ -465,11 +465,11 @@ describe('generateContent', () => {
     ).toBeRejectedWithError(URIError);
   });
 
-  it('returns a GenerateContentResponse when passed safety_settings and generation_config', async () => {
+  it('returns a GenerateContentResponse when passed safetySettings and generationConfig', async () => {
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
-      safety_settings: TEST_SAFETY_SETTINGS,
-      generation_config: TEST_GENERATION_CONFIG,
+      safetySettings: TEST_SAFETY_SETTINGS,
+      generationConfig: TEST_GENERATION_CONFIG,
     };
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
@@ -506,11 +506,11 @@ describe('generateContent', () => {
     );
   });
 
-  it('removes top_k when it is set to 0', async () => {
+  it('removes topK when it is set to 0', async () => {
     const reqWithEmptyConfigs: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
-      generation_config: {top_k: 0},
-      safety_settings: [],
+      generationConfig: {topK: 0},
+      safetySettings: [],
     };
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
@@ -526,15 +526,15 @@ describe('generateContent', () => {
     );
     const requestArgs = fetchSpy.calls.allArgs()[0][1];
     if (typeof requestArgs === 'object' && requestArgs) {
-      expect(JSON.stringify(requestArgs['body'])).not.toContain('top_k');
+      expect(JSON.stringify(requestArgs['body'])).not.toContain('topK');
     }
   });
 
-  it('includes top_k when it is within 1 - 40', async () => {
+  it('includes topK when it is within 1 - 40', async () => {
     const reqWithEmptyConfigs: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
-      generation_config: {top_k: 1},
-      safety_settings: [],
+      generationConfig: {topK: 1},
+      safetySettings: [],
     };
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
@@ -550,7 +550,7 @@ describe('generateContent', () => {
     );
     const requestArgs = fetchSpy.calls.allArgs()[0][1];
     if (typeof requestArgs === 'object' && requestArgs) {
-      expect(JSON.stringify(requestArgs['body'])).toContain('top_k');
+      expect(JSON.stringify(requestArgs['body'])).toContain('topK');
     }
   });
 

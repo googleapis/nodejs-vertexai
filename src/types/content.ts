@@ -95,9 +95,9 @@ export declare interface GetGenerativeModelParams extends ModelParams {
    */
   apiEndpoint?: string;
   /** Optional. The configuration to use for generation. */
-  generation_config?: GenerationConfig;
+  generationConfig?: GenerationConfig;
   /** Optional. The safety settings to use for generation. */
-  safety_settings?: SafetySetting[];
+  safetySettings?: SafetySetting[];
   /** Optional. The tools to use for generation. */
   tools?: Tool[];
   /** Optional. The request options to use for generation. */
@@ -121,9 +121,9 @@ export declare interface ModelParams extends BaseModelParams {
  */
 export declare interface BaseModelParams {
   /** Optional. Array of {@link SafetySetting}. */
-  safety_settings?: SafetySetting[];
+  safetySettings?: SafetySetting[];
   /** Optional.  {@link GenerationConfig}. */
-  generation_config?: GenerationConfig;
+  generationConfig?: GenerationConfig;
   /** Optional. Array of {@link Tool}. */
   tools?: Tool[];
 }
@@ -143,17 +143,17 @@ export declare interface SafetySetting {
  */
 export declare interface GenerationConfig {
   /** Optional. Number of candidates to generate. */
-  candidate_count?: number;
+  candidateCount?: number;
   /** Optional. Stop sequences. */
-  stop_sequences?: string[];
+  stopSequences?: string[];
   /** Optional. The maximum number of output tokens to generate per message. */
-  max_output_tokens?: number;
+  maxOutputTokens?: number;
   /** Optional. Controls the randomness of predictions. */
   temperature?: number;
   /** Optional. If specified, nucleus sampling will be used. */
-  top_p?: number;
+  topP?: number;
   /** Optional. If specified, top-k sampling will be used. */
-  top_k?: number;
+  topK?: number;
 }
 
 /**
@@ -243,9 +243,9 @@ export interface TextPart extends BasePart {
   /** Only this property is expected for TextPart. */
   text: string;
   /** inline_data is not expected for TextPart. */
-  inline_data?: never;
+  inlineData?: never;
   /** file_data is not expected for TextPart. */
-  file_data?: never;
+  fileData?: never;
   /** functionResponse is not expected for TextPart. */
   functionResponse?: never;
   /** functionCall is not expected for TextPart. */
@@ -259,9 +259,9 @@ export interface InlineDataPart extends BasePart {
   /** text is not expected for InlineDataPart. */
   text?: never;
   /** Only this property is expected for InlineDataPart. */
-  inline_data: GenerativeContentBlob;
+  inlineData: GenerativeContentBlob;
   /** file_data is not expected for InlineDataPart. */
-  file_data?: never;
+  fileData?: never;
   /** functionResponse is not expected for InlineDataPart. */
   functionResponse?: never;
   /** functionCall is not expected for InlineDataPart. */
@@ -273,9 +273,9 @@ export interface InlineDataPart extends BasePart {
  */
 export interface FileData {
   /** The IANA standard MIME type of the source data. */
-  mime_type: string;
+  mimeType: string;
   /** URI of the file. */
-  file_uri: string;
+  fileUri: string;
 }
 
 /**
@@ -285,9 +285,9 @@ export interface FileDataPart extends BasePart {
   /** text is not expected for FileDataPart. */
   text?: never;
   /** inline_data is not expected for FileDataPart. */
-  inline_data?: never;
+  inlineData?: never;
   /** Only this property is expected for FileDataPart. */
-  file_data: FileData;
+  fileData: FileData;
   /** functionResponse is not expected for FileDataPart. */
   functionResponse?: never;
   /** functionCall is not expected for FileDataPart. */
@@ -301,9 +301,9 @@ export interface FunctionResponsePart extends BasePart {
   /** text is not expected for FunctionResponsePart. */
   text?: never;
   /** inline_data is not expected for FunctionResponsePart. */
-  inline_data?: never;
+  inlineData?: never;
   /** file_data is not expected for FunctionResponsePart. */
-  file_data?: never;
+  fileData?: never;
   /** Only this property is expected for FunctionResponsePart. */
   functionResponse: FunctionResponse;
   /** functionCall is not expected for FunctionResponsePart. */
@@ -317,9 +317,9 @@ export interface FunctionCallPart extends BasePart {
   /** text is not expected for FunctionCallPart. */
   text?: never;
   /** inline_data is not expected for FunctionCallPart. */
-  inline_data?: never;
+  inlineData?: never;
   /** file_data is not expected for FunctionCallPart. */
-  file_data?: never;
+  fileData?: never;
   /** functionResponse is not expected for FunctionCallPart. */
   functionResponse?: never;
   /** Only this property is expected for FunctionCallPart. */
@@ -352,7 +352,7 @@ export declare interface GenerativeContentBlob {
    * The MIME type of the source data. The only accepted values: "image/png" or
    * "image/jpeg".
    */
-  mime_type: string;
+  mimeType: string;
   /** Base64 encoded data. */
   data: string;
 }
@@ -374,11 +374,11 @@ export declare interface UsageMetadata {
  */
 export declare interface PromptFeedback {
   /** The reason why the response is blocked. {@link BlockReason}. */
-  block_reason: BlockedReason;
+  blockReason: BlockedReason;
   /** Array of {@link SafetyRating} */
-  safety_ratings: SafetyRating[];
+  safetyRatings: SafetyRating[];
   /** A readable block reason message. */
-  block_reason_message: string;
+  blockReasonMessage: string;
 }
 
 /**
@@ -646,7 +646,7 @@ export declare interface FunctionDeclarationsTool {
    * generate the final response back to the user. Maximum 64 function
    * declarations can be provided.
    */
-  function_declarations?: FunctionDeclaration[];
+  functionDeclarations?: FunctionDeclaration[];
 }
 
 /**
@@ -781,13 +781,13 @@ export declare interface StartChatParams {
   /** Optional. History of the chat session. {@link Content} */
   history?: Content[];
   /** Optional. Array of {@link SafetySetting}. */
-  safety_settings?: SafetySetting[];
+  safetySettings?: SafetySetting[];
   /** Optional. {@link GenerationConfig}. */
-  generation_config?: GenerationConfig;
+  generationConfig?: GenerationConfig;
   /** Optional. Array of {@link Tool}. */
   tools?: Tool[];
   /** Optional. The base Vertex AI endpoint to use for the request. */
-  api_endpoint?: string;
+  apiEndpoint?: string;
 }
 
 /**
@@ -801,7 +801,7 @@ export declare interface StartChatSessionRequest extends StartChatParams {
   /** The Google Auth to use for the request. */
   googleAuth: GoogleAuth;
   /** The publisher model endpoint to use for the request. */
-  publisher_model_endpoint: string;
+  publisherModelEndpoint: string;
 }
 
 /**

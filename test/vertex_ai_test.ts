@@ -82,7 +82,7 @@ describe('VertexAI', () => {
     );
   });
 
-  it('VertexAI_Preview should generate GenerativatModelPreview', () => {
+  it('VertexAIPreview should generate GenerativatModelPreview', () => {
     const generativeModelPreview = vertexai.preview.getGenerativeModel({
       model: 'gemini-pro',
     });
