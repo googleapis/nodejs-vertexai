@@ -51,7 +51,7 @@ export function validateGenerateContentRequest(
         const uri = part['fileData']['fileUri'];
         if (!uri.startsWith('gs://')) {
           throw new URIError(
-            `Found invalid Google Cloud Storage URI ${uri}, Google Cloud Storage URIs must start with gs://`
+            `Found invalid Google Cloud Storage URI, Google Cloud Storage URIs must start with gs://`
           );
         }
       }

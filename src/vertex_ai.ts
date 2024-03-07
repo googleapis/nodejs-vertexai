@@ -161,7 +161,7 @@ function validateGoogleAuthOptions(
   }
   if (googleAuthOptions.projectId && googleAuthOptions.projectId !== project) {
     throw new Error(
-      `inconsistent project ID values. argument project got value ${project} but googleAuthOptions.projectId got value ${googleAuthOptions.projectId}`
+      `project ID value received to instantiate VertexAI class and project ID value received via GoogleAuthOptions are different.`
     );
   }
   opts = googleAuthOptions;
