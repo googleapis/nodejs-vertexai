@@ -78,8 +78,8 @@ export class VertexAI {
       location: this.location,
       googleAuth: this.googleAuth,
       apiEndpoint: this.apiEndpoint,
-      safety_settings: modelParams.safety_settings,
-      generation_config: modelParams.generation_config,
+      safetySettings: modelParams.safetySettings,
+      generationConfig: modelParams.generationConfig,
       tools: modelParams.tools,
       requestOptions: requestOptions,
     };
@@ -138,8 +138,8 @@ class VertexAIPreview {
       location: this.location,
       googleAuth: this.googleAuth,
       apiEndpoint: this.apiEndpoint,
-      safety_settings: modelParams.safety_settings,
-      generation_config: modelParams.generation_config,
+      safetySettings: modelParams.safetySettings,
+      generationConfig: modelParams.generationConfig,
       tools: modelParams.tools,
       requestOptions: requestOptions,
     };

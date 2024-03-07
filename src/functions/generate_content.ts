@@ -52,25 +52,25 @@ export async function generateContent(
   token: Promise<any>,
   request: GenerateContentRequest | string,
   apiEndpoint?: string,
-  generation_config?: GenerationConfig,
-  safety_settings?: SafetySetting[],
+  generationConfig?: GenerationConfig,
+  safetySettings?: SafetySetting[],
   tools?: Tool[],
   requestOptions?: RequestOptions
 ): Promise<GenerateContentResult> {
-  request = formatContentRequest(request, generation_config, safety_settings);
+  request = formatContentRequest(request, generationConfig, safetySettings);
 
   validateGenerateContentRequest(request);
 
-  if (request.generation_config) {
-    request.generation_config = validateGenerationConfig(
-      request.generation_config
+  if (request.generationConfig) {
+    request.generationConfig = validateGenerationConfig(
+      request.generationConfig
     );
   }
 
   const generateContentRequest: GenerateContentRequest = {
     contents: request.contents,
-    generation_config: request.generation_config ?? generation_config,
-    safety_settings: request.safety_settings ?? safety_settings,
+    generationConfig: request.generationConfig ?? generationConfig,
+    safetySettings: request.safetySettings ?? safetySettings,
     tools: request.tools ?? tools,
   };
   const apiVersion = generateContentRequest.tools ? 'v1beta1' : 'v1';
@@ -107,24 +107,24 @@ export async function generateContentStream(
   token: Promise<any>,
   request: GenerateContentRequest | string,
   apiEndpoint?: string,
-  generation_config?: GenerationConfig,
-  safety_settings?: SafetySetting[],
+  generationConfig?: GenerationConfig,
+  safetySettings?: SafetySetting[],
   tools?: Tool[],
   requestOptions?: RequestOptions
 ): Promise<StreamGenerateContentResult> {
-  request = formatContentRequest(request, generation_config, safety_settings);
+  request = formatContentRequest(request, generationConfig, safetySettings);
   validateGenerateContentRequest(request);
 
-  if (request.generation_config) {
-    request.generation_config = validateGenerationConfig(
-      request.generation_config
+  if (request.generationConfig) {
+    request.generationConfig = validateGenerationConfig(
+      request.generationConfig
     );
   }
 
   const generateContentRequest: GenerateContentRequest = {
     contents: request.contents,
-    generation_config: request.generation_config ?? generation_config,
-    safety_settings: request.safety_settings ?? safety_settings,
+    generationConfig: request.generationConfig ?? generationConfig,
+    safetySettings: request.safetySettings ?? safetySettings,
     tools: request.tools ?? tools,
   };
   const apiVersion = generateContentRequest.tools ? 'v1beta1' : 'v1';

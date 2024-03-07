@@ -47,8 +47,8 @@ import {constants} from '../util';
  */
 export class GenerativeModel {
   model: string;
-  generation_config?: GenerationConfig;
-  safety_settings?: SafetySetting[];
+  generationConfig?: GenerationConfig;
+  safetySettings?: SafetySetting[];
   tools?: Tool[];
   requestOptions?: RequestOptions;
   private project: string;
@@ -67,8 +67,8 @@ export class GenerativeModel {
     this.apiEndpoint = getGenerativeModelParams.apiEndpoint;
     this.googleAuth = getGenerativeModelParams.googleAuth;
     this.model = getGenerativeModelParams.model;
-    this.generation_config = getGenerativeModelParams.generation_config;
-    this.safety_settings = getGenerativeModelParams.safety_settings;
+    this.generationConfig = getGenerativeModelParams.generationConfig;
+    this.safetySettings = getGenerativeModelParams.safetySettings;
     this.tools = getGenerativeModelParams.tools;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
     if (this.model.startsWith('models/')) {
@@ -104,8 +104,8 @@ export class GenerativeModel {
       this.token,
       request,
       this.apiEndpoint,
-      this.generation_config,
-      this.safety_settings,
+      this.generationConfig,
+      this.safetySettings,
       this.tools,
       this.requestOptions
     );
@@ -127,8 +127,8 @@ export class GenerativeModel {
       this.token,
       request,
       this.apiEndpoint,
-      this.generation_config,
-      this.safety_settings,
+      this.generationConfig,
+      this.safetySettings,
       this.tools,
       this.requestOptions
     );
@@ -163,18 +163,18 @@ export class GenerativeModel {
       project: this.project,
       location: this.location,
       googleAuth: this.googleAuth,
-      publisher_model_endpoint: this.publisherModelEndpoint,
+      publisherModelEndpoint: this.publisherModelEndpoint,
       tools: this.tools,
     };
 
     if (request) {
       startChatRequest.history = request.history;
-      startChatRequest.generation_config =
-        request.generation_config ?? this.generation_config;
-      startChatRequest.safety_settings =
-        request.safety_settings ?? this.safety_settings;
+      startChatRequest.generationConfig =
+        request.generationConfig ?? this.generationConfig;
+      startChatRequest.safetySettings =
+        request.safetySettings ?? this.safetySettings;
       startChatRequest.tools = request.tools ?? this.tools;
-      startChatRequest.api_endpoint = request.api_endpoint ?? this.apiEndpoint;
+      startChatRequest.apiEndpoint = request.apiEndpoint ?? this.apiEndpoint;
     }
     return new ChatSession(startChatRequest, this.requestOptions);
   }
@@ -187,8 +187,8 @@ export class GenerativeModel {
  */
 export class GenerativeModelPreview {
   model: string;
-  generation_config?: GenerationConfig;
-  safety_settings?: SafetySetting[];
+  generationConfig?: GenerationConfig;
+  safetySettings?: SafetySetting[];
   tools?: Tool[];
   requestOptions?: RequestOptions;
   private project: string;
@@ -207,8 +207,8 @@ export class GenerativeModelPreview {
     this.apiEndpoint = getGenerativeModelParams.apiEndpoint;
     this.googleAuth = getGenerativeModelParams.googleAuth;
     this.model = getGenerativeModelParams.model;
-    this.generation_config = getGenerativeModelParams.generation_config;
-    this.safety_settings = getGenerativeModelParams.safety_settings;
+    this.generationConfig = getGenerativeModelParams.generationConfig;
+    this.safetySettings = getGenerativeModelParams.safetySettings;
     this.tools = getGenerativeModelParams.tools;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
     if (this.model.startsWith('models/')) {
@@ -244,8 +244,8 @@ export class GenerativeModelPreview {
       this.token,
       request,
       this.apiEndpoint,
-      this.generation_config,
-      this.safety_settings,
+      this.generationConfig,
+      this.safetySettings,
       this.tools,
       this.requestOptions
     );
@@ -267,8 +267,8 @@ export class GenerativeModelPreview {
       this.token,
       request,
       this.apiEndpoint,
-      this.generation_config,
-      this.safety_settings,
+      this.generationConfig,
+      this.safetySettings,
       this.tools,
       this.requestOptions
     );
@@ -303,16 +303,16 @@ export class GenerativeModelPreview {
       project: this.project,
       location: this.location,
       googleAuth: this.googleAuth,
-      publisher_model_endpoint: this.publisherModelEndpoint,
+      publisherModelEndpoint: this.publisherModelEndpoint,
       tools: this.tools,
     };
 
     if (request) {
       startChatRequest.history = request.history;
-      startChatRequest.generation_config =
-        request.generation_config ?? this.generation_config;
-      startChatRequest.safety_settings =
-        request.safety_settings ?? this.safety_settings;
+      startChatRequest.generationConfig =
+        request.generationConfig ?? this.generationConfig;
+      startChatRequest.safetySettings =
+        request.safetySettings ?? this.safetySettings;
       startChatRequest.tools = request.tools ?? this.tools;
     }
     return new ChatSessionPreview(startChatRequest, this.requestOptions);

@@ -19,12 +19,12 @@
  * GoogleAuthError is thrown when there is authentication issue with the request
  */
 class GoogleAuthError extends Error {
-  public readonly stack_trace: any = undefined;
-  constructor(message: string, stack_trace: any = undefined) {
+  public readonly stackTrace: any = undefined;
+  constructor(message: string, stackTrace: any = undefined) {
     super(message);
     this.message = constructErrorMessage('GoogleAuthError', message);
     this.name = 'GoogleAuthError';
-    this.stack_trace = stack_trace;
+    this.stackTrace = stackTrace;
   }
 }
 
@@ -33,12 +33,12 @@ class GoogleAuthError extends Error {
  * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses
  */
 class ClientError extends Error {
-  public readonly stack_trace: any = undefined;
-  constructor(message: string, stack_trace: any = undefined) {
+  public readonly stackTrace: any = undefined;
+  constructor(message: string, stackTrace: any = undefined) {
     super(message);
     this.message = constructErrorMessage('ClientError', message);
     this.name = 'ClientError';
-    this.stack_trace = stack_trace;
+    this.stackTrace = stackTrace;
   }
 }
 
@@ -47,12 +47,12 @@ class ClientError extends Error {
  * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
  */
 class GoogleGenerativeAIError extends Error {
-  public readonly stack_trace: any = undefined;
-  constructor(message: string, stack_trace: any = undefined) {
+  public readonly stackTrace: any = undefined;
+  constructor(message: string, stackTrace: any = undefined) {
     super(message);
     this.message = constructErrorMessage('GoogleGenerativeAIError', message);
     this.name = 'GoogleGenerativeAIError';
-    this.stack_trace = stack_trace;
+    this.stackTrace = stackTrace;
   }
 }
 

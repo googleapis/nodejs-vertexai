@@ -36,17 +36,17 @@ const TEXT_PART = {
 };
 
 const GCS_FILE_PART = {
-  file_data: {
-    file_uri: 'gs://generativeai-downloads/images/scones.jpg',
-    mime_type: 'image/jpeg',
+  fileData: {
+    fileUri: 'gs://generativeai-downloads/images/scones.jpg',
+    mimeType: 'image/jpeg',
   },
 };
 const BASE_64_IMAGE =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 const INLINE_DATA_FILE_PART = {
-  inline_data: {
+  inlineData: {
     data: BASE_64_IMAGE,
-    mime_type: 'image/jpeg',
+    mimeType: 'image/jpeg',
   },
 };
 
@@ -61,7 +61,7 @@ const FUNCTION_CALL_NAME = 'get_current_weather';
 
 const TOOLS_WITH_FUNCTION_DECLARATION: FunctionDeclarationsTool[] = [
   {
-    function_declarations: [
+    functionDeclarations: [
       {
         name: FUNCTION_CALL_NAME,
         description: 'get weather in a given location',
@@ -107,53 +107,53 @@ const FUNCTION_CALL = [
 ];
 
 // Initialize Vertex with your Cloud project and location
-const vertex_ai = new VertexAI({
+const vertexAI = new VertexAI({
   project: PROJECT as string,
   location: LOCATION,
 });
 
-const generativeTextModel = vertex_ai.getGenerativeModel({
+const generativeTextModel = vertexAI.getGenerativeModel({
   model: 'gemini-1.0-pro',
-  generation_config: {
-    max_output_tokens: 256,
+  generationConfig: {
+    maxOutputTokens: 256,
   },
 });
-const generativeTextModelPreview = vertex_ai.preview.getGenerativeModel({
+const generativeTextModelPreview = vertexAI.preview.getGenerativeModel({
   model: 'gemini-1.0-pro',
-  generation_config: {
-    max_output_tokens: 256,
+  generationConfig: {
+    maxOutputTokens: 256,
   },
 });
-const generativeTextModelWithPrefix = vertex_ai.getGenerativeModel({
+const generativeTextModelWithPrefix = vertexAI.getGenerativeModel({
   model: 'models/gemini-1.0-pro',
-  generation_config: {
-    max_output_tokens: 256,
+  generationConfig: {
+    maxOutputTokens: 256,
   },
 });
 const generativeTextModelWithPrefixPreview =
-  vertex_ai.preview.getGenerativeModel({
+  vertexAI.preview.getGenerativeModel({
     model: 'models/gemini-1.0-pro',
-    generation_config: {
-      max_output_tokens: 256,
+    generationConfig: {
+      maxOutputTokens: 256,
     },
   });
-const textModelNoOutputLimit = vertex_ai.getGenerativeModel({
+const textModelNoOutputLimit = vertexAI.getGenerativeModel({
   model: 'gemini-1.0-pro',
 });
-const textModelNoOutputLimitPreview = vertex_ai.preview.getGenerativeModel({
+const textModelNoOutputLimitPreview = vertexAI.preview.getGenerativeModel({
   model: 'gemini-1.0-pro',
 });
-const generativeVisionModel = vertex_ai.getGenerativeModel({
+const generativeVisionModel = vertexAI.getGenerativeModel({
   model: 'gemini-1.0-pro-vision',
 });
-const generativeVisionModelPreview = vertex_ai.preview.getGenerativeModel({
+const generativeVisionModelPreview = vertexAI.preview.getGenerativeModel({
   model: 'gemini-1.0-pro-vision',
 });
-const generativeVisionModelWithPrefix = vertex_ai.getGenerativeModel({
+const generativeVisionModelWithPrefix = vertexAI.getGenerativeModel({
   model: 'models/gemini-1.0-pro-vision',
 });
 const generativeVisionModelWithPrefixPreview =
-  vertex_ai.preview.getGenerativeModel({
+  vertexAI.preview.getGenerativeModel({
     model: 'models/gemini-1.0-pro-vision',
   });
 describe('generateContentStream', () => {
@@ -289,7 +289,7 @@ describe('generateContentStream', () => {
           role: 'user',
           parts: [
             {text: 'describe this image:'},
-            {inline_data: {mime_type: 'image/png', data: 'invalid data'}},
+            {inlineData: {mimeType: 'image/png', data: 'invalid data'}},
           ],
         },
       ],
@@ -310,7 +310,7 @@ describe('generateContentStream', () => {
           role: 'user',
           parts: [
             {text: 'describe this image:'},
-            {inline_data: {mime_type: 'image/png', data: 'invalid data'}},
+            {inlineData: {mimeType: 'image/png', data: 'invalid data'}},
           ],
         },
       ],
@@ -425,7 +425,7 @@ describe('generateContent', () => {
     );
   });
   it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
-    const generativeTextModel = vertex_ai.getGenerativeModel({
+    const generativeTextModel = vertexAI.getGenerativeModel({
       model: 'gemini-pro',
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
@@ -441,7 +441,7 @@ describe('generateContent', () => {
     }
   });
   it('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
-    const generativeTextModel = vertex_ai.getGenerativeModel({
+    const generativeTextModel = vertexAI.getGenerativeModel({
       model: 'gemini-pro',
     });
     const result = await generativeTextModel.generateContent({
@@ -457,7 +457,7 @@ describe('generateContent', () => {
     }
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
-    const generativeTextModel = vertex_ai.preview.getGenerativeModel({
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: 'gemini-pro',
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
@@ -473,7 +473,7 @@ describe('generateContent', () => {
     }
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
-    const generativeTextModel = vertex_ai.preview.getGenerativeModel({
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: 'gemini-pro',
     });
     const result = await generativeTextModel.generateContent({
@@ -515,7 +515,7 @@ describe('sendMessage', () => {
     expect(chat.history.length).toBe(2);
   });
   it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
-    const generativeTextModel = vertex_ai.getGenerativeModel({
+    const generativeTextModel = vertexAI.getGenerativeModel({
       model: 'gemini-pro',
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
@@ -530,7 +530,7 @@ describe('sendMessage', () => {
     }
   });
   it('should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
-    const generativeTextModel = vertex_ai.getGenerativeModel({
+    const generativeTextModel = vertexAI.getGenerativeModel({
       model: 'gemini-pro',
     });
     const chat = generativeTextModel.startChat({
@@ -546,7 +546,7 @@ describe('sendMessage', () => {
     }
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
-    const generativeTextModel = vertex_ai.preview.getGenerativeModel({
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: 'gemini-pro',
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
@@ -561,7 +561,7 @@ describe('sendMessage', () => {
     }
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
-    const generativeTextModel = vertex_ai.preview.getGenerativeModel({
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: 'gemini-pro',
     });
     const chat = generativeTextModel.startChat({
@@ -582,10 +582,10 @@ describe('sendMessageStream', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
-  it('should should return a stream and populate history when generation_config is passed to startChat', async () => {
+  it('should should return a stream and populate history when generationConfig is passed to startChat', async () => {
     const chat = generativeTextModel.startChat({
-      generation_config: {
-        max_output_tokens: 256,
+      generationConfig: {
+        maxOutputTokens: 256,
       },
     });
     const chatInput1 = 'How can I learn more about Node.js?';
@@ -601,10 +601,10 @@ describe('sendMessageStream', () => {
     );
     expect(chat.history.length).toBe(2);
   });
-  it('in preview should should return a stream and populate history when generation_config is passed to startChat', async () => {
+  it('in preview should should return a stream and populate history when generationConfig is passed to startChat', async () => {
     const chat = generativeTextModelPreview.startChat({
-      generation_config: {
-        max_output_tokens: 256,
+      generationConfig: {
+        maxOutputTokens: 256,
       },
     });
     const chatInput1 = 'How can I learn more about Node.js?';

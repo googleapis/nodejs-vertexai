@@ -50,14 +50,14 @@ export class ChatSession {
   private project: string;
   private location: string;
   private historyInternal: Content[];
-  private _send_stream_promise: Promise<void> = Promise.resolve();
-  private publisher_model_endpoint: string;
+  private sendStreamPromise: Promise<void> = Promise.resolve();
+  private publisherModelEndpoint: string;
   private googleAuth: GoogleAuth;
   requestOptions?: RequestOptions;
-  generation_config?: GenerationConfig;
-  safety_settings?: SafetySetting[];
+  generationConfig?: GenerationConfig;
+  safetySettings?: SafetySetting[];
   tools?: Tool[];
-  private api_endpoint?: string;
+  private apiEndpoint?: string;
 
   get history(): Content[] {
     return this.historyInternal;
@@ -74,12 +74,12 @@ export class ChatSession {
     this.project = request.project;
     this.location = request.location;
     this.googleAuth = request.googleAuth;
-    this.publisher_model_endpoint = request.publisher_model_endpoint;
+    this.publisherModelEndpoint = request.publisherModelEndpoint;
     this.historyInternal = request.history ?? [];
-    this.generation_config = request.generation_config;
-    this.safety_settings = request.safety_settings;
+    this.generationConfig = request.generationConfig;
+    this.safetySettings = request.safetySettings;
     this.tools = request.tools;
-    this.api_endpoint = request.api_endpoint;
+    this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
   }
 
@@ -106,20 +106,20 @@ export class ChatSession {
       formulateNewContentFromSendMessageRequest(request);
     const generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
-      safety_settings: this.safety_settings,
-      generation_config: this.generation_config,
+      safetySettings: this.safetySettings,
+      generationConfig: this.generationConfig,
       tools: this.tools,
     };
 
     const generateContentResult: GenerateContentResult = await generateContent(
       this.location,
       this.project,
-      this.publisher_model_endpoint,
+      this.publisherModelEndpoint,
       this.token,
       generateContentrequest,
-      this.api_endpoint,
-      this.generation_config,
-      this.safety_settings,
+      this.apiEndpoint,
+      this.generationConfig,
+      this.safetySettings,
       this.tools,
       this.requestOptions
     ).catch(e => {
@@ -179,27 +179,27 @@ export class ChatSession {
       formulateNewContentFromSendMessageRequest(request);
     const generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
-      safety_settings: this.safety_settings,
-      generation_config: this.generation_config,
+      safetySettings: this.safetySettings,
+      generationConfig: this.generationConfig,
       tools: this.tools,
     };
 
     const streamGenerateContentResultPromise = generateContentStream(
       this.location,
       this.project,
-      this.publisher_model_endpoint,
+      this.publisherModelEndpoint,
       this.token,
       generateContentrequest,
-      this.api_endpoint,
-      this.generation_config,
-      this.safety_settings,
+      this.apiEndpoint,
+      this.generationConfig,
+      this.safetySettings,
       this.tools,
       this.requestOptions
     ).catch(e => {
       throw e;
     });
 
-    this._send_stream_promise = this.appendHistory(
+    this.sendStreamPromise = this.appendHistory(
       streamGenerateContentResultPromise,
       newContent
     ).catch(e => {
@@ -218,14 +218,14 @@ export class ChatSessionPreview {
   private project: string;
   private location: string;
   private historyInternal: Content[];
-  private _send_stream_promise: Promise<void> = Promise.resolve();
-  private publisher_model_endpoint: string;
+  private sendStreamPromise: Promise<void> = Promise.resolve();
+  private publisherModelEndpoint: string;
   private googleAuth: GoogleAuth;
   requestOptions?: RequestOptions;
-  generation_config?: GenerationConfig;
-  safety_settings?: SafetySetting[];
+  generationConfig?: GenerationConfig;
+  safetySettings?: SafetySetting[];
   tools?: Tool[];
-  private api_endpoint?: string;
+  private apiEndpoint?: string;
 
   get history(): Content[] {
     return this.historyInternal;
@@ -242,12 +242,12 @@ export class ChatSessionPreview {
     this.project = request.project;
     this.location = request.location;
     this.googleAuth = request.googleAuth;
-    this.publisher_model_endpoint = request.publisher_model_endpoint;
+    this.publisherModelEndpoint = request.publisherModelEndpoint;
     this.historyInternal = request.history ?? [];
-    this.generation_config = request.generation_config;
-    this.safety_settings = request.safety_settings;
+    this.generationConfig = request.generationConfig;
+    this.safetySettings = request.safetySettings;
     this.tools = request.tools;
-    this.api_endpoint = request.api_endpoint;
+    this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
   }
 
@@ -274,20 +274,20 @@ export class ChatSessionPreview {
       formulateNewContentFromSendMessageRequest(request);
     const generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
-      safety_settings: this.safety_settings,
-      generation_config: this.generation_config,
+      safetySettings: this.safetySettings,
+      generationConfig: this.generationConfig,
       tools: this.tools,
     };
 
     const generateContentResult: GenerateContentResult = await generateContent(
       this.location,
       this.project,
-      this.publisher_model_endpoint,
+      this.publisherModelEndpoint,
       this.token,
       generateContentrequest,
-      this.api_endpoint,
-      this.generation_config,
-      this.safety_settings,
+      this.apiEndpoint,
+      this.generationConfig,
+      this.safetySettings,
       this.tools,
       this.requestOptions
     ).catch(e => {
@@ -347,27 +347,27 @@ export class ChatSessionPreview {
       formulateNewContentFromSendMessageRequest(request);
     const generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
-      safety_settings: this.safety_settings,
-      generation_config: this.generation_config,
+      safetySettings: this.safetySettings,
+      generationConfig: this.generationConfig,
       tools: this.tools,
     };
 
     const streamGenerateContentResultPromise = generateContentStream(
       this.location,
       this.project,
-      this.publisher_model_endpoint,
+      this.publisherModelEndpoint,
       this.token,
       generateContentrequest,
-      this.api_endpoint,
-      this.generation_config,
-      this.safety_settings,
+      this.apiEndpoint,
+      this.generationConfig,
+      this.safetySettings,
       this.tools,
       this.requestOptions
     ).catch(e => {
       throw e;
     });
 
-    this._send_stream_promise = this.appendHistory(
+    this.sendStreamPromise = this.appendHistory(
       streamGenerateContentResultPromise,
       newContent
     );
