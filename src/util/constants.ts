@@ -18,7 +18,6 @@ export const GENERATE_CONTENT_METHOD = 'generateContent';
 export const STREAMING_GENERATE_CONTENT_METHOD = 'streamGenerateContent';
 export const USER_ROLE = 'user';
 export const MODEL_ROLE = 'model';
-export const FUNCTION_ROLE = 'function';
 const USER_AGENT_PRODUCT = 'model-builder';
 const CLIENT_LIBRARY_VERSION = '0.5.0'; // x-release-please-version
 const CLIENT_LIBRARY_LANGUAGE = `grpc-node/${CLIENT_LIBRARY_VERSION}`;

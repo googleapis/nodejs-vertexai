@@ -407,7 +407,7 @@ function assignRoleToPartsAndValidateSendMessageRequest(
   parts: Array<Part>
 ): Content[] {
   const userContent: Content = {role: constants.USER_ROLE, parts: []};
-  const functionContent: Content = {role: constants.FUNCTION_ROLE, parts: []};
+  const functionContent: Content = {role: constants.MODEL_ROLE, parts: []};
   let hasUserContent = false;
   let hasFunctionContent = false;
   for (const part of parts) {
