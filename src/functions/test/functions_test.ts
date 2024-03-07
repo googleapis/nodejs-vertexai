@@ -233,6 +233,10 @@ export async function* testGenerator(): AsyncGenerator<GenerateContentResponse> 
   };
 }
 
+function buildFetchResponse(body: any): Response {
+  return new Response(JSON.stringify(body), fetchResponseObj);
+}
+
 describe('countTokens', () => {
   const req: CountTokensRequest = {
     contents: TEST_USER_CHAT_MESSAGE,
@@ -361,26 +365,17 @@ describe('countTokens', () => {
 });
 
 describe('generateContent', () => {
-  let expectedStreamResult: StreamGenerateContentResult;
   let fetchSpy: jasmine.Spy;
-  let fetchResult: Response;
 
   beforeEach(() => {
-    expectedStreamResult = {
-      response: Promise.resolve(TEST_MODEL_RESPONSE),
-      stream: testGenerator(),
-    };
-    fetchResult = new Response(
-      JSON.stringify(expectedStreamResult),
-      fetchResponseObj
-    );
+    fetchSpy = spyOn(global, 'fetch');
   });
 
   it('request rejected when timeout', async () => {
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo({
+    fetchSpy.and.resolveTo({
       ok: false,
       status: 500,
       statusText: 'AbortError',
@@ -408,8 +403,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -424,8 +418,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -444,8 +437,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -482,8 +474,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -501,8 +492,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -525,8 +515,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -550,8 +539,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -573,8 +561,7 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
@@ -600,8 +587,9 @@ describe('generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
     };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    fetchSpy.and.resolveTo(
+      buildFetchResponse(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL)
+    );
     const resp = await generateContent(
       TEST_LOCATION,
       TEST_PROJECT,
