@@ -43,22 +43,7 @@ export function formatContentRequest(
 export function validateGenerateContentRequest(
   request: GenerateContentRequest
 ) {
-  validateGcsInput(request.contents);
-  validateFunctionResponseRequest(request.contents);
-}
-
-export function validateGenerationConfig(
-  generationConfig: GenerationConfig
-): GenerationConfig {
-  if ('topK' in generationConfig) {
-    if (!(generationConfig.topK! > 0) || !(generationConfig.topK! <= 40)) {
-      delete generationConfig.topK;
-    }
-  }
-  return generationConfig;
-}
-
-function validateGcsInput(contents: Content[]) {
+  const contents = request.contents;
   for (const content of contents) {
     for (const part of content.parts) {
       if ('fileData' in part) {
@@ -74,18 +59,13 @@ function validateGcsInput(contents: Content[]) {
   }
 }
 
-function validateFunctionResponseRequest(contents: Content[]) {
-  const lastestContentPart = contents[contents.length - 1].parts[0];
-  if (!('functionResponse' in lastestContentPart)) {
-    return;
+export function validateGenerationConfig(
+  generationConfig: GenerationConfig
+): GenerationConfig {
+  if ('topK' in generationConfig) {
+    if (!(generationConfig.topK! > 0) || !(generationConfig.topK! <= 40)) {
+      delete generationConfig.topK;
+    }
   }
-  const errorMessage =
-    'Please ensure that function response turn comes immediately after a function call turn.';
-  if (contents.length < 2) {
-    throw new ClientError(errorMessage);
-  }
-  const secondLastestContentPart = contents[contents.length - 2].parts[0];
-  if (!('functionCall' in secondLastestContentPart)) {
-    throw new ClientError(errorMessage);
-  }
+  return generationConfig;
 }

@@ -523,42 +523,6 @@ describe('GenerativeModel generateContent', () => {
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
-
-  it('throws ClientError when functionResponse is not immedidately following functionCall case1', async () => {
-    const req: GenerateContentRequest = {
-      contents: [
-        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
-        {
-          role: 'function',
-          parts: TEST_FUNCTION_RESPONSE_PART,
-        },
-      ],
-      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
-    };
-    const expectedErrorMessage =
-      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
-    await model.generateContent(req).catch(e => {
-      expect(e.message).toEqual(expectedErrorMessage);
-    });
-  });
-
-  it('throws ClientError when functionResponse is not immedidately following functionCall case2', async () => {
-    const req: GenerateContentRequest = {
-      contents: [
-        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
-        {
-          role: 'function',
-          parts: TEST_FUNCTION_RESPONSE_PART,
-        },
-      ],
-      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
-    };
-    const expectedErrorMessage =
-      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
-    await model.generateContent(req).catch(e => {
-      expect(e.message).toEqual(expectedErrorMessage);
-    });
-  });
 });
 
 describe('GenerativeModelPreview generateContent', () => {
@@ -761,42 +725,6 @@ describe('GenerativeModelPreview generateContent', () => {
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
-
-  it('throws ClientError when functionResponse is not immedidately following functionCall case1', async () => {
-    const req: GenerateContentRequest = {
-      contents: [
-        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
-        {
-          role: 'function',
-          parts: TEST_FUNCTION_RESPONSE_PART,
-        },
-      ],
-      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
-    };
-    const expectedErrorMessage =
-      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
-    await model.generateContent(req).catch(e => {
-      expect(e.message).toEqual(expectedErrorMessage);
-    });
-  });
-
-  it('throws ClientError when functionResponse is not immedidately following functionCall case2', async () => {
-    const req: GenerateContentRequest = {
-      contents: [
-        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
-        {
-          role: 'function',
-          parts: TEST_FUNCTION_RESPONSE_PART,
-        },
-      ],
-      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
-    };
-    const expectedErrorMessage =
-      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
-    await model.generateContent(req).catch(e => {
-      expect(e.message).toEqual(expectedErrorMessage);
-    });
-  });
 });
 
 describe('GenerativeModel generateContentStream', () => {
@@ -909,41 +837,6 @@ describe('GenerativeModel generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedStreamResult);
-  });
-  it('throws ClientError when functionResponse is not immedidately following functionCall case1', async () => {
-    const req: GenerateContentRequest = {
-      contents: [
-        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
-        {
-          role: 'function',
-          parts: TEST_FUNCTION_RESPONSE_PART,
-        },
-      ],
-      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
-    };
-    const expectedErrorMessage =
-      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
-    await model.generateContentStream(req).catch(e => {
-      expect(e.message).toEqual(expectedErrorMessage);
-    });
-  });
-
-  it('throws ClientError when functionResponse is not immedidately following functionCall case2', async () => {
-    const req: GenerateContentRequest = {
-      contents: [
-        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
-        {
-          role: 'function',
-          parts: TEST_FUNCTION_RESPONSE_PART,
-        },
-      ],
-      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
-    };
-    const expectedErrorMessage =
-      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
-    await model.generateContentStream(req).catch(e => {
-      expect(e.message).toEqual(expectedErrorMessage);
-    });
   });
 });
 
@@ -1069,41 +962,6 @@ describe('GenerativeModelPreview generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedStreamResult);
-  });
-  it('throws ClientError when functionResponse is not immedidately following functionCall case1', async () => {
-    const req: GenerateContentRequest = {
-      contents: [
-        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
-        {
-          role: 'function',
-          parts: TEST_FUNCTION_RESPONSE_PART,
-        },
-      ],
-      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
-    };
-    const expectedErrorMessage =
-      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
-    await model.generateContentStream(req).catch(e => {
-      expect(e.message).toEqual(expectedErrorMessage);
-    });
-  });
-
-  it('throws ClientError when functionResponse is not immedidately following functionCall case2', async () => {
-    const req: GenerateContentRequest = {
-      contents: [
-        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
-        {
-          role: 'function',
-          parts: TEST_FUNCTION_RESPONSE_PART,
-        },
-      ],
-      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
-    };
-    const expectedErrorMessage =
-      '[VertexAI.ClientError]: Please ensure that function response turn comes immediately after a function call turn.';
-    await model.generateContentStream(req).catch(e => {
-      expect(e.message).toEqual(expectedErrorMessage);
-    });
   });
 });
 
