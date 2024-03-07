@@ -367,7 +367,7 @@ describe('generateContentStream', () => {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
         {role: 'model', parts: FUNCTION_CALL},
-        {role: 'model', parts: FUNCTION_RESPONSE_PART},
+        {role: 'user', parts: FUNCTION_RESPONSE_PART},
       ],
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
     };
@@ -387,7 +387,7 @@ describe('generateContentStream', () => {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
         {role: 'model', parts: FUNCTION_CALL},
-        {role: 'model', parts: FUNCTION_RESPONSE_PART},
+        {role: 'user', parts: FUNCTION_RESPONSE_PART},
       ],
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
     };
@@ -534,7 +534,7 @@ describe('generateContent', () => {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
         {role: 'model', parts: FUNCTION_CALL},
-        {role: 'model', parts: FUNCTION_RESPONSE_PART},
+        {role: 'user', parts: FUNCTION_RESPONSE_PART},
       ],
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
     };
@@ -552,7 +552,7 @@ describe('generateContent', () => {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
         {role: 'model', parts: FUNCTION_CALL},
-        {role: 'model', parts: FUNCTION_RESPONSE_PART},
+        {role: 'user', parts: FUNCTION_RESPONSE_PART},
       ],
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
     };

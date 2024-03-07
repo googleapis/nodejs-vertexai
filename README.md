@@ -259,7 +259,7 @@ async function functionCallingGenerateContentStream() {
     contents: [
       {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
       {role: 'model', parts: [{functionCall: {name: 'get_current_weather', args: {'location': 'Boston'}}}]},
-      {role: 'model', parts: functionResponseParts}
+      {role: 'user', parts: functionResponseParts}
     ],
     tools: functionDeclarations,
   };
