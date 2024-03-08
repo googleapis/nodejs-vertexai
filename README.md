@@ -36,18 +36,18 @@ const location = 'us-central1';
 const textModel =  'gemini-1.0-pro';
 const visionModel = 'gemini-1.0-pro-vision';
 
-const vertex_ai = new VertexAI({project: project, location: location});
+const vertexAI = new VertexAI({project: project, location: location});
 
 // Instantiate models
-const generativeModel = vertex_ai.getGenerativeModel({
+const generativeModel = vertexAI.getGenerativeModel({
     model: textModel,
     // The following parameters are optional
     // They can also be passed to individual content generation requests
-    safety_settings: [{category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE}],
-    generation_config: {max_output_tokens: 256},
+    safetySettings: [{category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE}],
+    generationConfig: {maxOutputTokens: 256},
   });
 
-const generativeVisionModel = vertex_ai.getGenerativeModel({
+const generativeVisionModel = vertexAI.getGenerativeModel({
     model: visionModel,
 });
 
@@ -60,11 +60,12 @@ async function streamGenerateContent() {
   const request = {
     contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
   };
-  const streamingResp = await generativeModel.generateContentStream(request);
-  for await (const item of streamingResp.stream) {
+  const streamingResult = await generativeModel.generateContentStream(request);
+  for await (const item of streamingResult.stream) {
     console.log('stream chunk: ', JSON.stringify(item));
   }
-  console.log('aggregated response: ', JSON.stringify(await streamingResp.response));
+  const aggregatedResponse = await streamingResult.response;
+  console.log('aggregated response: ', JSON.stringify(aggregatedResponse));
 };
 
 streamGenerateContent();
@@ -75,12 +76,13 @@ streamGenerateContent();
 ```typescript
 async function streamChat() {
   const chat = generativeModel.startChat();
-  const chatInput1 = "How can I learn more about Node.js?";
-  const result1 = await chat.sendMessageStream(chatInput1);
-  for await (const item of result1.stream) {
+  const chatInput = "How can I learn more about Node.js?";
+  const result = await chat.sendMessageStream(chatInput);
+  for await (const item of result.stream) {
       console.log(item.candidates[0].content.parts[0].text);
   }
-  console.log('aggregated response: ', JSON.stringify(await result1.response));
+  const aggregatedResponse = await result.response;
+  console.log('aggregated response: ', JSON.stringify(aggregatedResponse));
 }
 
 streamChat();
@@ -91,16 +93,16 @@ streamChat();
 ### Providing a Google Cloud Storage image URI
 ```typescript
 async function multiPartContent() {
-    const filePart = {file_data: {file_uri: "gs://generativeai-downloads/images/scones.jpg", mime_type: "image/jpeg"}};
+    const filePart = {fileData: {fileUri: "gs://generativeai-downloads/images/scones.jpg", mimeType: "image/jpeg"}};
     const textPart = {text: 'What is this picture about?'};
     const request = {
         contents: [{role: 'user', parts: [textPart, filePart]}],
       };
-    const streamingResp = await generativeVisionModel.generateContentStream(request);
-    for await (const item of streamingResp.stream) {
+    const streamingResult = await generativeVisionModel.generateContentStream(request);
+    for await (const item of streamingResult.stream) {
       console.log('stream chunk: ', JSON.stringify(item));
     }
-    const aggregatedResponse = await streamingResp.response;
+    const aggregatedResponse = await streamingResult.response;
     console.log(aggregatedResponse.candidates[0].content);
 }
 
@@ -112,13 +114,13 @@ multiPartContent();
 async function multiPartContentImageString() {
     // Replace this with your own base64 image string
     const base64Image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
-    const filePart = {inline_data: {data: base64Image, mime_type: 'image/jpeg'}};
+    const filePart = {inline_data: {data: base64Image, mimeType: 'image/jpeg'}};
     const textPart = {text: 'What is this picture about?'};
     const request = {
         contents: [{role: 'user', parts: [textPart, filePart]}],
       };
-    const resp = await generativeVisionModel.generateContentStream(request);
-    const contentResponse = await resp.response;
+    const streamingResult = await generativeVisionModel.generateContentStream(request);
+    const contentResponse = await streamingResult.response;
     console.log(contentResponse.candidates[0].content.parts[0].text);
 }
 
@@ -128,16 +130,16 @@ multiPartContentImageString();
 ### Multi-part content with text and video
 ```typescript
 async function multiPartContentVideo() {
-    const filePart = {file_data: {file_uri: 'gs://cloud-samples-data/video/animals.mp4', mime_type: 'video/mp4'}};
+    const filePart = {fileData: {fileUri: 'gs://cloud-samples-data/video/animals.mp4', mimeType: 'video/mp4'}};
     const textPart = {text: 'What is in the video?'};
     const request = {
         contents: [{role: 'user', parts: [textPart, filePart]}],
       };
-    const streamingResp = await generativeVisionModel.generateContentStream(request);
-    for await (const item of streamingResp.stream) {
+    const streamingResult = await generativeVisionModel.generateContentStream(request);
+    for await (const item of streamingResult.stream) {
       console.log('stream chunk: ', JSON.stringify(item));
     }
-    const aggregatedResponse = await streamingResp.response;
+    const aggregatedResponse = await streamingResult.response;
     console.log(aggregatedResponse.candidates[0].content);
 }
 
@@ -151,9 +153,9 @@ async function generateContent() {
   const request = {
     contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
   };
-  const resp = await generativeModel.generateContent(request);
-
-  console.log('aggregated response: ', JSON.stringify(await resp.response));
+  const result = await generativeModel.generateContent(request);
+  const response = result.response;
+  console.log('aggregated response: ', JSON.stringify(response));
 };
 
 generateContent();
@@ -163,11 +165,12 @@ generateContent();
 
 ```typescript
 async function countTokens() {
-    const request = {
-        contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
-      };
-    const resp = await generativeModel.countTokens(request);
-    console.log('count tokens response: ', resp);
+  const request = {
+      contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+    };
+  const result = await generativeModel.countTokens(request);
+  const response = result.response;
+  console.log('count tokens response: ', JSON.stringify(response));
 }
 
 countTokens();
@@ -188,7 +191,7 @@ passed to the model in the snippets that follow.
 ```typescript
 const functionDeclarations = [
   {
-    function_declarations: [
+    functionDeclarations: [
       {
         name: "get_current_weather",
         description: 'get weather in a given location',
@@ -231,21 +234,23 @@ async function functionCallingChat() {
   const chatInput1 = 'What is the weather in Boston?';
 
   // This should include a functionCall response from the model
-  const result1 = await chat.sendMessageStream(chatInput1);
-  for await (const item of result1.stream) {
+  const streamingResult1 = await chat.sendMessageStream(chatInput1);
+  for await (const item of streamingResult1.stream) {
     console.log(item.candidates[0]);
   }
-  const response1 = await result1.response;
+  const response1 = await streamingResult1.response;
+  console.log("first aggregated response: ", JSON.stringify(response1));
 
   // Send a follow up message with a FunctionResponse
-  const result2 = await chat.sendMessageStream(functionResponseParts);
-  for await (const item of result2.stream) {
+  const streamingResult2 = await chat.sendMessageStream(functionResponseParts);
+  for await (const item of streamingResult2.stream) {
     console.log(item.candidates[0]);
   }
 
   // This should include a text response from the model using the response content
   // provided above
-  const response2 = await result2.response;
+  const response2 = await streamingResult2.response;
+  console.log("second aggregated response: ", JSON.stringify(response2));
 }
 
 functionCallingChat();
@@ -263,9 +268,9 @@ async function functionCallingGenerateContentStream() {
     ],
     tools: functionDeclarations,
   };
-  const streamingResp =
+  const streamingResult =
       await generativeModel.generateContentStream(request);
-  for await (const item of streamingResp.stream) {
+  for await (const item of streamingResult.stream) {
     console.log(item.candidates[0]);
   }
 }
@@ -286,6 +291,8 @@ const response = await generativeModel.generateContent({
   tools: [googleSearchRetrievalTool],
 }).response;
 const groundingMetadata = response.candidates[0].groundingMetadata;
+console.log("Response of grounding is: ", JSON.stringify(response));
+console.log("Grounding metadata is: ", JSON.stringify(groundingMetadata));
 ```
 
 
@@ -305,6 +312,8 @@ const response = await generativeModel.generateContent({
   tools: [googleSearchRetrievalTool],
 }).response;
 const groundingMetadata = response.candidates[0].groundingMetadata;
+console.log("Response of grounding is: ", JSON.stringify(response));
+console.log("Grounding metadata is: ", JSON.stringify(groundingMetadata));
 ```
 
 ## License
