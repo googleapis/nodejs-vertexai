@@ -309,7 +309,7 @@ const vertexAiRetrievalTool: RetrievalTool = {
 };
 const response = await generativeModel.generateContent({
   contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
-  tools: [googleSearchRetrievalTool],
+  tools: [vertexAiRetrievalTool],
 }).response;
 const groundingMetadata = response.candidates[0].groundingMetadata;
 console.log("Response of grounding is: ", JSON.stringify(response));
