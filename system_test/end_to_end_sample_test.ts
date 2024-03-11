@@ -778,6 +778,11 @@ describe('sendMessageStream', () => {
       );
     }
     const response1 = await result1.response;
+    const functionCalls = response1.candidates[0].content.parts
+      .filter((part: Part) => !!part.functionCall)
+      .map((part: Part) => part.functionCall!);
+    expect(functionCalls).toHaveSize(1);
+    expect(response1.candidates[0].functionCalls!).toEqual(functionCalls!);
     expect(
       JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
     ).toContain(FUNCTION_CALL_NAME);
@@ -809,6 +814,11 @@ describe('sendMessageStream', () => {
       );
     }
     const response1 = await result1.response;
+    const functionCalls = response1.candidates[0].content.parts
+      .filter((part: Part) => !!part.functionCall)
+      .map((part: Part) => part.functionCall!);
+    expect(functionCalls).toHaveSize(1);
+    expect(response1.candidates[0].functionCalls!).toEqual(functionCalls!);
     expect(
       JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
     ).toContain(FUNCTION_CALL_NAME);
