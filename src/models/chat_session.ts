@@ -17,6 +17,11 @@
 
 /* tslint:disable */
 import {GoogleAuth} from 'google-auth-library';
+
+import {
+  generateContent,
+  generateContentStream,
+} from '../functions/generate_content';
 import {
   Content,
   GenerateContentRequest,
@@ -30,10 +35,6 @@ import {
   Tool,
 } from '../types/content';
 import {
-  generateContent,
-  generateContentStream,
-} from '../functions/generate_content';
-import {
   ClientError,
   GoogleAuthError,
   GoogleGenerativeAIError,
@@ -44,7 +45,8 @@ import {constants} from '../util';
  * Chat session to make multi-turn send message request.
  * Users can instantiate this using startChat method in GenerativeModel class.
  * `sendMessage` method makes async call to get response of a chat message.
- * `sendMessageStream` method makes async call to stream response of a chat message.
+ * `sendMessageStream` method makes async call to stream response of a chat
+ * message.
  */
 export class ChatSession {
   private project: string;
@@ -84,7 +86,8 @@ export class ChatSession {
   }
 
   /**
-   * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * Gets access token from GoogleAuth. Throws {@link GoogleAuthError} when
+   * fails.
    * @returns Promise of token.
    */
   get token(): Promise<any> {
@@ -95,7 +98,22 @@ export class ChatSession {
   }
 
   /**
-   * Makes an sync call to send message.
+   * Makes an sync call to send chat message.
+   *
+   * The response will be returned in {@link
+   * StreamGenerateContentResult.response}.
+   *
+   * @example
+   * ```
+   * const chat = generativeModel.startChat();
+   * const resp1 = await chat.sendMessage("How can I learn more about
+   * Node.js?"); console.log('Response: ', JSON.stringify(await
+   * resp1.response));
+   *
+   * const resp2 = await chat.sendMessage("What about python?");
+   * console.log('Response: ', JSON.stringify(await resp2.response));
+   * ```
+   *
    * @param request - send message request.
    * @returns Promise of {@link GenerateContentResult}.
    */
@@ -167,8 +185,25 @@ export class ChatSession {
   }
 
   /**
-   * Makes an async call to stream send message. Response will be returned in
-   * stream.
+   * Makes an async call to stream send message.
+   *
+   * Response is streamed chunk by chunk in
+   * {@link StreamGenerateContentResult.stream}. The aggregated response is
+   * avaliable in {@link StreamGenerateContentResult.response} after all chunks
+   * are returned.
+   *
+   * @example
+   * ```
+   * const chat = generativeModel.startChat();
+   * const chatInput = "How can I learn more about Node.js?";
+   * const result = await chat.sendMessageStream(chatInput);
+   * for await (const item of result.stream) {
+   *   console.log(item.candidates[0].content.parts[0].text);
+   * }
+   * const response = await result.response;
+   * console.log('aggregated response: ', JSON.stringify(result.response));
+   * ```
+   *
    * @param request - send message request.
    * @returns Promise of {@link StreamGenerateContentResult}.
    */
@@ -212,7 +247,8 @@ export class ChatSession {
 /**
  * Chat session to make multi-turn send message request.
  * `sendMessage` method makes async call to get response of a chat message.
- * `sendMessageStream` method makes async call to stream response of a chat message.
+ * `sendMessageStream` method makes async call to stream response of a chat
+ * message.
  */
 export class ChatSessionPreview {
   private project: string;

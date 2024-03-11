@@ -62,6 +62,40 @@ export class VertexAI {
   }
 
   /**
+   * Gets the GenerativeModel class instance.
+   *
+   * This will create a new instance of the GenerativeModel class with the
+   * platform initialization parameters provided in {@link VertexInit} and model
+   * initialization parameters provided in {@link ModelParams}. You can
+   * optionally provide {@link RequestOptions} to override the default request
+   * options.
+   *
+   * @example
+   * ```
+   * const project = 'your-cloud-project';
+   * const location = 'us-central1';
+   * const textModel =  'gemini-1.0-pro';
+   * const visionModel = 'gemini-1.0-pro-vision';
+   *
+   * const vertexAI = new VertexAI({project: project, location: location});
+   *
+   * // Instantiate models
+   * const generativeModel = vertexAI.getGenerativeModel({
+   *   model: textModel,
+   *   // The following parameters are optional
+   *   // They can also be passed to individual content generation requests
+   *   safetySettings: [{
+   *                      category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+   *                      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+   *                     }],
+   *   generationConfig: {maxOutputTokens: 256},
+   * });
+   *
+   * const generativeVisionModel = vertexAI.getGenerativeModel({
+   *   model: visionModel,
+   * });
+   * ```
+   *
    * @param modelParams - {@link ModelParams} Parameters to
    *     specify the generative model.
    * @param requestOptions - {@link RequestOptions} Parameters to specify

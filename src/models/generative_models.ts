@@ -17,6 +17,12 @@
 
 /* tslint:disable */
 import {GoogleAuth} from 'google-auth-library';
+
+import {countTokens} from '../functions/count_tokens';
+import {
+  generateContent,
+  generateContentStream,
+} from '../functions/generate_content';
 import {
   CountTokensRequest,
   CountTokensResponse,
@@ -32,13 +38,9 @@ import {
   Tool,
 } from '../types/content';
 import {GoogleAuthError} from '../types/errors';
-import {countTokens} from '../functions/count_tokens';
-import {
-  generateContent,
-  generateContentStream,
-} from '../functions/generate_content';
-import {ChatSession, ChatSessionPreview} from './chat_session';
 import {constants} from '../util';
+
+import {ChatSession, ChatSessionPreview} from './chat_session';
 
 /**
  * Base class for generative models.
@@ -79,7 +81,8 @@ export class GenerativeModel {
   }
 
   /**
-   * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
+   * Gets access token from GoogleAuth. Throws {@link GoogleAuthError} when
+   * fails.
    * @returns Promise of token
    */
   get token(): Promise<any> {
@@ -91,6 +94,20 @@ export class GenerativeModel {
 
   /**
    * Makes a async call to generate content.
+   *
+   * The response will be returned in {@link
+   * StreamGenerateContentResult.response}.
+   *
+   * @example
+   * ```
+   * const request = {
+   *   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+   * };
+   * const result = await generativeModel.generateContent(request);
+   * const response = await result.response;
+   * console.log('Response: ', JSON.stringify(response));
+   * ```
+   *
    * @param request - A GenerateContentRequest object with the request contents.
    * @returns The GenerateContentResponse object with the response candidates.
    */
@@ -112,8 +129,26 @@ export class GenerativeModel {
   }
 
   /**
-   * Makes an async stream request to generate content. The response will be
-   * returned in stream.
+   * Makes an async stream request to generate content.
+   *
+   * The response will be returned in {@link
+   * StreamGenerateContentResult.stream}. When all streams returned, the
+   * aggregated response will be available in
+   * {@link StreamGenerateContentResult.response}.
+   *
+   * @example
+   * ```
+   * const request = {
+   *   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+   * };
+   * const streamingResp = await generativeModel.generateContentStream(request);
+   * for await (const item of streamingResp.stream) {
+   *   console.log('stream chunk: ', JSON.stringify(item));
+   * }
+   * console.log('aggregated response: ', JSON.stringify(await
+   * streamingResp.response));
+   * ```
+   *
    * @param request - {@link GenerateContentRequest}
    * @returns Promise of {@link StreamGenerateContentResult}
    */
@@ -136,6 +171,19 @@ export class GenerativeModel {
 
   /**
    * Makes a async request to count tokens.
+   *
+   * This will return the token count and the number of billable characters for
+   * a prompt.
+   *
+   * @example
+   * ```
+   * const request = {
+   *   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+   * };
+   * const resp = await generativeModel.countTokens(request);
+   * console.log('count tokens response: ', resp);
+   * ```
+   *
    * @param request A CountTokensRequest object with the request contents.
    * @returns The CountTokensResponse object with the token count.
    */
@@ -152,9 +200,24 @@ export class GenerativeModel {
   }
 
   /**
-   * Instantiates a ChatSession.
-   * This method doesn't make any call to remote endpoint.
-   * Any call to remote endpoint is implemented in ChatSession class @see ChatSession
+   * Instantiates a {@link ChatSession}.
+   *
+   * The {@link ChatSession} is a stateful class that holds the state of the
+   * conversation with the model and provides methods to interact with the model
+   * in chat mode. Calling this method doesn't make any call to remote endpoint.
+   *
+   * @example
+   * ```
+   * const chat = generativeModel.startChat();
+   * const result1 = await chat.sendMessage("How can I learn more about Node.js?");
+   * const response1 = await result1.response;
+   * console.log('Response: ', JSON.stringify(response1));
+   *
+   * const result2 = await chat.sendMessageStream("What about python?");
+   * const response2 = await result2.response;
+   * console.log('Response: ', JSON.stringify(await response2));
+   * ```
+   *
    * @param request - {@link StartChatParams}
    * @returns {@link ChatSession}
    */
