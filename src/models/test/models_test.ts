@@ -1080,7 +1080,6 @@ describe('ChatSession', () => {
       spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
-      console.log(chatSessionWithNoArgs.history, 'hihii');
       expect(chatSessionWithNoArgs.history.length).toEqual(2);
     });
     it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
@@ -1419,7 +1418,6 @@ describe('ChatSessionPreview', () => {
       spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
-      console.log(chatSessionWithNoArgs.history, 'hihii');
       expect(chatSessionWithNoArgs.history.length).toEqual(2);
     });
     it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
