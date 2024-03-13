@@ -36,7 +36,7 @@ export async function countTokens(
   location: string,
   project: string,
   publisherModelEndpoint: string,
-  token: Promise<any>,
+  token: Promise<string | null | undefined>,
   request: CountTokensRequest,
   apiEndpoint?: string,
   requestOptions?: RequestOptions

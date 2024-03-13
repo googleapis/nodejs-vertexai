@@ -43,7 +43,7 @@ export async function postRequest({
   project: string;
   resourcePath: string;
   resourceMethod: string;
-  token: string;
+  token: string | null | undefined;
   data: GenerateContentRequest | CountTokensRequest;
   apiEndpoint?: string;
   requestOptions?: RequestOptions;

@@ -85,7 +85,7 @@ export class GenerativeModel {
    * fails.
    * @returns Promise of token
    */
-  get token(): Promise<any> {
+  get token(): Promise<string | null | undefined> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
       throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
     });
@@ -285,7 +285,7 @@ export class GenerativeModelPreview {
    * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
    * @returns Promise of token.
    */
-  get token(): Promise<any> {
+  get token(): Promise<string | null | undefined> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
       throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
     });
