@@ -41,7 +41,7 @@ export async function countTokens(
   apiEndpoint?: string,
   requestOptions?: RequestOptions
 ): Promise<CountTokensResponse> {
-  const response = await postRequest({
+  const response: Response | undefined = await postRequest({
     region: location,
     project: project,
     resourcePath: publisherModelEndpoint,

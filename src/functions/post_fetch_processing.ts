@@ -267,7 +267,7 @@ function addCandidateFunctionCalls(
  * @ignore
  */
 export async function processNonStream(
-  response: any
+  response: Response | undefined
 ): Promise<GenerateContentResult> {
   if (response !== undefined) {
     // ts-ignore
@@ -287,8 +287,12 @@ export async function processNonStream(
  * @ignore
  */
 export async function processCountTokenResponse(
-  response: any
+  response: Response | undefined
 ): Promise<CountTokensResponse> {
-  // ts-ignore
-  return response.json();
+  if (response) {
+    // ts-ignore
+    return response.json();
+  }
+
+  return Promise.resolve({} as CountTokensResponse);
 }
