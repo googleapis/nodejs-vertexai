@@ -48,16 +48,16 @@ import {ChatSession, ChatSessionPreview} from './chat_session';
  * `vertexai.getGenerativeModel()` instead.
  */
 export class GenerativeModel {
-  model: string;
-  generationConfig?: GenerationConfig;
-  safetySettings?: SafetySetting[];
-  tools?: Tool[];
-  requestOptions?: RequestOptions;
-  private project: string;
-  private location: string;
-  private googleAuth: GoogleAuth;
-  private publisherModelEndpoint: string;
-  private apiEndpoint?: string;
+  private readonly model: string;
+  private readonly generationConfig?: GenerationConfig;
+  private readonly safetySettings?: SafetySetting[];
+  private readonly tools?: Tool[];
+  private readonly requestOptions?: RequestOptions;
+  private readonly project: string;
+  private readonly location: string;
+  private readonly googleAuth: GoogleAuth;
+  private readonly publisherModelEndpoint: string;
+  private readonly apiEndpoint?: string;
 
   /**
    * @constructor
@@ -249,16 +249,16 @@ export class GenerativeModel {
  * `vertexai.preview.getGenerativeModel()` instead.
  */
 export class GenerativeModelPreview {
-  model: string;
-  generationConfig?: GenerationConfig;
-  safetySettings?: SafetySetting[];
-  tools?: Tool[];
-  requestOptions?: RequestOptions;
-  private project: string;
-  private location: string;
-  private googleAuth: GoogleAuth;
-  private publisherModelEndpoint: string;
-  private apiEndpoint?: string;
+  private readonly model: string;
+  private readonly generationConfig?: GenerationConfig;
+  private readonly safetySettings?: SafetySetting[];
+  private readonly tools?: Tool[];
+  private readonly requestOptions?: RequestOptions;
+  private readonly project: string;
+  private readonly location: string;
+  private readonly googleAuth: GoogleAuth;
+  private readonly publisherModelEndpoint: string;
+  private readonly apiEndpoint?: string;
 
   /**
    * @constructor

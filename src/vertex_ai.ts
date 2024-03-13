@@ -32,10 +32,10 @@ import {GoogleAuthError} from './types/errors';
  * Users use getGenerativeModel method to start using Google's generative models in GA.
  */
 export class VertexAI {
-  public preview: VertexAIPreview;
+  public readonly preview: VertexAIPreview;
   private readonly project: string;
   private readonly location: string;
-  protected googleAuth: GoogleAuth;
+  private readonly googleAuth: GoogleAuth;
   private readonly apiEndpoint?: string;
 
   /**
@@ -127,7 +127,7 @@ export class VertexAI {
 class VertexAIPreview {
   private readonly project: string;
   private readonly location: string;
-  protected readonly googleAuth: GoogleAuth;
+  private readonly googleAuth: GoogleAuth;
   private readonly apiEndpoint?: string;
 
   /**

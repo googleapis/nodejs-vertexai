@@ -49,17 +49,17 @@ import {constants} from '../util';
  * message.
  */
 export class ChatSession {
-  private project: string;
-  private location: string;
+  private readonly project: string;
+  private readonly location: string;
   private historyInternal: Content[];
   private sendStreamPromise: Promise<void> = Promise.resolve();
-  private publisherModelEndpoint: string;
-  private googleAuth: GoogleAuth;
-  requestOptions?: RequestOptions;
-  generationConfig?: GenerationConfig;
-  safetySettings?: SafetySetting[];
-  tools?: Tool[];
-  private apiEndpoint?: string;
+  private readonly publisherModelEndpoint: string;
+  private readonly googleAuth: GoogleAuth;
+  readonly requestOptions?: RequestOptions;
+  private readonly generationConfig?: GenerationConfig;
+  private readonly safetySettings?: SafetySetting[];
+  private readonly tools?: Tool[];
+  private readonly apiEndpoint?: string;
 
   get history(): Content[] {
     return this.historyInternal;
@@ -251,17 +251,17 @@ export class ChatSession {
  * message.
  */
 export class ChatSessionPreview {
-  private project: string;
-  private location: string;
+  private readonly project: string;
+  private readonly location: string;
   private historyInternal: Content[];
   private sendStreamPromise: Promise<void> = Promise.resolve();
-  private publisherModelEndpoint: string;
-  private googleAuth: GoogleAuth;
-  requestOptions?: RequestOptions;
-  generationConfig?: GenerationConfig;
-  safetySettings?: SafetySetting[];
-  tools?: Tool[];
-  private apiEndpoint?: string;
+  private readonly publisherModelEndpoint: string;
+  private readonly googleAuth: GoogleAuth;
+  readonly requestOptions?: RequestOptions;
+  private readonly generationConfig?: GenerationConfig;
+  private readonly safetySettings?: SafetySetting[];
+  private readonly tools?: Tool[];
+  private readonly apiEndpoint?: string;
 
   get history(): Content[] {
     return this.historyInternal;
