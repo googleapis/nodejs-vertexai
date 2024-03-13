@@ -278,15 +278,23 @@ async function functionCallingGenerateContentStream() {
 functionCallingGenerateContentStream();
 ```
 
-### Grounding using Google Search
+### In Preview: Grounding using Google Search
 
 ```typescript
+const generativeModelPreview = vertexAI.preview.getGenerativeModel({
+    model: textModel,
+    // The following parameters are optional
+    // They can also be passed to individual content generation requests
+    safetySettings: [{category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE}],
+    generationConfig: {maxOutputTokens: 256},
+  });
+
 const googleSearchRetrievalTool: GoogleSearchRetrievalTool = {
   googleSearchRetrieval: {
     disableAttribution: false,
   },
 };
-const response = await generativeModel.generateContent({
+const response = await generativeModelPreview.generateContent({
   contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
   tools: [googleSearchRetrievalTool],
 }).response;
@@ -296,9 +304,17 @@ console.log("Grounding metadata is: ", JSON.stringify(groundingMetadata));
 ```
 
 
-### Grounding using Vertex AI Search
+### In Preview: Grounding using Vertex AI Search
 
 ```typescript
+const generativeModelPreview = vertexAI.preview.getGenerativeModel({
+    model: textModel,
+    // The following parameters are optional
+    // They can also be passed to individual content generation requests
+    safetySettings: [{category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE}],
+    generationConfig: {maxOutputTokens: 256},
+  });
+
 const vertexAiRetrievalTool: RetrievalTool = {
   retrieval: {
     vertexAiSearch: {
@@ -307,7 +323,7 @@ const vertexAiRetrievalTool: RetrievalTool = {
     disableAttribution: false,
   },
 };
-const response = await generativeModel.generateContent({
+const response = await generativeModelPreview.generateContent({
   contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
   tools: [googleSearchRetrievalTool],
 }).response;
