@@ -73,10 +73,14 @@ export async function processStream(
   response: Response | undefined
 ): Promise<StreamGenerateContentResult> {
   if (response === undefined) {
-    throw new Error('Error processing stream because response === undefined');
+    throw new GoogleGenerativeAIError(
+      'Error processing stream because response === undefined'
+    );
   }
   if (!response.body) {
-    throw new Error('Error processing stream because response.body not found');
+    throw new GoogleGenerativeAIError(
+      'Error processing stream because response.body not found'
+    );
   }
   const inputStream = response.body!.pipeThrough(
     new TextDecoderStream('utf8', {fatal: true})
@@ -123,7 +127,11 @@ export function getResponseStream<T>(
         return reader.read().then(({value, done}) => {
           if (done) {
             if (currentText.trim()) {
-              controller.error(new Error('Failed to parse stream'));
+              controller.error(
+                new GoogleGenerativeAIError(
+                  'Failed to parse final chunk of stream'
+                )
+              );
               return;
             }
             controller.close();
@@ -138,7 +146,9 @@ export function getResponseStream<T>(
               parsedResponse = JSON.parse(match[1]) as T;
             } catch (e) {
               controller.error(
-                new Error(`Error parsing JSON response: "${match[1]}"`)
+                new GoogleGenerativeAIError(
+                  `Error parsing JSON response from stream chunk: "${match[1]}"`
+                )
               );
               return;
             }
@@ -165,8 +175,8 @@ function aggregateResponses(
   const lastResponse = responses[responses.length - 1];
 
   if (lastResponse === undefined) {
-    throw new Error(
-      'Error processing stream because the response is undefined'
+    throw new GoogleGenerativeAIError(
+      'Error aggregating stream chunks because the final response in stream chunk is undefined'
     );
   }
 

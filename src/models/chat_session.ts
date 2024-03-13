@@ -120,6 +120,7 @@ export class ChatSession {
   async sendMessage(
     request: string | Array<string | Part>
   ): Promise<GenerateContentResult> {
+    let errorMessage: string;
     const newContent: Content[] =
       formulateNewContentFromSendMessageRequest(request);
     const generateContentrequest: GenerateContentRequest = {
@@ -154,8 +155,16 @@ export class ChatSession {
       }
       this.historyInternal.push(contentFromAssistant);
     } else {
-      // TODO: handle promptFeedback in the response
-      throw new Error('Did not get a candidate from the model');
+      const promptFeedback = generateContentResponse.promptFeedback;
+      if (promptFeedback) {
+        errorMessage = `Model did not return candidate, but provided prompt feedback: ${JSON.stringify(
+          promptFeedback
+        )}`;
+      } else {
+        errorMessage =
+          'Model did not return candidate, could not find any prompt feedback from model as well';
+      }
+      throw new GoogleGenerativeAIError(errorMessage);
     }
 
     return Promise.resolve(generateContentResult);
@@ -165,6 +174,7 @@ export class ChatSession {
     streamGenerateContentResultPromise: Promise<StreamGenerateContentResult>,
     newContent: Content[]
   ): Promise<void> {
+    let errorMessage: string;
     const streamGenerateContentResult =
       await streamGenerateContentResultPromise;
     const streamGenerateContentResponse =
@@ -179,8 +189,16 @@ export class ChatSession {
       }
       this.historyInternal.push(contentFromAssistant);
     } else {
-      // TODO: handle promptFeedback in the response
-      throw new Error('Did not get a candidate from the model');
+      const promptFeedback = streamGenerateContentResponse.promptFeedback;
+      if (promptFeedback) {
+        errorMessage = `Model did not return candidate, but provided prompt feedback: ${JSON.stringify(
+          promptFeedback
+        )}`;
+      } else {
+        errorMessage =
+          'Model did not return candidate, could not find any prompt feedback from model as well';
+      }
+      throw new GoogleGenerativeAIError(errorMessage);
     }
   }
 

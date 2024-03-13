@@ -83,7 +83,7 @@ export async function generateContent(
     apiEndpoint: apiEndpoint,
     requestOptions: requestOptions,
   }).catch(e => {
-    throw new GoogleGenerativeAIError('exception posting request', e);
+    throw new GoogleGenerativeAIError('exception posting request to model', e);
   });
   await throwErrorIfNotOK(response).catch(e => {
     throw e;
