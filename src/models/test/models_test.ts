@@ -37,14 +37,19 @@ import {
 import * as StreamFunctions from '../../functions/post_fetch_processing';
 import * as GenerateContentFunctions from '../../functions/generate_content';
 import * as CountTokensFunctions from '../../functions/count_tokens';
+import {createFakeGoogleAuth} from '../../testing/fake_google_auth';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
 const googleAuth = new GoogleAuth({
   scopes: 'https://www.googleapis.com/auth/cloud-platform',
 });
-const TEST_CHAT_MESSSAGE_TEXT = 'How are you doing today?';
 const TEST_TOKEN = 'testtoken';
+const fakeGoogleAuth = createFakeGoogleAuth({
+  scopes: 'https://www.googleapis.com/auth/cloud-platform',
+  accessToken: TEST_TOKEN,
+});
+const TEST_CHAT_MESSSAGE_TEXT = 'How are you doing today?';
 const TEST_USER_CHAT_MESSAGE = [
   {role: constants.USER_ROLE, parts: [{text: TEST_CHAT_MESSSAGE_TEXT}]},
 ];
