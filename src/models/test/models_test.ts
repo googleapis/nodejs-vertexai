@@ -29,6 +29,7 @@ import {
   HarmBlockThreshold,
   HarmCategory,
   HarmProbability,
+  RequestOptions,
   SafetyRating,
   SafetySetting,
   StreamGenerateContentResult,
@@ -41,11 +42,8 @@ import {createFakeGoogleAuth} from '../../testing/fake_google_auth';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
-const googleAuth = new GoogleAuth({
-  scopes: 'https://www.googleapis.com/auth/cloud-platform',
-});
 const TEST_TOKEN = 'testtoken';
-const fakeGoogleAuth = createFakeGoogleAuth({
+const FAKE_GOOGLE_AUTH = createFakeGoogleAuth({
   scopes: 'https://www.googleapis.com/auth/cloud-platform',
   accessToken: TEST_TOKEN,
 });
@@ -252,7 +250,7 @@ describe('GenerativeModel startChat', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
     const chat = model.startChat();
 
@@ -263,7 +261,7 @@ describe('GenerativeModel startChat', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
     const chat = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
@@ -276,7 +274,7 @@ describe('GenerativeModel startChat', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       requestOptions: TEST_REQUEST_OPTIONS,
     });
     const chat = model.startChat({
@@ -293,7 +291,7 @@ describe('GenerativeModelPreview startChat', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
     const chat = model.startChat();
 
@@ -304,7 +302,7 @@ describe('GenerativeModelPreview startChat', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
     const chat = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
@@ -317,7 +315,7 @@ describe('GenerativeModelPreview startChat', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       requestOptions: TEST_REQUEST_OPTIONS,
     });
     const chat = model.startChat({
@@ -338,9 +336,8 @@ describe('GenerativeModel generateContent', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     expectedResult = {
       response: TEST_MODEL_RESPONSE,
     };
@@ -367,15 +364,12 @@ describe('GenerativeModel generateContent', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       requestOptions: TEST_REQUEST_OPTIONS,
     });
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
-    spyOnProperty(modelWithRequestOptions, 'token', 'get').and.resolveTo(
-      TEST_TOKEN
-    );
     const generateContentSpy = spyOn(
       GenerateContentFunctions,
       'generateContent'
@@ -433,10 +427,9 @@ describe('GenerativeModel generateContent', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       apiEndpoint: TEST_ENDPOINT_BASE_PATH,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
@@ -540,9 +533,8 @@ describe('GenerativeModelPreview generateContent', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     expectedResult = {
       response: TEST_MODEL_RESPONSE,
     };
@@ -569,15 +561,12 @@ describe('GenerativeModelPreview generateContent', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       requestOptions: TEST_REQUEST_OPTIONS,
     });
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
-    spyOnProperty(modelWithRequestOptions, 'token', 'get').and.resolveTo(
-      TEST_TOKEN
-    );
     const generateContentSpy = spyOn(
       GenerateContentFunctions,
       'generateContent'
@@ -635,10 +624,9 @@ describe('GenerativeModelPreview generateContent', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       apiEndpoint: TEST_ENDPOINT_BASE_PATH,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
@@ -742,9 +730,9 @@ describe('GenerativeModel generateContentStream', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
+
     expectedStreamResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
@@ -779,7 +767,7 @@ describe('GenerativeModel generateContentStream', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       requestOptions: TEST_REQUEST_OPTIONS,
     });
     const req: GenerateContentRequest = {
@@ -855,9 +843,8 @@ describe('GenerativeModelPreview generateContentStream', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     expectedStreamResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
@@ -903,7 +890,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       requestOptions: TEST_REQUEST_OPTIONS,
     });
     const req: GenerateContentRequest = {
@@ -983,27 +970,17 @@ describe('ChatSession', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
     });
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     expect(chatSession.history).toEqual(TEST_USER_CHAT_MESSAGE);
     chatSessionWithNoArgs = model.startChat();
-    spyOnProperty(chatSessionWithNoArgs, 'token', 'get').and.resolveTo(
-      TEST_TOKEN
-    );
     chatSessionWithEmptyResponse = model.startChat();
-    spyOnProperty(chatSessionWithEmptyResponse, 'token', 'get').and.resolveTo(
-      TEST_TOKEN
-    );
     chatSessionWithFunctionCall = model.startChat({
       tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
     });
-    spyOnProperty(chatSessionWithFunctionCall, 'token', 'get').and.resolveTo(
-      TEST_TOKEN
-    );
     expectedStreamResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
@@ -1030,7 +1007,7 @@ describe('ChatSession', () => {
         model: 'gemini-pro',
         project: PROJECT,
         location: LOCATION,
-        googleAuth: googleAuth,
+        googleAuth: FAKE_GOOGLE_AUTH,
         requestOptions: TEST_REQUEST_OPTIONS,
       });
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
@@ -1043,11 +1020,6 @@ describe('ChatSession', () => {
       ).and.resolveTo({
         response: TEST_MODEL_RESPONSE,
       });
-      spyOnProperty(
-        chatSessionWithRequestOptions,
-        'token',
-        'get'
-      ).and.resolveTo(TEST_TOKEN);
       await chatSessionWithRequestOptions.sendMessage(req);
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
@@ -1156,7 +1128,6 @@ describe('ChatSession', () => {
           },
         ],
       });
-      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
       spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
@@ -1185,7 +1156,6 @@ describe('ChatSession', () => {
           },
         ],
       });
-      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
       const resp = await chatSession.sendMessageStream(req);
 
       let firstChunkTimestamp = 0;
@@ -1203,7 +1173,7 @@ describe('ChatSession', () => {
         model: 'gemini-pro',
         project: PROJECT,
         location: LOCATION,
-        googleAuth: googleAuth,
+        googleAuth: FAKE_GOOGLE_AUTH,
         requestOptions: TEST_REQUEST_OPTIONS,
       });
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
@@ -1217,11 +1187,6 @@ describe('ChatSession', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       });
-      spyOnProperty(
-        chatSessionWithRequestOptions,
-        'token',
-        'get'
-      ).and.resolveTo(TEST_TOKEN);
       await chatSessionWithRequestOptions.sendMessageStream(req);
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
@@ -1242,7 +1207,6 @@ describe('ChatSession', () => {
           },
         ],
       });
-      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
       spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
@@ -1320,27 +1284,17 @@ describe('ChatSessionPreview', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
     });
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     expect(chatSession.history).toEqual(TEST_USER_CHAT_MESSAGE);
     chatSessionWithNoArgs = model.startChat();
-    spyOnProperty(chatSessionWithNoArgs, 'token', 'get').and.resolveTo(
-      TEST_TOKEN
-    );
     chatSessionWithEmptyResponse = model.startChat();
-    spyOnProperty(chatSessionWithEmptyResponse, 'token', 'get').and.resolveTo(
-      TEST_TOKEN
-    );
     chatSessionWithFunctionCall = model.startChat({
       tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
     });
-    spyOnProperty(chatSessionWithFunctionCall, 'token', 'get').and.resolveTo(
-      TEST_TOKEN
-    );
     expectedStreamResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
@@ -1368,7 +1322,7 @@ describe('ChatSessionPreview', () => {
         model: 'gemini-pro',
         project: PROJECT,
         location: LOCATION,
-        googleAuth: googleAuth,
+        googleAuth: FAKE_GOOGLE_AUTH,
         requestOptions: TEST_REQUEST_OPTIONS,
       });
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
@@ -1381,11 +1335,6 @@ describe('ChatSessionPreview', () => {
       ).and.resolveTo({
         response: TEST_MODEL_RESPONSE,
       });
-      spyOnProperty(
-        chatSessionWithRequestOptions,
-        'token',
-        'get'
-      ).and.resolveTo(TEST_TOKEN);
       await chatSessionWithRequestOptions.sendMessage(req);
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
@@ -1494,7 +1443,6 @@ describe('ChatSessionPreview', () => {
           },
         ],
       });
-      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
       spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
@@ -1523,7 +1471,6 @@ describe('ChatSessionPreview', () => {
           },
         ],
       });
-      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
       const resp = await chatSession.sendMessageStream(req);
 
       let firstChunkTimestamp = 0;
@@ -1541,7 +1488,7 @@ describe('ChatSessionPreview', () => {
         model: 'gemini-pro',
         project: PROJECT,
         location: LOCATION,
-        googleAuth: googleAuth,
+        googleAuth: FAKE_GOOGLE_AUTH,
         requestOptions: TEST_REQUEST_OPTIONS,
       });
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
@@ -1555,11 +1502,6 @@ describe('ChatSessionPreview', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
       });
-      spyOnProperty(
-        chatSessionWithRequestOptions,
-        'token',
-        'get'
-      ).and.resolveTo(TEST_TOKEN);
       await chatSessionWithRequestOptions.sendMessageStream(req);
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
@@ -1580,7 +1522,6 @@ describe('ChatSessionPreview', () => {
           },
         ],
       });
-      spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
       spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
@@ -1651,9 +1592,8 @@ describe('GenerativeModel countTokens', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     const req: CountTokensRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
@@ -1673,10 +1613,9 @@ describe('GenerativeModel countTokens', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       requestOptions: TEST_REQUEST_OPTIONS,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     const req: CountTokensRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
@@ -1693,9 +1632,8 @@ describe('GenerativeModelPreview countTokens', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     const req: CountTokensRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
@@ -1715,10 +1653,9 @@ describe('GenerativeModelPreview countTokens', () => {
       model: 'gemini-pro',
       project: PROJECT,
       location: LOCATION,
-      googleAuth: googleAuth,
+      googleAuth: FAKE_GOOGLE_AUTH,
       requestOptions: TEST_REQUEST_OPTIONS,
     });
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
     const req: CountTokensRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
@@ -1734,7 +1671,7 @@ describe('GenerativeModel when exception at fetch', () => {
     model: 'gemini-pro',
     project: PROJECT,
     location: LOCATION,
-    googleAuth: googleAuth,
+    googleAuth: FAKE_GOOGLE_AUTH,
   });
   const chatSession = model.startChat();
   const message = 'hi';
@@ -1745,8 +1682,6 @@ describe('GenerativeModel when exception at fetch', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.throwError('error');
   });
 
@@ -1772,7 +1707,7 @@ describe('GenerativeModelPreview when exception at fetch', () => {
     model: 'gemini-pro',
     project: PROJECT,
     location: LOCATION,
-    googleAuth: googleAuth,
+    googleAuth: FAKE_GOOGLE_AUTH,
   });
   const chatSession = model.startChat();
   const message = 'hi';
@@ -1783,8 +1718,6 @@ describe('GenerativeModelPreview when exception at fetch', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.throwError('error');
   });
 
@@ -1812,7 +1745,7 @@ describe('GenerativeModel when response is undefined', () => {
     model: 'gemini-pro',
     project: PROJECT,
     location: LOCATION,
-    googleAuth: googleAuth,
+    googleAuth: FAKE_GOOGLE_AUTH,
   });
   const req: GenerateContentRequest = {
     contents: TEST_USER_CHAT_MESSAGE,
@@ -1824,8 +1757,6 @@ describe('GenerativeModel when response is undefined', () => {
   };
   beforeEach(() => {
     spyOn(global, 'fetch').and.resolveTo();
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
   });
 
   it('generateContent should throw GoogleGenerativeAI error', async () => {
@@ -1864,7 +1795,7 @@ describe('GenerativeModelPreview when response is undefined', () => {
     model: 'gemini-pro',
     project: PROJECT,
     location: LOCATION,
-    googleAuth: googleAuth,
+    googleAuth: FAKE_GOOGLE_AUTH,
   });
   const req: GenerateContentRequest = {
     contents: TEST_USER_CHAT_MESSAGE,
@@ -1876,8 +1807,6 @@ describe('GenerativeModelPreview when response is undefined', () => {
   };
   beforeEach(() => {
     spyOn(global, 'fetch').and.resolveTo();
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
   });
 
   it('generateContent should throw GoogleGenerativeAI error', async () => {
@@ -1930,7 +1859,7 @@ describe('GeneratvieModel when response is 4XX', () => {
     model: 'gemini-pro',
     project: PROJECT,
     location: LOCATION,
-    googleAuth: googleAuth,
+    googleAuth: FAKE_GOOGLE_AUTH,
   });
   const message = 'hi';
   const chatSession = model.startChat();
@@ -1938,8 +1867,6 @@ describe('GeneratvieModel when response is 4XX', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.resolveTo(response);
   });
 
@@ -1997,7 +1924,7 @@ describe('GeneratvieModelPreview when response is 4XX', () => {
     model: 'gemini-pro',
     project: PROJECT,
     location: LOCATION,
-    googleAuth: googleAuth,
+    googleAuth: FAKE_GOOGLE_AUTH,
   });
   const message = 'hi';
   const chatSession = model.startChat();
@@ -2005,8 +1932,6 @@ describe('GeneratvieModelPreview when response is 4XX', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.resolveTo(response);
   });
 
@@ -2064,7 +1989,7 @@ describe('GenerativeModel when response is not OK and not 4XX', () => {
     model: 'gemini-pro',
     project: PROJECT,
     location: LOCATION,
-    googleAuth: googleAuth,
+    googleAuth: FAKE_GOOGLE_AUTH,
   });
   const message = 'hi';
   const chatSession = model.startChat();
@@ -2072,8 +1997,6 @@ describe('GenerativeModel when response is not OK and not 4XX', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.resolveTo(response);
   });
 
@@ -2131,7 +2054,7 @@ describe('GenerativeModelPreview when response is not OK and not 4XX', () => {
     model: 'gemini-pro',
     project: PROJECT,
     location: LOCATION,
-    googleAuth: googleAuth,
+    googleAuth: FAKE_GOOGLE_AUTH,
   });
   const message = 'hi';
   const chatSession = model.startChat();
@@ -2139,8 +2062,6 @@ describe('GenerativeModelPreview when response is not OK and not 4XX', () => {
     contents: TEST_USER_CHAT_MESSAGE,
   };
   beforeEach(() => {
-    spyOnProperty(model, 'token', 'get').and.resolveTo(TEST_TOKEN);
-    spyOnProperty(chatSession, 'token', 'get').and.resolveTo(TEST_TOKEN);
     spyOn(global, 'fetch').and.resolveTo(response);
   });
 
