@@ -85,8 +85,9 @@ export async function processStream(
   const inputStream = response.body!.pipeThrough(
     new TextDecoderStream('utf8', {fatal: true})
   );
-  const responseStream =
-    getResponseStream<GenerateContentResponse>(inputStream);
+  const responseStream = getResponseStream(
+    inputStream
+  ) as ReadableStream<GenerateContentResponse>;
   const [stream1, stream2] = responseStream.tee();
   return Promise.resolve({
     stream: generateResponseSequence(stream1),
@@ -115,11 +116,11 @@ async function getResponsePromise(
  * GenerateContentResponse in each iteration.
  * @ignore
  */
-export function getResponseStream<T>(
+export function getResponseStream(
   inputStream: ReadableStream<string>
-): ReadableStream<T> {
+): ReadableStream<unknown> {
   const reader = inputStream.getReader();
-  const stream = new ReadableStream<T>({
+  const stream = new ReadableStream<unknown>({
     start(controller) {
       let currentText = '';
       return pump();
@@ -140,10 +141,10 @@ export function getResponseStream<T>(
 
           currentText += value;
           let match = currentText.match(responseLineRE);
-          let parsedResponse: T;
+          let parsedResponse: unknown;
           while (match) {
             try {
-              parsedResponse = JSON.parse(match[1]) as T;
+              parsedResponse = JSON.parse(match[1]);
             } catch (e) {
               controller.error(
                 new GoogleGenerativeAIError(
