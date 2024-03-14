@@ -34,7 +34,7 @@ import {GoogleGenerativeAIError} from '../types/errors';
 import * as constants from '../util/constants';
 
 import {
-  processNonStream,
+  processUnary,
   processStream,
   throwErrorIfNotOK,
 } from './post_fetch_processing';
@@ -88,7 +88,7 @@ export async function generateContent(
   await throwErrorIfNotOK(response).catch(e => {
     throw e;
   });
-  return processNonStream(response);
+  return processUnary(response);
 }
 
 /**

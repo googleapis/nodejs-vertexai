@@ -35,7 +35,7 @@ import {
   StreamGenerateContentResult,
   Tool,
 } from '../../types/content';
-import * as StreamFunctions from '../../functions/post_fetch_processing';
+import * as PostFetchFunctions from '../../functions/post_fetch_processing';
 import * as GenerateContentFunctions from '../../functions/generate_content';
 import * as CountTokensFunctions from '../../functions/count_tokens';
 import {createFakeGoogleAuth} from '../../testing/fake_google_auth';
@@ -363,7 +363,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -390,7 +390,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(TEST_CHAT_MESSSAGE_TEXT);
     expect(resp).toEqual(expectedResult);
   });
@@ -402,7 +402,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -425,7 +425,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -444,7 +444,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     await model.generateContent(req);
     expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
       TEST_ENDPOINT_BASE_PATH
@@ -458,7 +458,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     await model.generateContent(req);
     expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
       `${LOCATION}-aiplatform.googleapis.com`
@@ -474,7 +474,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     await model.generateContent(reqWithEmptyConfigs);
     const requestArgs = fetchSpy.calls.allArgs()[0][1];
     if (typeof requestArgs === 'object' && requestArgs) {
@@ -491,7 +491,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     await model.generateContent(reqWithEmptyConfigs);
     const requestArgs = fetchSpy.calls.allArgs()[0][1];
     if (typeof requestArgs === 'object' && requestArgs) {
@@ -506,7 +506,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(
       resp.response.candidates[0].citationMetadata?.citationSources.length
@@ -525,7 +525,7 @@ describe('GenerativeModel generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -560,7 +560,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -587,7 +587,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(TEST_CHAT_MESSSAGE_TEXT);
     expect(resp).toEqual(expectedResult);
   });
@@ -599,7 +599,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -622,7 +622,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -641,7 +641,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     await model.generateContent(req);
     expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
       TEST_ENDPOINT_BASE_PATH
@@ -655,7 +655,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     await model.generateContent(req);
     expect(fetchSpy.calls.allArgs()[0][0].toString()).toContain(
       `${LOCATION}-aiplatform.googleapis.com`
@@ -671,7 +671,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     await model.generateContent(reqWithEmptyConfigs);
     const requestArgs = fetchSpy.calls.allArgs()[0][1];
     if (typeof requestArgs === 'object' && requestArgs) {
@@ -688,7 +688,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     await model.generateContent(reqWithEmptyConfigs);
     const requestArgs = fetchSpy.calls.allArgs()[0][1];
     if (typeof requestArgs === 'object' && requestArgs) {
@@ -703,7 +703,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(
       resp.response.candidates[0].citationMetadata?.citationSources.length
@@ -722,7 +722,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
     };
-    spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -758,7 +758,7 @@ describe('GenerativeModel generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGeneratorMultiStream(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
     let firstChunkTimestamp = 0;
     for await (const item of resp.stream) {
@@ -794,7 +794,7 @@ describe('GenerativeModel generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(TEST_CHAT_MESSSAGE_TEXT);
     expect(resp).toEqual(expectedResult);
   });
@@ -807,7 +807,7 @@ describe('GenerativeModel generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -820,7 +820,7 @@ describe('GenerativeModel generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -835,7 +835,9 @@ describe('GenerativeModel generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(
+      expectedStreamResult
+    );
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedStreamResult);
   });
@@ -870,7 +872,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -880,7 +882,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGeneratorMultiStream(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
     let firstChunkTimestamp = 0;
     for await (const item of resp.stream) {
@@ -918,7 +920,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(TEST_CHAT_MESSSAGE_TEXT);
     expect(resp).toEqual(expectedResult);
   });
@@ -931,7 +933,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -944,7 +946,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedResult);
   });
@@ -959,7 +961,9 @@ describe('GenerativeModelPreview generateContentStream', () => {
       response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
       stream: testGenerator(),
     };
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(
+      expectedStreamResult
+    );
     const resp = await model.generateContentStream(req);
     expect(resp).toEqual(expectedStreamResult);
   });
@@ -1005,7 +1009,7 @@ describe('ChatSession', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSession.sendMessage(req);
       expect(resp).toEqual(expectedResult);
       expect(chatSession.history.length).toEqual(3);
@@ -1040,7 +1044,7 @@ describe('ChatSession', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
       expect(chatSessionWithNoArgs.history.length).toEqual(2);
@@ -1051,7 +1055,7 @@ describe('ChatSession', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_EMPTY_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       await expectAsync(
         chatSessionWithEmptyResponse.sendMessage(req)
       ).toBeRejected();
@@ -1062,7 +1066,7 @@ describe('ChatSession', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
       expect(chatSessionWithNoArgs.history.length).toEqual(2);
@@ -1076,7 +1080,7 @@ describe('ChatSession', () => {
         response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
       };
 
-      const streamSpy = spyOn(StreamFunctions, 'processNonStream');
+      const streamSpy = spyOn(PostFetchFunctions, 'processUnary');
 
       streamSpy.and.resolveTo(expectedResult);
       const response1 = await chatSessionWithFunctionCall.sendMessage(
@@ -1136,7 +1140,7 @@ describe('ChatSession', () => {
           },
         ],
       });
-      spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       const result = await chatSession.sendMessageStream(req);
@@ -1154,7 +1158,7 @@ describe('ChatSession', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGeneratorMultiStream(),
       };
-      spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
 
       const chatSession = model.startChat({
         history: [
@@ -1215,7 +1219,7 @@ describe('ChatSession', () => {
           },
         ],
       });
-      spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       const result = await chatSession.sendMessageStream(req);
@@ -1235,7 +1239,7 @@ describe('ChatSession', () => {
         stream: testGenerator(),
       };
 
-      const streamSpy = spyOn(StreamFunctions, 'processStream');
+      const streamSpy = spyOn(PostFetchFunctions, 'processStream');
 
       streamSpy.and.resolveTo(expectedStreamResult);
       const response1 = await chatSessionWithFunctionCall.sendMessageStream(
@@ -1319,7 +1323,7 @@ describe('ChatSessionPreview', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSession.sendMessage(req);
       expect(resp).toEqual(expectedResult);
       expect(chatSession.history.length).toEqual(3);
@@ -1355,7 +1359,7 @@ describe('ChatSessionPreview', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
       expect(chatSessionWithNoArgs.history.length).toEqual(2);
@@ -1366,7 +1370,7 @@ describe('ChatSessionPreview', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_EMPTY_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       await expectAsync(
         chatSessionWithEmptyResponse.sendMessage(req)
       ).toBeRejected();
@@ -1377,7 +1381,7 @@ describe('ChatSessionPreview', () => {
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
-      spyOn(StreamFunctions, 'processNonStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
       expect(chatSessionWithNoArgs.history.length).toEqual(2);
@@ -1391,7 +1395,7 @@ describe('ChatSessionPreview', () => {
         response: TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL,
       };
 
-      const streamSpy = spyOn(StreamFunctions, 'processNonStream');
+      const streamSpy = spyOn(PostFetchFunctions, 'processUnary');
 
       streamSpy.and.resolveTo(expectedResult);
       const response1 = await chatSessionWithFunctionCall.sendMessage(
@@ -1451,7 +1455,7 @@ describe('ChatSessionPreview', () => {
           },
         ],
       });
-      spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       const result = await chatSession.sendMessageStream(req);
@@ -1469,7 +1473,7 @@ describe('ChatSessionPreview', () => {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGeneratorMultiStream(),
       };
-      spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
 
       const chatSession = model.startChat({
         history: [
@@ -1530,7 +1534,7 @@ describe('ChatSessionPreview', () => {
           },
         ],
       });
-      spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
       expect(chatSession.history.length).toEqual(1);
       expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
       const result = await chatSession.sendMessageStream(req);
@@ -1550,7 +1554,7 @@ describe('ChatSessionPreview', () => {
         stream: testGenerator(),
       };
 
-      const streamSpy = spyOn(StreamFunctions, 'processStream');
+      const streamSpy = spyOn(PostFetchFunctions, 'processStream');
 
       streamSpy.and.resolveTo(expectedStreamResult);
       const response1 = await chatSessionWithFunctionCall.sendMessageStream(

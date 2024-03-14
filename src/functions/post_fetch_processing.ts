@@ -267,7 +267,7 @@ function addCandidateFunctionCalls(
  * Process model responses from generateContent
  * @ignore
  */
-export async function processNonStream(
+export async function processUnary(
   response: Response | undefined
 ): Promise<GenerateContentResult> {
   if (response !== undefined) {
