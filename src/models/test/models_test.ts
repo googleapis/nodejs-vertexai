@@ -244,6 +244,14 @@ async function* testGeneratorMultiStream(): AsyncGenerator<GenerateContentRespon
   };
 }
 
+class ChatSessionForTest extends ChatSession {
+  public override readonly requestOptions?: RequestOptions;
+}
+
+class ChatSessionPreviewForTest extends ChatSessionPreview {
+  public override readonly requestOptions?: RequestOptions;
+}
+
 describe('GenerativeModel startChat', () => {
   it('returns ChatSession when pass no arg', () => {
     const model = new GenerativeModel({
@@ -279,7 +287,7 @@ describe('GenerativeModel startChat', () => {
     });
     const chat = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
-    });
+    }) as ChatSessionForTest;
 
     expect(chat.requestOptions).toEqual(TEST_REQUEST_OPTIONS);
   });
@@ -320,7 +328,7 @@ describe('GenerativeModelPreview startChat', () => {
     });
     const chat = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
-    });
+    }) as ChatSessionPreviewForTest;
 
     expect(chat.requestOptions).toEqual(TEST_REQUEST_OPTIONS);
   });
@@ -1012,7 +1020,7 @@ describe('ChatSession', () => {
       });
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
         history: TEST_USER_CHAT_MESSAGE,
-      });
+      }) as ChatSessionForTest;
       const req = 'How are you doing today?';
       const generateContentSpy: jasmine.Spy = spyOn(
         GenerateContentFunctions,
@@ -1178,7 +1186,7 @@ describe('ChatSession', () => {
       });
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
         history: TEST_USER_CHAT_MESSAGE,
-      });
+      }) as ChatSessionForTest;
       const req = 'How are you doing today?';
       const generateContentSpy: jasmine.Spy = spyOn(
         GenerateContentFunctions,
@@ -1327,7 +1335,7 @@ describe('ChatSessionPreview', () => {
       });
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
         history: TEST_USER_CHAT_MESSAGE,
-      });
+      }) as ChatSessionPreviewForTest;
       const req = 'How are you doing today?';
       const generateContentSpy: jasmine.Spy = spyOn(
         GenerateContentFunctions,
@@ -1493,7 +1501,7 @@ describe('ChatSessionPreview', () => {
       });
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
         history: TEST_USER_CHAT_MESSAGE,
-      });
+      }) as ChatSessionPreviewForTest;
       const req = 'How are you doing today?';
       const generateContentSpy: jasmine.Spy = spyOn(
         GenerateContentFunctions,

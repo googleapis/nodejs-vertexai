@@ -55,7 +55,7 @@ export class ChatSession {
   private sendStreamPromise: Promise<void> = Promise.resolve();
   private readonly publisherModelEndpoint: string;
   private readonly googleAuth: GoogleAuth;
-  readonly requestOptions?: RequestOptions;
+  protected readonly requestOptions?: RequestOptions;
   private readonly generationConfig?: GenerationConfig;
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
@@ -275,7 +275,7 @@ export class ChatSessionPreview {
   private sendStreamPromise: Promise<void> = Promise.resolve();
   private readonly publisherModelEndpoint: string;
   private readonly googleAuth: GoogleAuth;
-  readonly requestOptions?: RequestOptions;
+  protected readonly requestOptions?: RequestOptions;
   private readonly generationConfig?: GenerationConfig;
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
