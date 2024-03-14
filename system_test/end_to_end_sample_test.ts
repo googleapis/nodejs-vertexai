@@ -659,6 +659,7 @@ describe('sendMessage', () => {
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
     }
   });
+
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: 'gemini-pro',
