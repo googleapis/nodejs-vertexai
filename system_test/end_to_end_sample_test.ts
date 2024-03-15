@@ -113,14 +113,15 @@ const vertexAI = new VertexAI({
   location: LOCATION,
 });
 
+const TEXT_MODEL_NAME = 'gemini-1.0-pro';
 const generativeTextModel = vertexAI.getGenerativeModel({
-  model: 'gemini-1.0-pro',
+  model: TEXT_MODEL_NAME,
   generationConfig: {
     maxOutputTokens: 256,
   },
 });
 const generativeTextModelPreview = vertexAI.preview.getGenerativeModel({
-  model: 'gemini-1.0-pro',
+  model: TEXT_MODEL_NAME,
   generationConfig: {
     maxOutputTokens: 256,
   },
@@ -138,12 +139,6 @@ const generativeTextModelWithPrefixPreview =
       maxOutputTokens: 256,
     },
   });
-const textModelNoOutputLimit = vertexAI.getGenerativeModel({
-  model: 'gemini-1.0-pro',
-});
-const textModelNoOutputLimitPreview = vertexAI.preview.getGenerativeModel({
-  model: 'gemini-1.0-pro',
-});
 const generativeVisionModel = vertexAI.getGenerativeModel({
   model: 'gemini-1.0-pro-vision',
 });
@@ -442,6 +437,70 @@ describe('generateContentStream', () => {
       expect(item.candidates[0].functionCalls!).toEqual(functionCalls!);
     }
   });
+  it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const result = await generativeTextModel.generateContentStream({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = await result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+    });
+    const result = await generativeTextModel.generateContentStream({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const response = await result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const result = await generativeTextModel.generateContentStream({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = await result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+    });
+    const result = await generativeTextModel.generateContentStream({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const response = await result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
 });
 
 describe('generateContent', () => {
@@ -467,7 +526,7 @@ describe('generateContent', () => {
   });
   it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
-      model: 'gemini-pro',
+      model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await generativeTextModel.generateContent({
@@ -483,7 +542,7 @@ describe('generateContent', () => {
   });
   it('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
-      model: 'gemini-pro',
+      model: TEXT_MODEL_NAME,
     });
     const result = await generativeTextModel.generateContent({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
@@ -499,7 +558,7 @@ describe('generateContent', () => {
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
-      model: 'gemini-pro',
+      model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await generativeTextModel.generateContent({
@@ -515,7 +574,7 @@ describe('generateContent', () => {
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
-      model: 'gemini-pro',
+      model: TEXT_MODEL_NAME,
     });
     const result = await generativeTextModel.generateContent({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
@@ -630,7 +689,7 @@ describe('sendMessage', () => {
   });
   it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
-      model: 'gemini-pro',
+      model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const chat = generativeTextModel.startChat();
@@ -645,7 +704,7 @@ describe('sendMessage', () => {
   });
   it('should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
-      model: 'gemini-pro',
+      model: TEXT_MODEL_NAME,
     });
     const chat = generativeTextModel.startChat({
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -661,7 +720,7 @@ describe('sendMessage', () => {
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
-      model: 'gemini-pro',
+      model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const chat = generativeTextModel.startChat();
@@ -676,7 +735,7 @@ describe('sendMessage', () => {
   });
   it('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
-      model: 'gemini-pro',
+      model: TEXT_MODEL_NAME,
     });
     const chat = generativeTextModel.startChat({
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -827,6 +886,68 @@ describe('sendMessageStream', () => {
     expect(
       JSON.stringify(response2.candidates[0].content.parts[0].text)
     ).toContain(WEATHER_FORECAST);
+  });
+  it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessageStream('Why is the sky blue?');
+    const response = await result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+    });
+    const chat = generativeTextModel.startChat({
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const result = await chat.sendMessageStream('Why is the sky blue?');
+    const response = await result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessageStream('Why is the sky blue?');
+    const response = await result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
+  });
+  it('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+    });
+    const chat = generativeTextModel.startChat({
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
+    const result = await chat.sendMessageStream('Why is the sky blue?');
+    const response = await result.response;
+    const groundingMetadata = response.candidates[0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy();
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+    }
   });
 });
 

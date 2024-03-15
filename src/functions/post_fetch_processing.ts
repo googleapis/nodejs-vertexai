@@ -22,6 +22,7 @@ import {
   GenerateContentCandidate,
   GenerateContentResponse,
   GenerateContentResult,
+  GroundingMetadata,
   Part,
   StreamGenerateContentResult,
 } from '../types/content';
@@ -235,11 +236,50 @@ function aggregateResponses(
           }
         }
       }
+      const groundingMetadataAggregated: GroundingMetadata | undefined =
+        aggregateGroundingMetadataForCandidate(
+          response.candidates[i],
+          aggregatedResponse.candidates[i]
+        );
+      if (groundingMetadataAggregated) {
+        aggregatedResponse.candidates[i].groundingMetadata =
+          groundingMetadataAggregated;
+      }
     }
   }
   aggregatedResponse.promptFeedback =
     responses[responses.length - 1].promptFeedback;
   return aggregatedResponse;
+}
+
+function aggregateGroundingMetadataForCandidate(
+  candidateChunk: GenerateContentCandidate,
+  aggregatedCandidate: GenerateContentCandidate
+): GroundingMetadata | undefined {
+  if (!candidateChunk.groundingMetadata) {
+    return;
+  }
+  const emptyGroundingMetadata: GroundingMetadata = {
+    webSearchQueries: [],
+    groundingAttributions: [],
+  };
+  const groundingMetadataAggregated: GroundingMetadata =
+    aggregatedCandidate.groundingMetadata ?? emptyGroundingMetadata;
+  const groundingMetadataChunk: GroundingMetadata =
+    candidateChunk.groundingMetadata!;
+  if (groundingMetadataChunk.webSearchQueries) {
+    groundingMetadataAggregated.webSearchQueries =
+      groundingMetadataAggregated.webSearchQueries!.concat(
+        groundingMetadataChunk.webSearchQueries
+      );
+  }
+  if (groundingMetadataChunk.groundingAttributions) {
+    groundingMetadataAggregated.groundingAttributions =
+      groundingMetadataAggregated.groundingAttributions!.concat(
+        groundingMetadataChunk.groundingAttributions
+      );
+  }
+  return groundingMetadataAggregated;
 }
 
 function addCandidateFunctionCalls(
