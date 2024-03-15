@@ -90,7 +90,7 @@ export class ChatSession {
    * fails.
    * @returns Promise of token.
    */
-  private get token(): Promise<string | null | undefined> {
+  private fetchToken(): Promise<string | null | undefined> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
       throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
     });
@@ -134,7 +134,7 @@ export class ChatSession {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       generateContentrequest,
       this.apiEndpoint,
       this.generationConfig,
@@ -241,7 +241,7 @@ export class ChatSession {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       generateContentrequest,
       this.apiEndpoint,
       this.generationConfig,
@@ -309,7 +309,7 @@ export class ChatSessionPreview {
    * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
    * @returns Promise of token.
    */
-  private get token(): Promise<string | null | undefined> {
+  private fetchToken(): Promise<string | null | undefined> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
       throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
     });
@@ -338,7 +338,7 @@ export class ChatSessionPreview {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       generateContentrequest,
       this.apiEndpoint,
       this.generationConfig,
@@ -427,7 +427,7 @@ export class ChatSessionPreview {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       generateContentrequest,
       this.apiEndpoint,
       this.generationConfig,

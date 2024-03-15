@@ -85,7 +85,7 @@ export class GenerativeModel {
    * fails.
    * @returns Promise of token
    */
-  private get token(): Promise<string | null | undefined> {
+  private fetchToken(): Promise<string | null | undefined> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
       throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
     });
@@ -118,7 +118,7 @@ export class GenerativeModel {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       request,
       this.apiEndpoint,
       this.generationConfig,
@@ -159,7 +159,7 @@ export class GenerativeModel {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       request,
       this.apiEndpoint,
       this.generationConfig,
@@ -192,7 +192,7 @@ export class GenerativeModel {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       request,
       this.apiEndpoint,
       this.requestOptions
@@ -285,7 +285,7 @@ export class GenerativeModelPreview {
    * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
    * @returns Promise of token.
    */
-  private get token(): Promise<string | null | undefined> {
+  private fetchToken(): Promise<string | null | undefined> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
       throw new GoogleAuthError(constants.CREDENTIAL_ERROR_MESSAGE, e);
     });
@@ -304,7 +304,7 @@ export class GenerativeModelPreview {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       request,
       this.apiEndpoint,
       this.generationConfig,
@@ -327,7 +327,7 @@ export class GenerativeModelPreview {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       request,
       this.apiEndpoint,
       this.generationConfig,
@@ -347,7 +347,7 @@ export class GenerativeModelPreview {
       this.location,
       this.project,
       this.publisherModelEndpoint,
-      this.token,
+      this.fetchToken(),
       request,
       this.apiEndpoint,
       this.requestOptions
