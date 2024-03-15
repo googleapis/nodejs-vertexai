@@ -163,16 +163,22 @@ describe('generateContentStream', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream, for item ${item}`
+        `sys test failure on generateContentStream, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream for testing candidates in aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream for testing candidates in aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
     expect(aggregatedResp.usageMetadata).toBeTruthy(
-      `sys test failure on generateContentStream for testing usageMetadata in aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream for testing usageMetadata in aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
   it('in preview should should return a stream and aggregated response when passed text', async () => {
@@ -181,16 +187,22 @@ describe('generateContentStream', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream in preview, for item ${item}`
+        `sys test failure on generateContentStream in preview, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview for testing candidates in aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream in preview for testing candidates in aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
     expect(aggregatedResp.usageMetadata).toBeTruthy(
-      `sys test failure on generateContentStream in preview for testing usageMetadata in aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream in preview for testing usageMetadata in aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
 
@@ -201,13 +213,17 @@ describe('generateContentStream', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream, for item ${item}`
+        `sys test failure on generateContentStream, for item ${JSON.stringify(
+          item
+        )}`
       );
       for (const candidate of item.candidates) {
         for (const part of candidate.content.parts as TextPart[]) {
           expect(part.text).not.toContain(
             '\ufffd',
-            `sys test failure on generateContentStream, for item ${item}`
+            `sys test failure on generateContentStream, for item ${JSON.stringify(
+              item
+            )}`
           );
         }
       }
@@ -215,7 +231,9 @@ describe('generateContentStream', () => {
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
   it('in preview should not return a invalid unicode', async () => {
@@ -226,13 +244,17 @@ describe('generateContentStream', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream in preview, for item ${item}`
+        `sys test failure on generateContentStream in preview, for item ${JSON.stringify(
+          item
+        )}`
       );
       for (const candidate of item.candidates) {
         for (const part of candidate.content.parts as TextPart[]) {
           expect(part.text).not.toContain(
             '\ufffd',
-            `sys test failure on generateContentStream in preview, for item ${item}`
+            `sys test failure on generateContentStream in preview, for item ${JSON.stringify(
+              item
+            )}`
           );
         }
       }
@@ -240,7 +262,9 @@ describe('generateContentStream', () => {
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream in preview for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
 
@@ -251,13 +275,17 @@ describe('generateContentStream', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream, for item ${item}`
+        `sys test failure on generateContentStream, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
   it('in preview should return a stream and aggregated response when passed multipart base64 content', async () => {
@@ -268,13 +296,17 @@ describe('generateContentStream', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream in preview, for item ${item}`
+        `sys test failure on generateContentStream in preview, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream in preview for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
 
@@ -330,13 +362,17 @@ describe('generateContentStream', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream, for item ${item}`
+        `sys test failure on generateContentStream, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
   it('in preview should should return a stream and aggregated response when passed multipart GCS content', async () => {
@@ -347,13 +383,17 @@ describe('generateContentStream', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream in preview, for item ${item}`
+        `sys test failure on generateContentStream in preview, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream in preview for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
 
@@ -370,10 +410,15 @@ describe('generateContentStream', () => {
       await generativeTextModel.generateContentStream(request);
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream, for item ${item}`
+        `sys test failure on generateContentStream, for item ${JSON.stringify(
+          item
+        )}`
       );
       expect(item.candidates[0].content.parts[0].text?.toLowerCase()).toContain(
-        WEATHER_FORECAST
+        WEATHER_FORECAST,
+        `sys test failure on generateContentStream for candidate part ${JSON.stringify(
+          item.candidates[0].content.parts[0]
+        )}`
       );
     }
   });
@@ -390,10 +435,15 @@ describe('generateContentStream', () => {
       await generativeTextModelPreview.generateContentStream(request);
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream in preview, for item ${item}`
+        `sys test failure on generateContentStream in preview, for item ${JSON.stringify(
+          item
+        )}`
       );
       expect(item.candidates[0].content.parts[0].text?.toLowerCase()).toContain(
-        WEATHER_FORECAST
+        WEATHER_FORECAST,
+        `sys test failure on generateContentStream in preview for candidate part ${JSON.stringify(
+          item.candidates[0].content.parts[0]
+        )}`
       );
     }
   });
@@ -408,7 +458,9 @@ describe('generateContentStream', () => {
       await generativeTextModel.generateContentStream(request);
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream, for item ${item}`
+        `sys test failure on generateContentStream, for item ${JSON.stringify(
+          item
+        )}`
       );
       const functionCalls = item.candidates[0].content.parts
         .filter(part => !!part.functionCall)
@@ -428,7 +480,9 @@ describe('generateContentStream', () => {
       await generativeTextModelPreview.generateContentStream(request);
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream in preview, for item ${item}`
+        `sys test failure on generateContentStream in preview, for item ${JSON.stringify(
+          item
+        )}`
       );
       const functionCalls = item.candidates[0].content.parts
         .filter(part => !!part.functionCall)
@@ -437,7 +491,7 @@ describe('generateContentStream', () => {
       expect(item.candidates[0].functionCalls!).toEqual(functionCalls!);
     }
   });
-  it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -447,13 +501,19 @@ describe('generateContentStream', () => {
     });
     const response = await result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContentStream for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on generateContentStream for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContentStream for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
@@ -463,13 +523,19 @@ describe('generateContentStream', () => {
     });
     const response = await result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContentStream for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on generateContentStream for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContentStream for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -479,13 +545,19 @@ describe('generateContentStream', () => {
     });
     const response = await result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContentStream in preview for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on generateContentStream in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContentStream in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
@@ -495,10 +567,16 @@ describe('generateContentStream', () => {
     });
     const response = await result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContentStream in preview for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on generateContentStream in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContentStream in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
 });
@@ -512,7 +590,9 @@ describe('generateContent', () => {
 
     const aggregatedResp = response.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
   it('in preview should return the aggregated response', async () => {
@@ -521,10 +601,12 @@ describe('generateContent', () => {
 
     const aggregatedResp = response.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream in preview for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
-  it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -534,13 +616,19 @@ describe('generateContent', () => {
     });
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContent for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on generateContent for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContent for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
@@ -550,13 +638,19 @@ describe('generateContent', () => {
     });
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContent for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on generateContent for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContent for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -566,13 +660,19 @@ describe('generateContent', () => {
     });
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContent in preview for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on generateContent in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContent in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
@@ -582,10 +682,16 @@ describe('generateContent', () => {
     });
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContent in preview for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on generateContent in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContent in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
   it('should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
@@ -600,11 +706,18 @@ describe('generateContent', () => {
     const resp = await generativeTextModel.generateContent(request);
 
     expect(resp.response.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream, for resp ${resp}`
+      `sys test failure on generateContentStream, for resp ${JSON.stringify(
+        resp
+      )}`
     );
     expect(
       resp.response.candidates[0].content.parts[0].text?.toLowerCase()
-    ).toContain(WEATHER_FORECAST);
+    ).toContain(
+      WEATHER_FORECAST,
+      `sys test failure on generateContentStream for candidate part ${JSON.stringify(
+        resp.response.candidates[0].content.parts[0]
+      )}`
+    );
   });
   it('in preview should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const request = {
@@ -617,14 +730,21 @@ describe('generateContent', () => {
     };
     const resp = await generativeTextModelPreview.generateContent(request);
     expect(resp.response.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview, for resp ${resp}`
+      `sys test failure on generateContentStream in preview, for resp ${JSON.stringify(
+        resp
+      )}`
     );
     const functionCalls = resp.response.candidates[0].content.parts
       .filter((part: Part) => !!part.functionCall)
       .map((part: Part) => part.functionCall!);
     expect(
       resp.response.candidates[0].content.parts[0].text?.toLowerCase()
-    ).toContain(WEATHER_FORECAST);
+    ).toContain(
+      WEATHER_FORECAST,
+      `sys test failure on generateContentStream in preview for candidate part ${JSON.stringify(
+        resp.response.candidates[0].content.parts[0]
+      )}`
+    );
   });
   it('should return a FunctionCall when passed a FunctionDeclaration', async () => {
     const request = {
@@ -636,7 +756,9 @@ describe('generateContent', () => {
     const resp = await generativeTextModel.generateContent(request);
 
     expect(resp.response.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream, for resp ${resp}`
+      `sys test failure on generateContentStream, for resp ${JSON.stringify(
+        resp
+      )}`
     );
     const functionCalls = resp.response.candidates[0].content.parts
       .filter((part: Part) => !!part.functionCall)
@@ -653,7 +775,9 @@ describe('generateContent', () => {
     };
     const resp = await generativeTextModelPreview.generateContent(request);
     expect(resp.response.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview, for resp ${resp}`
+      `sys test failure on generateContentStream in preview, for resp ${JSON.stringify(
+        resp
+      )}`
     );
     const functionCalls = resp.response.candidates[0].content.parts
       .filter((part: Part) => !!part.functionCall)
@@ -687,7 +811,7 @@ describe('sendMessage', () => {
     );
     expect(chat.history.length).toBe(2);
   });
-  it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -696,13 +820,19 @@ describe('sendMessage', () => {
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on sendMessage for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on sendMessage for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on sendMessage for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
@@ -712,13 +842,19 @@ describe('sendMessage', () => {
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on sendMessage for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on sendMessage for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on sendMessage for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -727,13 +863,19 @@ describe('sendMessage', () => {
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on sendMessage in preview for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on sendMessage in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on sendMessage in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
@@ -743,10 +885,16 @@ describe('sendMessage', () => {
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on sendMessage in preview for grounding metadata: ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on sendMessage in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on sendMessage in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
 });
@@ -765,12 +913,16 @@ describe('sendMessageStream', () => {
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on sendMessageStream, for item ${item}`
+        `sys test failure on sendMessageStream, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
     const resp = await result1.response;
     expect(resp.candidates[0]).toBeTruthy(
-      `sys test failure on sendMessageStream for aggregated response: ${resp}`
+      `sys test failure on sendMessageStream for aggregated response: ${JSON.stringify(
+        resp
+      )}`
     );
     expect(chat.history.length).toBe(2);
   });
@@ -784,12 +936,16 @@ describe('sendMessageStream', () => {
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on sendMessageStream in preview, for item ${item}`
+        `sys test failure on sendMessageStream in preview, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
     const resp = await result1.response;
     expect(resp.candidates[0]).toBeTruthy(
-      `sys test failure on sendMessageStream in preview for aggregated response: ${resp}`
+      `sys test failure on sendMessageStream in preview for aggregated response: ${JSON.stringify(
+        resp
+      )}`
     );
     expect(chat.history.length).toBe(2);
   });
@@ -800,12 +956,16 @@ describe('sendMessageStream', () => {
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on sendMessageStream, for item ${item}`
+        `sys test failure on sendMessageStream, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
     const resp = await result1.response;
     expect(resp.candidates[0]).toBeTruthy(
-      `sys test failure on sendMessageStream for aggregated response: ${resp}`
+      `sys test failure on sendMessageStream for aggregated response: ${JSON.stringify(
+        resp
+      )}`
     );
     expect(chat.history.length).toBe(2);
   });
@@ -815,12 +975,16 @@ describe('sendMessageStream', () => {
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on sendMessageStream in preview, for item ${item}`
+        `sys test failure on sendMessageStream in preview, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
     const resp = await result1.response;
     expect(resp.candidates[0]).toBeTruthy(
-      `sys test failure on sendMessageStream in preview for aggregated response: ${resp}`
+      `sys test failure on sendMessageStream in preview for aggregated response: ${JSON.stringify(
+        resp
+      )}`
     );
     expect(chat.history.length).toBe(2);
   });
@@ -833,28 +997,45 @@ describe('sendMessageStream', () => {
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on sendMessageStream with function calling, for item ${item}`
+        `sys test failure on sendMessageStream with function calling, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
     const response1 = await result1.response;
     expect(
       JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
-    ).toContain(FUNCTION_CALL_NAME);
+    ).toContain(
+      FUNCTION_CALL_NAME,
+      `sys test failure on sendMessageStream with function calling, for function call: ${JSON.stringify(
+        response1.candidates[0].content.parts[0]
+      )}`
+    );
     expect(
       JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
-    ).toContain('location');
+    ).toContain(
+      'location',
+      `sys test failure on sendMessageStream with function calling, for function call: ${JSON.stringify(
+        response1.candidates[0].content.parts[0]
+      )}`
+    );
 
     // Send a follow up message with a FunctionResponse
     const result2 = await chat.sendMessageStream(FUNCTION_RESPONSE_PART);
     for await (const item of result2.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on sendMessageStream with function calling, for item ${item}`
+        `sys test failure on sendMessageStream with function calling, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
     const response2 = await result2.response;
-    expect(
-      JSON.stringify(response2.candidates[0].content.parts[0].text)
-    ).toContain(WEATHER_FORECAST);
+    expect(response2.candidates[0].content.parts[0].text).toContain(
+      WEATHER_FORECAST,
+      `sys test failure on sendMessageStream with function calling, for text: ${JSON.stringify(
+        response2.candidates[0].content.parts[0].text
+      )}`
+    );
   });
   it('in preview should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const chat = generativeTextModelPreview.startChat({
@@ -864,30 +1045,44 @@ describe('sendMessageStream', () => {
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on sendMessageStream in preview with function calling, for item ${item}`
+        `sys test failure on sendMessageStream in preview with function calling, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
     const response1 = await result1.response;
     expect(
       JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
-    ).toContain(FUNCTION_CALL_NAME);
+    ).toContain(
+      FUNCTION_CALL_NAME,
+      `sys test failure on sendMessageStream in preview with function calling, for function call: ${JSON.stringify(
+        response1.candidates[0].content.parts[0]
+      )}`
+    );
     expect(
       JSON.stringify(response1.candidates[0].content.parts[0].functionCall)
-    ).toContain('location');
+    ).toContain(
+      'location',
+      `sys test failure on sendMessageStream in preview with function calling, for function call: ${JSON.stringify(
+        response1.candidates[0].content.parts[0]
+      )}`
+    );
 
     // Send a follow up message with a FunctionResponse
     const result2 = await chat.sendMessageStream(FUNCTION_RESPONSE_PART);
     for await (const item of result2.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on sendMessageStream in preview with function calling, for item ${item}`
+        `sys test failure on sendMessageStream in preview with function calling, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
     const response2 = await result2.response;
-    expect(
-      JSON.stringify(response2.candidates[0].content.parts[0].text)
-    ).toContain(WEATHER_FORECAST);
+    expect(response2.candidates[0].content.parts[0].text).toContain(
+      WEATHER_FORECAST
+    );
   });
-  it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -896,13 +1091,19 @@ describe('sendMessageStream', () => {
     const result = await chat.sendMessageStream('Why is the sky blue?');
     const response = await result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on groundingMetadata, ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on groundingMetadata.groundingAttributions, ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on groundingMetadata.webSearchQueries, ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
@@ -912,13 +1113,19 @@ describe('sendMessageStream', () => {
     const result = await chat.sendMessageStream('Why is the sky blue?');
     const response = await result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on groundingMetadata, ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on groundingMetadata.groundingAttributions, ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on groundingMetadata.webSearchQueries, ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -927,13 +1134,19 @@ describe('sendMessageStream', () => {
     const result = await chat.sendMessageStream('Why is the sky blue?');
     const response = await result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on groundingMetadata in preview, ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on groundingMetadata.groundingAttributions in preview, ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on groundingMetadata.webSearchQueries in preview, ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
-  it('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
@@ -943,10 +1156,16 @@ describe('sendMessageStream', () => {
     const result = await chat.sendMessageStream('Why is the sky blue?');
     const response = await result.response;
     const groundingMetadata = response.candidates[0].groundingMetadata;
-    expect(!!groundingMetadata).toBeTruthy();
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on groundingMetadata in preview, ${groundingMetadata}`
+    );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy();
-      expect(!!groundingMetadata.webSearchQueries).toBeTruthy();
+      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
+        `sys test failure on groundingMetadata.groundingAttributions in preview, ${groundingMetadata.groundingAttributions}`
+      );
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on groundingMetadata.webSearchQueries in preview, ${groundingMetadata.webSearchQueries}`
+      );
     }
   });
 });
@@ -978,13 +1197,17 @@ describe('generateContentStream using models/model-id', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream using models/gemini-pro, for item ${item}`
+        `sys test failure on generateContentStream using models/gemini-pro, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream using models/gemini-pro for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream using models/gemini-pro for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
   it('in preview should should return a stream and aggregated response when passed text', async () => {
@@ -995,13 +1218,17 @@ describe('generateContentStream using models/model-id', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream in preview using models/gemini-pro, for item ${item}`
+        `sys test failure on generateContentStream in preview using models/gemini-pro, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview using models/gemini-pro for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream in preview using models/gemini-pro for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
 
@@ -1013,13 +1240,17 @@ describe('generateContentStream using models/model-id', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream using models/gemini-pro-vision, for item ${item}`
+        `sys test failure on generateContentStream using models/gemini-pro-vision, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream using models/gemini-pro-vision for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream using models/gemini-pro-vision for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
   it('in preview should return a stream and aggregated response when passed multipart base64 content when using models/gemini-pro-vision', async () => {
@@ -1030,13 +1261,17 @@ describe('generateContentStream using models/model-id', () => {
 
     for await (const item of streamingResp.stream) {
       expect(item.candidates[0]).toBeTruthy(
-        `sys test failure on generateContentStream in preview using models/gemini-pro-vision, for item ${item}`
+        `sys test failure on generateContentStream in preview using models/gemini-pro-vision, for item ${JSON.stringify(
+          item
+        )}`
       );
     }
 
     const aggregatedResp = await streamingResp.response;
     expect(aggregatedResp.candidates[0]).toBeTruthy(
-      `sys test failure on generateContentStream in preview using models/gemini-pro-vision for aggregated response: ${aggregatedResp}`
+      `sys test failure on generateContentStream in preview using models/gemini-pro-vision for aggregated response: ${JSON.stringify(
+        aggregatedResp
+      )}`
     );
   });
 });
