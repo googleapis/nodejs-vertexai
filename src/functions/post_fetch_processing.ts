@@ -16,8 +16,8 @@
  */
 
 import {
-  CitationSource,
-  Content,
+  Citation,
+  CitationMetadata,
   CountTokensResponse,
   GenerateContentCandidate,
   GenerateContentResponse,
@@ -199,23 +199,14 @@ export function aggregateResponses(
           },
         } as GenerateContentCandidate;
       }
-      if (response.candidates[i].citationMetadata) {
-        if (
-          !aggregatedResponse.candidates[i].citationMetadata?.citationSources
-        ) {
-          aggregatedResponse.candidates[i].citationMetadata = {
-            citationSources: [] as CitationSource[],
-          };
-        }
-
-        const existingMetadata = response.candidates[i].citationMetadata ?? {};
-
-        if (aggregatedResponse.candidates[i].citationMetadata) {
-          aggregatedResponse.candidates[i].citationMetadata!.citationSources =
-            aggregatedResponse.candidates[
-              i
-            ].citationMetadata!.citationSources.concat(existingMetadata);
-        }
+      const citationMetadataAggregated: CitationMetadata | undefined =
+        aggregateCitationMetadataForCandidate(
+          response.candidates[i],
+          aggregatedResponse.candidates[i]
+        );
+      if (citationMetadataAggregated) {
+        aggregatedResponse.candidates[i].citationMetadata =
+          citationMetadataAggregated;
       }
       const finishResonOfChunk = response.candidates[i].finishReason;
       if (finishResonOfChunk) {
@@ -258,6 +249,29 @@ export function aggregateResponses(
   aggregatedResponse.promptFeedback =
     responses[responses.length - 1].promptFeedback;
   return aggregatedResponse;
+}
+
+function aggregateCitationMetadataForCandidate(
+  candidateChunk: GenerateContentCandidate,
+  aggregatedCandidate: GenerateContentCandidate
+): CitationMetadata | undefined {
+  if (!candidateChunk.citationMetadata) {
+    return;
+  }
+  const emptyCitationMetadata: CitationMetadata = {
+    citations: [],
+  };
+  const citationMetadataAggregated: CitationMetadata =
+    aggregatedCandidate.citationMetadata ?? emptyCitationMetadata;
+  const citationMetadataChunk: CitationMetadata =
+    candidateChunk.citationMetadata!;
+  if (citationMetadataChunk.citations) {
+    citationMetadataAggregated.citations =
+      citationMetadataAggregated.citations!.concat(
+        citationMetadataChunk.citations
+      );
+  }
+  return citationMetadataAggregated;
 }
 
 function aggregateGroundingMetadataForCandidate(
