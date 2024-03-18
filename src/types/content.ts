@@ -441,6 +441,21 @@ export enum FinishReason {
   RECITATION = 'RECITATION',
   /** All other reasons that stopped the token generation. */
   OTHER = 'OTHER',
+  /**
+   * The token generation was stopped as the response was flagged for the
+   * terms which are included from the terminology blocklist.
+   */
+  BLOCKLIST = 'BLOCKLIST',
+  /**
+   * The token generation was stopped as the response was flagged for
+   * the prohibited contents.
+   */
+  PROHIBITED_CONTENT = 'PROHIBITED_CONTENT',
+  /**
+   * The token generation was stopped as the response was flagged for
+   * Sensitive Personally Identifiable Information (SPII) contents.
+   */
+  SPII = 'SPII',
 }
 
 /**
