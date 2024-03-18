@@ -17,16 +17,26 @@
 
 import {
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1,
+  AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2,
   STREAM_RESPONSE_CHUNKS_1,
+  STREAM_RESPONSE_CHUNKS_2,
 } from './test_data';
 import {aggregateResponses} from '../post_fetch_processing';
 
 describe('aggregateResponses', () => {
-  it('grounding metadata in muliple chunks for multiple chandidates, should aggregate accordingly', () => {
+  it('grounding metadata in multiple chunks for multiple candidates, should aggregate accordingly', () => {
     const actualResult = aggregateResponses(STREAM_RESPONSE_CHUNKS_1);
 
     expect(JSON.stringify(actualResult)).toEqual(
       JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1)
+    );
+  });
+
+  it('citation metadata in multiple chunks for multiple candidates, should aggregate accordingly', () => {
+    const actualResult = aggregateResponses(STREAM_RESPONSE_CHUNKS_2);
+
+    expect(JSON.stringify(actualResult)).toEqual(
+      JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2)
     );
   });
 });

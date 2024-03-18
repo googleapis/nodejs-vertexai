@@ -500,3 +500,300 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
       totalTokenCount: 97,
     },
   } as GenerateContentResponse;
+
+export const STREAM_RESPONSE_CHUNKS_2: GenerateContentResponse[] = [
+  {
+    candidates: [
+      {
+        content: {
+          role: 'model',
+          parts: [
+            {
+              text: 'chunk1Candidate1',
+            },
+          ],
+        },
+        citationMetadata: {
+          citations: [
+            {
+              startIndex: 1,
+              endIndex: 42,
+              uri: '1st url for former chunk for first candidate',
+              title: '1st title for former chunk for first candidate',
+              license: '1st license for former chunk for first candidate',
+            },
+            {
+              startIndex: 2,
+              endIndex: 67,
+              uri: '2nd url for former chunk for first candidate',
+              title: '2nd title for former chunk for first candidate',
+              license: '2nd license for former chunk for first candidate',
+            },
+          ],
+        },
+      },
+      {
+        content: {
+          role: 'model',
+          parts: [
+            {
+              text: 'chunk1Candidate2',
+            },
+          ],
+        },
+        citationMetadata: {
+          citations: [
+            {
+              startIndex: 5,
+              endIndex: 921,
+              uri: '1st url for former chunk for second candidate',
+              title: '1st title for former chunk for second candidate',
+              license: '1st license for former chunk for second candidate',
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    candidates: [
+      {
+        content: {
+          role: 'model',
+          parts: [
+            {
+              text: 'chunk2Candidate1',
+            },
+          ],
+        },
+      },
+      {
+        content: {
+          role: 'model',
+          parts: [
+            {
+              text: 'chunk2Candidate2',
+            },
+          ],
+        },
+        safetyRatings: [
+          {
+            category: 'HARM_CATEGORY_HATE_SPEECH',
+            probability: 'NEGLIGIBLE',
+            probabilityScore: 0.32594952,
+            severity: 'HARM_SEVERITY_LOW',
+            severityScore: 0.20481865,
+          },
+          {
+            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            probability: 'NEGLIGIBLE',
+            probabilityScore: 0.32498476,
+            severity: 'HARM_SEVERITY_NEGLIGIBLE',
+            severityScore: 0.18728127,
+          },
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            probability: 'NEGLIGIBLE',
+            probabilityScore: 0.31742626,
+            severity: 'HARM_SEVERITY_NEGLIGIBLE',
+            severityScore: 0.12940271,
+          },
+          {
+            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+            probability: 'NEGLIGIBLE',
+            probabilityScore: 0.14175598,
+            severity: 'HARM_SEVERITY_NEGLIGIBLE',
+            severityScore: 0.12252322,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    candidates: [
+      {
+        content: {
+          role: 'model',
+          parts: [
+            {
+              text: 'chunk3Candidate1',
+            },
+          ],
+        },
+        citationMetadata: {
+          citations: [
+            {
+              startIndex: 1,
+              endIndex: 42,
+              uri: '1st url for later chunk for first candidate',
+              title: '1st title for later chunk for first candidate',
+              license: '1st license for later chunk for first candidate',
+            },
+            {
+              startIndex: 2,
+              endIndex: 67,
+              uri: '2nd url for later chunk for first candidate',
+              title: '2nd title for later chunk for first candidate',
+              license: '2nd license for later chunk for first candidate',
+            },
+          ],
+        },
+      },
+      {
+        content: {
+          role: 'model',
+          parts: [
+            {
+              text: 'chunk3Candidate2',
+            },
+          ],
+        },
+        citationMetadata: {
+          citations: [
+            {
+              startIndex: 6,
+              endIndex: 432,
+              uri: '1st url for later chunk for second candidate',
+              title: '1st title for later chunk for second candidate',
+              license: '1st license for later chunk for second candidate',
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    candidates: [
+      {
+        content: {
+          role: 'model',
+        },
+        finishReason: 'STOP',
+      },
+      {
+        content: {
+          role: 'model',
+        },
+        finishReason: 'STOP',
+      },
+    ],
+    usageMetadata: {
+      promptTokenCount: 6,
+      candidatesTokenCount: 91,
+      totalTokenCount: 97,
+    },
+  },
+] as GenerateContentResponse[];
+
+export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2: GenerateContentResponse =
+  {
+    candidates: [
+      {
+        content: {
+          role: 'model',
+          parts: [
+            {
+              text: 'chunk1Candidate1chunk2Candidate1chunk3Candidate1',
+            },
+          ],
+        },
+        citationMetadata: {
+          citations: [
+            {
+              startIndex: 1,
+              endIndex: 42,
+              uri: '1st url for former chunk for first candidate',
+              title: '1st title for former chunk for first candidate',
+              license: '1st license for former chunk for first candidate',
+            },
+            {
+              startIndex: 2,
+              endIndex: 67,
+              uri: '2nd url for former chunk for first candidate',
+              title: '2nd title for former chunk for first candidate',
+              license: '2nd license for former chunk for first candidate',
+            },
+            {
+              startIndex: 1,
+              endIndex: 42,
+              uri: '1st url for later chunk for first candidate',
+              title: '1st title for later chunk for first candidate',
+              license: '1st license for later chunk for first candidate',
+            },
+            {
+              startIndex: 2,
+              endIndex: 67,
+              uri: '2nd url for later chunk for first candidate',
+              title: '2nd title for later chunk for first candidate',
+              license: '2nd license for later chunk for first candidate',
+            },
+          ],
+        },
+        finishReason: 'STOP',
+      },
+      {
+        content: {
+          role: 'model',
+          parts: [
+            {
+              text: 'chunk1Candidate2chunk2Candidate2chunk3Candidate2',
+            },
+          ],
+        },
+        citationMetadata: {
+          citations: [
+            {
+              startIndex: 5,
+              endIndex: 921,
+              uri: '1st url for former chunk for second candidate',
+              title: '1st title for former chunk for second candidate',
+              license: '1st license for former chunk for second candidate',
+            },
+            {
+              startIndex: 6,
+              endIndex: 432,
+              uri: '1st url for later chunk for second candidate',
+              title: '1st title for later chunk for second candidate',
+              license: '1st license for later chunk for second candidate',
+            },
+          ],
+        },
+        safetyRatings: [
+          {
+            category: 'HARM_CATEGORY_HATE_SPEECH',
+            probability: 'NEGLIGIBLE',
+            probabilityScore: 0.32594952,
+            severity: 'HARM_SEVERITY_LOW',
+            severityScore: 0.20481865,
+          },
+          {
+            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            probability: 'NEGLIGIBLE',
+            probabilityScore: 0.32498476,
+            severity: 'HARM_SEVERITY_NEGLIGIBLE',
+            severityScore: 0.18728127,
+          },
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            probability: 'NEGLIGIBLE',
+            probabilityScore: 0.31742626,
+            severity: 'HARM_SEVERITY_NEGLIGIBLE',
+            severityScore: 0.12940271,
+          },
+          {
+            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+            probability: 'NEGLIGIBLE',
+            probabilityScore: 0.14175598,
+            severity: 'HARM_SEVERITY_NEGLIGIBLE',
+            severityScore: 0.12252322,
+          },
+        ],
+        finishReason: 'STOP',
+      },
+    ],
+    usageMetadata: {
+      promptTokenCount: 6,
+      candidatesTokenCount: 91,
+      totalTokenCount: 97,
+    },
+  } as GenerateContentResponse;

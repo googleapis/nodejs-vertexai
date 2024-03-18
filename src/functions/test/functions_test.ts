@@ -104,7 +104,7 @@ const TEST_CANDIDATES = [
     finishMessage: '',
     safetyRatings: TEST_SAFETY_RATINGS,
     citationMetadata: {
-      citationSources: [
+      citations: [
         {
           startIndex: 367,
           endIndex: 491,
@@ -585,9 +585,9 @@ describe('generateContent', () => {
       TEST_API_ENDPOINT
     );
     expect(
-      resp.response.candidates[0].citationMetadata?.citationSources.length
+      resp.response.candidates[0].citationMetadata?.citations.length
     ).toEqual(
-      TEST_MODEL_RESPONSE.candidates[0].citationMetadata.citationSources.length
+      TEST_MODEL_RESPONSE.candidates[0].citationMetadata.citations.length
     );
   });
 
