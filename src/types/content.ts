@@ -875,6 +875,6 @@ export declare interface StartChatSessionRequest extends StartChatParams {
  * Request options params passed to getGenerativeModel method in VertexAI class.
  */
 export interface RequestOptions {
-  /** time out in milli seconds. time out value needs to be non negative. */
-  timeoutMillis?: number;
+  /** timeout in milli seconds. time out value needs to be non negative. */
+  timeout?: number;
 }

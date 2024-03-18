@@ -74,14 +74,14 @@ function getFetchOptions(requestOptions?: RequestOptions): RequestInit {
   const fetchOptions = {} as RequestInit;
   if (
     !requestOptions ||
-    requestOptions.timeoutMillis === undefined ||
-    requestOptions.timeoutMillis < 0
+    requestOptions.timeout === undefined ||
+    requestOptions.timeout < 0
   ) {
     return fetchOptions;
   }
   const abortController = new AbortController();
   const signal = abortController.signal;
-  setTimeout(() => abortController.abort(), requestOptions.timeoutMillis);
+  setTimeout(() => abortController.abort(), requestOptions.timeout);
   fetchOptions.signal = signal;
   return fetchOptions;
 }

@@ -81,7 +81,7 @@ const TEST_SAFETY_SETTINGS: SafetySetting[] = [
 ];
 
 const TEST_REQUEST_OPTIONS: RequestOptions = {
-  timeoutMillis: 0,
+  timeout: 0,
 };
 const TEST_SAFETY_RATINGS: SafetyRating[] = [
   {

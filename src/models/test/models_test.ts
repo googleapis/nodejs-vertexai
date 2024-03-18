@@ -226,7 +226,7 @@ const TEST_MODEL_RESPONSE_MISSING_ROLE = {
   usageMetadata: {promptTokenCount: 0, candidatesTokenCount: 0},
 };
 const TEST_REQUEST_OPTIONS = {
-  timeoutMillis: 0,
+  timeout: 0,
 };
 async function* testGenerator(): AsyncGenerator<GenerateContentResponse> {
   yield {
@@ -384,7 +384,7 @@ describe('GenerativeModel generateContent', () => {
     );
     await modelWithRequestOptions.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
@@ -581,7 +581,7 @@ describe('GenerativeModelPreview generateContent', () => {
     );
     await modelWithRequestOptions.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
@@ -787,7 +787,7 @@ describe('GenerativeModel generateContentStream', () => {
     );
     await modelWithRequestOptions.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: StreamGenerateContentResult = {
@@ -912,7 +912,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
     );
     await modelWithRequestOptions.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
   });
 
   it('returns a GenerateContentResponse when passed a string', async () => {
@@ -1036,7 +1036,7 @@ describe('ChatSession', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
     });
 
     it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
@@ -1203,7 +1203,7 @@ describe('ChatSession', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
     });
     it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
       const req = 'How are you doing today?';
@@ -1351,7 +1351,7 @@ describe('ChatSessionPreview', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
     });
 
     it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
@@ -1518,7 +1518,7 @@ describe('ChatSessionPreview', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][9].timeoutMillis).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
     });
     it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
       const req = 'How are you doing today?';
@@ -1634,7 +1634,7 @@ describe('GenerativeModel countTokens', () => {
     const countTokenSpy = spyOn(CountTokensFunctions, 'countTokens');
     await model.countTokens(req);
     // @ts-ignore
-    expect(countTokenSpy.calls.allArgs()[0][6].timeoutMillis).toEqual(0);
+    expect(countTokenSpy.calls.allArgs()[0][6].timeout).toEqual(0);
   });
 });
 
@@ -1674,7 +1674,7 @@ describe('GenerativeModelPreview countTokens', () => {
     const countTokenSpy = spyOn(CountTokensFunctions, 'countTokens');
     await model.countTokens(req);
     // @ts-ignore
-    expect(countTokenSpy.calls.allArgs()[0][6].timeoutMillis).toEqual(0);
+    expect(countTokenSpy.calls.allArgs()[0][6].timeout).toEqual(0);
   });
 });
 
