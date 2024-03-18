@@ -204,13 +204,34 @@ export enum HarmProbability {
 }
 
 /**
+ * Harm severity levels
+ */
+export enum HarmSeverity {
+  /** Harm severity unspecified. */
+  HARM_SEVERITY_UNSPECIFIED = 'HARM_SEVERITY_UNSPECIFIED',
+  /** Negligible level of harm severity. */
+  HARM_SEVERITY_NEGLIGIBLE = 'HARM_SEVERITY_NEGLIGIBLE',
+  /** Low level of harm severity. */
+  HARM_SEVERITY_LOW = 'HARM_SEVERITY_LOW',
+  /** Medium level of harm severity. */
+  HARM_SEVERITY_MEDIUM = 'HARM_SEVERITY_MEDIUM',
+  /** High level of harm severity. */
+  HARM_SEVERITY_HIGH = 'HARM_SEVERITY_HIGH',
+}
+/**
  * Safety rating corresponding to the generated content.
  */
 export declare interface SafetyRating {
   /** The harm category. {@link HarmCategory} */
-  category: HarmCategory;
+  category?: HarmCategory;
   /** The harm probability. {@link HarmProbability} */
-  probability: HarmProbability;
+  probability?: HarmProbability;
+  /** The harm probability score. */
+  probabilityScore?: number;
+  /** The harm severity.level {@link HarmSeverity} */
+  severity?: HarmSeverity;
+  /** The harm severity score. */
+  severityScore?: number;
 }
 
 /**
@@ -391,6 +412,10 @@ export enum BlockedReason {
   SAFETY = 'SAFETY',
   /** Candidates blocked due to other reason. */
   OTHER = 'OTHER',
+  /** terminology blocklist. */
+  BLOCKLIST = 'BLOCKLIST',
+  /** Candidates blocked due to prohibited content. */
+  PROHIBITED_CONTENT = 'PROHIBITED_CONTENT',
 }
 
 /**

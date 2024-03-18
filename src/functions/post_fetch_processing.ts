@@ -117,7 +117,7 @@ async function getResponsePromise(
  * GenerateContentResponse in each iteration.
  * @ignore
  */
-export function getResponseStream(
+function getResponseStream(
   inputStream: ReadableStream<string>
 ): ReadableStream<unknown> {
   const reader = inputStream.getReader();
@@ -170,8 +170,9 @@ export function getResponseStream(
  * Aggregates an array of `GenerateContentResponse`s into a single
  * GenerateContentResponse.
  * @ignore
+ * @VisibleForTesting
  */
-function aggregateResponses(
+export function aggregateResponses(
   responses: GenerateContentResponse[]
 ): GenerateContentResponse {
   const lastResponse = responses[responses.length - 1];
@@ -216,12 +217,19 @@ function aggregateResponses(
             ].citationMetadata!.citationSources.concat(existingMetadata);
         }
       }
-      aggregatedResponse.candidates[i].finishReason =
-        response.candidates[i].finishReason;
-      aggregatedResponse.candidates[i].finishMessage =
-        response.candidates[i].finishMessage;
-      aggregatedResponse.candidates[i].safetyRatings =
-        response.candidates[i].safetyRatings;
+      const finishResonOfChunk = response.candidates[i].finishReason;
+      if (finishResonOfChunk) {
+        aggregatedResponse.candidates[i].finishReason =
+          response.candidates[i].finishReason;
+      }
+      const finishMessageOfChunk = response.candidates[i].finishMessage;
+      if (finishMessageOfChunk) {
+        aggregatedResponse.candidates[i].finishMessage = finishMessageOfChunk;
+      }
+      const safetyRatingsOfChunk = response.candidates[i].safetyRatings;
+      if (safetyRatingsOfChunk) {
+        aggregatedResponse.candidates[i].safetyRatings = safetyRatingsOfChunk;
+      }
       if ('parts' in response.candidates[i].content) {
         for (const part of response.candidates[i].content.parts) {
           if (part.text) {
