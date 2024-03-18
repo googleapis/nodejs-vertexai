@@ -46,7 +46,20 @@ if [[ $KOKORO_BUILD_ARTIFACTS_SUBDIR = *"continuous"* ]] || [[ $KOKORO_BUILD_ART
   trap cleanup EXIT HUP
 fi
 
+# Switch to 'fail at end' to allow tar command to complete before exiting.
+set +e
+
 npm run system-test
+EXIT=$?
+
+tar cvfz build.tar.gz build
+
+if [[ $EXIT -ne 0 ]]; then
+  echo -e "\n Testing failed: npm returned a non-zero exit code. \n"
+  exit $EXIT
+fi
+
+set -e
 
 # codecov combines coverage across integration and unit tests. Include
 # the logic below for any environment you wish to collect coverage for:
