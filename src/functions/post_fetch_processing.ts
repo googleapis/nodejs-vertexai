@@ -307,6 +307,9 @@ function aggregateGroundingMetadataForCandidate(
 function addCandidateFunctionCalls(
   response: GenerateContentResponse
 ): GenerateContentResponse {
+  if (!response.candidates) {
+    return response;
+  }
   for (const candidate of response.candidates) {
     if (
       !candidate.content ||

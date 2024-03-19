@@ -654,6 +654,29 @@ describe('generateContent', () => {
     expect(actualResult).toEqual(expectedResult);
     expect(actualResult.response.candidates[0].functionCalls).not.toBeDefined();
   });
+
+  it('returns empty candidates when response is empty', async () => {
+    const req: GenerateContentRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [{text: 'What is the weater like in Boston?'}],
+        },
+      ],
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    fetchSpy.and.resolveTo(new Response(JSON.stringify({}), fetchResponseObj));
+
+    const actualResult: GenerateContentResult = await generateContent(
+      TEST_LOCATION,
+      TEST_PROJECT,
+      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_TOKEN_PROMISE,
+      req,
+      TEST_API_ENDPOINT
+    );
+    expect(actualResult.response.candidates).not.toBeDefined();
+  });
 });
 
 describe('generateContentStream', () => {
