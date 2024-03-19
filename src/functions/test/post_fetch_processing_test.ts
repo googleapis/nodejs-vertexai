@@ -18,11 +18,32 @@
 import {
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1,
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2,
+  COUNT_TOKENS_RESPONSE_1,
   STREAM_RESPONSE_CHUNKS_1,
   STREAM_RESPONSE_CHUNKS_2,
+  UNARY_RESPONSE_1,
 } from './test_data';
+import * as PostFetchFunctions from '../post_fetch_processing';
 import {aggregateResponses} from '../post_fetch_processing';
+import {generateContent, generateContentStream} from '../generate_content';
+import {countTokens} from '../count_tokens';
 
+const fetchResponseObj = {
+  status: 200,
+  statusText: 'OK',
+  ok: true,
+  headers: {'Content-Type': 'application/json'},
+  url: 'url',
+};
+
+const LOCATION = 'location';
+const PROJECT = 'project';
+const PUBLISHER_MODEL_ENDPOINT = 'publisher_model_endpoint';
+const TOKEN = Promise.resolve('token');
+const GENERATE_CONTENT_REQUEST = 'generate_content_request';
+const COUNT_TOKEN_REQUEST = {
+  contents: [{role: 'user', parts: [{text: 'text'}]}],
+};
 describe('aggregateResponses', () => {
   it('grounding metadata in multiple chunks for multiple candidates, should aggregate accordingly', () => {
     const actualResult = aggregateResponses(STREAM_RESPONSE_CHUNKS_1);
@@ -38,5 +59,67 @@ describe('aggregateResponses', () => {
     expect(JSON.stringify(actualResult)).toEqual(
       JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2)
     );
+  });
+});
+
+describe('processUnary', () => {
+  it('grounding metadata in multiple candidates, processUnary should return faithful response', async () => {
+    const fetchResult = new Response(
+      JSON.stringify(UNARY_RESPONSE_1),
+      fetchResponseObj
+    );
+    spyOn(global, 'fetch').and.resolveTo(fetchResult);
+    const actualResult = await generateContent(
+      LOCATION,
+      PROJECT,
+      PUBLISHER_MODEL_ENDPOINT,
+      TOKEN,
+      GENERATE_CONTENT_REQUEST
+    );
+    const actualResponse = actualResult.response;
+
+    expect(actualResponse).toEqual(UNARY_RESPONSE_1);
+  });
+});
+
+describe('processStream', () => {
+  it('grounding metadata in multiple chunks for multiple candidates, processStream should return faithful response', async () => {
+    const fetchResult = new Response(
+      JSON.stringify(STREAM_RESPONSE_CHUNKS_1),
+      fetchResponseObj
+    );
+    spyOn(global, 'fetch').and.resolveTo(fetchResult);
+    const processStreamSpy = spyOn(PostFetchFunctions, 'processStream');
+    await generateContentStream(
+      LOCATION,
+      PROJECT,
+      PUBLISHER_MODEL_ENDPOINT,
+      TOKEN,
+      GENERATE_CONTENT_REQUEST
+    );
+    const actualArg = processStreamSpy.calls.allArgs()[0][0];
+
+    expect(actualArg).toBeDefined();
+    const actualResponseToProcessStream = await actualArg!.json();
+    expect(actualResponseToProcessStream).toEqual(STREAM_RESPONSE_CHUNKS_1);
+  });
+});
+
+describe('processCountTokenResponse', () => {
+  it('multiple contents, processCountTokenResponse should return faithful response', async () => {
+    const fetchResult = new Response(
+      JSON.stringify(COUNT_TOKENS_RESPONSE_1),
+      fetchResponseObj
+    );
+    spyOn(global, 'fetch').and.resolveTo(fetchResult);
+    const actualResponse = await countTokens(
+      LOCATION,
+      PROJECT,
+      PUBLISHER_MODEL_ENDPOINT,
+      TOKEN,
+      COUNT_TOKEN_REQUEST
+    );
+
+    expect(actualResponse).toEqual(COUNT_TOKENS_RESPONSE_1);
   });
 });

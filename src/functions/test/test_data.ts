@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {GenerateContentResponse} from '../../types/content';
+import {
+  CountTokensResponse,
+  GenerateContentResponse,
+} from '../../types/content';
 
 export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
   {
@@ -797,3 +800,111 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2: GenerateContentRespon
       totalTokenCount: 97,
     },
   } as GenerateContentResponse;
+
+export const UNARY_RESPONSE_1: GenerateContentResponse = {
+  candidates: [
+    {
+      content: {
+        role: 'model',
+        parts: [
+          {
+            text: 'candidate1',
+          },
+        ],
+      },
+      safetyRatings: [
+        {
+          category: 'HARM_CATEGORY_HATE_SPEECH',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.448547,
+          severity: 'HARM_SEVERITY_MEDIUM',
+          severityScore: 0.40221596,
+        },
+        {
+          category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.41935068,
+          severity: 'HARM_SEVERITY_LOW',
+          severityScore: 0.27067295,
+        },
+        {
+          category: 'HARM_CATEGORY_HARASSMENT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.40703878,
+          severity: 'HARM_SEVERITY_LOW',
+          severityScore: 0.26095408,
+        },
+        {
+          category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.24220563,
+          severity: 'HARM_SEVERITY_NEGLIGIBLE',
+          severityScore: 0.15140383,
+        },
+      ],
+    },
+    {
+      content: {
+        role: 'model',
+        parts: [
+          {
+            text: 'candidate2',
+          },
+        ],
+      },
+      safetyRatings: [
+        {
+          category: 'HARM_CATEGORY_HATE_SPEECH',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.448547,
+          severity: 'HARM_SEVERITY_MEDIUM',
+          severityScore: 0.40221596,
+        },
+        {
+          category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.41935068,
+          severity: 'HARM_SEVERITY_LOW',
+          severityScore: 0.27067295,
+        },
+        {
+          category: 'HARM_CATEGORY_HARASSMENT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.40703878,
+          severity: 'HARM_SEVERITY_LOW',
+          severityScore: 0.26095408,
+        },
+        {
+          category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.24220563,
+          severity: 'HARM_SEVERITY_NEGLIGIBLE',
+          severityScore: 0.15140383,
+        },
+      ],
+    },
+  ],
+  promptFeedback: {
+    blockReason: 'BLOCK_REASON_UNSPECIFIED',
+    safetyRatings: [
+      {
+        category: 'HARM_CATEGORY_HATE_SPEECH',
+        probability: 'NEGLIGIBLE',
+        probabilityScore: 0.448547,
+        severity: 'HARM_SEVERITY_MEDIUM',
+        severityScore: 0.40221596,
+      },
+    ],
+    blockReasonMessage: 'block reason message',
+  },
+  usageMetadata: {
+    promptTokenCount: 6,
+    candidatesTokenCount: 91,
+    totalTokenCount: 97,
+  },
+} as GenerateContentResponse;
+
+export const COUNT_TOKENS_RESPONSE_1: CountTokensResponse = {
+  totalTokens: 6,
+  totalBillableCharacters: 20,
+};
