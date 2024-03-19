@@ -491,7 +491,7 @@ describe('generateContentStream', () => {
       expect(item.candidates[0].functionCalls!).toEqual(functionCalls!);
     }
   });
-  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  it('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -628,7 +628,7 @@ describe('generateContent', () => {
       );
     }
   });
-  xit('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+  it('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
