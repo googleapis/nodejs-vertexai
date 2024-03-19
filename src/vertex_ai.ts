@@ -28,8 +28,10 @@ import {
 import {GoogleAuthError} from './types/errors';
 
 /**
- * Base class for authenticating to Vertex, creates the preview namespace.
- * Users use getGenerativeModel method to start using Google's generative models in GA.
+ * The `VertexAI` class is the base class for authenticating to Vertex AI.
+ * To use Vertex AI's generative AI models, use the `getGenerativeModel` method.
+ * To use generative AI features that are in Preview, use the `preview`
+ * namespace.
  */
 export class VertexAI {
   public readonly preview: VertexAIPreview;
@@ -41,7 +43,7 @@ export class VertexAI {
   /**
    * @constructor
    * @param init - assign authentication related information,
-   *     including project and location string, to instantiate a Vertex AI
+   *     including the project and location strings, to instantiate a Vertex AI
    * client.
    */
   constructor(init: VertexInit) {
@@ -64,7 +66,7 @@ export class VertexAI {
   /**
    * Gets the GenerativeModel class instance.
    *
-   * This will create a new instance of the GenerativeModel class with the
+   * This method creates a new instance of the `GenerativeModel` class with the
    * platform initialization parameters provided in {@link VertexInit} and model
    * initialization parameters provided in {@link ModelParams}. You can
    * optionally provide {@link RequestOptions} to override the default request
@@ -122,7 +124,8 @@ export class VertexAI {
 }
 
 /**
- * Preview namespace for VertexAI. Users invoke getGenerativeModel method to start using Google's generative models in preview.
+ * The preview namespace for VertexAI. Users invoke the `getGenerativeModel`
+ * method to start using generative AI features that are in preview.
  */
 class VertexAIPreview {
   private readonly project: string;

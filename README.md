@@ -1,38 +1,43 @@
-# Vertex AI Node.js SDK
+# Vertex AI SDK for Node.js quickstart
 
-The Vertex AI Node.js SDK enables developers to use Google's state-of-the-art generative AI models (like Gemini) to build AI-powered features and applications.
+The Vertex AI SDK for Node.js lets you use the Vertex AI Gemini API to build
+AI-powered features and applications.
 
-[See here](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/main/generative-ai/snippets) for detailed samples using the Vertex AI Node.js SDK.
+For detailed samples using the Vertex AI Node.js SDK, see the
+[samples repository](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/main/generative-ai/snippets)
+on GitHub.
+
+For the latest list of available Gemini models on Vertex AI, see the
+[Model information](https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models#gemini-models)
+page in Vertex AI documentation.
 
 ## Before you begin
 
-1.  [Select or create a Cloud Platform project](https://console.cloud.google.com/project).
+1.  [Select](https://console.cloud.google.com/project) or [create](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) a Google Cloud project.
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 1.  [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-1.  [Set up authentication with a service account](https://cloud.google.com/docs/authentication/getting-started) so you can access the
-    API from your local workstation.
+1.  [Set up authentication with a service account](https://cloud.google.com/docs/authentication/getting-started)
+    so you can access the API from your local workstation.
 
-## Installation
+## Install the SDK
 
-Install this SDK via NPM.
+Install the Vertex AI SDK for Node.js by running the following command:
 
 ```shell
 npm install @google-cloud/vertexai
 ```
 
-## Available Gemini models in Vertex
-For the latest list of available Gemini models in Vertex, please refer to [Google Cloud Generative AI page](https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models#gemini-models)
+## Initialize the `VertexAI` class
 
-## Setup
-
-To use the SDK, create an instance of `VertexAI` by passing it your Google Cloud project ID and location. Then create a reference to a generative model.
+To use the Vertex AI SDK for Node.js, create an instance of `VertexAI` by
+passing it your Google Cloud project ID and location. Then create a reference to
+a generative model.
 
 ```typescript
 const {VertexAI, HarmCategory, HarmBlockThreshold, GoogleSearchRetrievalTool, RetrievalTool} = require('@google-cloud/vertexai');
 
 const project = 'your-cloud-project';
 const location = 'us-central1';
-// For the latest list of available Gemini models in Vertex, please refer to https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models#gemini-models
 const textModel =  'gemini-1.0-pro';
 const visionModel = 'gemini-1.0-pro-vision';
 
@@ -50,10 +55,17 @@ const generativeModel = vertexAI.getGenerativeModel({
 const generativeVisionModel = vertexAI.getGenerativeModel({
     model: visionModel,
 });
-
 ```
 
-## Streaming content generation
+## Send text prompt requests
+
+You can send text prompt requests by using `generateContentStream` for streamed
+responses, or `generateContent` for nonstreamed responses.
+
+### Get streamed text responses
+
+The response is returned in chunks as it's being generated to reduce the
+perception of latency to a human reader.
 
 ```typescript
 async function streamGenerateContent() {
@@ -71,7 +83,33 @@ async function streamGenerateContent() {
 streamGenerateContent();
 ```
 
-## Streaming chat
+### Get nonstreamed text responses
+
+The response is returned all at once.
+
+```typescript
+async function generateContent() {
+  const request = {
+    contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+  };
+  const result = await generativeModel.generateContent(request);
+  const response = result.response;
+  console.log('Response: ', JSON.stringify(response));
+};
+
+generateContent();
+```
+
+## Send multiturn chat requests
+
+Chat requests use previous messages as context when responding to new prompts.
+To send multiturn chat requests, use `sendMessageStream` for streamed responses,
+or `sendMessage` for nonstreamed responses.
+
+### Get streamed chat responses
+
+The response is returned in chunks as it's being generated to reduce the
+perception of latency to a human reader.
 
 ```typescript
 async function streamChat() {
@@ -79,18 +117,47 @@ async function streamChat() {
   const chatInput = "How can I learn more about Node.js?";
   const result = await chat.sendMessageStream(chatInput);
   for await (const item of result.stream) {
-      console.log(item.candidates[0].content.parts[0].text);
+      console.log("Stream chunk: ", item.candidates[0].content.parts[0].text);
   }
   const aggregatedResponse = await result.response;
-  console.log('aggregated response: ', JSON.stringify(aggregatedResponse));
+  console.log('Aggregated response: ', JSON.stringify(aggregatedResponse));
 }
 
 streamChat();
 ```
 
-## Multi-part content generation
+### Get nonstreamed chat responses
 
-### Providing a Google Cloud Storage image URI
+The response is returned all at once.
+
+```typescript
+async function sendChat() {
+  const chat = generativeModel.startChat();
+  const chatInput = "How can I learn more about Node.js?";
+  const result = await chat.sendMessage(chatInput);
+  const response = result.response;
+  console.log('response: ', JSON.stringify(response));
+}
+
+sendChat();
+```
+
+## Include images or videos in your prompt request
+
+Prompt requests can include either an image or video in addition to text.
+For more information, see
+[Send multimodal prompt requests](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/send-multimodal-prompts)
+in the Vertex AI documentation.
+
+### Include an image
+
+You can include images in the prompt either by specifying the Cloud Storage URI
+where the image is located or by including a base64 encoding of the image.
+
+#### Specify a Cloud Storage URI of the image
+
+You can specify the Cloud Storage URI of the image in `fileUri`.
+
 ```typescript
 async function multiPartContent() {
     const filePart = {fileData: {fileUri: "gs://generativeai-downloads/images/scones.jpg", mimeType: "image/jpeg"}};
@@ -109,7 +176,10 @@ async function multiPartContent() {
 multiPartContent();
 ```
 
-### Providing a base64 image string
+#### Specify a base64 image encoding string
+
+You can specify the base64 image encoding string in `data`.
+
 ```typescript
 async function multiPartContentImageString() {
     // Replace this with your own base64 image string
@@ -127,7 +197,11 @@ async function multiPartContentImageString() {
 multiPartContentImageString();
 ```
 
-### Multi-part content with text and video
+### Include a video
+
+You can include videos in the prompt by specifying the Cloud Storage URI
+where the video is located in `fileUri`.
+
 ```typescript
 async function multiPartContentVideo() {
     const filePart = {fileData: {fileUri: 'gs://cloud-samples-data/video/animals.mp4', mimeType: 'video/mp4'}};
@@ -146,47 +220,18 @@ async function multiPartContentVideo() {
 multiPartContentVideo();
 ```
 
-## Content generation: non-streaming
-
-```typescript
-async function generateContent() {
-  const request = {
-    contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
-  };
-  const result = await generativeModel.generateContent(request);
-  const response = result.response;
-  console.log('aggregated response: ', JSON.stringify(response));
-};
-
-generateContent();
-```
-
-## Counting tokens
-
-```typescript
-async function countTokens() {
-  const request = {
-      contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
-    };
-  const result = await generativeModel.countTokens(request);
-  const response = result.response;
-  console.log('count tokens response: ', JSON.stringify(response));
-}
-
-countTokens();
-```
-
 ## Function calling
 
-The Node SDK supports
-[function calling](https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/function-calling) via `sendMessage`, `sendMessageStream`, `generateContent`, and `generateContentStream`. We recommend using it through chat methods
+The Vertex AI SDK for Node.js supports
+[function calling](https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/function-calling)
+in the `sendMessage`, `sendMessageStream`, `generateContent`, and
+`generateContentStream` methods. We recommend using it through the chat methods
 (`sendMessage` or `sendMessageStream`) but have included examples of both
 approaches below.
 
-### Function declarations and response
+### Declare a function
 
-This is an example of a function declaration and function response, which are
-passed to the model in the snippets that follow.
+The following examples show you how to declare a function.
 
 ```typescript
 const functionDeclarations = [
@@ -222,7 +267,10 @@ const functionResponseParts = [
 ];
 ```
 
-### Function calling with chat
+### Function calling using `sendMessageStream`
+
+After the function is declared, you can pass it to the model in the
+`tools` parameter of the prompt request.
 
 ```typescript
 async function functionCallingChat() {
@@ -256,7 +304,7 @@ async function functionCallingChat() {
 functionCallingChat();
 ```
 
-### Function calling with generateContentStream
+### Function calling using `generateContentStream`
 
 ```typescript
 async function functionCallingGenerateContentStream() {
@@ -278,7 +326,31 @@ async function functionCallingGenerateContentStream() {
 functionCallingGenerateContentStream();
 ```
 
-### In Preview: Grounding using Google Search
+## Counting tokens
+
+```typescript
+async function countTokens() {
+  const request = {
+      contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+    };
+  const result = await generativeModel.countTokens(request);
+  const response = result.response;
+  console.log('count tokens response: ', JSON.stringify(response));
+}
+
+countTokens();
+```
+
+
+## Grounding (Preview)
+
+Grounding is preview only feature.
+
+Grounding lets you connect model output to verifiable sources of information to
+reduce hallucination. You can specify Google Search or Vertex AI search as the
+data source for grounding.
+
+### Grounding using Google Search (Preview)
 
 ```typescript
 const generativeModelPreview = vertexAI.preview.getGenerativeModel({
@@ -303,8 +375,7 @@ console.log("Response of grounding is: ", JSON.stringify(response));
 console.log("Grounding metadata is: ", JSON.stringify(groundingMetadata));
 ```
 
-
-### In Preview: Grounding using Vertex AI Search
+### Grounding using Vertex AI Search (Preview)
 
 ```typescript
 const generativeModelPreview = vertexAI.preview.getGenerativeModel({

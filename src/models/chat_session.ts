@@ -42,11 +42,12 @@ import {
 import {constants} from '../util';
 
 /**
- * Chat session to make multi-turn send message request.
- * Users can instantiate this using startChat method in GenerativeModel class.
- * `sendMessage` method makes async call to get response of a chat message.
- * `sendMessageStream` method makes async call to stream response of a chat
- * message.
+ * The `ChatSession` class is used to make multiturn send message requests. You
+ * can instantiate this class by using the `startChat` method in the
+ * `GenerativeModel` class. The `sendMessage` method makes an async call to get
+ * the response of a chat message at at once. The `sendMessageStream` method
+ * makes an async call to stream the response of a chat message as it's being
+ * generated.
  */
 export class ChatSession {
   private readonly project: string;
@@ -98,10 +99,10 @@ export class ChatSession {
   }
 
   /**
-   * Makes an sync call to send chat message.
+   * Makes an async call to send chat message.
    *
-   * The response will be returned in {@link
-   * StreamGenerateContentResult.response}.
+   * The response is returned in {@link
+   * GenerateContentResult.response}.
    *
    * @example
    * ```
@@ -145,7 +146,7 @@ export class ChatSession {
       throw e;
     });
     const generateContentResponse = await generateContentResult.response;
-    // Only push the latest message to history if the response returned a result
+    // Only push the latest message to history if the response returns a result
     if (generateContentResponse.candidates.length !== 0) {
       this.historyInternal = this.historyInternal.concat(newContent);
       const contentFromAssistant =
@@ -205,7 +206,7 @@ export class ChatSession {
   /**
    * Makes an async call to stream send message.
    *
-   * Response is streamed chunk by chunk in
+   * The response is streamed chunk by chunk in
    * {@link StreamGenerateContentResult.stream}. The aggregated response is
    * avaliable in {@link StreamGenerateContentResult.response} after all chunks
    * are returned.
@@ -263,10 +264,10 @@ export class ChatSession {
 }
 
 /**
- * Chat session to make multi-turn send message request.
- * `sendMessage` method makes async call to get response of a chat message.
- * `sendMessageStream` method makes async call to stream response of a chat
- * message.
+ * Chat session to make multiturn send message request. `sendMessage` method
+ * makes an async call to get response of a chat message all at once.
+ * `sendMessageStream` method makes an async call to stream response of a chat
+ * message as it's being generated.
  */
 export class ChatSessionPreview {
   private readonly project: string;

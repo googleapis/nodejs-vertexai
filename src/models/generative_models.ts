@@ -43,8 +43,9 @@ import {constants} from '../util';
 import {ChatSession, ChatSessionPreview} from './chat_session';
 
 /**
- * Base class for generative models.
- * NOTE: this class should not be instantiated directly. Use
+ * The `GenerativeModel` class is the base class for the generative models on
+ * Vertex AI.
+ * NOTE: Don't instantiate this class directly. Use
  * `vertexai.getGenerativeModel()` instead.
  */
 export class GenerativeModel {
@@ -93,10 +94,10 @@ export class GenerativeModel {
   }
 
   /**
-   * Makes a async call to generate content.
+   * Makes an async call to generate content.
    *
    * The response will be returned in {@link
-   * StreamGenerateContentResult.response}.
+   * GenerateContentResult.response}.
    *
    * @example
    * ```
@@ -131,9 +132,9 @@ export class GenerativeModel {
   /**
    * Makes an async stream request to generate content.
    *
-   * The response will be returned in {@link
-   * StreamGenerateContentResult.stream}. When all streams returned, the
-   * aggregated response will be available in
+   * The response is returned chunk by chunk as it's being generated in {@link
+   * StreamGenerateContentResult.stream}. After all chunks of the response are
+   * returned, the aggregated response is available in
    * {@link StreamGenerateContentResult.response}.
    *
    * @example
@@ -170,10 +171,10 @@ export class GenerativeModel {
   }
 
   /**
-   * Makes a async request to count tokens.
+   * Makes an async request to count tokens.
    *
-   * This will return the token count and the number of billable characters for
-   * a prompt.
+   * The `countTokens` function returns the token count and the number of
+   * billable characters for a prompt.
    *
    * @example
    * ```
@@ -184,7 +185,7 @@ export class GenerativeModel {
    * console.log('count tokens response: ', resp);
    * ```
    *
-   * @param request A CountTokensRequest object with the request contents.
+   * @param request - A CountTokensRequest object with the request contents.
    * @returns The CountTokensResponse object with the token count.
    */
   async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
@@ -202,15 +203,17 @@ export class GenerativeModel {
   /**
    * Instantiates a {@link ChatSession}.
    *
-   * The {@link ChatSession} is a stateful class that holds the state of the
-   * conversation with the model and provides methods to interact with the model
-   * in chat mode. Calling this method doesn't make any call to remote endpoint.
+   * The {@link ChatSession} class is a stateful class that holds the state of
+   * the conversation with the model and provides methods to interact with the
+   * model in chat mode. Calling this method doesn't make any calls to a remote
+   * endpoint. To make remote call, use {@link ChatSession.sendMessage} or
+   * @link ChatSession.sendMessageStream}.
    *
    * @example
    * ```
    * const chat = generativeModel.startChat();
-   * const result1 = await chat.sendMessage("How can I learn more about Node.js?");
-   * const response1 = await result1.response;
+   * const result1 = await chat.sendMessage("How can I learn more about
+   * Node.js?"); const response1 = await result1.response;
    * console.log('Response: ', JSON.stringify(response1));
    *
    * const result2 = await chat.sendMessageStream("What about python?");
@@ -244,8 +247,8 @@ export class GenerativeModel {
 }
 
 /**
- * Base class for generative models in preview.
- * NOTE: this class should not be instantiated directly. Use
+ * The base class for generative models that are in preview.
+ * NOTE: Don't instantiate this class directly. Use
  * `vertexai.preview.getGenerativeModel()` instead.
  */
 export class GenerativeModelPreview {
@@ -293,7 +296,7 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Makes a async call to generate content.
+   * Makes an async call to generate content.
    * @param request A GenerateContentRequest object with the request contents.
    * @returns The GenerateContentResponse object with the response candidates.
    */
@@ -315,7 +318,7 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Makes an async stream request to generate content. The response will be
+   * Makes an async stream request to generate content. The response is
    * returned in stream.
    * @param request - {@link GenerateContentRequest}
    * @returns Promise of {@link StreamGenerateContentResult}
@@ -338,7 +341,7 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Makes a async request to count tokens.
+   * Makes an async request to count tokens.
    * @param request A CountTokensRequest object with the request contents.
    * @returns The CountTokensResponse object with the token count.
    */
