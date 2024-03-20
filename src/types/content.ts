@@ -399,7 +399,7 @@ export declare interface PromptFeedback {
   /** Array of {@link SafetyRating} */
   safetyRatings: SafetyRating[];
   /** A readable block reason message. */
-  blockReasonMessage: string;
+  blockReasonMessage?: string;
 }
 
 /**
