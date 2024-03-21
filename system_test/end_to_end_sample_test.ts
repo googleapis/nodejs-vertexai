@@ -414,15 +414,16 @@ describe('generateContentStream', () => {
           item
         )}`
       );
-      expect(
-        item.candidates![0].content.parts[0].text?.toLowerCase()
-      ).toContain(
-        WEATHER_FORECAST,
-        `sys test failure on generateContentStream for candidate part ${JSON.stringify(
-          item.candidates![0].content.parts[0]
-        )}`
-      );
     }
+    const aggregaratedResponse = await streamingResp.response;
+    expect(
+      aggregaratedResponse.candidates![0].content.parts[0].text?.toLowerCase()
+    ).toContain(
+      WEATHER_FORECAST,
+      `sys test failure on generateContentStream for candidate part ${JSON.stringify(
+        aggregaratedResponse.candidates![0].content.parts[0]
+      )}`
+    );
   });
   it('in preview should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const request = {
@@ -441,15 +442,16 @@ describe('generateContentStream', () => {
           item
         )}`
       );
-      expect(
-        item.candidates![0].content.parts[0].text?.toLowerCase()
-      ).toContain(
-        WEATHER_FORECAST,
-        `sys test failure on generateContentStream in preview for candidate part ${JSON.stringify(
-          item.candidates![0].content.parts[0]
-        )}`
-      );
     }
+    const aggregaratedResponse = await streamingResp.response;
+    expect(
+      aggregaratedResponse.candidates![0].content.parts[0].text?.toLowerCase()
+    ).toContain(
+      WEATHER_FORECAST,
+      `sys test failure on generateContentStream for candidate part ${JSON.stringify(
+        aggregaratedResponse.candidates![0].content.parts[0]
+      )}`
+    );
   });
   it('should return a FunctionCall when passed a FunctionDeclaration', async () => {
     const request = {
