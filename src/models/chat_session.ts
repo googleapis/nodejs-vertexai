@@ -62,8 +62,8 @@ export class ChatSession {
   private readonly tools?: Tool[];
   private readonly apiEndpoint?: string;
 
-  get history(): Content[] {
-    return this.historyInternal;
+  async getHistory(): Promise<Content[]> {
+    return Promise.resolve(this.historyInternal);
   }
 
   /**
@@ -282,8 +282,8 @@ export class ChatSessionPreview {
   private readonly tools?: Tool[];
   private readonly apiEndpoint?: string;
 
-  get history(): Content[] {
-    return this.historyInternal;
+  async getHistory(): Promise<Content[]> {
+    return Promise.resolve(this.historyInternal);
   }
 
   /**

@@ -805,7 +805,7 @@ describe('sendMessage', () => {
     expect(response1.candidates![0]).toBeTruthy(
       `sys test failure on sendMessage for aggregated response: ${response1}`
     );
-    expect(chat.history.length).toBe(2);
+    expect((await chat.getHistory()).length).toBe(2);
   });
   it('in preview should populate history and return a chat response', async () => {
     const chat = generativeTextModelPreview.startChat();
@@ -815,7 +815,7 @@ describe('sendMessage', () => {
     expect(response1.candidates![0]).toBeTruthy(
       `sys test failure on sendMessage in preview for aggregated response: ${response1}`
     );
-    expect(chat.history.length).toBe(2);
+    expect((await chat.getHistory()).length).toBe(2);
   });
   xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
@@ -930,7 +930,7 @@ describe('sendMessageStream', () => {
         resp
       )}`
     );
-    expect(chat.history.length).toBe(2);
+    expect((await chat.getHistory()).length).toBe(2);
   });
   it('in preview should should return a stream and populate history when generationConfig is passed to startChat', async () => {
     const chat = generativeTextModelPreview.startChat({
@@ -953,7 +953,7 @@ describe('sendMessageStream', () => {
         resp
       )}`
     );
-    expect(chat.history.length).toBe(2);
+    expect((await chat.getHistory()).length).toBe(2);
   });
 
   it('should should return a stream and populate history when startChat is passed no request obj', async () => {
@@ -973,7 +973,7 @@ describe('sendMessageStream', () => {
         resp
       )}`
     );
-    expect(chat.history.length).toBe(2);
+    expect((await chat.getHistory()).length).toBe(2);
   });
   it('in preview should should return a stream and populate history when startChat is passed no request obj', async () => {
     const chat = generativeTextModelPreview.startChat();
@@ -992,7 +992,7 @@ describe('sendMessageStream', () => {
         resp
       )}`
     );
-    expect(chat.history.length).toBe(2);
+    expect((await chat.getHistory()).length).toBe(2);
   });
 
   it('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {

@@ -1181,7 +1181,7 @@ describe('ChatSession', () => {
   let chatSessionWithFunctionCall: ChatSession;
   let model: GenerativeModel;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     model = new GenerativeModel({
       model: 'gemini-pro',
       project: PROJECT,
@@ -1191,7 +1191,7 @@ describe('ChatSession', () => {
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
     });
-    expect(chatSession.history).toEqual(TEST_USER_CHAT_MESSAGE);
+    expect(await chatSession.getHistory()).toEqual(TEST_USER_CHAT_MESSAGE);
     chatSessionWithNoArgs = model.startChat();
     chatSessionWithEmptyResponse = model.startChat();
     chatSessionWithFunctionCall = model.startChat({
@@ -1214,7 +1214,7 @@ describe('ChatSession', () => {
       };
       const resp = await chatSession.sendMessage(req);
       expect(resp).toEqual(expectedResult);
-      expect(chatSession.history.length).toEqual(3);
+      expect((await chatSession.getHistory()).length).toEqual(3);
     });
     it('send timeout to functions', async () => {
       const modelWithRequestOptions = new GenerativeModel({
@@ -1249,7 +1249,7 @@ describe('ChatSession', () => {
       spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
-      expect(chatSessionWithNoArgs.history.length).toEqual(2);
+      expect((await chatSessionWithNoArgs.getHistory()).length).toEqual(2);
     });
 
     it('throws an error when the model returns an empty response', async () => {
@@ -1261,7 +1261,9 @@ describe('ChatSession', () => {
       await expectAsync(
         chatSessionWithEmptyResponse.sendMessage(req)
       ).toBeRejected();
-      expect(chatSessionWithEmptyResponse.history.length).toEqual(0);
+      expect((await chatSessionWithEmptyResponse.getHistory()).length).toEqual(
+        0
+      );
     });
     it('returns a GenerateContentResponse when passed multi-part content', async () => {
       const req = TEST_MULTIPART_MESSAGE[0]['parts'];
@@ -1271,7 +1273,7 @@ describe('ChatSession', () => {
       spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
-      expect(chatSessionWithNoArgs.history.length).toEqual(2);
+      expect((await chatSessionWithNoArgs.getHistory()).length).toEqual(2);
     });
     it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
       const functionCallChatMessage = 'What is the weather in LA?';
@@ -1289,7 +1291,9 @@ describe('ChatSession', () => {
         functionCallChatMessage
       );
       expect(response1).toEqual(expectedFunctionCallResponse);
-      expect(chatSessionWithFunctionCall.history.length).toEqual(2);
+      expect((await chatSessionWithFunctionCall.getHistory()).length).toEqual(
+        2
+      );
 
       // Send a follow-up message with a FunctionResponse
       const expectedFollowUpResponse: GenerateContentResult = {
@@ -1303,7 +1307,9 @@ describe('ChatSession', () => {
         TEST_FUNCTION_RESPONSE_PART
       );
       expect(response2).toEqual(expectedFollowUpResponse);
-      expect(chatSessionWithFunctionCall.history.length).toEqual(4);
+      expect((await chatSessionWithFunctionCall.getHistory()).length).toEqual(
+        4
+      );
     });
 
     it('throw ClientError when request has no content', async () => {
@@ -1353,16 +1359,18 @@ describe('ChatSession', () => {
         ],
       });
       spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
-      expect(chatSession.history.length).toEqual(1);
-      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
+      const history = await chatSession.getHistory();
+      expect(history.length).toEqual(1);
+      expect(history[0].role).toEqual(constants.USER_ROLE);
       const result = await chatSession.sendMessageStream(req);
       const response = await result.response;
       const expectedResponse = await expectedResult.response;
+      const secondHistory = await chatSession.getHistory();
       expect(response).toEqual(expectedResponse);
-      expect(chatSession.history.length).toEqual(3);
-      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
-      expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
-      expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+      expect(secondHistory.length).toEqual(3);
+      expect(secondHistory[0].role).toEqual(constants.USER_ROLE);
+      expect(secondHistory[1].role).toEqual(constants.USER_ROLE);
+      expect(secondHistory[2].role).toEqual(constants.MODEL_ROLE);
     });
     it('returns a StreamGenerateContentResponse in streaming mode', async () => {
       const req = 'How are you doing today?';
@@ -1432,7 +1440,9 @@ describe('ChatSession', () => {
         functionCallChatMessage
       );
       expect(response1).toEqual(expectedStreamResult);
-      expect(chatSessionWithFunctionCall.history.length).toEqual(2);
+      expect((await chatSessionWithFunctionCall.getHistory()).length).toEqual(
+        2
+      );
 
       // Send a follow-up message with a FunctionResponse
       const expectedFollowUpStreamResult: StreamGenerateContentResult = {
@@ -1444,7 +1454,9 @@ describe('ChatSession', () => {
         TEST_FUNCTION_RESPONSE_PART
       );
       expect(response2).toEqual(expectedFollowUpStreamResult);
-      expect(chatSessionWithFunctionCall.history.length).toEqual(4);
+      expect((await chatSessionWithFunctionCall.getHistory()).length).toEqual(
+        4
+      );
     });
 
     it('throw ClientError when request has no content', async () => {
@@ -1477,7 +1489,7 @@ describe('ChatSessionPreview', () => {
   let model: GenerativeModelPreview;
   let expectedStreamResult: StreamGenerateContentResult;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     model = new GenerativeModelPreview({
       model: 'gemini-pro',
       project: PROJECT,
@@ -1487,7 +1499,7 @@ describe('ChatSessionPreview', () => {
     chatSession = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
     });
-    expect(chatSession.history).toEqual(TEST_USER_CHAT_MESSAGE);
+    expect(await chatSession.getHistory()).toEqual(TEST_USER_CHAT_MESSAGE);
     chatSessionWithNoArgs = model.startChat();
     chatSessionWithEmptyResponse = model.startChat();
     chatSessionWithFunctionCall = model.startChat({
@@ -1512,7 +1524,7 @@ describe('ChatSessionPreview', () => {
       spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSession.sendMessage(req);
       expect(resp).toEqual(expectedResult);
-      expect(chatSession.history.length).toEqual(3);
+      expect((await chatSession.getHistory()).length).toEqual(3);
     });
 
     it('send timeout to functions', async () => {
@@ -1548,7 +1560,7 @@ describe('ChatSessionPreview', () => {
       spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
-      expect(chatSessionWithNoArgs.history.length).toEqual(2);
+      expect((await chatSessionWithNoArgs.getHistory()).length).toEqual(2);
     });
 
     it('throws an error when the model returns an empty response', async () => {
@@ -1560,7 +1572,9 @@ describe('ChatSessionPreview', () => {
       await expectAsync(
         chatSessionWithEmptyResponse.sendMessage(req)
       ).toBeRejected();
-      expect(chatSessionWithEmptyResponse.history.length).toEqual(0);
+      expect((await chatSessionWithEmptyResponse.getHistory()).length).toEqual(
+        0
+      );
     });
     it('returns a GenerateContentResponse when passed multi-part content', async () => {
       const req = TEST_MULTIPART_MESSAGE[0]['parts'];
@@ -1570,7 +1584,7 @@ describe('ChatSessionPreview', () => {
       spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
       const resp = await chatSessionWithNoArgs.sendMessage(req);
       expect(resp).toEqual(expectedResult);
-      expect(chatSessionWithNoArgs.history.length).toEqual(2);
+      expect((await chatSessionWithNoArgs.getHistory()).length).toEqual(2);
     });
     it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
       const functionCallChatMessage = 'What is the weather in LA?';
@@ -1588,7 +1602,9 @@ describe('ChatSessionPreview', () => {
         functionCallChatMessage
       );
       expect(response1).toEqual(expectedFunctionCallResponse);
-      expect(chatSessionWithFunctionCall.history.length).toEqual(2);
+      expect((await chatSessionWithFunctionCall.getHistory()).length).toEqual(
+        2
+      );
 
       // Send a follow-up message with a FunctionResponse
       const expectedFollowUpResponse: GenerateContentResult = {
@@ -1602,7 +1618,9 @@ describe('ChatSessionPreview', () => {
         TEST_FUNCTION_RESPONSE_PART
       );
       expect(response2).toEqual(expectedFollowUpResponse);
-      expect(chatSessionWithFunctionCall.history.length).toEqual(4);
+      expect((await chatSessionWithFunctionCall.getHistory()).length).toEqual(
+        4
+      );
     });
 
     it('throw ClientError when request has no content', async () => {
@@ -1642,16 +1660,18 @@ describe('ChatSessionPreview', () => {
         ],
       });
       spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
-      expect(chatSession.history.length).toEqual(1);
-      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
+      const history = await chatSession.getHistory();
+      expect(history.length).toEqual(1);
+      expect(history[0].role).toEqual(constants.USER_ROLE);
       const result = await chatSession.sendMessageStream(req);
       const response = await result.response;
       const expectedResponse = await expectedResult.response;
       expect(response).toEqual(expectedResponse);
-      expect(chatSession.history.length).toEqual(3);
-      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
-      expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
-      expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
+      const secondHistory = await chatSession.getHistory();
+      expect(secondHistory.length).toEqual(3);
+      expect(secondHistory[0].role).toEqual(constants.USER_ROLE);
+      expect(secondHistory[1].role).toEqual(constants.USER_ROLE);
+      expect(secondHistory[2].role).toEqual(constants.MODEL_ROLE);
     });
     it('returns a StreamGenerateContentResponse in streaming mode', async () => {
       const req = 'How are you doing today?';
@@ -1721,7 +1741,9 @@ describe('ChatSessionPreview', () => {
         functionCallChatMessage
       );
       expect(response1).toEqual(expectedStreamResult);
-      expect(chatSessionWithFunctionCall.history.length).toEqual(2);
+      expect((await chatSessionWithFunctionCall.getHistory()).length).toEqual(
+        2
+      );
 
       // Send a follow-up message with a FunctionResponse
       const expectedFollowUpStreamResult: StreamGenerateContentResult = {
@@ -1733,7 +1755,9 @@ describe('ChatSessionPreview', () => {
         TEST_FUNCTION_RESPONSE_PART
       );
       expect(response2).toEqual(expectedFollowUpStreamResult);
-      expect(chatSessionWithFunctionCall.history.length).toEqual(4);
+      expect((await chatSessionWithFunctionCall.getHistory()).length).toEqual(
+        4
+      );
     });
 
     it('throw ClientError when request has no content', async () => {
