@@ -34,7 +34,12 @@ passing it your Google Cloud project ID and location. Then create a reference to
 a generative model.
 
 ```typescript
-const {VertexAI, HarmCategory, HarmBlockThreshold, GoogleSearchRetrievalTool, RetrievalTool} = require('@google-cloud/vertexai');
+const {
+  FunctionDeclarationSchemaType,
+  HarmBlockThreshold,
+  HarmCategory,
+  VertexAI
+} = require('@google-cloud/vertexai');
 
 const project = 'your-cloud-project';
 const location = 'us-central1';
@@ -333,8 +338,7 @@ async function countTokens() {
   const request = {
       contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
     };
-  const result = await generativeModel.countTokens(request);
-  const response = result.response;
+  const response = await generativeModel.countTokens(request);
   console.log('count tokens response: ', JSON.stringify(response));
 }
 
@@ -353,7 +357,8 @@ data source for grounding.
 ### Grounding using Google Search (Preview)
 
 ```typescript
-const generativeModelPreview = vertexAI.preview.getGenerativeModel({
+async function generateContentWithGoogleSearchGrounding() {
+  const generativeModelPreview = vertexAI.preview.getGenerativeModel({
     model: textModel,
     // The following parameters are optional
     // They can also be passed to individual content generation requests
@@ -361,24 +366,28 @@ const generativeModelPreview = vertexAI.preview.getGenerativeModel({
     generationConfig: {maxOutputTokens: 256},
   });
 
-const googleSearchRetrievalTool: GoogleSearchRetrievalTool = {
-  googleSearchRetrieval: {
-    disableAttribution: false,
-  },
-};
-const response = await generativeModelPreview.generateContent({
-  contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
-  tools: [googleSearchRetrievalTool],
-}).response;
-const groundingMetadata = response.candidates[0].groundingMetadata;
-console.log("Response of grounding is: ", JSON.stringify(response));
-console.log("Grounding metadata is: ", JSON.stringify(groundingMetadata));
+  const googleSearchRetrievalTool = {
+    googleSearchRetrieval: {
+      disableAttribution: false,
+    },
+  };
+  const result = await generativeModelPreview.generateContent({
+    contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    tools: [googleSearchRetrievalTool],
+  })
+  const response = result.response;
+  const groundingMetadata = response.candidates[0].groundingMetadata;
+  console.log("GroundingMetadata is: ", JSON.stringify(groundingMetadata));
+}
+generateContentWithGoogleSearchGrounding();
+
 ```
 
 ### Grounding using Vertex AI Search (Preview)
 
 ```typescript
-const generativeModelPreview = vertexAI.preview.getGenerativeModel({
+async function generateContentWithVertexAISearchGrounding() {
+  const generativeModelPreview = vertexAI.preview.getGenerativeModel({
     model: textModel,
     // The following parameters are optional
     // They can also be passed to individual content generation requests
@@ -386,21 +395,24 @@ const generativeModelPreview = vertexAI.preview.getGenerativeModel({
     generationConfig: {maxOutputTokens: 256},
   });
 
-const vertexAiRetrievalTool: RetrievalTool = {
-  retrieval: {
-    vertexAiSearch: {
-      datastore='projects/.../locations/.../collections/.../dataStores/...',
-    }
-    disableAttribution: false,
-  },
-};
-const response = await generativeModelPreview.generateContent({
-  contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
-  tools: [googleSearchRetrievalTool],
-}).response;
-const groundingMetadata = response.candidates[0].groundingMetadata;
-console.log("Response of grounding is: ", JSON.stringify(response));
-console.log("Grounding metadata is: ", JSON.stringify(groundingMetadata));
+  const vertexAIRetrievalTool = {
+    retrieval: {
+      vertexAiSearch: {
+        datastore='projects/.../locations/.../collections/.../dataStores/...',
+      },
+      disableAttribution: false,
+    },
+  };
+  const result = await generativeModelPreview.generateContent({
+    contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    tools: [vertexAIRetrievalTool],
+  })
+  const response = result.response;
+  const groundingMetadata = response.candidates[0].groundingMetadata;
+  console.log("Grounding metadata is: ", JSON.stringify(groundingMetadata));
+}
+generateContentWithVertexAISearchGrounding();
+
 ```
 
 ## License
