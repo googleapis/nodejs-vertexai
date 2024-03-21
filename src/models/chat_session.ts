@@ -147,13 +147,13 @@ export class ChatSession {
     });
     const generateContentResponse = await generateContentResult.response;
     // Only push the latest message to history if the response returns a result
-    if (generateContentResponse.candidates.length !== 0) {
+    if (
+      generateContentResponse.candidates &&
+      generateContentResponse.candidates.length !== 0
+    ) {
       this.historyInternal = this.historyInternal.concat(newContent);
       const contentFromAssistant =
         generateContentResponse.candidates[0].content;
-      if (!contentFromAssistant.role) {
-        contentFromAssistant.role = constants.MODEL_ROLE;
-      }
       this.historyInternal.push(contentFromAssistant);
     } else {
       const promptFeedback = generateContentResponse.promptFeedback;
@@ -181,13 +181,13 @@ export class ChatSession {
     const streamGenerateContentResponse =
       await streamGenerateContentResult.response;
     // Only push the latest message to history if the response returned a result
-    if (streamGenerateContentResponse.candidates.length !== 0) {
+    if (
+      streamGenerateContentResponse.candidates &&
+      streamGenerateContentResponse.candidates.length !== 0
+    ) {
       this.historyInternal = this.historyInternal.concat(newContent);
       const contentFromAssistant =
         streamGenerateContentResponse.candidates[0].content;
-      if (!contentFromAssistant.role) {
-        contentFromAssistant.role = constants.MODEL_ROLE;
-      }
       this.historyInternal.push(contentFromAssistant);
     } else {
       const promptFeedback = streamGenerateContentResponse.promptFeedback;
@@ -351,13 +351,13 @@ export class ChatSessionPreview {
     });
     const generateContentResponse = await generateContentResult.response;
     // Only push the latest message to history if the response returned a result
-    if (generateContentResponse.candidates.length !== 0) {
+    if (
+      generateContentResponse.candidates &&
+      generateContentResponse.candidates.length !== 0
+    ) {
       this.historyInternal = this.historyInternal.concat(newContent);
       const contentFromAssistant =
         generateContentResponse.candidates[0].content;
-      if (!contentFromAssistant.role) {
-        contentFromAssistant.role = constants.MODEL_ROLE;
-      }
       this.historyInternal.push(contentFromAssistant);
     } else {
       const promptFeedback = generateContentResponse.promptFeedback;
@@ -385,13 +385,13 @@ export class ChatSessionPreview {
     const streamGenerateContentResponse =
       await streamGenerateContentResult.response;
     // Only push the latest message to history if the response returned a result
-    if (streamGenerateContentResponse.candidates.length !== 0) {
+    if (
+      streamGenerateContentResponse.candidates &&
+      streamGenerateContentResponse.candidates.length !== 0
+    ) {
       this.historyInternal = this.historyInternal.concat(newContent);
       const contentFromAssistant =
         streamGenerateContentResponse.candidates[0].content;
-      if (!contentFromAssistant.role) {
-        contentFromAssistant.role = constants.MODEL_ROLE;
-      }
       this.historyInternal.push(contentFromAssistant);
     } else {
       const promptFeedback = streamGenerateContentResponse.promptFeedback;

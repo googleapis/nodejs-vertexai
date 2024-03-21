@@ -18,10 +18,13 @@
 import {
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1,
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2,
+  AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_3,
   COUNT_TOKENS_RESPONSE_1,
   STREAM_RESPONSE_CHUNKS_1,
   STREAM_RESPONSE_CHUNKS_2,
+  STREAM_RESPONSE_CHUNKS_3,
   UNARY_RESPONSE_1,
+  UNARY_RESPONSE_MISSING_ROLE_INDEX,
 } from './test_data';
 import * as PostFetchFunctions from '../post_fetch_processing';
 import {aggregateResponses} from '../post_fetch_processing';
@@ -60,6 +63,18 @@ describe('aggregateResponses', () => {
       JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2)
     );
   });
+
+  it('missing candidates, should return {}', () => {
+    expect(aggregateResponses([{}, {}])).toEqual({});
+  });
+
+  it('missing role and index, should add role and index', () => {
+    const actualResult = aggregateResponses(STREAM_RESPONSE_CHUNKS_3);
+
+    expect(JSON.stringify(actualResult)).toEqual(
+      JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_3)
+    );
+  });
 });
 
 describe('processUnary', () => {
@@ -79,6 +94,41 @@ describe('processUnary', () => {
     const actualResponse = actualResult.response;
 
     expect(actualResponse).toEqual(UNARY_RESPONSE_1);
+  });
+
+  it('response missing role and index, should add role and index', async () => {
+    const fetchResult = new Response(
+      JSON.stringify(UNARY_RESPONSE_MISSING_ROLE_INDEX),
+      fetchResponseObj
+    );
+    const expectedResult = UNARY_RESPONSE_1;
+    spyOn(global, 'fetch').and.resolveTo(fetchResult);
+    const actualResult = await generateContent(
+      LOCATION,
+      PROJECT,
+      PUBLISHER_MODEL_ENDPOINT,
+      TOKEN,
+      GENERATE_CONTENT_REQUEST
+    );
+    const actualResponse = actualResult.response;
+
+    expect(actualResponse).toEqual(expectedResult);
+  });
+
+  it('candidate undefined, should return empty response', async () => {
+    spyOn(global, 'fetch').and.resolveTo(
+      new Response(JSON.stringify({}), fetchResponseObj)
+    );
+    const actualResult = await generateContent(
+      LOCATION,
+      PROJECT,
+      PUBLISHER_MODEL_ENDPOINT,
+      TOKEN,
+      GENERATE_CONTENT_REQUEST
+    );
+    const actualResponse = actualResult.response;
+
+    expect(actualResponse).toEqual({});
   });
 });
 

@@ -357,8 +357,14 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
 
 export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse =
   {
+    usageMetadata: {
+      promptTokenCount: 6,
+      candidatesTokenCount: 91,
+      totalTokenCount: 97,
+    },
     candidates: [
       {
+        index: 0,
         content: {
           role: 'model',
           parts: [
@@ -428,6 +434,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
         finishReason: 'STOP',
       },
       {
+        index: 1,
         content: {
           role: 'model',
           parts: [
@@ -497,11 +504,6 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
         finishReason: 'STOP',
       },
     ],
-    usageMetadata: {
-      promptTokenCount: 6,
-      candidatesTokenCount: 91,
-      totalTokenCount: 97,
-    },
   } as GenerateContentResponse;
 
 export const STREAM_RESPONSE_CHUNKS_2: GenerateContentResponse[] = [
@@ -690,8 +692,14 @@ export const STREAM_RESPONSE_CHUNKS_2: GenerateContentResponse[] = [
 
 export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2: GenerateContentResponse =
   {
+    usageMetadata: {
+      promptTokenCount: 6,
+      candidatesTokenCount: 91,
+      totalTokenCount: 97,
+    },
     candidates: [
       {
+        index: 0,
         content: {
           role: 'model',
           parts: [
@@ -735,6 +743,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2: GenerateContentRespon
         finishReason: 'STOP',
       },
       {
+        index: 1,
         content: {
           role: 'model',
           parts: [
@@ -794,13 +803,42 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2: GenerateContentRespon
         finishReason: 'STOP',
       },
     ],
-    usageMetadata: {
-      promptTokenCount: 6,
-      candidatesTokenCount: 91,
-      totalTokenCount: 97,
-    },
   } as GenerateContentResponse;
 
+export const STREAM_RESPONSE_CHUNKS_3: GenerateContentResponse[] = [
+  {
+    candidates: [
+      {content: {parts: [{text: 'chunk1Candidate1'}]}},
+      {content: {parts: [{text: 'chunk1Candidate2'}]}},
+    ],
+  },
+  {
+    candidates: [
+      {content: {parts: [{text: 'chunk2Candidate1'}]}},
+      {content: {parts: [{text: 'chunk2Candidate2'}]}},
+    ],
+  },
+] as GenerateContentResponse[];
+
+export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_3: GenerateContentResponse =
+  {
+    candidates: [
+      {
+        index: 0,
+        content: {
+          role: 'model',
+          parts: [{text: 'chunk1Candidate1chunk2Candidate1'}],
+        },
+      },
+      {
+        index: 1,
+        content: {
+          role: 'model',
+          parts: [{text: 'chunk1Candidate2chunk2Candidate2'}],
+        },
+      },
+    ],
+  } as GenerateContentResponse;
 export const UNARY_RESPONSE_1: GenerateContentResponse = {
   candidates: [
     {
@@ -812,6 +850,7 @@ export const UNARY_RESPONSE_1: GenerateContentResponse = {
           },
         ],
       },
+      index: 0,
       safetyRatings: [
         {
           category: 'HARM_CATEGORY_HATE_SPEECH',
@@ -846,6 +885,109 @@ export const UNARY_RESPONSE_1: GenerateContentResponse = {
     {
       content: {
         role: 'model',
+        parts: [
+          {
+            text: 'candidate2',
+          },
+        ],
+      },
+      index: 1,
+      safetyRatings: [
+        {
+          category: 'HARM_CATEGORY_HATE_SPEECH',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.448547,
+          severity: 'HARM_SEVERITY_MEDIUM',
+          severityScore: 0.40221596,
+        },
+        {
+          category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.41935068,
+          severity: 'HARM_SEVERITY_LOW',
+          severityScore: 0.27067295,
+        },
+        {
+          category: 'HARM_CATEGORY_HARASSMENT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.40703878,
+          severity: 'HARM_SEVERITY_LOW',
+          severityScore: 0.26095408,
+        },
+        {
+          category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.24220563,
+          severity: 'HARM_SEVERITY_NEGLIGIBLE',
+          severityScore: 0.15140383,
+        },
+      ],
+    },
+  ],
+  promptFeedback: {
+    blockReason: 'BLOCK_REASON_UNSPECIFIED',
+    safetyRatings: [
+      {
+        category: 'HARM_CATEGORY_HATE_SPEECH',
+        probability: 'NEGLIGIBLE',
+        probabilityScore: 0.448547,
+        severity: 'HARM_SEVERITY_MEDIUM',
+        severityScore: 0.40221596,
+      },
+    ],
+    blockReasonMessage: 'block reason message',
+  },
+  usageMetadata: {
+    promptTokenCount: 6,
+    candidatesTokenCount: 91,
+    totalTokenCount: 97,
+  },
+} as GenerateContentResponse;
+
+export const UNARY_RESPONSE_MISSING_ROLE_INDEX: GenerateContentResponse = {
+  candidates: [
+    {
+      content: {
+        parts: [
+          {
+            text: 'candidate1',
+          },
+        ],
+      },
+      index: 0,
+      safetyRatings: [
+        {
+          category: 'HARM_CATEGORY_HATE_SPEECH',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.448547,
+          severity: 'HARM_SEVERITY_MEDIUM',
+          severityScore: 0.40221596,
+        },
+        {
+          category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.41935068,
+          severity: 'HARM_SEVERITY_LOW',
+          severityScore: 0.27067295,
+        },
+        {
+          category: 'HARM_CATEGORY_HARASSMENT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.40703878,
+          severity: 'HARM_SEVERITY_LOW',
+          severityScore: 0.26095408,
+        },
+        {
+          category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+          probability: 'NEGLIGIBLE',
+          probabilityScore: 0.24220563,
+          severity: 'HARM_SEVERITY_NEGLIGIBLE',
+          severityScore: 0.15140383,
+        },
+      ],
+    },
+    {
+      content: {
         parts: [
           {
             text: 'candidate2',

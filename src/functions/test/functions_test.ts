@@ -585,7 +585,7 @@ describe('generateContent', () => {
       TEST_API_ENDPOINT
     );
     expect(
-      resp.response.candidates[0].citationMetadata?.citations.length
+      resp.response.candidates![0].citationMetadata?.citations.length
     ).toEqual(
       TEST_MODEL_RESPONSE.candidates[0].citationMetadata.citations.length
     );
@@ -617,9 +617,9 @@ describe('generateContent', () => {
       TEST_API_ENDPOINT
     );
     expect(actualResult).toEqual(expectedResult);
-    expect(actualResult.response.candidates[0].functionCalls).toHaveSize(1);
-    expect(actualResult.response.candidates[0].functionCalls).toEqual([
-      expectedResult.response.candidates[0].content.parts[0].functionCall!,
+    expect(actualResult.response.candidates![0].functionCalls).toHaveSize(1);
+    expect(actualResult.response.candidates![0].functionCalls).toEqual([
+      expectedResult.response.candidates![0].content.parts[0].functionCall!,
     ]);
   });
 
@@ -652,7 +652,9 @@ describe('generateContent', () => {
       TEST_API_ENDPOINT
     );
     expect(actualResult).toEqual(expectedResult);
-    expect(actualResult.response.candidates[0].functionCalls).not.toBeDefined();
+    expect(
+      actualResult.response.candidates![0].functionCalls
+    ).not.toBeDefined();
   });
 
   it('returns empty candidates when response is empty', async () => {

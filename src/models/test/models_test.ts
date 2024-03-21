@@ -219,19 +219,6 @@ const fetchResponseObj = {
 const TEST_EMPTY_MODEL_RESPONSE = {
   candidates: [],
 };
-const TEST_CANDIDATES_MISSING_ROLE = [
-  {
-    index: 1,
-    content: {parts: [{text: 'Im doing great! How are you?'}]},
-    finishReason: FinishReason.FINISH_REASON_UNSPECIFIED,
-    finishMessage: '',
-    safetyRatings: TEST_SAFETY_RATINGS,
-  },
-];
-const TEST_MODEL_RESPONSE_MISSING_ROLE = {
-  candidates: TEST_CANDIDATES_MISSING_ROLE,
-  usageMetadata: {promptTokenCount: 0, candidatesTokenCount: 0},
-};
 const TEST_REQUEST_OPTIONS = {
   timeout: 0,
 };
@@ -588,7 +575,7 @@ describe('GenerativeModel generateContent', () => {
     };
     const resp = await model.generateContent(req);
     expect(
-      resp.response.candidates[0].citationMetadata?.citations.length
+      resp.response.candidates![0].citationMetadata?.citations.length
     ).toEqual(
       TEST_MODEL_RESPONSE.candidates[0].citationMetadata.citations.length
     );
@@ -796,7 +783,7 @@ describe('GenerativeModelPreview generateContent', () => {
     };
     const resp = await model.generateContent(req);
     expect(
-      resp.response.candidates[0].citationMetadata?.citations.length
+      resp.response.candidates![0].citationMetadata?.citations.length
     ).toEqual(
       TEST_MODEL_RESPONSE.candidates[0].citationMetadata.citations.length
     );
@@ -1430,32 +1417,6 @@ describe('ChatSession', () => {
       );
       expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
     });
-    it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
-      const req = 'How are you doing today?';
-      const expectedResult: StreamGenerateContentResult = {
-        response: Promise.resolve(TEST_MODEL_RESPONSE_MISSING_ROLE),
-        stream: testGenerator(),
-      };
-      const chatSession = model.startChat({
-        history: [
-          {
-            role: constants.USER_ROLE,
-            parts: [{text: 'How are you doing today?'}],
-          },
-        ],
-      });
-      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
-      expect(chatSession.history.length).toEqual(1);
-      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
-      const result = await chatSession.sendMessageStream(req);
-      const response = await result.response;
-      const expectedResponse = await expectedResult.response;
-      expect(response).toEqual(expectedResponse);
-      expect(chatSession.history.length).toEqual(3);
-      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
-      expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
-      expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
-    });
 
     it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
       const functionCallChatMessage = 'What is the weather in LA?';
@@ -1744,32 +1705,6 @@ describe('ChatSessionPreview', () => {
         TEST_REQUEST_OPTIONS
       );
       expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
-    });
-    it('returns a StreamGenerateContentResponse and appends role if missing', async () => {
-      const req = 'How are you doing today?';
-      const expectedResult: StreamGenerateContentResult = {
-        response: Promise.resolve(TEST_MODEL_RESPONSE_MISSING_ROLE),
-        stream: testGenerator(),
-      };
-      const chatSession = model.startChat({
-        history: [
-          {
-            role: constants.USER_ROLE,
-            parts: [{text: 'How are you doing today?'}],
-          },
-        ],
-      });
-      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
-      expect(chatSession.history.length).toEqual(1);
-      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
-      const result = await chatSession.sendMessageStream(req);
-      const response = await result.response;
-      const expectedResponse = await expectedResult.response;
-      expect(response).toEqual(expectedResponse);
-      expect(chatSession.history.length).toEqual(3);
-      expect(chatSession.history[0].role).toEqual(constants.USER_ROLE);
-      expect(chatSession.history[1].role).toEqual(constants.USER_ROLE);
-      expect(chatSession.history[2].role).toEqual(constants.MODEL_ROLE);
     });
 
     it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {

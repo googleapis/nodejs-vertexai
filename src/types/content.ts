@@ -241,7 +241,7 @@ export declare interface Content {
   /** Array of {@link Part}. */
   parts: Part[];
   /** The producer of the content. */
-  role?: string;
+  role: string;
 }
 
 /**
@@ -488,7 +488,7 @@ export declare interface StreamGenerateContentResult {
  */
 export declare interface GenerateContentResponse {
   /** Array of {@link GenerateContentCandidate}. */
-  candidates: GenerateContentCandidate[];
+  candidates?: GenerateContentCandidate[];
   /**
    * Optional. This is only populated if there are no candidates due to a
    * safety block. {@link PromptFeedback}.
@@ -508,7 +508,7 @@ export declare interface GenerateContentCandidate {
    * Optional. The index of the candidate in the {@link
    * GenerateContentResponse}.
    */
-  index?: number;
+  index: number;
   /**
    * Optional. The reason why the model stopped generating tokens. {@link
    * FinishReason}.

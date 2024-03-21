@@ -16,8 +16,8 @@
  */
 
 import {
-  Citation,
   CitationMetadata,
+  Content,
   CountTokensResponse,
   GenerateContentCandidate,
   GenerateContentResponse,
@@ -26,6 +26,7 @@ import {
   Part,
   StreamGenerateContentResult,
 } from '../types/content';
+import {constants} from '../util';
 import {ClientError, GoogleGenerativeAIError} from '../types/errors';
 
 export async function throwErrorIfNotOK(response: Response | undefined) {
@@ -57,7 +58,7 @@ async function* generateResponseSequence(
     if (done) {
       break;
     }
-    yield addCandidateFunctionCalls(value);
+    yield addMissingFields(value);
   }
 }
 
@@ -183,18 +184,28 @@ export function aggregateResponses(
     );
   }
 
-  const aggregatedResponse: GenerateContentResponse = {
-    candidates: [],
-    promptFeedback: lastResponse.promptFeedback,
-    usageMetadata: lastResponse.usageMetadata,
-  };
+  const aggregatedResponse: GenerateContentResponse = {};
+
+  if (lastResponse.promptFeedback) {
+    aggregatedResponse.promptFeedback = lastResponse.promptFeedback;
+  }
+  if (lastResponse.usageMetadata) {
+    aggregatedResponse.usageMetadata = lastResponse.usageMetadata;
+  }
+
   for (const response of responses) {
+    if (!response.candidates || response.candidates.length === 0) {
+      continue;
+    }
     for (let i = 0; i < response.candidates.length; i++) {
+      if (!aggregatedResponse.candidates) {
+        aggregatedResponse.candidates = [];
+      }
       if (!aggregatedResponse.candidates[i]) {
         aggregatedResponse.candidates[i] = {
-          index: response.candidates[i].index,
+          index: response.candidates[i].index ?? i,
           content: {
-            role: response.candidates[i].content.role,
+            role: response.candidates[i].content.role ?? constants.MODEL_ROLE,
             parts: [{text: ''}],
           },
         } as GenerateContentCandidate;
@@ -246,8 +257,6 @@ export function aggregateResponses(
       }
     }
   }
-  aggregatedResponse.promptFeedback =
-    responses[responses.length - 1].promptFeedback;
   return aggregatedResponse;
 }
 
@@ -304,6 +313,33 @@ function aggregateGroundingMetadataForCandidate(
   return groundingMetadataAggregated;
 }
 
+function addMissingIndexAndRole(
+  response: GenerateContentResponse
+): GenerateContentResponse {
+  const generateContentResponse = response as GenerateContentResponse;
+  if (
+    generateContentResponse.candidates &&
+    generateContentResponse.candidates.length > 0
+  ) {
+    generateContentResponse.candidates.forEach((candidate, index) => {
+      if (candidate.index === undefined) {
+        generateContentResponse.candidates![index].index = index;
+      }
+
+      if (candidate.content === undefined) {
+        generateContentResponse.candidates![index].content = {} as Content;
+      }
+
+      if (candidate.content.role === undefined) {
+        generateContentResponse.candidates![index].content.role =
+          constants.MODEL_ROLE;
+      }
+    });
+  }
+
+  return generateContentResponse;
+}
+
 function addCandidateFunctionCalls(
   response: GenerateContentResponse
 ): GenerateContentResponse {
@@ -328,6 +364,13 @@ function addCandidateFunctionCalls(
   return response;
 }
 
+function addMissingFields(
+  response: GenerateContentResponse
+): GenerateContentResponse {
+  const generateContentResponse = addMissingIndexAndRole(response);
+  return addCandidateFunctionCalls(generateContentResponse);
+}
+
 /**
  * Process model responses from generateContent
  * @ignore
@@ -338,8 +381,9 @@ export async function processUnary(
   if (response !== undefined) {
     // ts-ignore
     const responseJson = await response.json();
+    const generateContentResponse = addMissingIndexAndRole(responseJson);
     return Promise.resolve({
-      response: addCandidateFunctionCalls(responseJson),
+      response: addCandidateFunctionCalls(generateContentResponse),
     });
   }
 
