@@ -58,7 +58,7 @@ async function* generateResponseSequence(
     if (done) {
       break;
     }
-    yield addMissingFields(value);
+    yield addMissingIndexAndRole(value);
   }
 }
 
@@ -340,37 +340,6 @@ function addMissingIndexAndRole(
   return generateContentResponse;
 }
 
-function addCandidateFunctionCalls(
-  response: GenerateContentResponse
-): GenerateContentResponse {
-  if (!response.candidates) {
-    return response;
-  }
-  for (const candidate of response.candidates) {
-    if (
-      !candidate.content ||
-      !candidate.content.parts ||
-      candidate.content.parts.length === 0
-    ) {
-      continue;
-    }
-    const functionCalls = candidate.content.parts
-      .filter((part: Part) => !!part.functionCall)
-      .map((part: Part) => part.functionCall!);
-    if (functionCalls.length > 0) {
-      candidate.functionCalls = functionCalls;
-    }
-  }
-  return response;
-}
-
-function addMissingFields(
-  response: GenerateContentResponse
-): GenerateContentResponse {
-  const generateContentResponse = addMissingIndexAndRole(response);
-  return addCandidateFunctionCalls(generateContentResponse);
-}
-
 /**
  * Process model responses from generateContent
  * @ignore
@@ -383,7 +352,7 @@ export async function processUnary(
     const responseJson = await response.json();
     const generateContentResponse = addMissingIndexAndRole(responseJson);
     return Promise.resolve({
-      response: addCandidateFunctionCalls(generateContentResponse),
+      response: generateContentResponse,
     });
   }
 

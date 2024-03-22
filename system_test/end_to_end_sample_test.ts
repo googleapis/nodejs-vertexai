@@ -23,6 +23,7 @@ import {
   Part,
   TextPart,
   VertexAI,
+  ResponseHandler,
 } from '../src';
 import {FunctionDeclarationSchemaType} from '../src/types';
 
@@ -472,7 +473,9 @@ describe('generateContentStream', () => {
         .candidates![0].content.parts.filter(part => !!part.functionCall)
         .map(part => part.functionCall!);
       expect(functionCalls).toHaveSize(1);
-      expect(item.candidates![0].functionCalls!).toEqual(functionCalls!);
+      expect(
+        ResponseHandler.getCandidateFunctionCalls(item.candidates?.[0])
+      ).toEqual(functionCalls!);
     }
   });
   it('in preview should return a FunctionCall when passed a FunctionDeclaration', async () => {
@@ -494,7 +497,9 @@ describe('generateContentStream', () => {
         .candidates![0].content.parts.filter(part => !!part.functionCall)
         .map(part => part.functionCall!);
       expect(functionCalls).toHaveSize(1);
-      expect(item.candidates![0].functionCalls!).toEqual(functionCalls!);
+      expect(
+        ResponseHandler.getCandidateFunctionCalls(item.candidates?.[0])
+      ).toEqual(functionCalls!);
     }
   });
   xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
@@ -770,7 +775,9 @@ describe('generateContent', () => {
       .candidates![0].content.parts.filter((part: Part) => !!part.functionCall)
       .map((part: Part) => part.functionCall!);
     expect(functionCalls).toHaveSize(1);
-    expect(resp.response.candidates![0].functionCalls!).toEqual(functionCalls!);
+    expect(
+      ResponseHandler.getCandidateFunctionCalls(resp.response.candidates![0])
+    ).toEqual(functionCalls!);
   });
   it('in preview should return a FunctionCall when passed a FunctionDeclaration', async () => {
     const request = {
@@ -789,7 +796,9 @@ describe('generateContent', () => {
       .candidates![0].content.parts.filter((part: Part) => !!part.functionCall)
       .map((part: Part) => part.functionCall!);
     expect(functionCalls).toHaveSize(1);
-    expect(resp.response.candidates![0].functionCalls!).toEqual(functionCalls!);
+    expect(
+      ResponseHandler.getCandidateFunctionCalls(resp.response.candidates![0])
+    ).toEqual(functionCalls!);
   });
 });
 

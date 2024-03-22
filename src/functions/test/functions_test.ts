@@ -36,6 +36,7 @@ import {constants} from '../../util';
 import {countTokens} from '../count_tokens';
 import {generateContent, generateContentStream} from '../generate_content';
 import * as StreamFunctions from '../post_fetch_processing';
+import {ResponseHandler} from '../response_handler';
 
 const TEST_PROJECT = 'test-project';
 const TEST_LOCATION = 'test-location';
@@ -150,7 +151,6 @@ const TEST_CANDIDATES_WITH_FUNCTION_CALL = [
     finishReason: FinishReason.STOP,
     finishMessage: '',
     safetyRatings: TEST_SAFETY_RATINGS,
-    functionCalls: [TEST_FUNCTION_CALL_RESPONSE.functionCall],
   },
 ];
 const TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL = {
@@ -617,8 +617,16 @@ describe('generateContent', () => {
       TEST_API_ENDPOINT
     );
     expect(actualResult).toEqual(expectedResult);
-    expect(actualResult.response.candidates![0].functionCalls).toHaveSize(1);
-    expect(actualResult.response.candidates![0].functionCalls).toEqual([
+    expect(
+      ResponseHandler.getCandidateFunctionCalls(
+        actualResult.response.candidates![0]
+      )
+    ).toHaveSize(1);
+    expect(
+      ResponseHandler.getCandidateFunctionCalls(
+        actualResult.response.candidates![0]
+      )
+    ).toEqual([
       expectedResult.response.candidates![0].content.parts[0].functionCall!,
     ]);
   });
@@ -653,8 +661,10 @@ describe('generateContent', () => {
     );
     expect(actualResult).toEqual(expectedResult);
     expect(
-      actualResult.response.candidates![0].functionCalls
-    ).not.toBeDefined();
+      ResponseHandler.getCandidateFunctionCalls(
+        actualResult.response.candidates?.[0]
+      )
+    ).toHaveSize(0);
   });
 
   it('returns empty candidates when response is empty', async () => {
