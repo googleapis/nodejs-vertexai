@@ -31,7 +31,6 @@ import {
   StreamGenerateContentResult,
   Tool,
 } from '../../types';
-import {FunctionCall} from '../../types/content';
 import {constants} from '../../util';
 import {countTokens} from '../count_tokens';
 import {generateContent, generateContentStream} from '../generate_content';
@@ -156,25 +155,6 @@ const TEST_CANDIDATES_WITH_FUNCTION_CALL = [
 const TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL = {
   candidates: TEST_CANDIDATES_WITH_FUNCTION_CALL,
 };
-
-const TEST_FUNCTION_RESPONSE_PART = [
-  {
-    functionResponse: {
-      name: 'get_current_weather',
-      response: {name: 'get_current_weather', content: {weather: 'super nice'}},
-    },
-  },
-];
-
-const TEST_CANDIDATES_MISSING_ROLE = [
-  {
-    index: 1,
-    content: {parts: [{text: 'Im doing great! How are you?'}]},
-    finish_reason: 0,
-    finish_message: '',
-    safety_ratings: TEST_SAFETY_RATINGS,
-  },
-];
 
 const TEST_ENDPOINT_BASE_PATH = 'test.googleapis.com';
 const TEST_GCS_FILENAME = 'gs://test_bucket/test_image.jpeg';
@@ -311,8 +291,6 @@ describe('countTokens', () => {
       status: 'INTERNAL_SERVER_ERROR',
     };
     const response = new Response(JSON.stringify(body), fetch500Obj);
-    const expectedErrorMessage =
-      '[VertexAI.GoogleGenerativeAIError]: got status: 500 Internal Server Error. {"code":500,"message":"service is having downtime","status":"INTERNAL_SERVER_ERROR"}';
     spyOn(global, 'fetch').and.resolveTo(response);
 
     await expectAsync(
@@ -325,17 +303,6 @@ describe('countTokens', () => {
         TEST_API_ENDPOINT
       )
     ).toBeRejected();
-    // TODO: update jasmine version or use flush to uncomment
-    // await countTokens(
-    //   TEST_LOCATION,
-    //   TEST_PROJECT,
-    //   TEST_PUBLISHER_MODEL_ENDPOINT,
-    //   TEST_TOKEN_PROMISE,
-    //   req,
-    //   TEST_API_ENDPOINT
-    // ).catch(e => {
-    //   expect(e.message).toEqual(expectedErrorMessage);
-    // });
   });
 
   it('throw ClientError when not OK and 4XX', async () => {
@@ -350,8 +317,6 @@ describe('countTokens', () => {
       status: 'INVALID_ARGUMENT',
     };
     const response = new Response(JSON.stringify(body), fetch400Obj);
-    const expectedErrorMessage =
-      '[VertexAI.ClientError]: got status: 400 Bad Request. {"code":400,"message":"request is invalid","status":"INVALID_ARGUMENT"}';
     spyOn(global, 'fetch').and.resolveTo(response);
 
     await expectAsync(
@@ -364,17 +329,6 @@ describe('countTokens', () => {
         TEST_API_ENDPOINT
       )
     ).toBeRejected();
-    // TODO: update jasmine version or use flush to uncomment
-    // await countTokens(
-    //   TEST_LOCATION,
-    //   TEST_PROJECT,
-    //   TEST_PUBLISHER_MODEL_ENDPOINT,
-    //   TEST_TOKEN_PROMISE,
-    //   req,
-    //   TEST_API_ENDPOINT
-    // ).catch(e => {
-    //   expect(e.message).toEqual(expectedErrorMessage);
-    // });
   });
 });
 
@@ -503,9 +457,6 @@ describe('generateContent', () => {
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
     };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
-    };
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     await generateContent(
       TEST_LOCATION,
@@ -525,9 +476,6 @@ describe('generateContent', () => {
       contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
       generationConfig: {topK: 0},
       safetySettings: [],
-    };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
     };
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     await generateContent(
@@ -550,9 +498,6 @@ describe('generateContent', () => {
       generationConfig: {topK: 1},
       safetySettings: [],
     };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
-    };
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     await generateContent(
       TEST_LOCATION,
@@ -571,9 +516,6 @@ describe('generateContent', () => {
   it('aggregates citation metadata', async () => {
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
-    };
-    const expectedResult: GenerateContentResult = {
-      response: TEST_MODEL_RESPONSE,
     };
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(

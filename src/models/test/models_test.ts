@@ -216,9 +216,6 @@ const fetchResponseObj = {
   headers: {'Content-Type': 'application/json'},
   url: 'url',
 };
-const TEST_EMPTY_MODEL_RESPONSE = {
-  candidates: [],
-};
 const TEST_REQUEST_OPTIONS = {
   timeout: 0,
 };
@@ -1177,7 +1174,6 @@ describe('GenerativeModelPreview generateContentStream', () => {
 describe('ChatSession', () => {
   let chatSession: ChatSession;
   let chatSessionWithNoArgs: ChatSession;
-  let chatSessionWithEmptyResponse: ChatSession;
   let chatSessionWithFunctionCall: ChatSession;
   let model: GenerativeModel;
 
@@ -1193,7 +1189,6 @@ describe('ChatSession', () => {
     });
     expect(await chatSession.getHistory()).toEqual(TEST_USER_CHAT_MESSAGE);
     chatSessionWithNoArgs = model.startChat();
-    chatSessionWithEmptyResponse = model.startChat();
     chatSessionWithFunctionCall = model.startChat({
       tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
     });
@@ -1252,19 +1247,6 @@ describe('ChatSession', () => {
       expect((await chatSessionWithNoArgs.getHistory()).length).toEqual(2);
     });
 
-    it('throws an error when the model returns an empty response', async () => {
-      const req = 'How are you doing today?';
-      const expectedResult: GenerateContentResult = {
-        response: TEST_EMPTY_MODEL_RESPONSE,
-      };
-      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
-      await expectAsync(
-        chatSessionWithEmptyResponse.sendMessage(req)
-      ).toBeRejected();
-      expect((await chatSessionWithEmptyResponse.getHistory()).length).toEqual(
-        0
-      );
-    });
     it('returns a GenerateContentResponse when passed multi-part content', async () => {
       const req = TEST_MULTIPART_MESSAGE[0]['parts'];
       const expectedResult: GenerateContentResult = {
@@ -1484,7 +1466,6 @@ describe('ChatSession', () => {
 describe('ChatSessionPreview', () => {
   let chatSession: ChatSessionPreview;
   let chatSessionWithNoArgs: ChatSessionPreview;
-  let chatSessionWithEmptyResponse: ChatSessionPreview;
   let chatSessionWithFunctionCall: ChatSessionPreview;
   let model: GenerativeModelPreview;
   let expectedStreamResult: StreamGenerateContentResult;
@@ -1501,7 +1482,6 @@ describe('ChatSessionPreview', () => {
     });
     expect(await chatSession.getHistory()).toEqual(TEST_USER_CHAT_MESSAGE);
     chatSessionWithNoArgs = model.startChat();
-    chatSessionWithEmptyResponse = model.startChat();
     chatSessionWithFunctionCall = model.startChat({
       tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
     });
@@ -1563,19 +1543,6 @@ describe('ChatSessionPreview', () => {
       expect((await chatSessionWithNoArgs.getHistory()).length).toEqual(2);
     });
 
-    it('throws an error when the model returns an empty response', async () => {
-      const req = 'How are you doing today?';
-      const expectedResult: GenerateContentResult = {
-        response: TEST_EMPTY_MODEL_RESPONSE,
-      };
-      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
-      await expectAsync(
-        chatSessionWithEmptyResponse.sendMessage(req)
-      ).toBeRejected();
-      expect((await chatSessionWithEmptyResponse.getHistory()).length).toEqual(
-        0
-      );
-    });
     it('returns a GenerateContentResponse when passed multi-part content', async () => {
       const req = TEST_MULTIPART_MESSAGE[0]['parts'];
       const expectedResult: GenerateContentResult = {
@@ -2035,8 +2002,6 @@ describe('GenerativeModelPreview when response is undefined', () => {
 });
 
 describe('GeneratvieModel when response is 4XX', () => {
-  const expectedErrorMessage =
-    '[VertexAI.ClientError]: got status: 400 Bad Request. {"code":400,"message":"request is invalid","status":"INVALID_ARGUMENT"}';
   const req: GenerateContentRequest = {
     contents: TEST_USER_CHAT_MESSAGE,
   };
@@ -2100,8 +2065,6 @@ describe('GeneratvieModel when response is 4XX', () => {
 });
 
 describe('GeneratvieModelPreview when response is 4XX', () => {
-  const expectedErrorMessage =
-    '[VertexAI.ClientError]: got status: 400 Bad Request. {"code":400,"message":"request is invalid","status":"INVALID_ARGUMENT"}';
   const req: GenerateContentRequest = {
     contents: TEST_USER_CHAT_MESSAGE,
   };
@@ -2165,8 +2128,6 @@ describe('GeneratvieModelPreview when response is 4XX', () => {
 });
 
 describe('GenerativeModel when response is not OK and not 4XX', () => {
-  const expectedErrorMessage =
-    '[VertexAI.GoogleGenerativeAIError]: got status: 500 Internal Server Error. {"code":500,"message":"service is having downtime","status":"INTERNAL_SERVER_ERROR"}';
   const req: GenerateContentRequest = {
     contents: TEST_USER_CHAT_MESSAGE,
   };
@@ -2230,8 +2191,6 @@ describe('GenerativeModel when response is not OK and not 4XX', () => {
 });
 
 describe('GenerativeModelPreview when response is not OK and not 4XX', () => {
-  const expectedErrorMessage =
-    '[VertexAI.GoogleGenerativeAIError]: got status: 500 Internal Server Error. {"code":500,"message":"service is having downtime","status":"INTERNAL_SERVER_ERROR"}';
   const req: GenerateContentRequest = {
     contents: TEST_USER_CHAT_MESSAGE,
   };

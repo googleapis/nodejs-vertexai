@@ -155,17 +155,6 @@ export class ChatSession {
       const contentFromAssistant =
         generateContentResponse.candidates[0].content;
       this.historyInternal.push(contentFromAssistant);
-    } else {
-      const promptFeedback = generateContentResponse.promptFeedback;
-      if (promptFeedback) {
-        errorMessage = `Model did not return candidate, but provided prompt feedback: ${JSON.stringify(
-          promptFeedback
-        )}`;
-      } else {
-        errorMessage =
-          'Model did not return candidate, could not find any prompt feedback from model as well';
-      }
-      throw new GoogleGenerativeAIError(errorMessage);
     }
 
     return Promise.resolve(generateContentResult);
@@ -189,17 +178,6 @@ export class ChatSession {
       const contentFromAssistant =
         streamGenerateContentResponse.candidates[0].content;
       this.historyInternal.push(contentFromAssistant);
-    } else {
-      const promptFeedback = streamGenerateContentResponse.promptFeedback;
-      if (promptFeedback) {
-        errorMessage = `Model did not return candidate, but provided prompt feedback: ${JSON.stringify(
-          promptFeedback
-        )}`;
-      } else {
-        errorMessage =
-          'Model did not return candidate, could not find any prompt feedback from model as well';
-      }
-      throw new GoogleGenerativeAIError(errorMessage);
     }
   }
 
@@ -359,17 +337,6 @@ export class ChatSessionPreview {
       const contentFromAssistant =
         generateContentResponse.candidates[0].content;
       this.historyInternal.push(contentFromAssistant);
-    } else {
-      const promptFeedback = generateContentResponse.promptFeedback;
-      if (promptFeedback) {
-        errorMessage = `Model did not return candidate, but provided prompt feedback: ${JSON.stringify(
-          promptFeedback
-        )}`;
-      } else {
-        errorMessage =
-          'Model did not return candidate, could not find any prompt feedback from model as well';
-      }
-      throw new GoogleGenerativeAIError(errorMessage);
     }
 
     return Promise.resolve(generateContentResult);
@@ -379,7 +346,6 @@ export class ChatSessionPreview {
     streamGenerateContentResultPromise: Promise<StreamGenerateContentResult>,
     newContent: Content[]
   ): Promise<void> {
-    let errorMessage: string;
     const streamGenerateContentResult =
       await streamGenerateContentResultPromise;
     const streamGenerateContentResponse =
@@ -393,16 +359,6 @@ export class ChatSessionPreview {
       const contentFromAssistant =
         streamGenerateContentResponse.candidates[0].content;
       this.historyInternal.push(contentFromAssistant);
-    } else {
-      const promptFeedback = streamGenerateContentResponse.promptFeedback;
-      if (promptFeedback) {
-        errorMessage = `Model did not return candidate, but provided prompt feedback: ${JSON.stringify(
-          promptFeedback
-        )}`;
-      } else {
-        errorMessage =
-          'Model did not return candidate, could not find any prompt feedback from model as well';
-      }
     }
   }
 

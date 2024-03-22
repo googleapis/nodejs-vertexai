@@ -388,7 +388,7 @@ export async function processUnary(
   }
 
   return Promise.resolve({
-    response: {candidates: []},
+    response: {} as GenerateContentResponse,
   });
 }
 
