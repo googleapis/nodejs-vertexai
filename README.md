@@ -33,7 +33,7 @@ To use the Vertex AI SDK for Node.js, create an instance of `VertexAI` by
 passing it your Google Cloud project ID and location. Then create a reference to
 a generative model.
 
-```typescript
+```javascript
 const {
   FunctionDeclarationSchemaType,
   HarmBlockThreshold,
@@ -96,7 +96,7 @@ streamGenerateContent();
 
 The response is returned all at once.
 
-```typescript
+```javascript
 async function generateContent() {
   const request = {
     contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
@@ -120,7 +120,7 @@ or `sendMessage` for nonstreamed responses.
 The response is returned in chunks as it's being generated to reduce the
 perception of latency to a human reader.
 
-```typescript
+```javascript
 async function streamChat() {
   const chat = generativeModel.startChat();
   const chatInput = "How can I learn more about Node.js?";
@@ -139,7 +139,7 @@ streamChat();
 
 The response is returned all at once.
 
-```typescript
+```javascript
 async function sendChat() {
   const chat = generativeModel.startChat();
   const chatInput = "How can I learn more about Node.js?";
@@ -167,7 +167,7 @@ where the image is located or by including a base64 encoding of the image.
 
 You can specify the Cloud Storage URI of the image in `fileUri`.
 
-```typescript
+```javascript
 async function multiPartContent() {
     const filePart = {fileData: {fileUri: "gs://generativeai-downloads/images/scones.jpg", mimeType: "image/jpeg"}};
     const textPart = {text: 'What is this picture about?'};
@@ -189,7 +189,7 @@ multiPartContent();
 
 You can specify the base64 image encoding string in `data`.
 
-```typescript
+```javascript
 async function multiPartContentImageString() {
     // Replace this with your own base64 image string
     const base64Image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
@@ -211,7 +211,7 @@ multiPartContentImageString();
 You can include videos in the prompt by specifying the Cloud Storage URI
 where the video is located in `fileUri`.
 
-```typescript
+```javascript
 async function multiPartContentVideo() {
     const filePart = {fileData: {fileUri: 'gs://cloud-samples-data/video/animals.mp4', mimeType: 'video/mp4'}};
     const textPart = {text: 'What is in the video?'};
@@ -242,7 +242,7 @@ approaches below.
 
 The following examples show you how to declare a function.
 
-```typescript
+```javascript
 const functionDeclarations = [
   {
     functionDeclarations: [
@@ -281,7 +281,7 @@ const functionResponseParts = [
 After the function is declared, you can pass it to the model in the
 `tools` parameter of the prompt request.
 
-```typescript
+```javascript
 async function functionCallingChat() {
   // Create a chat session and pass your function declarations
   const chat = generativeModel.startChat({
@@ -315,7 +315,7 @@ functionCallingChat();
 
 ### Function calling using `generateContentStream`
 
-```typescript
+```javascript
 async function functionCallingGenerateContentStream() {
   const request = {
     contents: [
@@ -337,7 +337,7 @@ functionCallingGenerateContentStream();
 
 ## Counting tokens
 
-```typescript
+```javascript
 async function countTokens() {
   const request = {
       contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
@@ -360,7 +360,7 @@ data source for grounding.
 
 ### Grounding using Google Search (Preview)
 
-```typescript
+```javascript
 async function generateContentWithGoogleSearchGrounding() {
   const generativeModelPreview = vertexAI.preview.getGenerativeModel({
     model: textModel,
@@ -389,7 +389,7 @@ generateContentWithGoogleSearchGrounding();
 
 ### Grounding using Vertex AI Search (Preview)
 
-```typescript
+```javascript
 async function generateContentWithVertexAISearchGrounding() {
   const generativeModelPreview = vertexAI.preview.getGenerativeModel({
     model: textModel,
