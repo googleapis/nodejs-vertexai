@@ -163,7 +163,6 @@ export class ChatSession {
     streamGenerateContentResultPromise: Promise<StreamGenerateContentResult>,
     newContent: Content[]
   ): Promise<void> {
-    let errorMessage: string;
     const streamGenerateContentResult =
       await streamGenerateContentResultPromise;
     const streamGenerateContentResponse =
