@@ -21,6 +21,7 @@ import {
   FunctionDeclarationSchemaType,
   GenerateContentRequest,
   GenerateContentResponse,
+  GenerateContentResponseHandler,
   GenerateContentResult,
   HarmBlockThreshold,
   HarmCategory,
@@ -35,7 +36,6 @@ import {constants} from '../../util';
 import {countTokens} from '../count_tokens';
 import {generateContent, generateContentStream} from '../generate_content';
 import * as StreamFunctions from '../post_fetch_processing';
-import {ResponseHandler} from '../response_handler';
 
 const TEST_PROJECT = 'test-project';
 const TEST_LOCATION = 'test-location';
@@ -560,12 +560,12 @@ describe('generateContent', () => {
     );
     expect(actualResult).toEqual(expectedResult);
     expect(
-      ResponseHandler.getCandidateFunctionCalls(
+      GenerateContentResponseHandler.getFunctionCallsFromCandidate(
         actualResult.response.candidates![0]
       )
     ).toHaveSize(1);
     expect(
-      ResponseHandler.getCandidateFunctionCalls(
+      GenerateContentResponseHandler.getFunctionCallsFromCandidate(
         actualResult.response.candidates![0]
       )
     ).toEqual([
@@ -603,7 +603,7 @@ describe('generateContent', () => {
     );
     expect(actualResult).toEqual(expectedResult);
     expect(
-      ResponseHandler.getCandidateFunctionCalls(
+      GenerateContentResponseHandler.getFunctionCallsFromCandidate(
         actualResult.response.candidates?.[0]
       )
     ).toHaveSize(0);

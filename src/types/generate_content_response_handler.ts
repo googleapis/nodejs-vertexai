@@ -15,17 +15,19 @@
  * limitations under the License.
  */
 
-import {GenerateContentCandidate, FunctionCall, Part} from '../types';
+import {GenerateContentCandidate, FunctionCall, Part} from './content';
 
-/** Helper class to render any extra properties out of {@link GenerateContentResponse}. */
-export class ResponseHandler {
+/** Helper class to render any extra properties out of
+ * {@link GenerateContentResponse} or properties of {@link GenerateContentResponse}
+ */
+export class GenerateContentResponseHandler {
   /**
    * Extracts function calls from a {@link GenerateContentCandidate}.
    *
    * @param candidate - The candidate to extract function calls from.
    * @returns the array of function calls in a {@link GenerateContentCandidate}.
    */
-  static getCandidateFunctionCalls(
+  static getFunctionCallsFromCandidate(
     candidate?: GenerateContentCandidate
   ): FunctionCall[] {
     if (!candidate) return [] as FunctionCall[];

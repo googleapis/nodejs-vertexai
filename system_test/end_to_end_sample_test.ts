@@ -23,7 +23,7 @@ import {
   Part,
   TextPart,
   VertexAI,
-  ResponseHandler,
+  GenerateContentResponseHandler,
 } from '../src';
 import {FunctionDeclarationSchemaType} from '../src/types';
 
@@ -474,7 +474,9 @@ describe('generateContentStream', () => {
         .map(part => part.functionCall!);
       expect(functionCalls).toHaveSize(1);
       expect(
-        ResponseHandler.getCandidateFunctionCalls(item.candidates?.[0])
+        GenerateContentResponseHandler.getFunctionCallsFromCandidate(
+          item.candidates?.[0]
+        )
       ).toEqual(functionCalls!);
     }
   });
@@ -498,7 +500,9 @@ describe('generateContentStream', () => {
         .map(part => part.functionCall!);
       expect(functionCalls).toHaveSize(1);
       expect(
-        ResponseHandler.getCandidateFunctionCalls(item.candidates?.[0])
+        GenerateContentResponseHandler.getFunctionCallsFromCandidate(
+          item.candidates?.[0]
+        )
       ).toEqual(functionCalls!);
     }
   });
@@ -773,7 +777,9 @@ describe('generateContent', () => {
       .map((part: Part) => part.functionCall!);
     expect(functionCalls).toHaveSize(1);
     expect(
-      ResponseHandler.getCandidateFunctionCalls(resp.response.candidates![0])
+      GenerateContentResponseHandler.getFunctionCallsFromCandidate(
+        resp.response.candidates![0]
+      )
     ).toEqual(functionCalls!);
   });
   it('in preview should return a FunctionCall when passed a FunctionDeclaration', async () => {
@@ -794,7 +800,9 @@ describe('generateContent', () => {
       .map((part: Part) => part.functionCall!);
     expect(functionCalls).toHaveSize(1);
     expect(
-      ResponseHandler.getCandidateFunctionCalls(resp.response.candidates![0])
+      GenerateContentResponseHandler.getFunctionCallsFromCandidate(
+        resp.response.candidates![0]
+      )
     ).toEqual(functionCalls!);
   });
 });
