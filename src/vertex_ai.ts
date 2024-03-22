@@ -96,6 +96,10 @@ export class VertexAI {
    * const generativeVisionModel = vertexAI.getGenerativeModel({
    *   model: visionModel,
    * });
+   *
+   * const generativeModelPreview = vertexAI.preview.getGenerativeModel({
+   *   model: textModel,
+   * });
    * ```
    *
    * @param modelParams - {@link ModelParams} Parameters to
@@ -138,7 +142,7 @@ class VertexAIPreview {
    * @param project - The Google Cloud project to use for the request
    * @param location - location The Google Cloud project location to use for the
    *     request
-   * @param googleAuth - googleAuth The GoogleAuthen class instance from
+   * @param googleAuth - The GoogleAuthen class instance from
    *     google-auth-library.
    *        Complete list of authentication options is documented in the
    * GoogleAuthOptions interface:

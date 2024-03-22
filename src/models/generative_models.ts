@@ -84,7 +84,7 @@ export class GenerativeModel {
   /**
    * Gets access token from GoogleAuth. Throws {@link GoogleAuthError} when
    * fails.
-   * @returns Promise of token
+   * @returns Promise of token string.
    */
   private fetchToken(): Promise<string | null | undefined> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -105,8 +105,7 @@ export class GenerativeModel {
    *   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
    * };
    * const result = await generativeModel.generateContent(request);
-   * const response = await result.response;
-   * console.log('Response: ', JSON.stringify(response));
+   * console.log('Response: ', JSON.stringify(result.response));
    * ```
    *
    * @param request - A GenerateContentRequest object with the request contents.
@@ -142,12 +141,12 @@ export class GenerativeModel {
    * const request = {
    *   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
    * };
-   * const streamingResp = await generativeModel.generateContentStream(request);
-   * for await (const item of streamingResp.stream) {
+   * const streamingResult = await generativeModel.generateContentStream(request);
+   * for await (const item of streamingResult.stream) {
    *   console.log('stream chunk: ', JSON.stringify(item));
    * }
-   * console.log('aggregated response: ', JSON.stringify(await
-   * streamingResp.response));
+   * const aggregatedResponse = await streamingResult.response;
+   * console.log('aggregated response: ', JSON.stringify(aggregatedResponse));
    * ```
    *
    * @param request - {@link GenerateContentRequest}
@@ -212,8 +211,8 @@ export class GenerativeModel {
    * @example
    * ```
    * const chat = generativeModel.startChat();
-   * const result1 = await chat.sendMessage("How can I learn more about
-   * Node.js?"); const response1 = await result1.response;
+   * const result1 = await chat.sendMessage("How can I learn more about Node.js?");
+   * const response1 = await result1.response;
    * console.log('Response: ', JSON.stringify(response1));
    *
    * const result2 = await chat.sendMessageStream("What about python?");
@@ -247,7 +246,8 @@ export class GenerativeModel {
 }
 
 /**
- * The base class for generative models that are in preview.
+ * The `GenerativeModelPreview` class is the base class for the generative models
+ * that are in preview.
  * NOTE: Don't instantiate this class directly. Use
  * `vertexai.preview.getGenerativeModel()` instead.
  */
@@ -285,8 +285,9 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Gets access token from GoogleAuth. Throws GoogleAuthError when fails.
-   * @returns Promise of token.
+   * Gets access token from GoogleAuth. Throws {@link GoogleAuthError} when
+   * fails.
+   * @returns Promise of token string.
    */
   private fetchToken(): Promise<string | null | undefined> {
     const tokenPromise = this.googleAuth.getAccessToken().catch(e => {
@@ -297,7 +298,19 @@ export class GenerativeModelPreview {
 
   /**
    * Makes an async call to generate content.
-   * @param request A GenerateContentRequest object with the request contents.
+   *
+   * The response will be returned in {@link GenerateContentResult.response}.
+   *
+   * @example
+   * ```
+   * const request = {
+   *   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+   * };
+   * const result = await generativeModelPreview.generateContent(request);
+   * console.log('Response: ', JSON.stringify(result.response));
+   * ```
+   *
+   * @param request - A GenerateContentRequest object with the request contents.
    * @returns The GenerateContentResponse object with the response candidates.
    */
   async generateContent(
@@ -318,8 +331,26 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Makes an async stream request to generate content. The response is
-   * returned in stream.
+   * Makes an async stream request to generate content.
+   *
+   * The response is returned chunk by chunk as it's being generated in {@link
+   * StreamGenerateContentResult.stream}. After all chunks of the response are
+   * returned, the aggregated response is available in
+   * {@link StreamGenerateContentResult.response}.
+   *
+   * @example
+   * ```
+   * const request = {
+   *   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+   * };
+   * const streamingResult = await generativeModelPreview.generateContentStream(request);
+   * for await (const item of streamingResult.stream) {
+   *   console.log('stream chunk: ', JSON.stringify(item));
+   * }
+   * const aggregatedResponse = await streamingResult.response;
+   * console.log('aggregated response: ', JSON.stringify(aggregatedResponse));
+   * ```
+   *
    * @param request - {@link GenerateContentRequest}
    * @returns Promise of {@link StreamGenerateContentResult}
    */
@@ -342,7 +373,20 @@ export class GenerativeModelPreview {
 
   /**
    * Makes an async request to count tokens.
-   * @param request A CountTokensRequest object with the request contents.
+   *
+   * The `countTokens` function returns the token count and the number of
+   * billable characters for a prompt.
+   *
+   * @example
+   * ```
+   * const request = {
+   *   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+   * };
+   * const resp = await generativeModelPreview.countTokens(request);
+   * console.log('count tokens response: ', resp);
+   * ```
+   *
+   * @param request - A CountTokensRequest object with the request contents.
    * @returns The CountTokensResponse object with the token count.
    */
   async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
@@ -358,11 +402,28 @@ export class GenerativeModelPreview {
   }
 
   /**
-   * Instantiates a ChatSessionPreview.
-   * This method doesn't make any call to remote endpoint.
-   * Any call to remote endpoint is implemented in ChatSessionPreview class @see ChatSessionPreview
+   * Instantiates a {@link ChatSessionPreview}.
+   *
+   * The {@link ChatSessionPreview} class is a stateful class that holds the state of
+   * the conversation with the model and provides methods to interact with the
+   * model in chat mode. Calling this method doesn't make any calls to a remote
+   * endpoint. To make remote call, use {@link ChatSessionPreview.sendMessage} or
+   * {@link ChatSessionPreview.sendMessageStream}.
+   *
+   * @example
+   * ```
+   * const chat = generativeModelPreview.startChat();
+   * const result1 = await chat.sendMessage("How can I learn more about Node.js?");
+   * const response1 = await result1.response;
+   * console.log('Response: ', JSON.stringify(response1));
+   *
+   * const result2 = await chat.sendMessageStream("What about python?");
+   * const response2 = await result2.response;
+   * console.log('Response: ', JSON.stringify(await response2));
+   * ```
+   *
    * @param request - {@link StartChatParams}
-   * @returns {@link ChatSessionPrevew}
+   * @returns {@link ChatSessionPreview}
    */
   startChat(request?: StartChatParams): ChatSessionPreview {
     const startChatRequest: StartChatSessionRequest = {
