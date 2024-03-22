@@ -745,9 +745,6 @@ describe('generateContent', () => {
         resp
       )}`
     );
-    const functionCalls = resp.response
-      .candidates![0].content.parts.filter((part: Part) => !!part.functionCall)
-      .map((part: Part) => part.functionCall!);
     expect(
       resp.response.candidates![0].content.parts[0].text?.toLowerCase()
     ).toContain(

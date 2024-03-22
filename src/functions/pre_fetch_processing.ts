@@ -16,12 +16,10 @@
  */
 
 import {
-  Content,
   GenerateContentRequest,
   GenerationConfig,
   SafetySetting,
 } from '../types/content';
-import {ClientError} from '../types/errors';
 import * as constants from '../util/constants';
 
 export function formatContentRequest(
