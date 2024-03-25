@@ -48,7 +48,7 @@ const visionModel = 'gemini-1.0-pro-vision';
 
 const vertexAI = new VertexAI({project: project, location: location});
 
-// Instantiate models
+// Instantiate Gemini models
 const generativeModel = vertexAI.getGenerativeModel({
     model: textModel,
     // The following parameters are optional
