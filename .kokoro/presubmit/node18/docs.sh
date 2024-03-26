@@ -17,13 +17,9 @@
 
 set -eo pipefail
 
-if [[ -z "$CREDENTIALS" ]]; then
-  # if CREDENTIALS are explicitly set, assume we're testing locally
-  # and don't set NPM_CONFIG_PREFIX.
-  export NPM_CONFIG_PREFIX=${HOME}/.npm-global
-  export PATH="$PATH:${NPM_CONFIG_PREFIX}/bin"
-  cd $(dirname $0)/../..
-fi
+export NPM_CONFIG_PREFIX=${HOME}/.npm-global
+export PATH="$PATH:${NPM_CONFIG_PREFIX}/bin"
+cd $(dirname $0)/../..
 
 npm install
 npm install --no-save @google-cloud/cloud-rad@^0.4.0
@@ -31,7 +27,7 @@ npm install --no-save @google-cloud/cloud-rad@^0.4.0
 # Switch to 'fail at end' to allow tar command to complete before exiting.
 set +e
 
-# publish docs to devsite
+# no publish docs to devsite
 NO_UPLOAD=1 npx @google-cloud/cloud-rad . cloud-rad
 
 tar cvfz docs.tar.gz yaml
