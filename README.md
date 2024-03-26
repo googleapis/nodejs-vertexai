@@ -402,7 +402,7 @@ async function generateContentWithVertexAISearchGrounding() {
   const vertexAIRetrievalTool = {
     retrieval: {
       vertexAiSearch: {
-        datastore='projects/.../locations/.../collections/.../dataStores/...',
+        datastore: 'projects/.../locations/.../collections/.../dataStores/...',
       },
       disableAttribution: false,
     },
