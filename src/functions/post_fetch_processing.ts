@@ -232,7 +232,11 @@ export function aggregateResponses(
       if (safetyRatingsOfChunk) {
         aggregatedResponse.candidates[i].safetyRatings = safetyRatingsOfChunk;
       }
-      if ('parts' in response.candidates[i].content) {
+      if (
+        response.candidates[i].content &&
+        response.candidates[i].content.parts &&
+        response.candidates[i].content.parts.length > 0
+      ) {
         for (const part of response.candidates[i].content.parts) {
           if (part.text) {
             aggregatedResponse.candidates[i].content.parts[0].text += part.text;
