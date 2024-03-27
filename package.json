@@ -29,7 +29,11 @@
     "prepare": "if [ \"${CUSTOM_PACK}\" ]; then echo \"custom compile\" && npm run compile:oss; else npm run compile; fi",
     "pretest": "npm run compile",
     "posttest": "npm run lint",
-    "postpack": "if [ \"${CLEAN}\" ]; then npm run clean-after-pack; fi"
+    "postpack": "if [ \"${CLEAN}\" ]; then npm run clean-after-pack; fi",
+    "cover": "npm run cover:unit && npm run cover:integration && npm run cover:report",
+    "cover:unit": "nyc npm run test",
+    "cover:integration": "nyc --no-clean npm run system-test",
+    "cover:report": "nyc report --reporter=lcov"
   },
   "dependencies": {
     "google-auth-library": "^9.1.0"
@@ -39,11 +43,12 @@
     "@types/node": "^20.9.0",
     "gts": "^5.2.0",
     "jasmine": "^5.1.0",
+    "jasmine-reporters": "^2.4.0",
     "jsdoc": "^4.0.0",
     "jsdoc-fresh": "^3.0.0",
     "jsdoc-region-tag": "^3.0.0",
     "linkinator": "^4.0.0",
     "typescript": "~5.2.0",
-    "jasmine-reporters": "^2.4.0"
+    "nyc": "^15.1.0"
   }
 }
