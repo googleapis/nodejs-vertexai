@@ -581,6 +581,8 @@ export declare interface Citation {
 export declare interface GroundingMetadata {
   /** Optional. Web search queries for the following-up web search. */
   webSearchQueries?: string[];
+  /** Optional. Queries executed by the retrieval tools. */
+  retrievalQueries?: string[];
   /** Optional. Array of {@link GroundingAttribution}. */
   groundingAttributions?: GroundingAttribution[];
 }
@@ -591,6 +593,8 @@ export declare interface GroundingMetadata {
 export declare interface GroundingAttribution {
   /** Optional. Attribution from the web. */
   web?: GroundingAttributionWeb;
+  /** Optional. Attribution from context retrieved by the retrieval tools. */
+  retrievedContext?: GroundingAttributionRetrievedContext;
   /** Optional. Segment of the content this attribution belongs to. */
   segment?: GroundingAttributionSegment;
   /**
@@ -622,6 +626,16 @@ export declare interface GroundingAttributionSegment {
  * Attribution from the web.
  */
 export declare interface GroundingAttributionWeb {
+  /** Optional. URI reference of the attribution. */
+  uri?: string;
+  /** Optional. Title of the attribution. */
+  title?: string;
+}
+
+/**
+ * Attribution from context retrieved by the retrieval tools.
+ */
+export declare interface GroundingAttributionRetrievedContext {
   /** Optional. URI reference of the attribution. */
   uri?: string;
   /** Optional. Title of the attribution. */
