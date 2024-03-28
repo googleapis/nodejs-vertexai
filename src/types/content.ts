@@ -771,7 +771,9 @@ export declare interface VertexAISearch {
   /**
    * Fully-qualified Vertex AI Search's datastore resource ID. See
    * https://cloud.google.com/vertex-ai-search-and-conversation
-   * @example: "projects/<>/locations/<>/collections/<>/dataStores/<>"
+   *
+   * @example
+   * "projects/<>/locations/<>/collections/<>/dataStores/<>"
    */
   datastore: string;
 }
