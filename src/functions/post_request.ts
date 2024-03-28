@@ -58,6 +58,9 @@ export async function postRequest({
     vertexEndpoint += '?alt=sse';
   }
 
+  const extraHeaders: HeadersInit = requestOptions?.apiClient
+    ? {'X-Goog-Api-Client': requestOptions?.apiClient}
+    : {};
   return fetch(vertexEndpoint, {
     ...getFetchOptions(requestOptions),
     method: 'POST',
@@ -65,6 +68,7 @@ export async function postRequest({
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
       'User-Agent': constants.USER_AGENT,
+      ...extraHeaders,
     },
     body: JSON.stringify(data),
   });
