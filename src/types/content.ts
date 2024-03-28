@@ -546,7 +546,7 @@ export declare interface CitationMetadata {
  *   A year and month, with a zero day (for example, a credit card expiration
  *   date).
  */
-export declare interface Date {
+export declare interface GoogleDate {
   /** Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year. */
   year?: number;
   /** Month of the date. Must be from 1 to 12, or 0 to specify a year without a monthi and day. */
@@ -572,7 +572,7 @@ export declare interface Citation {
   /** Optional. License of the attribution. */
   license?: string;
   /** Optional. Publication date of the attribution. */
-  publicationDate?: Date;
+  publicationDate?: GoogleDate;
 }
 
 /**
