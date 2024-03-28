@@ -42,7 +42,7 @@ describe('VertexAI', () => {
       });
     }).toThrow(
       new Error(
-        'inconsistent project ID values. argument project got value test_project but googleAuthOptions.projectId got value another_project'
+        'project ID value received to instantiate VertexAI class and project ID value received via GoogleAuthOptions are different.'
       )
     );
   });
