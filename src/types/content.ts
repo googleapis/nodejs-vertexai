@@ -152,7 +152,7 @@ export declare interface GenerationConfig {
   temperature?: number;
   /** Optional. If specified, nucleus sampling will be used. */
   topP?: number;
-  /** Optional. If specified, top-k sampling will be used. */
+  /** Optional. If specified, topK sampling will be used. */
   topK?: number;
 }
 
@@ -248,8 +248,8 @@ export declare interface Content {
  * A part of a turn in a conversation with the model with a fixed MIME type.
  * It has one of the following mutually exclusive fields:
  * 1. text
- * 2. inline_data
- * 3. file_data
+ * 2. inlineData
+ * 3. fileData
  * 4. functionResponse
  * 5. functionCall
  */
@@ -263,9 +263,9 @@ export interface BasePart {}
 export interface TextPart extends BasePart {
   /** Only this property is expected for TextPart. */
   text: string;
-  /** inline_data is not expected for TextPart. */
+  /** inlineData is not expected for TextPart. */
   inlineData?: never;
-  /** file_data is not expected for TextPart. */
+  /** fileData is not expected for TextPart. */
   fileData?: never;
   /** functionResponse is not expected for TextPart. */
   functionResponse?: never;
@@ -281,7 +281,7 @@ export interface InlineDataPart extends BasePart {
   text?: never;
   /** Only this property is expected for InlineDataPart. */
   inlineData: GenerativeContentBlob;
-  /** file_data is not expected for InlineDataPart. */
+  /** fileData is not expected for InlineDataPart. */
   fileData?: never;
   /** functionResponse is not expected for InlineDataPart. */
   functionResponse?: never;
@@ -305,7 +305,7 @@ export interface FileData {
 export interface FileDataPart extends BasePart {
   /** text is not expected for FileDataPart. */
   text?: never;
-  /** inline_data is not expected for FileDataPart. */
+  /** inlineData is not expected for FileDataPart. */
   inlineData?: never;
   /** Only this property is expected for FileDataPart. */
   fileData: FileData;
@@ -321,9 +321,9 @@ export interface FileDataPart extends BasePart {
 export interface FunctionResponsePart extends BasePart {
   /** text is not expected for FunctionResponsePart. */
   text?: never;
-  /** inline_data is not expected for FunctionResponsePart. */
+  /** inlineData is not expected for FunctionResponsePart. */
   inlineData?: never;
-  /** file_data is not expected for FunctionResponsePart. */
+  /** fileData is not expected for FunctionResponsePart. */
   fileData?: never;
   /** Only this property is expected for FunctionResponsePart. */
   functionResponse: FunctionResponse;
@@ -337,9 +337,9 @@ export interface FunctionResponsePart extends BasePart {
 export interface FunctionCallPart extends BasePart {
   /** text is not expected for FunctionCallPart. */
   text?: never;
-  /** inline_data is not expected for FunctionCallPart. */
+  /** inlineData is not expected for FunctionCallPart. */
   inlineData?: never;
-  /** file_data is not expected for FunctionCallPart. */
+  /** fileData is not expected for FunctionCallPart. */
   fileData?: never;
   /** functionResponse is not expected for FunctionCallPart. */
   functionResponse?: never;
@@ -353,8 +353,8 @@ export interface FunctionCallPart extends BasePart {
  * InlineDataPart}, {@link FileDataPart}, and {@link FunctionResponsePart}. A
  * `Part` has one of the following mutually exclusive fields:
  * 1. text
- * 2. inline_data
- * 3. file_data
+ * 2. inlineData
+ * 3. fileData
  * 4. functionResponse
  */
 export declare type Part =
@@ -470,8 +470,7 @@ export declare interface GenerateContentResult {
 }
 
 /**
- * Wrapper for respones from a generateContent method when `steam` parameter is
- * `true`.
+ * Wrapper for respones from a generateContentStream method.
  */
 export declare interface StreamGenerateContentResult {
   /** Promise of {@link GenerateContentResponse}. */
@@ -705,8 +704,8 @@ export declare interface FunctionDeclarationsTool {
    * Optional. One or more function declarations
    * to be passed to the model along with the current user query. Model may
    * decide to call a subset of these functions by populating
-   * [FunctionCall][content.part.function_call] in the response. User should
-   * provide a [FunctionResponse][content.part.function_response] for each
+   * [FunctionCall][content.part.functionCall] in the response. User should
+   * provide a [FunctionResponse][content.part.functionResponse] for each
    * function call in the next turn. Based on the function responses, Model will
    * generate the final response back to the user. Maximum 64 function
    * declarations can be provided.
