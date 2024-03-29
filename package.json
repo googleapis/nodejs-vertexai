@@ -36,7 +36,8 @@
     "cover:report": "nyc report --reporter=lcov"
   },
   "dependencies": {
-    "google-auth-library": "^9.1.0"
+    "google-auth-library": "^9.1.0",
+    "gaxio": "^6.3.0"
   },
   "devDependencies": {
     "@types/jasmine": "^5.1.2",

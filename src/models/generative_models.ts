@@ -21,7 +21,8 @@ import {GoogleAuth} from 'google-auth-library';
 import {countTokens} from '../functions/count_tokens';
 import {
   generateContent,
-  generateContentStream,
+  generateContentGoogleAuth,
+  generateContentStream
 } from '../functions/generate_content';
 import {
   CountTokensRequest,
@@ -114,10 +115,11 @@ export class GenerativeModel {
   async generateContent(
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
-    return generateContent(
+    return generateContentGoogleAuth(
       this.location,
       this.project,
       this.publisherModelEndpoint,
+      this.googleAuth,
       this.fetchToken(),
       request,
       this.apiEndpoint,

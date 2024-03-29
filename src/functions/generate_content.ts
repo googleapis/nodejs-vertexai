@@ -37,13 +37,67 @@ import {
   processUnary,
   processStream,
   throwErrorIfNotOK,
+  throwErrorIfNotOKGoogleAuth
 } from './post_fetch_processing';
-import {postRequest} from './post_request';
+import {postRequest, postRequestGoogleAuth} from './post_request';
 import {
   formatContentRequest,
   validateGenerateContentRequest,
   validateGenerationConfig,
 } from './pre_fetch_processing';
+import {GoogleAuth} from 'google-auth-library';
+
+export async function generateContentGoogleAuth(
+  location: string,
+  project: string,
+  publisherModelEndpoint: string,
+  googleAuth: GoogleAuth,
+  token: Promise<string | null | undefined>,
+  request: GenerateContentRequest | string,
+  apiEndpoint?: string,
+  generationConfig?: GenerationConfig,
+  safetySettings?: SafetySetting[],
+  tools?: Tool[],
+  requestOptions?: RequestOptions
+): Promise<GenerateContentResult> {
+  request = formatContentRequest(request, generationConfig, safetySettings);
+
+  validateGenerateContentRequest(request);
+
+  if (request.generationConfig) {
+    request.generationConfig = validateGenerationConfig(
+      request.generationConfig
+    );
+  }
+
+  const generateContentRequest: GenerateContentRequest = {
+    contents: request.contents,
+    generationConfig: request.generationConfig ?? generationConfig,
+    safetySettings: request.safetySettings ?? safetySettings,
+    tools: request.tools ?? tools,
+  };
+  const response = await postRequestGoogleAuth({
+    region: location,
+    project: project,
+    resourcePath: publisherModelEndpoint,
+    resourceMethod: constants.GENERATE_CONTENT_METHOD,
+    googleAuth,
+    token: await token,
+    data: generateContentRequest,
+    apiEndpoint: apiEndpoint,
+    requestOptions: requestOptions,
+  }).catch(e => {
+    throw new GoogleGenerativeAIError('exception posting request to model', e);
+  });
+  await throwErrorIfNotOKGoogleAuth(response).catch(e => {
+    throw e;
+  });
+  // return processUnary(response);
+  return Promise.resolve({
+    response: response.data,
+  });
+}
+
 
 export async function generateContent(
   location: string,

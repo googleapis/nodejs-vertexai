@@ -21,13 +21,76 @@ import {
   GenerateContentRequest,
   CountTokensRequest,
   RequestOptions,
+  GenerateContentResponse
 } from '../types/content';
 import * as constants from '../util/constants';
+import {GaxiosResponse, GaxiosError} from 'gaxios'; // from //third_party/javascript/node_modules/gaxios:typings
+import {GoogleAuth} from 'google-auth-library';
 
 /**
  * Makes a POST request to a Vertex service
  * @ignore
  */
+export async function postRequestGoogleAuth({
+  region,
+  project,
+  resourcePath,
+  resourceMethod,
+  googleAuth,
+  token,
+  data,
+  apiEndpoint,
+  requestOptions,
+  apiVersion = 'v1',
+}: {
+  region: string;
+  project: string;
+  resourcePath: string;
+  resourceMethod: string;
+  googleAuth: GoogleAuth;
+  token: string | null | undefined;
+  data: GenerateContentRequest | CountTokensRequest;
+  apiEndpoint?: string;
+  requestOptions?: RequestOptions;
+  apiVersion?: string;
+}): Promise<GaxiosResponse<GenerateContentResponse>> {
+  const vertexBaseEndpoint = apiEndpoint ?? `${region}-${API_BASE_PATH}`;
+
+  let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/projects/${project}/locations/${region}/${resourcePath}:${resourceMethod}`;
+
+  // Use server sent events for streamGenerateContent
+  if (resourceMethod === constants.STREAMING_GENERATE_CONTENT_METHOD) {
+    vertexEndpoint += '?alt=sse';
+  }
+
+  // return fetch(vertexEndpoint, {
+  //   ...getFetchOptions(requestOptions),
+  //   method: 'POST',
+  //   headers: {
+  //     Authorization: `Bearer ${token}`,
+  //     'Content-Type': 'application/json',
+  //     'User-Agent': constants.USER_AGENT,
+  //   },
+  //   body: JSON.stringify(data),
+  // });
+  console.log("=========removed token");
+  const client = await googleAuth.getClient();
+  return client.request<GenerateContentResponse>({
+    url: vertexEndpoint,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      // 'User-Agent': constants.USER_AGENT,
+    },
+    timeout: requestOptions?.timeout,
+    data,
+  });
+
+  // .catch(e => {
+  //   throw new GaxiosError(e.message, );
+  // });
+}
+
 export async function postRequest({
   region,
   project,
