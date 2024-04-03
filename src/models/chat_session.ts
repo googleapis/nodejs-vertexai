@@ -151,9 +151,8 @@ export class ChatSession {
       generateContentResponse.candidates.length !== 0
     ) {
       this.historyInternal = this.historyInternal.concat(newContent);
-      const contentFromAssistant =
-        generateContentResponse.candidates[0].content;
-      this.historyInternal.push(contentFromAssistant);
+      const contentFromModel = generateContentResponse.candidates[0].content;
+      this.historyInternal.push(contentFromModel);
     }
 
     return Promise.resolve(generateContentResult);
@@ -173,9 +172,9 @@ export class ChatSession {
       streamGenerateContentResponse.candidates.length !== 0
     ) {
       this.historyInternal = this.historyInternal.concat(newContent);
-      const contentFromAssistant =
+      const contentFromModel =
         streamGenerateContentResponse.candidates[0].content;
-      this.historyInternal.push(contentFromAssistant);
+      this.historyInternal.push(contentFromModel);
     }
   }
 
