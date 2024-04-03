@@ -890,4 +890,10 @@ export declare interface StartChatSessionRequest extends StartChatParams {
 export interface RequestOptions {
   /** timeout in milli seconds. time out value needs to be non negative. */
   timeout?: number;
+  /**
+   * Value for x-goog-api-client header to set on the API request. This is
+   * intended for wrapper SDKs to set additional SDK identifiers for the
+   * backend.
+   */
+  apiClient?: string;
 }

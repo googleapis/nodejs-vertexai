@@ -22,6 +22,7 @@ import {
   CountTokensRequest,
   RequestOptions,
 } from '../types/content';
+import {ClientError} from '../types/errors';
 import * as constants from '../util/constants';
 
 /**
@@ -58,6 +59,20 @@ export async function postRequest({
     vertexEndpoint += '?alt=sse';
   }
 
+  if (
+    requestOptions?.apiClient &&
+    (requestOptions?.apiClient.includes('\n') ||
+      requestOptions?.apiClient.includes('\r'))
+  ) {
+    throw new ClientError(
+      'Found line break in apiClient request option field, please remove ' +
+        'the line break and try again.'
+    );
+  }
+
+  const extraHeaders: HeadersInit = requestOptions?.apiClient
+    ? {'X-Goog-Api-Client': requestOptions?.apiClient}
+    : {};
   return fetch(vertexEndpoint, {
     ...getFetchOptions(requestOptions),
     method: 'POST',
@@ -65,6 +80,7 @@ export async function postRequest({
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
       'User-Agent': constants.USER_AGENT,
+      ...extraHeaders,
     },
     body: JSON.stringify(data),
   });
