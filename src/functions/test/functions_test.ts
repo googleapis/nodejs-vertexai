@@ -767,7 +767,7 @@ describe('generateContentStream', () => {
     };
     fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
-    const resp = await generateContentStream(
+    const result = await generateContentStream(
       TEST_LOCATION,
       TEST_PROJECT,
       TEST_PUBLISHER_MODEL_ENDPOINT,
@@ -775,6 +775,48 @@ describe('generateContentStream', () => {
       req,
       TEST_API_ENDPOINT
     );
-    expect(resp).toEqual(expectedStreamResult);
+    expect(result).toEqual(expectedStreamResult);
+    const response = await result.response;
+    expect(
+      GenerateContentResponseHandler.getFunctionCallsFromCandidate(
+        response.candidates![0]
+      )
+    ).toHaveSize(1);
+    expect(
+      GenerateContentResponseHandler.getFunctionCallsFromCandidate(
+        response.candidates![0]
+      )
+    ).toEqual([response.candidates![0].content.parts[0].functionCall!]);
+  });
+
+  it('returns an empty FunctionCall list when response contains invalid data', async () => {
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+      ],
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    };
+    const expectedStreamResult: StreamGenerateContentResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_INVALID_DATA),
+      stream: testGenerator(),
+    };
+    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
+    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
+
+    const actualResult = await generateContentStream(
+      TEST_LOCATION,
+      TEST_PROJECT,
+      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_TOKEN_PROMISE,
+      req,
+      TEST_API_ENDPOINT
+    );
+    expect(actualResult).toEqual(expectedStreamResult);
+    const response = await actualResult.response;
+    expect(
+      GenerateContentResponseHandler.getFunctionCallsFromCandidate(
+        response.candidates?.[0]
+      )
+    ).toHaveSize(0);
   });
 });
