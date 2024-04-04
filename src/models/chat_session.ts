@@ -120,7 +120,6 @@ export class ChatSession {
   async sendMessage(
     request: string | Array<string | Part>
   ): Promise<GenerateContentResult> {
-    let errorMessage: string;
     const newContent: Content[] =
       formulateNewContentFromSendMessageRequest(request);
     const generateContentrequest: GenerateContentRequest = {
