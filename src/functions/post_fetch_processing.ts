@@ -28,6 +28,7 @@ import {
 } from '../types/content';
 import {constants} from '../util';
 import {ClientError, GoogleGenerativeAIError} from '../types/errors';
+import { GaxiosOptions, GaxiosResponse } from 'gaxios';
 
 export async function throwErrorIfNotOK(response: Response | undefined) {
   if (response === undefined) {
@@ -39,6 +40,23 @@ export async function throwErrorIfNotOK(response: Response | undefined) {
     const errorBody = await response.json();
     const errorMessage = `got status: ${status} ${statusText}. ${JSON.stringify(
       errorBody
+    )}`;
+    if (status >= 400 && status < 500) {
+      throw new ClientError(errorMessage);
+    }
+    throw new GoogleGenerativeAIError(errorMessage);
+  }
+}
+
+export async function throwErrorIfNotOKGoogleAuth(response:  GaxiosResponse | undefined) {
+  if (response === undefined) {
+    throw new GoogleGenerativeAIError('response is undefined');
+  }
+  if (response.status !== 200) {
+    const status: number = response.status;
+    const statusText: string = response.statusText;
+    const errorMessage = `got status: ${status} ${statusText}. ${JSON.stringify(
+      response.data
     )}`;
     if (status >= 400 && status < 500) {
       throw new ClientError(errorMessage);
