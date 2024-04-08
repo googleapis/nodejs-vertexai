@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.0.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.5.0...v1.0.0) (2024-04-04)
+
+
+### Features
+
+* added userAgent option to RequestOptions to allow setting User-Agent header ([ca43e2f](https://github.com/googleapis/nodejs-vertexai/commit/ca43e2f0b4ebef60d3739b10a3707cdfe2e2a4ec))
+* include grounding metadata to stream aggregated response. ([d32755e](https://github.com/googleapis/nodejs-vertexai/commit/d32755e41ca36a52bfd55dafd45bf5a1a8835b7b))
+* Support functionCalls property in GenerationContentCandidate interface for non streaming mode ([89568a6](https://github.com/googleapis/nodejs-vertexai/commit/89568a654550f51ed7e280eb6108f6bdb13e7a92))
+
+
+### Bug Fixes
+
+* check optional field in aggregate response ([f7718ae](https://github.com/googleapis/nodejs-vertexai/commit/f7718aec22f2806bfda18cc75d2ba2c47c929efe))
+* correct CitationMetadata interface. refactor nested function ([722b7fd](https://github.com/googleapis/nodejs-vertexai/commit/722b7fda23fd03e85b418e71cfacf2206596fc86))
+* correct code snippets in README ([bdcc5fd](https://github.com/googleapis/nodejs-vertexai/commit/bdcc5fdda9325c37a2efcfc9c00e8cf90fae1f46))
+* correct GenerateContentCandidate interface and GenerateContentResponse interface ([7a366ab](https://github.com/googleapis/nodejs-vertexai/commit/7a366abfc13b87e93bc233e045b8e173ae6357b5))
+* correct sys test logic on stream endpoint for funcion calling ([1fd5b72](https://github.com/googleapis/nodejs-vertexai/commit/1fd5b725a6537ddca0b93c34be04a4ad8f9f50b6))
+* Fix a bug in the Vertex AI client library. ([8ad7dfb](https://github.com/googleapis/nodejs-vertexai/commit/8ad7dfbd7090868ed89a155aa9519ed220c23451))
+* fix bug in safetyRatings handling, fix incomplete content interfaces, and add unit test for stream response handling ([e573ce6](https://github.com/googleapis/nodejs-vertexai/commit/e573ce68bda3fabdc75ffbacc56421215cbe2f70))
+* for function call, role should be model. ([3b80dc8](https://github.com/googleapis/nodejs-vertexai/commit/3b80dc86b8c5d1e4be0afe99bca35201fd812abb))
+* functionResponse should be user role ([d092ab4](https://github.com/googleapis/nodejs-vertexai/commit/d092ab4bb0862fc8471e663a4fb7084b432baf74))
+* Make appendHistory private. ([a1bedcd](https://github.com/googleapis/nodejs-vertexai/commit/a1bedcdb6fe71d73a7601c4fafda699b0b8d1698))
+* pass tools from getGenerativeModel and startChat methods to top level functions ([bbaf78a](https://github.com/googleapis/nodejs-vertexai/commit/bbaf78a5286ca39074b72bcce7eb7856fe0bec70))
+* pass tools from getGenerativeModel to chatSession. ([907ad74](https://github.com/googleapis/nodejs-vertexai/commit/907ad74aefe24082607431c34027df6ae6d46a08))
+* remove any type in token signature ([add084c](https://github.com/googleapis/nodejs-vertexai/commit/add084c6c1657f92a43c102159abceb0b7121b0c))
+* remove defaulting value of candidates in unary api. remove unused variables and imports. remove throwing GoogleAIError when candidates undefined or empty. ([6c0c31c](https://github.com/googleapis/nodejs-vertexai/commit/6c0c31c2d798f32739fb0d8b647d4289168cc446))
+* replace any type with explicit types in post fetch processing functions ([4099129](https://github.com/googleapis/nodejs-vertexai/commit/4099129d8497ec39fd1410e3edfc7599f2a91db8))
+* replace snake_case in docs to camelCase ([5893581](https://github.com/googleapis/nodejs-vertexai/commit/5893581b17b9f1df28410f1315c2fd760acc98b6))
+* SDK should be released to 1.0.0 ([4cab5fd](https://github.com/googleapis/nodejs-vertexai/commit/4cab5fd814bb0c47c98b5be2ed250f5a3765cd6e))
+* update finish reason enum list to be complete ([f16b2e7](https://github.com/googleapis/nodejs-vertexai/commit/f16b2e778f1c0d250404928d85f12e775fc0f720))
+* update prompt feedback interface ([0d3754a](https://github.com/googleapis/nodejs-vertexai/commit/0d3754ac7c51b73281342cdb20b22af5918045fa))
+
 ## [0.5.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.4.0...v0.5.0) (2024-02-29)
 
 
