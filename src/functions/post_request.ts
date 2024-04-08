@@ -70,9 +70,10 @@ export async function postRequest({
     );
   }
 
-  const extraHeaders: HeadersInit = requestOptions?.apiClient
-    ? {'X-Goog-Api-Client': requestOptions?.apiClient}
-    : {};
+  const extraHeaders: HeadersInit = {
+    ...(requestOptions?.extraHeaders || {}),
+    ...(requestOptions?.apiClient ? { 'X-Goog-Api-Client': requestOptions.apiClient } : {}),
+  };
   return fetch(vertexEndpoint, {
     ...getFetchOptions(requestOptions),
     method: 'POST',

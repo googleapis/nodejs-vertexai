@@ -896,4 +896,6 @@ export interface RequestOptions {
    * backend.
    */
   apiClient?: string;
+  /** Extra headers to be included in the request.  */
+  extraHeaders?: HeadersInit;
 }
