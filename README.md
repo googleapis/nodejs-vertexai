@@ -81,7 +81,7 @@ async function streamGenerateContent() {
   const request = {
     contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
   };
-  const streamingResult = await generativeModel.generateContentStrea(request);
+  const streamingResult = await generativeModel.generateContentStream(request);
   for await (const item of streamingResult.stream) {
     console.log('stream chunk: ', JSON.stringify(item));
   }
