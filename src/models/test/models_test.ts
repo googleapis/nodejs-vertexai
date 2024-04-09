@@ -219,6 +219,14 @@ const fetchResponseObj = {
 const TEST_REQUEST_OPTIONS = {
   timeout: 0,
 };
+const TEST_SYSTEM_INSTRUCTION = {
+  role: constants.SYSTEM_ROLE,
+  parts: [{text: 'system instruction'}],
+};
+const TEST_SYSTEM_INSTRUCTION_WRONG_ROLE = {
+  role: 'WRONG_ROLE',
+  parts: [{text: 'system instruction'}],
+};
 async function* testGenerator(): AsyncGenerator<GenerateContentResponse> {
   yield {
     candidates: TEST_CANDIDATES,
@@ -472,6 +480,162 @@ describe('GenerativeModel generateContent', () => {
     // @ts-ignore
     expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
   });
+  it('set system instruction in constructor, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
+  it('set system instruction in generateContent, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
+  it('set system instruction in constructor, wrong role, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
+  it('set system instruction in generateContent, wrong role, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
       response: TEST_MODEL_RESPONSE,
@@ -679,6 +843,162 @@ describe('GenerativeModelPreview generateContent', () => {
     await modelWithRequestOptions.generateContent(req);
     // @ts-ignore
     expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
+  });
+  it('set system instruction in constructor, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
+  it('set system instruction in generateContent, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
+  it('set system instruction in constructor, wrong role, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
+  it('set system instruction in generateContent, wrong role, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
@@ -899,6 +1219,84 @@ describe('GenerativeModel generateContentStream', () => {
     // @ts-ignore
     expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
   });
+  it('set system instruction in generateContent, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
+  it('set system instruction in generateContent, wrong role, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: StreamGenerateContentResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),
@@ -1071,6 +1469,84 @@ describe('GenerativeModelPreview generateContentStream', () => {
     expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
   });
 
+  it('set system instruction in generateContent, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
+  it('set system instruction in generateContent, wrong role, should send system instruction to functions', async () => {
+    const modelWithSystemInstruction = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedRequest = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How are you doing today?',
+            },
+          ],
+        },
+      ],
+      systemInstruction: {
+        role: 'system',
+        parts: [
+          {
+            text: 'system instruction',
+          },
+        ],
+      },
+    };
+    await modelWithSystemInstruction.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+  });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: StreamGenerateContentResult = {
       response: Promise.resolve(TEST_MODEL_RESPONSE),

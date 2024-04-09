@@ -69,6 +69,7 @@ export async function generateContent(
 
   const generateContentRequest: GenerateContentRequest = {
     contents: request.contents,
+    systemInstruction: request.systemInstruction,
     generationConfig: request.generationConfig ?? generationConfig,
     safetySettings: request.safetySettings ?? safetySettings,
     tools: request.tools ?? tools,
@@ -121,6 +122,7 @@ export async function generateContentStream(
 
   const generateContentRequest: GenerateContentRequest = {
     contents: request.contents,
+    systemInstruction: request.systemInstruction,
     generationConfig: request.generationConfig ?? generationConfig,
     safetySettings: request.safetySettings ?? safetySettings,
     tools: request.tools ?? tools,

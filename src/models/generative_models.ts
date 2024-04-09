@@ -24,6 +24,7 @@ import {
   generateContentStream,
 } from '../functions/generate_content';
 import {
+  Content,
   CountTokensRequest,
   CountTokensResponse,
   GenerateContentRequest,
@@ -54,6 +55,7 @@ export class GenerativeModel {
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
   private readonly requestOptions?: RequestOptions;
+  private readonly systemInstruction?: Content;
   private readonly project: string;
   private readonly location: string;
   private readonly googleAuth: GoogleAuth;
@@ -74,6 +76,10 @@ export class GenerativeModel {
     this.safetySettings = getGenerativeModelParams.safetySettings;
     this.tools = getGenerativeModelParams.tools;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
+    if (getGenerativeModelParams.systemInstruction) {
+      getGenerativeModelParams.systemInstruction.role = constants.SYSTEM_ROLE;
+    }
+    this.systemInstruction = getGenerativeModelParams.systemInstruction;
     if (this.model.startsWith('models/')) {
       this.publisherModelEndpoint = `publishers/google/${this.model}`;
     } else {
@@ -114,12 +120,18 @@ export class GenerativeModel {
   async generateContent(
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
+    request = formulateRequestToGenerateContentRequest(request);
+    const formulatedRequest =
+      formulateSystemInstructionIntoGenerateContentRequest(
+        request,
+        this.systemInstruction
+      );
     return generateContent(
       this.location,
       this.project,
       this.publisherModelEndpoint,
       this.fetchToken(),
-      request,
+      formulatedRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -155,12 +167,18 @@ export class GenerativeModel {
   async generateContentStream(
     request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
+    request = formulateRequestToGenerateContentRequest(request);
+    const formulatedRequest =
+      formulateSystemInstructionIntoGenerateContentRequest(
+        request,
+        this.systemInstruction
+      );
     return generateContentStream(
       this.location,
       this.project,
       this.publisherModelEndpoint,
       this.fetchToken(),
-      request,
+      formulatedRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -257,6 +275,7 @@ export class GenerativeModelPreview {
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
   private readonly requestOptions?: RequestOptions;
+  private readonly systemInstruction?: Content;
   private readonly project: string;
   private readonly location: string;
   private readonly googleAuth: GoogleAuth;
@@ -277,6 +296,10 @@ export class GenerativeModelPreview {
     this.safetySettings = getGenerativeModelParams.safetySettings;
     this.tools = getGenerativeModelParams.tools;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
+    if (getGenerativeModelParams.systemInstruction) {
+      getGenerativeModelParams.systemInstruction.role = constants.SYSTEM_ROLE;
+    }
+    this.systemInstruction = getGenerativeModelParams.systemInstruction;
     if (this.model.startsWith('models/')) {
       this.publisherModelEndpoint = `publishers/google/${this.model}`;
     } else {
@@ -316,12 +339,18 @@ export class GenerativeModelPreview {
   async generateContent(
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
+    request = formulateRequestToGenerateContentRequest(request);
+    const formulatedRequest =
+      formulateSystemInstructionIntoGenerateContentRequest(
+        request,
+        this.systemInstruction
+      );
     return generateContent(
       this.location,
       this.project,
       this.publisherModelEndpoint,
       this.fetchToken(),
-      request,
+      formulatedRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -357,12 +386,18 @@ export class GenerativeModelPreview {
   async generateContentStream(
     request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
+    request = formulateRequestToGenerateContentRequest(request);
+    const formulatedRequest =
+      formulateSystemInstructionIntoGenerateContentRequest(
+        request,
+        this.systemInstruction
+      );
     return generateContentStream(
       this.location,
       this.project,
       this.publisherModelEndpoint,
       this.fetchToken(),
-      request,
+      formulatedRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -444,4 +479,29 @@ export class GenerativeModelPreview {
     }
     return new ChatSessionPreview(startChatRequest, this.requestOptions);
   }
+}
+
+function formulateRequestToGenerateContentRequest(
+  request: GenerateContentRequest | string
+): GenerateContentRequest {
+  if (typeof request === 'string') {
+    return {
+      contents: [{role: constants.USER_ROLE, parts: [{text: request}]}],
+    } as GenerateContentRequest;
+  }
+  return request;
+}
+
+function formulateSystemInstructionIntoGenerateContentRequest(
+  methodRequest: GenerateContentRequest,
+  classSystemInstruction?: Content
+): GenerateContentRequest {
+  if (methodRequest.systemInstruction) {
+    methodRequest.systemInstruction.role = constants.SYSTEM_ROLE;
+    return methodRequest;
+  }
+  if (classSystemInstruction) {
+    methodRequest.systemInstruction = classSystemInstruction;
+  }
+  return methodRequest;
 }

@@ -122,6 +122,7 @@ export class VertexAI {
       generationConfig: modelParams.generationConfig,
       tools: modelParams.tools,
       requestOptions: requestOptions,
+      systemInstruction: modelParams.systemInstruction,
     };
     return new GenerativeModel(getGenerativeModelParams);
   }
@@ -183,6 +184,7 @@ class VertexAIPreview {
       generationConfig: modelParams.generationConfig,
       tools: modelParams.tools,
       requestOptions: requestOptions,
+      systemInstruction: modelParams.systemInstruction,
     };
     return new GenerativeModelPreview(getGenerativeModelParams);
   }

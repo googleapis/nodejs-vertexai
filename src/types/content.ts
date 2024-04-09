@@ -47,6 +47,10 @@ export declare interface VertexInit {
 export declare interface GenerateContentRequest extends BaseModelParams {
   /** Array of {@link Content}.*/
   contents: Content[];
+  /** Optional. The user provided system instructions for the model.
+   * Note: only text should be used in parts of {@link Content}
+   */
+  systemInstruction?: Content;
 }
 
 /**
@@ -102,6 +106,10 @@ export declare interface GetGenerativeModelParams extends ModelParams {
   tools?: Tool[];
   /** Optional. The request options to use for generation. */
   requestOptions?: RequestOptions;
+  /** Optional. The user provided system instructions for the model.
+   * Note: only text should be used in parts of {@link Content}
+   */
+  systemInstruction?: Content;
 }
 
 /**
@@ -126,6 +134,10 @@ export declare interface BaseModelParams {
   generationConfig?: GenerationConfig;
   /** Optional. Array of {@link Tool}. */
   tools?: Tool[];
+  /** Optional. The user provided system instructions for the model.
+   * Note: only text should be used in parts of {@link Content}
+   */
+  systemInstruction?: Content;
 }
 
 /**
