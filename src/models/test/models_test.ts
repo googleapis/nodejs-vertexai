@@ -223,6 +223,10 @@ const TEST_SYSTEM_INSTRUCTION = {
   role: constants.SYSTEM_ROLE,
   parts: [{text: 'system instruction'}],
 };
+const TEST_SYSTEM_INSTRUCTION_1 = {
+  role: constants.SYSTEM_ROLE,
+  parts: [{text: 'system instruction1'}],
+};
 const TEST_SYSTEM_INSTRUCTION_WRONG_ROLE = {
   role: 'WRONG_ROLE',
   parts: [{text: 'system instruction'}],
@@ -339,6 +343,118 @@ describe('GenerativeModel startChat', () => {
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
     expect(actualBody).toEqual(expectedBody);
   });
+  it('pass system instruction to remote endpoint from GenerativeModel constructor', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"systemInstruction":{"role":"system","parts":[{"text":"system instruction"}]}}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(
+      expectedBody,
+      `unit test failed in chat.sendMessage with ${actualBody} not equal to ${expectedBody}`
+    );
+  });
+  it('pass system instruction to remote endpoint from startChat', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_1,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+      // this is different from constructor
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"systemInstruction":{"role":"system","parts":[{"text":"system instruction"}]}}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(
+      expectedBody,
+      `unit test failed in chat.sendMessage with ${actualBody} not equal to ${expectedBody}`
+    );
+  });
+  it('pass system instruction with wrong role to remote endpoint from GenerativeModel constructor', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"systemInstruction":{"role":"system","parts":[{"text":"system instruction"}]}}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(
+      expectedBody,
+      `unit test failed in chat.sendMessage with ${actualBody} not equal to ${expectedBody}`
+    );
+  });
+  it('pass system instruction with wrong role to remote endpoint from startChat', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_1,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+      // this is different from constructor
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"systemInstruction":{"role":"system","parts":[{"text":"system instruction"}]}}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(
+      expectedBody,
+      `unit test failed in chat.sendMessage with ${actualBody} not equal to ${expectedBody}`
+    );
+  });
 });
 
 describe('GenerativeModelPreview startChat', () => {
@@ -428,6 +544,118 @@ describe('GenerativeModelPreview startChat', () => {
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
     expect(actualBody).toEqual(expectedBody);
+  });
+  it('pass system instruction to remote endpoint from GenerativeModelPreview constructor', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"systemInstruction":{"role":"system","parts":[{"text":"system instruction"}]}}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(
+      expectedBody,
+      `unit test failed in chat.sendMessage with ${actualBody} not equal to ${expectedBody}`
+    );
+  });
+  it('pass system instruction to remote endpoint from startChat', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_1,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+      // this is different from constructor
+      systemInstruction: TEST_SYSTEM_INSTRUCTION,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"systemInstruction":{"role":"system","parts":[{"text":"system instruction"}]}}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(
+      expectedBody,
+      `unit test failed in chat.sendMessage with ${actualBody} not equal to ${expectedBody}`
+    );
+  });
+  it('pass system instruction with wrong role to remote endpoint from GenerativeModelPreview constructor', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"systemInstruction":{"role":"system","parts":[{"text":"system instruction"}]}}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(
+      expectedBody,
+      `unit test failed in chat.sendMessage with ${actualBody} not equal to ${expectedBody}`
+    );
+  });
+  it('pass system instruction with wrong role to remote endpoint from startChat', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_1,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+      // this is different from constructor
+      systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"systemInstruction":{"role":"system","parts":[{"text":"system instruction"}]}}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(
+      expectedBody,
+      `unit test failed in chat.sendMessage with ${actualBody} not equal to ${expectedBody}`
+    );
   });
 });
 

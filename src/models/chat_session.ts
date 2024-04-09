@@ -61,6 +61,7 @@ export class ChatSession {
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
   private readonly apiEndpoint?: string;
+  private readonly systemInstruction?: Content;
 
   async getHistory(): Promise<Content[]> {
     return Promise.resolve(this.historyInternal);
@@ -84,6 +85,10 @@ export class ChatSession {
     this.tools = request.tools;
     this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
+    if (request.systemInstruction) {
+      request.systemInstruction.role = constants.SYSTEM_ROLE;
+    }
+    this.systemInstruction = request.systemInstruction;
   }
 
   /**
@@ -127,6 +132,7 @@ export class ChatSession {
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
       tools: this.tools,
+      systemInstruction: this.systemInstruction,
     };
 
     const generateContentResult: GenerateContentResult = await generateContent(
@@ -210,6 +216,7 @@ export class ChatSession {
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
       tools: this.tools,
+      systemInstruction: this.systemInstruction,
     };
 
     const streamGenerateContentResultPromise = generateContentStream(
@@ -257,6 +264,7 @@ export class ChatSessionPreview {
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
   private readonly apiEndpoint?: string;
+  private readonly systemInstruction?: Content;
 
   async getHistory(): Promise<Content[]> {
     return Promise.resolve(this.historyInternal);
@@ -280,6 +288,10 @@ export class ChatSessionPreview {
     this.tools = request.tools;
     this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
+    if (request.systemInstruction) {
+      request.systemInstruction.role = constants.SYSTEM_ROLE;
+    }
+    this.systemInstruction = request.systemInstruction;
   }
 
   /**
@@ -322,6 +334,7 @@ export class ChatSessionPreview {
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
       tools: this.tools,
+      systemInstruction: this.systemInstruction,
     };
 
     const generateContentResult: GenerateContentResult = await generateContent(
@@ -406,6 +419,7 @@ export class ChatSessionPreview {
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
       tools: this.tools,
+      systemInstruction: this.systemInstruction,
     };
 
     const streamGenerateContentResultPromise = generateContentStream(

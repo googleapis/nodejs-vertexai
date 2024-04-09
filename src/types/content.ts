@@ -880,6 +880,10 @@ export declare interface StartChatParams {
   tools?: Tool[];
   /** Optional. The base Vertex AI endpoint to use for the request. */
   apiEndpoint?: string;
+  /** Optional. The user provided system instructions for the model.
+   * Note: only text should be used in parts of {@link Content}
+   */
+  systemInstruction?: Content;
 }
 
 /**
@@ -894,6 +898,10 @@ export declare interface StartChatSessionRequest extends StartChatParams {
   googleAuth: GoogleAuth;
   /** The publisher model endpoint to use for the request. */
   publisherModelEndpoint: string;
+  /** Optional. The user provided system instructions for the model.
+   * Note: only text should be used in parts of {@link Content}
+   */
+  systemInstruction?: Content;
 }
 
 /**

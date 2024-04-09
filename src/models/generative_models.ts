@@ -258,6 +258,8 @@ export class GenerativeModel {
         request.safetySettings ?? this.safetySettings;
       startChatRequest.tools = request.tools ?? this.tools;
       startChatRequest.apiEndpoint = request.apiEndpoint ?? this.apiEndpoint;
+      startChatRequest.systemInstruction =
+        request.systemInstruction ?? this.systemInstruction;
     }
     return new ChatSession(startChatRequest, this.requestOptions);
   }
@@ -476,6 +478,8 @@ export class GenerativeModelPreview {
       startChatRequest.safetySettings =
         request.safetySettings ?? this.safetySettings;
       startChatRequest.tools = request.tools ?? this.tools;
+      startChatRequest.systemInstruction =
+        request.systemInstruction ?? this.systemInstruction;
     }
     return new ChatSessionPreview(startChatRequest, this.requestOptions);
   }
