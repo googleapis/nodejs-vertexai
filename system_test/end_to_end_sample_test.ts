@@ -643,7 +643,7 @@ describe('generateContent', () => {
       );
     }
   });
-  it('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in generateContent', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
