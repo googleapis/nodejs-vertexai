@@ -916,4 +916,8 @@ export interface RequestOptions {
    * backend.
    */
   apiClient?: string;
+  /**
+   * Value for custom HTTP headers to set on the HTTP request.
+   */
+  customHeaders?: Headers;
 }

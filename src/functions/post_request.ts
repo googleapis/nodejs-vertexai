@@ -58,30 +58,19 @@ export async function postRequest({
   if (resourceMethod === constants.STREAMING_GENERATE_CONTENT_METHOD) {
     vertexEndpoint += '?alt=sse';
   }
-
-  if (
-    requestOptions?.apiClient &&
-    (requestOptions?.apiClient.includes('\n') ||
-      requestOptions?.apiClient.includes('\r'))
-  ) {
-    throw new ClientError(
-      'Found line break in apiClient request option field, please remove ' +
-        'the line break and try again.'
-    );
-  }
-
-  const extraHeaders: HeadersInit = requestOptions?.apiClient
-    ? {'X-Goog-Api-Client': requestOptions?.apiClient}
-    : {};
+  const necessaryHeaders = new Headers({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'User-Agent': constants.USER_AGENT,
+  });
+  const totalHeaders: Headers = getExtraHeaders(
+    necessaryHeaders,
+    requestOptions
+  );
   return fetch(vertexEndpoint, {
     ...getFetchOptions(requestOptions),
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'User-Agent': constants.USER_AGENT,
-      ...extraHeaders,
-    },
+    headers: totalHeaders,
     body: JSON.stringify(data),
   });
 }
@@ -100,4 +89,52 @@ function getFetchOptions(requestOptions?: RequestOptions): RequestInit {
   setTimeout(() => abortController.abort(), requestOptions.timeout);
   fetchOptions.signal = signal;
   return fetchOptions;
+}
+
+function stringHasLineBreak(header?: string | null): boolean {
+  if (header === null || header === undefined) {
+    return false;
+  }
+  return header.includes('\n') || header.includes('\r');
+}
+function headersHasLineBreak(customHeaders?: Headers): boolean {
+  if (!customHeaders) {
+    return false;
+  }
+  for (const [key, value] of customHeaders.entries()) {
+    if (stringHasLineBreak(key) || stringHasLineBreak(value)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getExtraHeaders(
+  necessaryHeaders: Headers,
+  requestOptions?: RequestOptions
+): Headers {
+  if (stringHasLineBreak(requestOptions?.apiClient)) {
+    throw new ClientError(
+      'Found line break in apiClient request option field, please remove ' +
+        'the line break and try again.'
+    );
+  }
+  if (headersHasLineBreak(requestOptions?.customHeaders)) {
+    throw new ClientError(
+      'Found line break in customerHeaders request option field, please remove ' +
+        'the line break and try again.'
+    );
+  }
+  const totalHeaders: Headers = new Headers();
+  for (const [key, val] of necessaryHeaders.entries()) {
+    totalHeaders.append(key, val);
+  }
+  const customHeaders = requestOptions?.customHeaders ?? new Headers();
+  for (const [key, val] of customHeaders.entries()) {
+    totalHeaders.append(key, val);
+  }
+  if (requestOptions?.apiClient) {
+    totalHeaders.append('X-Goog-Api-Client', requestOptions?.apiClient);
+  }
+  return totalHeaders;
 }
