@@ -16,6 +16,13 @@
  */
 
 const API_BASE_PATH = 'aiplatform.googleapis.com';
+const GOOGLE_INTERNAL_ENDPOINT = 'googleapis.com';
+
+const AUTHORIZATION_HEADER = 'Authorization';
+const CONTENT_TYPE_HEADER = 'Content-Type';
+const USER_AGENT_HEADER = 'User-Agent';
+const X_GOOG_API_CLIENT_HEADER = 'X-Goog-Api-Client';
+const SERVER_RESERVED_HEADERS = [AUTHORIZATION_HEADER, CONTENT_TYPE_HEADER];
 
 import {
   GenerateContentRequest,
@@ -59,11 +66,12 @@ export async function postRequest({
     vertexEndpoint += '?alt=sse';
   }
   const necessaryHeaders = new Headers({
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-    'User-Agent': constants.USER_AGENT,
+    [AUTHORIZATION_HEADER]: `Bearer ${token}`,
+    [CONTENT_TYPE_HEADER]: 'application/json',
+    [USER_AGENT_HEADER]: constants.USER_AGENT,
   });
   const totalHeaders: Headers = getExtraHeaders(
+    vertexBaseEndpoint,
     necessaryHeaders,
     requestOptions
   );
@@ -110,6 +118,7 @@ function headersHasLineBreak(customHeaders?: Headers): boolean {
 }
 
 function getExtraHeaders(
+  vertexBaseEndpoint: string,
   necessaryHeaders: Headers,
   requestOptions?: RequestOptions
 ): Headers {
@@ -125,16 +134,26 @@ function getExtraHeaders(
         'the line break and try again.'
     );
   }
-  const totalHeaders: Headers = new Headers();
-  for (const [key, val] of necessaryHeaders.entries()) {
-    totalHeaders.append(key, val);
-  }
+  const totalHeaders: Headers = new Headers(necessaryHeaders);
   const customHeaders = requestOptions?.customHeaders ?? new Headers();
   for (const [key, val] of customHeaders.entries()) {
     totalHeaders.append(key, val);
   }
   if (requestOptions?.apiClient) {
-    totalHeaders.append('X-Goog-Api-Client', requestOptions?.apiClient);
+    totalHeaders.append(X_GOOG_API_CLIENT_HEADER, requestOptions?.apiClient);
+  }
+
+  // Resolve header conflicts.
+  let goldenHeaders: Headers;
+  if (vertexBaseEndpoint.endsWith(GOOGLE_INTERNAL_ENDPOINT)) {
+    goldenHeaders = necessaryHeaders;
+  } else {
+    goldenHeaders = customHeaders;
+  }
+  for (const header of SERVER_RESERVED_HEADERS) {
+    if (goldenHeaders.has(header)) {
+      totalHeaders.set(header, goldenHeaders.get(header)!);
+    }
   }
   return totalHeaders;
 }

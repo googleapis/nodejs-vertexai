@@ -1,12 +1,14 @@
-import {postRequest} from '../post_request';
 import {GenerateContentRequest, RequestOptions} from '../../types';
+import {postRequest} from '../post_request';
+
 describe('postRequest', () => {
   const REGION = 'us-central1';
   const PROJECT = 'project-id';
   const RESOURCE_PATH = 'resource-path';
   const RESOURCE_METHOD = 'resource-method';
   const TOKEN = 'token';
-  const API_ENDPOINT = 'api-endpoint';
+  const API_ENDPOINT = 'api-endpoint.googleapis.com';
+  const API_ENDPOINT_EXTERNAL = 'api-endpoint.external.com';
   const data = {} as GenerateContentRequest;
   let fetchSpy: jasmine.Spy;
 
@@ -127,9 +129,13 @@ describe('postRequest', () => {
     const actualHeaders = fetchSpy.calls.mostRecent().args[1].headers;
     expect(actualHeaders.get('customerHeader')).toEqual('customerHeaderValue');
   });
-  it('set X-Goog-Api-Client in custom header and apiClient, should call through', async () => {
+  it('set both custom header and apiClient, should prioritize apiClient and SDK headers if sent to internal endpoint', async () => {
     const requestOptions: RequestOptions = {
-      customHeaders: new Headers({'X-Goog-Api-Client': 'apiClient1'}),
+      customHeaders: new Headers({
+        'User-Agent': 'user-agent-value',
+        'X-Goog-Api-Client': 'apiClient1',
+        'Content-Type': 'other-content-type',
+      }),
       apiClient: 'apiClient2',
     } as RequestOptions;
     await postRequest({
@@ -146,5 +152,36 @@ describe('postRequest', () => {
     expect(actualHeaders.get('X-Goog-Api-Client')).toEqual(
       'apiClient1, apiClient2'
     );
+    expect(actualHeaders.get('User-Agent')).toContain('model-builder');
+    expect(actualHeaders.get('User-Agent')).toContain('user-agent-value');
+    expect(actualHeaders.get('Content-Type')).toEqual('application/json');
+  });
+
+  it('set both custom header and apiClient, should prioritize custom headers if sent to external endpoint', async () => {
+    const requestOptions: RequestOptions = {
+      customHeaders: new Headers({
+        'User-Agent': 'user-agent-value',
+        'X-Goog-Api-Client': 'apiClient1',
+        'Content-Type': 'other-content-type',
+      }),
+      apiClient: 'apiClient2',
+    } as RequestOptions;
+    await postRequest({
+      region: REGION,
+      project: PROJECT,
+      resourcePath: RESOURCE_PATH,
+      resourceMethod: RESOURCE_METHOD,
+      token: TOKEN,
+      apiEndpoint: API_ENDPOINT_EXTERNAL,
+      data: data,
+      requestOptions: requestOptions,
+    });
+    const actualHeaders = fetchSpy.calls.mostRecent().args[1].headers;
+    expect(actualHeaders.get('X-Goog-Api-Client')).toEqual(
+      'apiClient1, apiClient2'
+    );
+    expect(actualHeaders.get('User-Agent')).toContain('model-builder');
+    expect(actualHeaders.get('User-Agent')).toContain('user-agent-value');
+    expect(actualHeaders.get('Content-Type')).toEqual('other-content-type');
   });
 });
