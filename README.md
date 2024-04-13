@@ -1,3 +1,5 @@
+[![NPM Downloads](https://img.shields.io/npm/dm/%40google-cloud%2Fvertexai)](https://www.npmjs.com/package/@google-cloud/vertexai)
+
 # Vertex AI SDK for Node.js quickstart
 
 The Vertex AI SDK for Node.js lets you use the Vertex AI Gemini API to build
