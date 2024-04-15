@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.0.0...v1.1.0) (2024-04-13)
+
+
+### Features
+
+* enable system instruction for GenerativeModel ([590ca5a](https://github.com/googleapis/nodejs-vertexai/commit/590ca5a055e65b493c7d20f3983173dc8a8cbc39))
+* enable system instruction in chat experience ([7e71f75](https://github.com/googleapis/nodejs-vertexai/commit/7e71f750104cf14f465bb8091f851b5692f5aea9))
+* exposing customHeader in requestOptions to allow users pass in customer headers. ([b47d733](https://github.com/googleapis/nodejs-vertexai/commit/b47d733680837233b4323f4113737421099df02b))
+
 ## [1.0.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.5.0...v1.0.0) (2024-04-04)
 
 
