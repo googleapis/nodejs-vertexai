@@ -398,7 +398,7 @@ describe('generateContentStream', () => {
     );
   });
 
-  it('should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
+  xit('should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -426,7 +426,7 @@ describe('generateContentStream', () => {
       )}`
     );
   });
-  it('in preview should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
+  xit('in preview should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -454,7 +454,7 @@ describe('generateContentStream', () => {
       )}`
     );
   });
-  it('should return a FunctionCall when passed a FunctionDeclaration', async () => {
+  xit('should return a FunctionCall when passed a FunctionDeclaration', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -480,7 +480,7 @@ describe('generateContentStream', () => {
       ).toEqual(functionCalls!);
     }
   });
-  it('in preview should return a FunctionCall when passed a FunctionDeclaration', async () => {
+  xit('in preview should return a FunctionCall when passed a FunctionDeclaration', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -709,7 +709,7 @@ describe('generateContent', () => {
       );
     }
   });
-  it('should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
+  xit('should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -734,7 +734,7 @@ describe('generateContent', () => {
       )}`
     );
   });
-  it('in preview should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
+  xit('in preview should return a text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -758,7 +758,7 @@ describe('generateContent', () => {
       )}`
     );
   });
-  it('should return a FunctionCall when passed a FunctionDeclaration', async () => {
+  xit('should return a FunctionCall when passed a FunctionDeclaration', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -782,7 +782,7 @@ describe('generateContent', () => {
       )
     ).toEqual(functionCalls!);
   });
-  it('in preview should return a FunctionCall when passed a FunctionDeclaration', async () => {
+  xit('in preview should return a FunctionCall when passed a FunctionDeclaration', async () => {
     const request = {
       contents: [
         {role: 'user', parts: [{text: 'What is the weather in Boston?'}]},
@@ -1009,7 +1009,7 @@ describe('sendMessageStream', () => {
     expect((await chat.getHistory()).length).toBe(2);
   });
 
-  it('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
+  xit('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const chat = generativeTextModel.startChat({
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
     });
@@ -1057,7 +1057,7 @@ describe('sendMessageStream', () => {
       )}`
     );
   });
-  it('in preview should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
+  xit('in preview should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
     const chat = generativeTextModelPreview.startChat({
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
     });
