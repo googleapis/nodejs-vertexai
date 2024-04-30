@@ -18,6 +18,7 @@
 /* tslint:disable */
 import {GoogleAuth} from 'google-auth-library';
 
+import {formulateSystemInstructionIntoContent} from './util';
 import {countTokens} from '../functions/count_tokens';
 import {
   generateContent,
@@ -77,9 +78,10 @@ export class GenerativeModel {
     this.tools = getGenerativeModelParams.tools;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
     if (getGenerativeModelParams.systemInstruction) {
-      getGenerativeModelParams.systemInstruction.role = constants.SYSTEM_ROLE;
+      this.systemInstruction = formulateSystemInstructionIntoContent(
+        getGenerativeModelParams.systemInstruction
+      );
     }
-    this.systemInstruction = getGenerativeModelParams.systemInstruction;
     if (this.model.startsWith('models/')) {
       this.publisherModelEndpoint = `publishers/google/${this.model}`;
     } else {
@@ -248,6 +250,7 @@ export class GenerativeModel {
       googleAuth: this.googleAuth,
       publisherModelEndpoint: this.publisherModelEndpoint,
       tools: this.tools,
+      systemInstruction: this.systemInstruction,
     };
 
     if (request) {
@@ -299,9 +302,10 @@ export class GenerativeModelPreview {
     this.tools = getGenerativeModelParams.tools;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
     if (getGenerativeModelParams.systemInstruction) {
-      getGenerativeModelParams.systemInstruction.role = constants.SYSTEM_ROLE;
+      this.systemInstruction = formulateSystemInstructionIntoContent(
+        getGenerativeModelParams.systemInstruction
+      );
     }
-    this.systemInstruction = getGenerativeModelParams.systemInstruction;
     if (this.model.startsWith('models/')) {
       this.publisherModelEndpoint = `publishers/google/${this.model}`;
     } else {
@@ -469,6 +473,7 @@ export class GenerativeModelPreview {
       googleAuth: this.googleAuth,
       publisherModelEndpoint: this.publisherModelEndpoint,
       tools: this.tools,
+      systemInstruction: this.systemInstruction,
     };
 
     if (request) {
@@ -501,7 +506,9 @@ function formulateSystemInstructionIntoGenerateContentRequest(
   classSystemInstruction?: Content
 ): GenerateContentRequest {
   if (methodRequest.systemInstruction) {
-    methodRequest.systemInstruction.role = constants.SYSTEM_ROLE;
+    methodRequest.systemInstruction = formulateSystemInstructionIntoContent(
+      methodRequest.systemInstruction
+    );
     return methodRequest;
   }
   if (classSystemInstruction) {

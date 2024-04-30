@@ -18,6 +18,7 @@
 /* tslint:disable */
 import {GoogleAuth} from 'google-auth-library';
 
+import {formulateSystemInstructionIntoContent} from './util';
 import {
   generateContent,
   generateContentStream,
@@ -86,9 +87,10 @@ export class ChatSession {
     this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
     if (request.systemInstruction) {
-      request.systemInstruction.role = constants.SYSTEM_ROLE;
+      this.systemInstruction = formulateSystemInstructionIntoContent(
+        request.systemInstruction
+      );
     }
-    this.systemInstruction = request.systemInstruction;
   }
 
   /**
@@ -289,9 +291,10 @@ export class ChatSessionPreview {
     this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
     if (request.systemInstruction) {
-      request.systemInstruction.role = constants.SYSTEM_ROLE;
+      this.systemInstruction = formulateSystemInstructionIntoContent(
+        request.systemInstruction
+      );
     }
-    this.systemInstruction = request.systemInstruction;
   }
 
   /**

@@ -50,7 +50,7 @@ export declare interface GenerateContentRequest extends BaseModelParams {
   /** Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
-  systemInstruction?: Content;
+  systemInstruction?: string | Content;
 }
 
 /**
@@ -109,7 +109,7 @@ export declare interface GetGenerativeModelParams extends ModelParams {
   /** Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
-  systemInstruction?: Content;
+  systemInstruction?: string | Content;
 }
 
 /**
@@ -137,7 +137,7 @@ export declare interface BaseModelParams {
   /** Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
-  systemInstruction?: Content;
+  systemInstruction?: string | Content;
 }
 
 /**
@@ -883,7 +883,7 @@ export declare interface StartChatParams {
   /** Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
-  systemInstruction?: Content;
+  systemInstruction?: string | Content;
 }
 
 /**
@@ -901,7 +901,7 @@ export declare interface StartChatSessionRequest extends StartChatParams {
   /** Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
-  systemInstruction?: Content;
+  systemInstruction?: string | Content;
 }
 
 /**
