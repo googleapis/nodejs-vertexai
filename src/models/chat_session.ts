@@ -240,7 +240,9 @@ export class ChatSession {
       streamGenerateContentResultPromise,
       newContent
     ).catch(e => {
-      throw new GoogleGenerativeAIError('exception appending chat history', e);
+      // Errors from remote endpoint will be catchable by user from streamGenerateContentResultPromise
+      // Errors in appendHistory should not throw to cause user's programe exit with code 1
+      console.error(e);
     });
     return streamGenerateContentResultPromise;
   }
@@ -443,7 +445,11 @@ export class ChatSessionPreview {
     this.sendStreamPromise = this.appendHistory(
       streamGenerateContentResultPromise,
       newContent
-    );
+    ).catch(e => {
+      // Errors from remote endpoint will be catchable by user from streamGenerateContentResultPromise
+      // Errors in appendHistory should not throw to cause user's programe exit with code 1
+      console.error(e);
+    });
     return streamGenerateContentResultPromise;
   }
 }
