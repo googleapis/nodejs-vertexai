@@ -150,6 +150,17 @@ export declare interface SafetySetting {
   threshold: HarmBlockThreshold;
 }
 
+export enum ResponseStyle {
+  /** response style unspecified. */
+  RESPONSE_STYLE_UNSPECIFIED = 'RESPONSE_STYLE_UNSPECIFIED',
+  /** Precise response. */
+  RESPONSE_STYLE_PRECISE = 'RESPONSE_STYLE_PRECISE',
+  /** Default response style. */
+  RESPONSE_STYLE_BALANCED = 'RESPONSE_STYLE_BALANCED',
+  /** Creative response style. */
+  RESPONSE_STYLE_CREATIVE = 'RESPONSE_STYLE_CREATIVE',
+}
+
 /**
  * Configuration options for model generation and outputs.
  */
@@ -166,6 +177,8 @@ export declare interface GenerationConfig {
   topP?: number;
   /** Optional. If specified, topK sampling will be used. */
   topK?: number;
+  /** Optional. Control three levels of creativity in the model output. Default: RESPONSE_STYLE_BALANCED {@link ResponseStyle}*/
+  responseStyle?: ResponseStyle;
 }
 
 /**
