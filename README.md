@@ -15,6 +15,7 @@ page in Vertex AI documentation.
 
 ## Before you begin
 
+1.  Make sure your node.js version is 18 or above.
 1.  [Select](https://console.cloud.google.com/project) or [create](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) a Google Cloud project.
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 1.  [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
