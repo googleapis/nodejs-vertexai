@@ -297,6 +297,7 @@ function aggregateGroundingMetadataForCandidate(
   const emptyGroundingMetadata: GroundingMetadata = {
     webSearchQueries: [],
     groundingAttributions: [],
+    retrievalQueries: [],
   };
   const groundingMetadataAggregated: GroundingMetadata =
     aggregatedCandidate.groundingMetadata ?? emptyGroundingMetadata;
@@ -313,6 +314,16 @@ function aggregateGroundingMetadataForCandidate(
       groundingMetadataAggregated.groundingAttributions!.concat(
         groundingMetadataChunk.groundingAttributions
       );
+  }
+  if (groundingMetadataChunk.retrievalQueries) {
+    groundingMetadataAggregated.retrievalQueries =
+      groundingMetadataAggregated.retrievalQueries!.concat(
+        groundingMetadataChunk.retrievalQueries
+      );
+  }
+  if (groundingMetadataChunk.searchEntryPoint) {
+    groundingMetadataAggregated.searchEntryPoint =
+      groundingMetadataChunk.searchEntryPoint;
   }
   return groundingMetadataAggregated;
 }

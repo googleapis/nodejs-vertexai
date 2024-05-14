@@ -323,6 +323,10 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
               },
             },
           ],
+          searchEntryPoint: {
+            renderedContent:
+              'rendered content for later chunk for first candidate',
+          },
         },
       },
       {
@@ -344,6 +348,10 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
               },
             },
           ],
+          searchEntryPoint: {
+            renderedContent:
+              'rendered content for later chunk for second candidate',
+          },
         },
       },
     ],
@@ -430,6 +438,11 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
               },
             },
           ],
+          retrievalQueries: [],
+          searchEntryPoint: {
+            renderedContent:
+              'rendered content for later chunk for first candidate',
+          },
         },
         finishReason: 'STOP',
       },
@@ -500,6 +513,11 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
               },
             },
           ],
+          retrievalQueries: [],
+          searchEntryPoint: {
+            renderedContent:
+              'rendered content for later chunk for second candidate',
+          },
         },
         finishReason: 'STOP',
       },

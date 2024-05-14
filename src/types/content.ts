@@ -588,6 +588,16 @@ export declare interface Citation {
 }
 
 /**
+ * Google search entry point.
+ */
+export declare interface SearchEntryPoint {
+  /** Optional. Web content snippet that can be embedded in a web page or an app webview. */
+  renderedContent?: string;
+  /** Optional. Base64 encoded JSON representing array of tuple. */
+  sdkBlob?: string;
+}
+
+/**
  * A collection of grounding attributions for a piece of content.
  */
 export declare interface GroundingMetadata {
@@ -597,6 +607,8 @@ export declare interface GroundingMetadata {
   retrievalQueries?: string[];
   /** Optional. Array of {@link GroundingAttribution}. */
   groundingAttributions?: GroundingAttribution[];
+  /** Optional. Google search entry for the following-up web searches. {@link SearchEntryPoint} */
+  searchEntryPoint?: SearchEntryPoint;
 }
 
 /**
