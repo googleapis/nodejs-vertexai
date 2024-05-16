@@ -21,6 +21,7 @@ import {
   RequestOptions,
 } from '../types/content';
 import {GoogleGenerativeAIError} from '../types/errors';
+import * as constants from '../util/constants';
 import {
   throwErrorIfNotOK,
   processCountTokenResponse,
@@ -34,8 +35,7 @@ import {postRequest} from './post_request';
  */
 export async function countTokens(
   location: string,
-  project: string,
-  publisherModelEndpoint: string,
+  resourcePath: string,
   token: Promise<string | null | undefined>,
   request: CountTokensRequest,
   apiEndpoint?: string,
@@ -43,9 +43,8 @@ export async function countTokens(
 ): Promise<CountTokensResponse> {
   const response: Response | undefined = await postRequest({
     region: location,
-    project: project,
-    resourcePath: publisherModelEndpoint,
-    resourceMethod: 'countTokens',
+    resourcePath: resourcePath,
+    resourceMethod: constants.COUNT_TOKENS_METHOD,
     token: await token,
     data: request,
     apiEndpoint: apiEndpoint,

@@ -689,6 +689,101 @@ describe('GenerativeModel generateContent', () => {
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
+  it('gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithShortName = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedResourcePath =
+      'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+    await modelWithShortName.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('models/gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithLongName = new GenerativeModel({
+      model: 'models/gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedResourcePath =
+      'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+    await modelWithLongName.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('projects/my-project/my-tuned-gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithFullName = new GenerativeModel({
+      model: 'projects/my-project/my-tuned-gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedResourcePath = 'projects/my-project/my-tuned-gemini-pro';
+    await modelWithFullName.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('empty model raise ClientError', () => {
+    const expectedErrorMessage =
+      '[VertexAI.ClientError]: model parameter must not be empty.';
+    try {
+      new GenerativeModel({
+        model: '',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+    } catch (e) {
+      // @ts-ignore
+      expect(e.message).toEqual(expectedErrorMessage);
+    }
+  });
+  it('invalid model raise ClientError', () => {
+    const expectedErrorMessage =
+      '[VertexAI.ClientError]: model parameter must be either a Model Garden model ID or a full resource name.';
+    try {
+      new GenerativeModel({
+        model: 'invalid/my-tuned-mode',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+    } catch (e) {
+      // @ts-ignore
+      expect(e.message).toEqual(expectedErrorMessage);
+    }
+  });
   it('send timeout options to functions', async () => {
     const modelWithRequestOptions = new GenerativeModel({
       model: 'gemini-pro',
@@ -706,7 +801,7 @@ describe('GenerativeModel generateContent', () => {
     );
     await modelWithRequestOptions.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][8].timeout).toEqual(0);
   });
   it('set system instruction in constructor, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModel({
@@ -745,7 +840,7 @@ describe('GenerativeModel generateContent', () => {
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('set system instruction in generateContent, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModel({
@@ -784,7 +879,7 @@ describe('GenerativeModel generateContent', () => {
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('set system instruction in constructor, wrong role, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModel({
@@ -823,7 +918,7 @@ describe('GenerativeModel generateContent', () => {
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('set system instruction in generateContent, wrong role, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModel({
@@ -862,7 +957,7 @@ describe('GenerativeModel generateContent', () => {
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
@@ -1053,6 +1148,101 @@ describe('GenerativeModelPreview generateContent', () => {
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
   });
+  it('gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithShortName = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedResourcePath =
+      'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+    await modelWithShortName.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('models/gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithLongName = new GenerativeModelPreview({
+      model: 'models/gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedResourcePath =
+      'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+    await modelWithLongName.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('projects/my-project/my-tuned-gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithFullName = new GenerativeModelPreview({
+      model: 'projects/my-project/my-tuned-gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContent'
+    );
+    const expectedResourcePath = 'projects/my-project/my-tuned-gemini-pro';
+    await modelWithFullName.generateContent(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('empty model raise ClientError', () => {
+    const expectedErrorMessage =
+      '[VertexAI.ClientError]: model parameter must not be empty.';
+    try {
+      new GenerativeModelPreview({
+        model: '',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+    } catch (e) {
+      // @ts-ignore
+      expect(e.message).toEqual(expectedErrorMessage);
+    }
+  });
+  it('invalid model raise ClientError', () => {
+    const expectedErrorMessage =
+      '[VertexAI.ClientError]: model parameter must be either a Model Garden model ID or a full resource name.';
+    try {
+      new GenerativeModelPreview({
+        model: 'invalid/my-tuned-mode',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+    } catch (e) {
+      // @ts-ignore
+      expect(e.message).toEqual(expectedErrorMessage);
+    }
+  });
   it('send timeout options to functions', async () => {
     const modelWithRequestOptions = new GenerativeModelPreview({
       model: 'gemini-pro',
@@ -1070,7 +1260,7 @@ describe('GenerativeModelPreview generateContent', () => {
     );
     await modelWithRequestOptions.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][8].timeout).toEqual(0);
   });
   it('set system instruction in constructor, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModelPreview({
@@ -1109,7 +1299,7 @@ describe('GenerativeModelPreview generateContent', () => {
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('set system instruction in generateContent, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModelPreview({
@@ -1148,7 +1338,7 @@ describe('GenerativeModelPreview generateContent', () => {
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('set system instruction in constructor, wrong role, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModelPreview({
@@ -1187,7 +1377,7 @@ describe('GenerativeModelPreview generateContent', () => {
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('set system instruction in generateContent, wrong role, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModelPreview({
@@ -1226,7 +1416,7 @@ describe('GenerativeModelPreview generateContent', () => {
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: GenerateContentResult = {
@@ -1428,6 +1618,71 @@ describe('GenerativeModel generateContentStream', () => {
       200 - DATE_NOW_PRECISION_MILLIS
     );
   });
+  it('gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithShortName = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedResourcePath =
+      'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+    await modelWithShortName.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('models/gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithLongName = new GenerativeModel({
+      model: 'models/gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedResourcePath =
+      'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+    await modelWithLongName.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('projects/my-project/my-tuned-gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithFullName = new GenerativeModel({
+      model: 'projects/my-project/my-tuned-gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedResourcePath = 'projects/my-project/my-tuned-gemini-pro';
+    await modelWithFullName.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
   it('send timeout options to functions', async () => {
     const modelWithRequestOptions = new GenerativeModel({
       model: 'gemini-pro',
@@ -1445,7 +1700,7 @@ describe('GenerativeModel generateContentStream', () => {
     );
     await modelWithRequestOptions.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][8].timeout).toEqual(0);
   });
   it('set system instruction in generateContent, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModel({
@@ -1484,7 +1739,7 @@ describe('GenerativeModel generateContentStream', () => {
     };
     await modelWithSystemInstruction.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('set system instruction in generateContent, wrong role, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModel({
@@ -1523,7 +1778,7 @@ describe('GenerativeModel generateContentStream', () => {
     };
     await modelWithSystemInstruction.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: StreamGenerateContentResult = {
@@ -1676,6 +1931,71 @@ describe('GenerativeModelPreview generateContentStream', () => {
       200 - DATE_NOW_PRECISION_MILLIS
     );
   });
+  it('gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithShortName = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedResourcePath =
+      'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+    await modelWithShortName.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('models/gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithLongName = new GenerativeModelPreview({
+      model: 'models/gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedResourcePath =
+      'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+    await modelWithLongName.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
+  it('projects/my-project/my-tuned-gemini-pro model send correct resourcePath to functions', async () => {
+    const modelWithFullName = new GenerativeModelPreview({
+      model: 'projects/my-project/my-tuned-gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const req: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE,
+    };
+    const generateContentSpy = spyOn(
+      GenerateContentFunctions,
+      'generateContentStream'
+    );
+    const expectedResourcePath = 'projects/my-project/my-tuned-gemini-pro';
+    await modelWithFullName.generateContentStream(req);
+    // @ts-ignore
+    expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+      expectedResourcePath
+    );
+  });
 
   it('send timeout options to functions', async () => {
     const modelWithRequestOptions = new GenerativeModelPreview({
@@ -1694,7 +2014,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
     );
     await modelWithRequestOptions.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
+    expect(generateContentSpy.calls.allArgs()[0][8].timeout).toEqual(0);
   });
 
   it('set system instruction in generateContent, should send system instruction to functions', async () => {
@@ -1734,7 +2054,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
     };
     await modelWithSystemInstruction.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('set system instruction in generateContent, wrong role, should send system instruction to functions', async () => {
     const modelWithSystemInstruction = new GenerativeModelPreview({
@@ -1773,7 +2093,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
     };
     await modelWithSystemInstruction.generateContentStream(req);
     // @ts-ignore
-    expect(generateContentSpy.calls.allArgs()[0][4]).toEqual(expectedRequest);
+    expect(generateContentSpy.calls.allArgs()[0][3]).toEqual(expectedRequest);
   });
   it('returns a GenerateContentResponse when passed a string', async () => {
     const expectedResult: StreamGenerateContentResult = {
@@ -1915,6 +2235,81 @@ describe('ChatSession', () => {
       expect(resp).toEqual(expectedResult);
       expect((await chatSession.getHistory()).length).toEqual(3);
     });
+    it('gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithShortName = new GenerativeModel({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithShortName = modelWithShortName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContent'
+      ).and.callThrough();
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
+      const expectedResourcePath =
+        'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+      await chatSessionWithShortName.sendMessage(req);
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
+    it('models/gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithLongName = new GenerativeModel({
+        model: 'models/gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithLongName = modelWithLongName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContent'
+      ).and.callThrough();
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
+      const expectedResourcePath =
+        'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+      await chatSessionWithLongName.sendMessage(req);
+      console.log('hey\n', generateContentSpy.calls.allArgs());
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
+    it('projects/my-project/my-tuned-gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithFullName = new GenerativeModel({
+        model: 'projects/my-project/my-tuned-gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithFullName = modelWithFullName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContent'
+      ).and.callThrough();
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
+      const expectedResourcePath = 'projects/my-project/my-tuned-gemini-pro';
+      await chatSessionWithFullName.sendMessage(req);
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
     it('send timeout to functions', async () => {
       const modelWithRequestOptions = new GenerativeModel({
         model: 'gemini-pro',
@@ -1937,7 +2332,7 @@ describe('ChatSession', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][8].timeout).toEqual(0);
     });
 
     it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
@@ -2086,6 +2481,84 @@ describe('ChatSession', () => {
         200 - DATE_NOW_PRECISION_MILLIS
       );
     });
+    it('gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithShortName = new GenerativeModel({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithShortName = modelWithShortName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContentStream'
+      ).and.callThrough();
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGeneratorMultiStream(),
+      };
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
+      const expectedResourcePath =
+        'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+      await chatSessionWithShortName.sendMessageStream(req);
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
+    it('models/gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithLongName = new GenerativeModel({
+        model: 'models/gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithLongName = modelWithLongName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContentStream'
+      ).and.callThrough();
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGeneratorMultiStream(),
+      };
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
+      const expectedResourcePath =
+        'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+      await chatSessionWithLongName.sendMessageStream(req);
+      console.log('hey\n', generateContentSpy.calls.allArgs());
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
+    it('projects/my-project/my-tuned-gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithFullName = new GenerativeModel({
+        model: 'projects/my-project/my-tuned-gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithFullName = modelWithFullName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContentStream'
+      ).and.callThrough();
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGeneratorMultiStream(),
+      };
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
+      const expectedResourcePath = 'projects/my-project/my-tuned-gemini-pro';
+      await chatSessionWithFullName.sendMessageStream(req);
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
     it('send timeout to functions', async () => {
       const modelWithRequestOptions = new GenerativeModel({
         model: 'gemini-pro',
@@ -2109,7 +2582,7 @@ describe('ChatSession', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][8].timeout).toEqual(0);
     });
 
     it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
@@ -2201,7 +2674,7 @@ describe('ChatSessionPreview', () => {
 
   describe('sendMessage', () => {
     it('returns a GenerateContentResponse and appends to history', async () => {
-      const req = 'How are you doing today?';
+      const req = TEST_CHAT_MESSSAGE_TEXT;
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
@@ -2211,6 +2684,81 @@ describe('ChatSessionPreview', () => {
       expect((await chatSession.getHistory()).length).toEqual(3);
     });
 
+    it('gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithShortName = new GenerativeModelPreview({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithShortName = modelWithShortName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContent'
+      ).and.callThrough();
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
+      const expectedResourcePath =
+        'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+      await chatSessionWithShortName.sendMessage(req);
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
+    it('models/gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithLongName = new GenerativeModelPreview({
+        model: 'models/gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithLongName = modelWithLongName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContent'
+      ).and.callThrough();
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
+      const expectedResourcePath =
+        'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+      await chatSessionWithLongName.sendMessage(req);
+      console.log('hey\n', generateContentSpy.calls.allArgs());
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
+    it('projects/my-project/my-tuned-gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithFullName = new GenerativeModelPreview({
+        model: 'projects/my-project/my-tuned-gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithFullName = modelWithFullName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContent'
+      ).and.callThrough();
+      const expectedResult: GenerateContentResult = {
+        response: TEST_MODEL_RESPONSE,
+      };
+      spyOn(PostFetchFunctions, 'processUnary').and.resolveTo(expectedResult);
+      const expectedResourcePath = 'projects/my-project/my-tuned-gemini-pro';
+      await chatSessionWithFullName.sendMessage(req);
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
     it('send timeout to functions', async () => {
       const modelWithRequestOptions = new GenerativeModelPreview({
         model: 'gemini-pro',
@@ -2222,7 +2770,7 @@ describe('ChatSessionPreview', () => {
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
         history: TEST_USER_CHAT_MESSAGE,
       }) as ChatSessionPreviewForTest;
-      const req = 'How are you doing today?';
+      const req = TEST_CHAT_MESSSAGE_TEXT;
       const generateContentSpy: jasmine.Spy = spyOn(
         GenerateContentFunctions,
         'generateContent'
@@ -2233,11 +2781,11 @@ describe('ChatSessionPreview', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][8].timeout).toEqual(0);
     });
 
     it('returns a GenerateContentResponse and appends to history when startChat is passed with no args', async () => {
-      const req = 'How are you doing today?';
+      const req = TEST_CHAT_MESSSAGE_TEXT;
       const expectedResult: GenerateContentResult = {
         response: TEST_MODEL_RESPONSE,
       };
@@ -2317,7 +2865,7 @@ describe('ChatSessionPreview', () => {
 
   describe('sendMessageStream', () => {
     it('returns a StreamGenerateContentResponse and appends to history', async () => {
-      const req = 'How are you doing today?';
+      const req = TEST_CHAT_MESSSAGE_TEXT;
       const expectedResult: StreamGenerateContentResult = {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGenerator(),
@@ -2345,7 +2893,7 @@ describe('ChatSessionPreview', () => {
       expect(secondHistory[2].role).toEqual(constants.MODEL_ROLE);
     });
     it('returns a StreamGenerateContentResponse in streaming mode', async () => {
-      const req = 'How are you doing today?';
+      const req = TEST_CHAT_MESSSAGE_TEXT;
       const expectedResult: StreamGenerateContentResult = {
         response: Promise.resolve(TEST_MODEL_RESPONSE),
         stream: testGeneratorMultiStream(),
@@ -2372,6 +2920,84 @@ describe('ChatSessionPreview', () => {
         200 - DATE_NOW_PRECISION_MILLIS
       );
     });
+    it('gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithShortName = new GenerativeModelPreview({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithShortName = modelWithShortName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContentStream'
+      ).and.callThrough();
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGeneratorMultiStream(),
+      };
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
+      const expectedResourcePath =
+        'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+      await chatSessionWithShortName.sendMessageStream(req);
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
+    it('models/gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithLongName = new GenerativeModelPreview({
+        model: 'models/gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithLongName = modelWithLongName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContentStream'
+      ).and.callThrough();
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGeneratorMultiStream(),
+      };
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
+      const expectedResourcePath =
+        'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
+      await chatSessionWithLongName.sendMessageStream(req);
+      console.log('hey\n', generateContentSpy.calls.allArgs());
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
+    it('projects/my-project/my-tuned-gemini-pro model send correct resourcePath to functions', async () => {
+      const modelWithFullName = new GenerativeModelPreview({
+        model: 'projects/my-project/my-tuned-gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chatSessionWithFullName = modelWithFullName.startChat();
+      const req = TEST_CHAT_MESSSAGE_TEXT;
+      const generateContentSpy = spyOn(
+        GenerateContentFunctions,
+        'generateContentStream'
+      ).and.callThrough();
+      const expectedResult: StreamGenerateContentResult = {
+        response: Promise.resolve(TEST_MODEL_RESPONSE),
+        stream: testGeneratorMultiStream(),
+      };
+      spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
+      const expectedResourcePath = 'projects/my-project/my-tuned-gemini-pro';
+      await chatSessionWithFullName.sendMessageStream(req);
+      // @ts-ignore
+      expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
+        expectedResourcePath
+      );
+    });
     it('send timeout to functions', async () => {
       const modelWithRequestOptions = new GenerativeModelPreview({
         model: 'gemini-pro',
@@ -2383,7 +3009,7 @@ describe('ChatSessionPreview', () => {
       const chatSessionWithRequestOptions = modelWithRequestOptions.startChat({
         history: TEST_USER_CHAT_MESSAGE,
       }) as ChatSessionPreviewForTest;
-      const req = 'How are you doing today?';
+      const req = TEST_CHAT_MESSSAGE_TEXT;
       const generateContentSpy: jasmine.Spy = spyOn(
         GenerateContentFunctions,
         'generateContentStream'
@@ -2395,7 +3021,7 @@ describe('ChatSessionPreview', () => {
       expect(chatSessionWithRequestOptions.requestOptions).toEqual(
         TEST_REQUEST_OPTIONS
       );
-      expect(generateContentSpy.calls.allArgs()[0][9].timeout).toEqual(0);
+      expect(generateContentSpy.calls.allArgs()[0][8].timeout).toEqual(0);
     });
 
     it('returns a FunctionCall and appends to history when passed a FunctionDeclaration', async () => {
@@ -2489,7 +3115,7 @@ describe('GenerativeModel countTokens', () => {
     const countTokenSpy = spyOn(CountTokensFunctions, 'countTokens');
     await model.countTokens(req);
     // @ts-ignore
-    expect(countTokenSpy.calls.allArgs()[0][6].timeout).toEqual(0);
+    expect(countTokenSpy.calls.allArgs()[0][5].timeout).toEqual(0);
   });
 });
 
@@ -2529,7 +3155,7 @@ describe('GenerativeModelPreview countTokens', () => {
     const countTokenSpy = spyOn(CountTokensFunctions, 'countTokens');
     await model.countTokens(req);
     // @ts-ignore
-    expect(countTokenSpy.calls.allArgs()[0][6].timeout).toEqual(0);
+    expect(countTokenSpy.calls.allArgs()[0][5].timeout).toEqual(0);
   });
 });
 

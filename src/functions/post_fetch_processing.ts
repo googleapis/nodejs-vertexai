@@ -23,7 +23,6 @@ import {
   GenerateContentResponse,
   GenerateContentResult,
   GroundingMetadata,
-  Part,
   StreamGenerateContentResult,
 } from '../types/content';
 import {constants} from '../util';

@@ -37,9 +37,8 @@ import {countTokens} from '../count_tokens';
 import {generateContent, generateContentStream} from '../generate_content';
 import * as StreamFunctions from '../post_fetch_processing';
 
-const TEST_PROJECT = 'test-project';
 const TEST_LOCATION = 'test-location';
-const TEST_PUBLISHER_MODEL_ENDPOINT = 'test-publisher-model-endpoint';
+const TEST_RESOURCE_PATH = 'test-resource-path';
 const TEST_TOKEN = 'testtoken';
 const TEST_TOKEN_PROMISE = Promise.resolve(TEST_TOKEN);
 const TEST_API_ENDPOINT = 'test-api-endpoint';
@@ -249,8 +248,7 @@ describe('countTokens', () => {
 
     const resp = await countTokens(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -268,8 +266,7 @@ describe('countTokens', () => {
     await expectAsync(
       countTokens(
         TEST_LOCATION,
-        TEST_PROJECT,
-        TEST_PUBLISHER_MODEL_ENDPOINT,
+        TEST_RESOURCE_PATH,
         TEST_TOKEN_PROMISE,
         req,
         TEST_API_ENDPOINT,
@@ -296,8 +293,7 @@ describe('countTokens', () => {
     await expectAsync(
       countTokens(
         TEST_LOCATION,
-        TEST_PROJECT,
-        TEST_PUBLISHER_MODEL_ENDPOINT,
+        TEST_RESOURCE_PATH,
         TEST_TOKEN_PROMISE,
         req,
         TEST_API_ENDPOINT
@@ -322,8 +318,7 @@ describe('countTokens', () => {
     await expectAsync(
       countTokens(
         TEST_LOCATION,
-        TEST_PROJECT,
-        TEST_PUBLISHER_MODEL_ENDPOINT,
+        TEST_RESOURCE_PATH,
         TEST_TOKEN_PROMISE,
         req,
         TEST_API_ENDPOINT
@@ -351,8 +346,7 @@ describe('generateContent', () => {
     await expectAsync(
       generateContent(
         TEST_LOCATION,
-        TEST_PROJECT,
-        TEST_PUBLISHER_MODEL_ENDPOINT,
+        TEST_RESOURCE_PATH,
         TEST_TOKEN_PROMISE,
         req,
         TEST_API_ENDPOINT,
@@ -374,8 +368,7 @@ describe('generateContent', () => {
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -389,8 +382,7 @@ describe('generateContent', () => {
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       TEST_CHAT_MESSAGE_TEXT,
       TEST_API_ENDPOINT
@@ -408,8 +400,7 @@ describe('generateContent', () => {
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -424,8 +415,7 @@ describe('generateContent', () => {
     await expectAsync(
       generateContent(
         TEST_LOCATION,
-        TEST_PROJECT,
-        TEST_PUBLISHER_MODEL_ENDPOINT,
+        TEST_RESOURCE_PATH,
         TEST_TOKEN_PROMISE,
         req,
         TEST_API_ENDPOINT
@@ -445,8 +435,7 @@ describe('generateContent', () => {
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -460,8 +449,7 @@ describe('generateContent', () => {
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_ENDPOINT_BASE_PATH
@@ -480,8 +468,7 @@ describe('generateContent', () => {
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       reqWithEmptyConfigs,
       TEST_API_ENDPOINT
@@ -501,8 +488,7 @@ describe('generateContent', () => {
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       reqWithEmptyConfigs,
       TEST_API_ENDPOINT
@@ -520,8 +506,7 @@ describe('generateContent', () => {
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
     const resp = await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -552,8 +537,7 @@ describe('generateContent', () => {
 
     const actualResult = await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -595,8 +579,7 @@ describe('generateContent', () => {
 
     const actualResult = await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -623,8 +606,7 @@ describe('generateContent', () => {
 
     const actualResult: GenerateContentResult = await generateContent(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -661,8 +643,7 @@ describe('generateContentStream', () => {
     await expectAsync(
       generateContentStream(
         TEST_LOCATION,
-        TEST_PROJECT,
-        TEST_PUBLISHER_MODEL_ENDPOINT,
+        TEST_RESOURCE_PATH,
         TEST_TOKEN_PROMISE,
         req,
         TEST_API_ENDPOINT,
@@ -686,8 +667,7 @@ describe('generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -704,8 +684,7 @@ describe('generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       TEST_API_ENDPOINT,
       TEST_CHAT_MESSAGE_TEXT
@@ -725,8 +704,7 @@ describe('generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -746,8 +724,7 @@ describe('generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedResult);
     const resp = await generateContentStream(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -769,8 +746,7 @@ describe('generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
     const result = await generateContentStream(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT
@@ -805,8 +781,7 @@ describe('generateContentStream', () => {
 
     const actualResult = await generateContentStream(
       TEST_LOCATION,
-      TEST_PROJECT,
-      TEST_PUBLISHER_MODEL_ENDPOINT,
+      TEST_RESOURCE_PATH,
       TEST_TOKEN_PROMISE,
       req,
       TEST_API_ENDPOINT

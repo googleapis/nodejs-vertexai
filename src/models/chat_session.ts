@@ -35,11 +35,7 @@ import {
   StreamGenerateContentResult,
   Tool,
 } from '../types/content';
-import {
-  ClientError,
-  GoogleAuthError,
-  GoogleGenerativeAIError,
-} from '../types/errors';
+import {ClientError, GoogleAuthError} from '../types/errors';
 import {constants} from '../util';
 
 /**
@@ -55,7 +51,7 @@ export class ChatSession {
   private readonly location: string;
   private historyInternal: Content[];
   private sendStreamPromise: Promise<void> = Promise.resolve();
-  private readonly publisherModelEndpoint: string;
+  private readonly resourcePath: string;
   private readonly googleAuth: GoogleAuth;
   protected readonly requestOptions?: RequestOptions;
   private readonly generationConfig?: GenerationConfig;
@@ -79,7 +75,7 @@ export class ChatSession {
     this.project = request.project;
     this.location = request.location;
     this.googleAuth = request.googleAuth;
-    this.publisherModelEndpoint = request.publisherModelEndpoint;
+    this.resourcePath = request.resourcePath;
     this.historyInternal = request.history ?? [];
     this.generationConfig = request.generationConfig;
     this.safetySettings = request.safetySettings;
@@ -139,8 +135,7 @@ export class ChatSession {
 
     const generateContentResult: GenerateContentResult = await generateContent(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       generateContentrequest,
       this.apiEndpoint,
@@ -223,8 +218,7 @@ export class ChatSession {
 
     const streamGenerateContentResultPromise = generateContentStream(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       generateContentrequest,
       this.apiEndpoint,
@@ -261,7 +255,7 @@ export class ChatSessionPreview {
   private readonly location: string;
   private historyInternal: Content[];
   private sendStreamPromise: Promise<void> = Promise.resolve();
-  private readonly publisherModelEndpoint: string;
+  private readonly resourcePath: string;
   private readonly googleAuth: GoogleAuth;
   protected readonly requestOptions?: RequestOptions;
   private readonly generationConfig?: GenerationConfig;
@@ -285,7 +279,7 @@ export class ChatSessionPreview {
     this.project = request.project;
     this.location = request.location;
     this.googleAuth = request.googleAuth;
-    this.publisherModelEndpoint = request.publisherModelEndpoint;
+    this.resourcePath = request.resourcePath;
     this.historyInternal = request.history ?? [];
     this.generationConfig = request.generationConfig;
     this.safetySettings = request.safetySettings;
@@ -344,8 +338,7 @@ export class ChatSessionPreview {
 
     const generateContentResult: GenerateContentResult = await generateContent(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       generateContentrequest,
       this.apiEndpoint,
@@ -429,8 +422,7 @@ export class ChatSessionPreview {
 
     const streamGenerateContentResultPromise = generateContentStream(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       generateContentrequest,
       this.apiEndpoint,

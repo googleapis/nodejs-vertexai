@@ -3,7 +3,6 @@ import {postRequest} from '../post_request';
 
 describe('postRequest', () => {
   const REGION = 'us-central1';
-  const PROJECT = 'project-id';
   const RESOURCE_PATH = 'resource-path';
   const RESOURCE_METHOD = 'resource-method';
   const TOKEN = 'token';
@@ -24,7 +23,6 @@ describe('postRequest', () => {
       'the line break and try again.';
     await postRequest({
       region: REGION,
-      project: PROJECT,
       resourcePath: RESOURCE_PATH,
       resourceMethod: RESOURCE_METHOD,
       token: TOKEN,
@@ -44,7 +42,6 @@ describe('postRequest', () => {
       'the line break and try again.';
     await postRequest({
       region: REGION,
-      project: PROJECT,
       resourcePath: RESOURCE_PATH,
       resourceMethod: RESOURCE_METHOD,
       token: TOKEN,
@@ -61,7 +58,6 @@ describe('postRequest', () => {
     };
     await postRequest({
       region: REGION,
-      project: PROJECT,
       resourcePath: RESOURCE_PATH,
       resourceMethod: RESOURCE_METHOD,
       token: TOKEN,
@@ -81,7 +77,6 @@ describe('postRequest', () => {
       'the line break and try again.';
     await postRequest({
       region: REGION,
-      project: PROJECT,
       resourcePath: RESOURCE_PATH,
       resourceMethod: RESOURCE_METHOD,
       token: TOKEN,
@@ -101,7 +96,6 @@ describe('postRequest', () => {
       'the line break and try again.';
     await postRequest({
       region: REGION,
-      project: PROJECT,
       resourcePath: RESOURCE_PATH,
       resourceMethod: RESOURCE_METHOD,
       token: TOKEN,
@@ -118,7 +112,6 @@ describe('postRequest', () => {
     } as RequestOptions;
     await postRequest({
       region: REGION,
-      project: PROJECT,
       resourcePath: RESOURCE_PATH,
       resourceMethod: RESOURCE_METHOD,
       token: TOKEN,
@@ -140,7 +133,6 @@ describe('postRequest', () => {
     } as RequestOptions;
     await postRequest({
       region: REGION,
-      project: PROJECT,
       resourcePath: RESOURCE_PATH,
       resourceMethod: RESOURCE_METHOD,
       token: TOKEN,
@@ -168,7 +160,6 @@ describe('postRequest', () => {
     } as RequestOptions;
     await postRequest({
       region: REGION,
-      project: PROJECT,
       resourcePath: RESOURCE_PATH,
       resourceMethod: RESOURCE_METHOD,
       token: TOKEN,

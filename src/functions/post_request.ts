@@ -38,7 +38,6 @@ import * as constants from '../util/constants';
  */
 export async function postRequest({
   region,
-  project,
   resourcePath,
   resourceMethod,
   token,
@@ -48,7 +47,6 @@ export async function postRequest({
   apiVersion = 'v1',
 }: {
   region: string;
-  project: string;
   resourcePath: string;
   resourceMethod: string;
   token: string | null | undefined;
@@ -59,7 +57,7 @@ export async function postRequest({
 }): Promise<Response | undefined> {
   const vertexBaseEndpoint = apiEndpoint ?? `${region}-${API_BASE_PATH}`;
 
-  let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/projects/${project}/locations/${region}/${resourcePath}:${resourceMethod}`;
+  let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/${resourcePath}:${resourceMethod}`;
 
   // Use server sent events for streamGenerateContent
   if (resourceMethod === constants.STREAMING_GENERATE_CONTENT_METHOD) {

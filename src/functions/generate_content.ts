@@ -47,8 +47,7 @@ import {
 
 export async function generateContent(
   location: string,
-  project: string,
-  publisherModelEndpoint: string,
+  resourcePath: string,
   token: Promise<string | null | undefined>,
   request: GenerateContentRequest | string,
   apiEndpoint?: string,
@@ -76,8 +75,7 @@ export async function generateContent(
   };
   const response: Response | undefined = await postRequest({
     region: location,
-    project: project,
-    resourcePath: publisherModelEndpoint,
+    resourcePath: resourcePath,
     resourceMethod: constants.GENERATE_CONTENT_METHOD,
     token: await token,
     data: generateContentRequest,
@@ -101,8 +99,7 @@ export async function generateContent(
  */
 export async function generateContentStream(
   location: string,
-  project: string,
-  publisherModelEndpoint: string,
+  resourcePath: string,
   token: Promise<string | null | undefined>,
   request: GenerateContentRequest | string,
   apiEndpoint?: string,
@@ -129,8 +126,7 @@ export async function generateContentStream(
   };
   const response = await postRequest({
     region: location,
-    project: project,
-    resourcePath: publisherModelEndpoint,
+    resourcePath: resourcePath,
     resourceMethod: constants.STREAMING_GENERATE_CONTENT_METHOD,
     token: await token,
     data: generateContentRequest,

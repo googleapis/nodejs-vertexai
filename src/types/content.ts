@@ -910,6 +910,8 @@ export declare interface StartChatSessionRequest extends StartChatParams {
   googleAuth: GoogleAuth;
   /** The publisher model endpoint to use for the request. */
   publisherModelEndpoint: string;
+  /** The resource path to use for the request. */
+  resourcePath: string;
   /** Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */

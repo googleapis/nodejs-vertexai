@@ -40,8 +40,7 @@ const fetchResponseObj = {
 };
 
 const LOCATION = 'location';
-const PROJECT = 'project';
-const PUBLISHER_MODEL_ENDPOINT = 'publisher_model_endpoint';
+const RESOURCE_PATH = 'RESOURCE_PATH';
 const TOKEN = Promise.resolve('token');
 const GENERATE_CONTENT_REQUEST = 'generate_content_request';
 const COUNT_TOKEN_REQUEST = {
@@ -86,8 +85,7 @@ describe('processUnary', () => {
     spyOn(global, 'fetch').and.resolveTo(fetchResult);
     const actualResult = await generateContent(
       LOCATION,
-      PROJECT,
-      PUBLISHER_MODEL_ENDPOINT,
+      RESOURCE_PATH,
       TOKEN,
       GENERATE_CONTENT_REQUEST
     );
@@ -105,8 +103,7 @@ describe('processUnary', () => {
     spyOn(global, 'fetch').and.resolveTo(fetchResult);
     const actualResult = await generateContent(
       LOCATION,
-      PROJECT,
-      PUBLISHER_MODEL_ENDPOINT,
+      RESOURCE_PATH,
       TOKEN,
       GENERATE_CONTENT_REQUEST
     );
@@ -121,8 +118,7 @@ describe('processUnary', () => {
     );
     const actualResult = await generateContent(
       LOCATION,
-      PROJECT,
-      PUBLISHER_MODEL_ENDPOINT,
+      RESOURCE_PATH,
       TOKEN,
       GENERATE_CONTENT_REQUEST
     );
@@ -142,8 +138,7 @@ describe('processStream', () => {
     const processStreamSpy = spyOn(PostFetchFunctions, 'processStream');
     await generateContentStream(
       LOCATION,
-      PROJECT,
-      PUBLISHER_MODEL_ENDPOINT,
+      RESOURCE_PATH,
       TOKEN,
       GENERATE_CONTENT_REQUEST
     );
@@ -164,8 +159,7 @@ describe('processCountTokenResponse', () => {
     spyOn(global, 'fetch').and.resolveTo(fetchResult);
     const actualResponse = await countTokens(
       LOCATION,
-      PROJECT,
-      PUBLISHER_MODEL_ENDPOINT,
+      RESOURCE_PATH,
       TOKEN,
       COUNT_TOKEN_REQUEST
     );

@@ -39,7 +39,7 @@ import {
   StreamGenerateContentResult,
   Tool,
 } from '../types/content';
-import {GoogleAuthError} from '../types/errors';
+import {ClientError, GoogleAuthError} from '../types/errors';
 import {constants} from '../util';
 
 import {ChatSession, ChatSessionPreview} from './chat_session';
@@ -61,6 +61,7 @@ export class GenerativeModel {
   private readonly location: string;
   private readonly googleAuth: GoogleAuth;
   private readonly publisherModelEndpoint: string;
+  private readonly resourcePath: string;
   private readonly apiEndpoint?: string;
 
   /**
@@ -82,11 +83,13 @@ export class GenerativeModel {
         getGenerativeModelParams.systemInstruction
       );
     }
-    if (this.model.startsWith('models/')) {
-      this.publisherModelEndpoint = `publishers/google/${this.model}`;
-    } else {
-      this.publisherModelEndpoint = `publishers/google/models/${this.model}`;
-    }
+    this.resourcePath = formulateResourcePathFromModel(
+      this.model,
+      this.project,
+      this.location
+    );
+    // publisherModelEndpoint is deprecated
+    this.publisherModelEndpoint = this.resourcePath;
   }
 
   /**
@@ -130,8 +133,7 @@ export class GenerativeModel {
       );
     return generateContent(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       formulatedRequest,
       this.apiEndpoint,
@@ -177,8 +179,7 @@ export class GenerativeModel {
       );
     return generateContentStream(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       formulatedRequest,
       this.apiEndpoint,
@@ -210,8 +211,7 @@ export class GenerativeModel {
   async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
     return countTokens(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       request,
       this.apiEndpoint,
@@ -249,6 +249,7 @@ export class GenerativeModel {
       location: this.location,
       googleAuth: this.googleAuth,
       publisherModelEndpoint: this.publisherModelEndpoint,
+      resourcePath: this.resourcePath,
       tools: this.tools,
       systemInstruction: this.systemInstruction,
     };
@@ -285,6 +286,7 @@ export class GenerativeModelPreview {
   private readonly location: string;
   private readonly googleAuth: GoogleAuth;
   private readonly publisherModelEndpoint: string;
+  private readonly resourcePath: string;
   private readonly apiEndpoint?: string;
 
   /**
@@ -306,11 +308,13 @@ export class GenerativeModelPreview {
         getGenerativeModelParams.systemInstruction
       );
     }
-    if (this.model.startsWith('models/')) {
-      this.publisherModelEndpoint = `publishers/google/${this.model}`;
-    } else {
-      this.publisherModelEndpoint = `publishers/google/models/${this.model}`;
-    }
+    this.resourcePath = formulateResourcePathFromModel(
+      this.model,
+      this.project,
+      this.location
+    );
+    // publisherModelEndpoint is deprecated
+    this.publisherModelEndpoint = this.resourcePath;
   }
 
   /**
@@ -353,8 +357,7 @@ export class GenerativeModelPreview {
       );
     return generateContent(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       formulatedRequest,
       this.apiEndpoint,
@@ -400,8 +403,7 @@ export class GenerativeModelPreview {
       );
     return generateContentStream(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       formulatedRequest,
       this.apiEndpoint,
@@ -433,8 +435,7 @@ export class GenerativeModelPreview {
   async countTokens(request: CountTokensRequest): Promise<CountTokensResponse> {
     return countTokens(
       this.location,
-      this.project,
-      this.publisherModelEndpoint,
+      this.resourcePath,
       this.fetchToken(),
       request,
       this.apiEndpoint,
@@ -472,6 +473,7 @@ export class GenerativeModelPreview {
       location: this.location,
       googleAuth: this.googleAuth,
       publisherModelEndpoint: this.publisherModelEndpoint,
+      resourcePath: this.resourcePath,
       tools: this.tools,
       systemInstruction: this.systemInstruction,
     };
@@ -488,6 +490,33 @@ export class GenerativeModelPreview {
     }
     return new ChatSessionPreview(startChatRequest, this.requestOptions);
   }
+}
+
+function formulateResourcePathFromModel(
+  model: string,
+  project: string,
+  location: string
+): string {
+  let resourcePath: string;
+  if (!model) {
+    throw new ClientError('model parameter must not be empty.');
+  }
+  if (!model.includes('/')) {
+    // example 'gemini-1.0-pro'
+    resourcePath = `projects/${project}/locations/${location}/publishers/google/models/${model}`;
+  } else if (model.startsWith('models/')) {
+    // example 'models/gemini-1.0-pro'
+    resourcePath = `projects/${project}/locations/${location}/publishers/google/${model}`;
+  } else if (model.startsWith('projects/')) {
+    // example 'projects/my-project/locations/my-location/models/my-tuned-model'
+    resourcePath = model;
+  } else {
+    throw new ClientError(
+      'model parameter must be either a Model Garden model ID or a full resource name.'
+    );
+  }
+
+  return resourcePath;
 }
 
 function formulateRequestToGenerateContentRequest(

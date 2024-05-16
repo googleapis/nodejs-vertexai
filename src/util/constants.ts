@@ -16,6 +16,7 @@
  */
 export const GENERATE_CONTENT_METHOD = 'generateContent';
 export const STREAMING_GENERATE_CONTENT_METHOD = 'streamGenerateContent';
+export const COUNT_TOKENS_METHOD = 'countTokens';
 export const USER_ROLE = 'user';
 export const MODEL_ROLE = 'model';
 export const SYSTEM_ROLE = 'system';
