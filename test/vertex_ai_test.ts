@@ -14,6 +14,50 @@ describe('VertexAI', () => {
     });
   });
 
+  it('no location given, should instantiate VertexAI and VertexAIPreview', () => {
+    const vertexaiNoLocation = new VertexAI({project: PROJECT});
+    const generativeModel = vertexaiNoLocation.getGenerativeModel({
+      model: 'gemini-pro',
+    });
+    const generativeModelPreview =
+      vertexaiNoLocation.preview.getGenerativeModel({
+        model: 'gemini-pro',
+      });
+    expect(vertexaiNoLocation).toBeInstanceOf(VertexAI);
+    expect(generativeModel).toBeInstanceOf(GenerativeModel);
+    expect(generativeModelPreview).toBeInstanceOf(GenerativeModelPreview);
+  });
+
+  it('location in run time env GOOGLE_CLOUD_REGION, should instantiate VertexAI and VertexAIPreview', () => {
+    process.env['GOOGLE_CLOUD_REGION'] = 'us-central1';
+    const vertexaiNoLocation = new VertexAI({project: PROJECT});
+    const generativeModel = vertexaiNoLocation.getGenerativeModel({
+      model: 'gemini-pro',
+    });
+    const generativeModelPreview =
+      vertexaiNoLocation.preview.getGenerativeModel({
+        model: 'gemini-pro',
+      });
+    expect(vertexaiNoLocation).toBeInstanceOf(VertexAI);
+    expect(generativeModel).toBeInstanceOf(GenerativeModel);
+    expect(generativeModelPreview).toBeInstanceOf(GenerativeModelPreview);
+  });
+
+  it('location in run time env CLOUD_ML_REGION, should instantiate VertexAI and VertexAIPreview', () => {
+    process.env['CLOUD_ML_REGION'] = 'us-central1';
+    const vertexaiNoLocation = new VertexAI({project: PROJECT});
+    const generativeModel = vertexaiNoLocation.getGenerativeModel({
+      model: 'gemini-pro',
+    });
+    const generativeModelPreview =
+      vertexaiNoLocation.preview.getGenerativeModel({
+        model: 'gemini-pro',
+      });
+    expect(vertexaiNoLocation).toBeInstanceOf(VertexAI);
+    expect(generativeModel).toBeInstanceOf(GenerativeModel);
+    expect(generativeModelPreview).toBeInstanceOf(GenerativeModelPreview);
+  });
+
   it('given undefined google auth options, should be instantiated', () => {
     expect(vertexai).toBeInstanceOf(VertexAI);
   });

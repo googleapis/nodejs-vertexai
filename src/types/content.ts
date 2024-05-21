@@ -24,8 +24,12 @@ import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
 export declare interface VertexInit {
   /** The Google Cloud project name. It is not the numeric project ID. */
   project: string;
-  /** The Google Cloud project location. */
-  location: string;
+  /**
+   * Optional. The Google Cloud project location. If not provided, SDK will
+   * firtly try to resolve it from run time environment. If no location resolved
+   * from run time environment, SDK will use default value `us-central1`.
+   */
+  location?: string;
   /**
    * Optional. The base Vertex AI endpoint to use for the request. If not
    * provided, the default regionalized endpoint (i.e.

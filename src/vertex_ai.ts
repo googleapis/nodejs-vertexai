@@ -52,7 +52,7 @@ export class VertexAI {
       init.googleAuthOptions
     );
     this.project = init.project;
-    this.location = init.location;
+    this.location = resolveLocation(init.location);
     this.googleAuth = new GoogleAuth(opts);
     this.apiEndpoint = init.apiEndpoint;
     this.preview = new VertexAIPreview(
@@ -221,4 +221,16 @@ function validateGoogleAuthOptions(
     );
   }
   return opts;
+}
+
+function resolveLocation(locationFromInput?: string): string {
+  if (locationFromInput) {
+    return locationFromInput;
+  }
+  const inferredLocation =
+    process.env['GOOGLE_CLOUD_REGION'] || process.env['CLOUD_ML_REGION'];
+  if (inferredLocation) {
+    return inferredLocation;
+  }
+  return 'us-central1';
 }

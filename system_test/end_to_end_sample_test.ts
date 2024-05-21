@@ -27,7 +27,7 @@ import {
 } from '../src';
 import {FunctionDeclarationSchemaType} from '../src/types';
 
-const PROJECT = process.env.GCLOUD_PROJECT;
+const PROJECT = process.env['GCLOUD_PROJECT'];
 const LOCATION = 'us-central1';
 const TEXT_REQUEST = {
   contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
