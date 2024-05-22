@@ -91,6 +91,21 @@ const TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL: GoogleSearchRetrievalTool[] = [
   },
 ];
 
+const TOOLS_WITH_RAG = [
+  {
+    retrieval: {
+      vertexRagStore: {
+        ragResources: [
+          {
+            ragCorpus:
+              'projects/ucaip-sample-tests/locations/us-central1/ragCorpora/6917529027641081856',
+          },
+        ],
+      },
+    },
+  },
+];
+
 const WEATHER_FORECAST = 'super nice';
 const FUNCTION_RESPONSE_PART = [
   {
@@ -594,6 +609,37 @@ describe('generateContentStream', () => {
       );
     }
   });
+
+  it('in preview should return grounding metadata when passed a VertexRagStore', async () => {
+    const request = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How much gain or loss did Google get in the Motorola Mobile deal in 2014?',
+            },
+          ],
+        },
+      ],
+      tools: TOOLS_WITH_RAG,
+    };
+    const result =
+      await generativeTextModelPreview.generateContentStream(request);
+    const response = await result.response;
+    expect(response.candidates![0]).toBeTruthy(
+      `sys test failure on generateContent with RAG tool, for resp ${JSON.stringify(
+        response
+      )}`
+    );
+    expect(
+      response.candidates![0]?.groundingMetadata?.retrievalQueries
+    ).toBeTruthy(
+      `sys test failure on generateContent with RAG tool, empty groundingMetadata.retrievalQueries, for resp ${JSON.stringify(
+        response
+      )}`
+    );
+  });
 });
 
 describe('generateContent', () => {
@@ -755,6 +801,34 @@ describe('generateContent', () => {
       WEATHER_FORECAST,
       `sys test failure on generateContentStream in preview for candidate part ${JSON.stringify(
         resp.response.candidates![0].content.parts[0]
+      )}`
+    );
+  });
+  it('in preview should return grounding metadata when passed a VertexRagStore', async () => {
+    const request = {
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: 'How much gain or loss did Google get in the Motorola Mobile deal in 2014?',
+            },
+          ],
+        },
+      ],
+      tools: TOOLS_WITH_RAG,
+    };
+    const resp = await generativeTextModelPreview.generateContent(request);
+    expect(resp.response.candidates![0]).toBeTruthy(
+      `sys test failure on generateContent with RAG tool, for resp ${JSON.stringify(
+        resp
+      )}`
+    );
+    expect(
+      resp.response.candidates![0]?.groundingMetadata?.retrievalQueries
+    ).toBeTruthy(
+      `sys test failure on generateContent with RAG tool, empty groundingMetadata.retrievalQueries, for resp ${JSON.stringify(
+        resp
       )}`
     );
   });
