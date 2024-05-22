@@ -51,7 +51,8 @@ export declare interface VertexInit {
 export declare interface GenerateContentRequest extends BaseModelParams {
   /** Array of {@link Content}.*/
   contents: Content[];
-  /** Optional. The user provided system instructions for the model.
+  /**
+   * Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
@@ -110,7 +111,8 @@ export declare interface GetGenerativeModelParams extends ModelParams {
   tools?: Tool[];
   /** Optional. The request options to use for generation. */
   requestOptions?: RequestOptions;
-  /** Optional. The user provided system instructions for the model.
+  /**
+   * Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
@@ -138,7 +140,8 @@ export declare interface BaseModelParams {
   generationConfig?: GenerationConfig;
   /** Optional. Array of {@link Tool}. */
   tools?: Tool[];
-  /** Optional. The user provided system instructions for the model.
+  /**
+   * Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
@@ -563,12 +566,20 @@ export declare interface CitationMetadata {
  *   date).
  */
 export declare interface GoogleDate {
-  /** Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year. */
+  /**
+   * Year of the date. Must be from 1 to 9999, or 0 to specify a date without a
+   * year.
+   */
   year?: number;
-  /** Month of the date. Must be from 1 to 12, or 0 to specify a year without a monthi and day. */
+  /**
+   * Month of the date. Must be from 1 to 12, or 0 to specify a year without a
+   * monthi and day.
+   */
   month?: number;
-  /** Day of the date. Must be from 1 to 31 and valid for the year and month.
-   * or 0 to specify a year by itself or a year and month where the day isn't significant
+  /**
+   * Day of the date. Must be from 1 to 31 and valid for the year and month.
+   * or 0 to specify a year by itself or a year and month where the day isn't
+   * significant
    */
   day?: number;
 }
@@ -763,6 +774,40 @@ export declare interface RetrievalTool {
   retrieval?: Retrieval;
 }
 
+export declare interface VertexRagStore {
+  /**
+   * Optional. List of corpora for retrieval. Currently only support one corpus
+   * or multiple files from one corpus. In the future we may open up multiple
+   * corpora support.
+   */
+  ragResources?: RagResource[];
+
+  /** Optional. Number of top k results to return from the selected corpora. */
+  similarityTopK?: number;
+
+  /** Optional. If set this field, results with vector distance smaller than this threshold will be returned. */
+  vectorDistanceThreshold?: number;
+}
+
+/**
+ * Config of Vertex RagStore grounding checking.
+ */
+export declare interface RagResource {
+  /**
+   * Optional. Vertex RAG Store corpus resource name.
+   *
+   * @example
+   * `projects/{project}/locations/{location}/ragCorpora/{rag_corpus}`
+   */
+  ragCorpus?: string;
+
+  /**
+   * Optional. Set this field to select the files under the ragCorpora for
+   * retrieval.
+   */
+  ragFileIds?: string[];
+}
+
 /**
  * Defines a retrieval tool that model can call to access external knowledge.
  */
@@ -786,6 +831,10 @@ export declare interface Retrieval {
    * VertexAISearch}.
    */
   vertexAiSearch?: VertexAISearch;
+
+  /** Optional. Set to use data source powered by Vertex RAG store. */
+  vertexRagStore?: VertexRagStore;
+
   /**
    * Optional. Disable using the result from this tool in detecting grounding
    * attribution. This does not affect how the result is given to the model for
@@ -896,7 +945,8 @@ export declare interface StartChatParams {
   tools?: Tool[];
   /** Optional. The base Vertex AI endpoint to use for the request. */
   apiEndpoint?: string;
-  /** Optional. The user provided system instructions for the model.
+  /**
+   * Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
@@ -916,7 +966,8 @@ export declare interface StartChatSessionRequest extends StartChatParams {
   publisherModelEndpoint: string;
   /** The resource path to use for the request. */
   resourcePath: string;
-  /** Optional. The user provided system instructions for the model.
+  /**
+   * Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;

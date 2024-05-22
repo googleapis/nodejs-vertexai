@@ -47,6 +47,13 @@ const TEST_USER_CHAT_MESSAGE = [
   {role: constants.USER_ROLE, parts: [{text: TEST_CHAT_MESSAGE_TEXT}]},
 ];
 
+const CONTENTS = [
+  {
+    role: 'user',
+    parts: [{text: 'What is the weater like in Boston?'}],
+  },
+];
+
 const TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE = [
   {
     role: constants.USER_ROLE,
@@ -205,6 +212,12 @@ const TEST_TOOLS_WITH_FUNCTION_DECLARATION: Tool[] = [
         },
       },
     ],
+  },
+];
+
+const TEST_TOOLS_WITH_RAG: Tool[] = [
+  {
+    retrieval: {vertexRagStore: {ragResources: [{ragCorpus: 'ragCorpus'}]}},
   },
 ];
 
@@ -520,9 +533,7 @@ describe('generateContent', () => {
 
   it('returns a FunctionCall when passed a FunctionDeclaration', async () => {
     const req: GenerateContentRequest = {
-      contents: [
-        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
-      ],
+      contents: CONTENTS,
       tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
     };
     const expectedResult: GenerateContentResult = {
@@ -559,12 +570,7 @@ describe('generateContent', () => {
 
   it('returns a empty FunctionCall list when response contains invalid data', async () => {
     const req: GenerateContentRequest = {
-      contents: [
-        {
-          role: 'user',
-          parts: [{text: 'What is the weater like in Boston?'}],
-        },
-      ],
+      contents: CONTENTS,
       tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
     };
     const expectedResult: GenerateContentResult = {
@@ -594,12 +600,7 @@ describe('generateContent', () => {
 
   it('returns empty candidates when response is empty', async () => {
     const req: GenerateContentRequest = {
-      contents: [
-        {
-          role: 'user',
-          parts: [{text: 'What is the weater like in Boston?'}],
-        },
-      ],
+      contents: CONTENTS,
       tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
     };
     fetchSpy.and.resolveTo(new Response(JSON.stringify({}), fetchResponseObj));
@@ -612,6 +613,39 @@ describe('generateContent', () => {
       TEST_API_ENDPOINT
     );
     expect(actualResult.response.candidates).not.toBeDefined();
+  });
+
+  it('should use v1 apiVersion', async () => {
+    const request: GenerateContentRequest = {
+      contents: CONTENTS,
+    };
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
+    await generateContent(
+      TEST_LOCATION,
+      TEST_RESOURCE_PATH,
+      TEST_TOKEN_PROMISE,
+      request,
+      TEST_API_ENDPOINT
+    );
+    const vertexEndpoint = fetchSpy.calls.allArgs()[0][0];
+    expect(vertexEndpoint).toContain('/v1/');
+  });
+
+  it('should use v1beta1 apiVersion when set RAG in tools', async () => {
+    const request: GenerateContentRequest = {
+      contents: CONTENTS,
+      tools: TEST_TOOLS_WITH_RAG,
+    };
+    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
+    await generateContent(
+      TEST_LOCATION,
+      TEST_RESOURCE_PATH,
+      TEST_TOKEN_PROMISE,
+      request,
+      TEST_API_ENDPOINT
+    );
+    const vertexEndpoint = fetchSpy.calls.allArgs()[0][0];
+    expect(vertexEndpoint).toContain('/v1beta1/');
   });
 });
 

@@ -43,6 +43,8 @@ import {
   formatContentRequest,
   validateGenerateContentRequest,
   validateGenerationConfig,
+  hasVertexRagStore,
+  getApiVersion,
 } from './pre_fetch_processing';
 
 export async function generateContent(
@@ -75,12 +77,13 @@ export async function generateContent(
   };
   const response: Response | undefined = await postRequest({
     region: location,
-    resourcePath: resourcePath,
+    resourcePath,
     resourceMethod: constants.GENERATE_CONTENT_METHOD,
     token: await token,
     data: generateContentRequest,
-    apiEndpoint: apiEndpoint,
-    requestOptions: requestOptions,
+    apiEndpoint,
+    requestOptions,
+    apiVersion: getApiVersion(request),
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request to model', e);
   });
@@ -126,12 +129,13 @@ export async function generateContentStream(
   };
   const response = await postRequest({
     region: location,
-    resourcePath: resourcePath,
+    resourcePath,
     resourceMethod: constants.STREAMING_GENERATE_CONTENT_METHOD,
     token: await token,
     data: generateContentRequest,
-    apiEndpoint: apiEndpoint,
-    requestOptions: requestOptions,
+    apiEndpoint,
+    requestOptions,
+    apiVersion: getApiVersion(request),
   }).catch(e => {
     throw new GoogleGenerativeAIError('exception posting request', e);
   });

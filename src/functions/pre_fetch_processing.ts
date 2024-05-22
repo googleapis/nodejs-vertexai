@@ -18,8 +18,11 @@
 import {
   GenerateContentRequest,
   GenerationConfig,
+  RetrievalTool,
   SafetySetting,
+  Tool,
 } from '../types/content';
+import {ClientError} from '../types/errors';
 import * as constants from '../util/constants';
 
 export function formatContentRequest(
@@ -55,6 +58,12 @@ export function validateGenerateContentRequest(
       }
     }
   }
+
+  if (hasVertexAISearch(request) && hasVertexRagStore(request)) {
+    throw new ClientError(
+      'Found both vertexAiSearch and vertexRagStore field are set in tool. Either set vertexAiSearch or vertexRagStore.'
+    );
+  }
 }
 
 export function validateGenerationConfig(
@@ -66,4 +75,32 @@ export function validateGenerationConfig(
     }
   }
   return generationConfig;
+}
+
+export function getApiVersion(
+  request: GenerateContentRequest
+): 'v1' | 'v1beta1' {
+  return hasVertexRagStore(request) ? 'v1beta1' : 'v1';
+}
+
+export function hasVertexRagStore(request: GenerateContentRequest): boolean {
+  for (const tool of request?.tools ?? []) {
+    const retrieval = (tool as RetrievalTool).retrieval;
+    if (!retrieval) continue;
+    if (retrieval.vertexRagStore) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function hasVertexAISearch(request: GenerateContentRequest): boolean {
+  for (const tool of request?.tools ?? []) {
+    const retrieval = (tool as RetrievalTool).retrieval;
+    if (!retrieval) continue;
+    if (retrieval.vertexAiSearch) {
+      return true;
+    }
+  }
+  return false;
 }
