@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.1.0...v1.2.0) (2024-05-22)
+
+
+### Features
+
+* allow users to pass string as system instruction ([a824162](https://github.com/googleapis/nodejs-vertexai/commit/a824162a29b8c6ba3ccae46c492dd28e9c2baf9c))
+* enable inference request to tuned model. ([de9c4c2](https://github.com/googleapis/nodejs-vertexai/commit/de9c4c2f8c63a298bd28ab69dae9b6a5d72c20d7))
+* infer location if user doesn't specifies it. ([b8d4af1](https://github.com/googleapis/nodejs-vertexai/commit/b8d4af1bb990e95093f446c808194bfc4fe53287))
+* support RAG in public preview ([5ade755](https://github.com/googleapis/nodejs-vertexai/commit/5ade7551fe0dbab54bc56f251c32bf3b7802c2c5))
+* update grounding metadata ([d3c0a64](https://github.com/googleapis/nodejs-vertexai/commit/d3c0a647248be6be49b6b93a18aad79c10bae6c4))
+
+
+### Bug Fixes
+
+* log instead of throw appendHistory errors to avoid unhandled rejection ([2ec9e7d](https://github.com/googleapis/nodejs-vertexai/commit/2ec9e7d5519af438eb03b9f21f90b86f2575ac47))
+
 ## [1.1.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.0.0...v1.1.0) (2024-04-13)
 
 
