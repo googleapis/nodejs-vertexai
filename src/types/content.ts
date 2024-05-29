@@ -620,7 +620,9 @@ export declare interface GroundingMetadata {
   webSearchQueries?: string[];
   /** Optional. Queries executed by the retrieval tools. */
   retrievalQueries?: string[];
-  /** Optional. Array of {@link GroundingAttribution}. */
+  /** @deprecated
+   * Optional. Array of {@link GroundingAttribution}
+   */
   groundingAttributions?: GroundingAttribution[];
   /** Optional. Google search entry for the following-up web searches. {@link SearchEntryPoint} */
   searchEntryPoint?: SearchEntryPoint;
@@ -848,6 +850,7 @@ export declare interface Retrieval {
  */
 export declare interface GoogleSearchRetrieval {
   /**
+   * @deprecated groundingAttributions field in {@link GroundingMetadata} is also deprecated.
    * Optional. Disable using the result from this tool in detecting grounding
    * attribution. This does not affect how the result is given to the model for
    * generation.
