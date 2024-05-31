@@ -198,6 +198,14 @@ describe('generateContentStream', () => {
     );
   });
   it('in preview should should return a stream and aggregated response when passed text', async () => {
+    const vertexAINoArgs = new VertexAI({});
+    const generativeTextModelPreview =
+      vertexAINoArgs.preview.getGenerativeModel({
+        model: TEXT_MODEL_NAME,
+        generationConfig: {
+          maxOutputTokens: 256,
+        },
+      });
     const streamingResp =
       await generativeTextModelPreview.generateContentStream(TEXT_REQUEST);
 
