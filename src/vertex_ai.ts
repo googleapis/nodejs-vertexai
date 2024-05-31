@@ -53,7 +53,7 @@ export class VertexAI {
     );
     this.project = init.project;
     this.location = resolveLocation(init.location);
-    this.googleAuth = new GoogleAuth(opts);
+    this.googleAuth = import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';;
     this.apiEndpoint = init.apiEndpoint;
     this.preview = new VertexAIPreview(
       this.project,
