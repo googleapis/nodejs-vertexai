@@ -16,6 +16,8 @@
  */
 
 import {
+  ClientError,
+  ClientErrorApi,
   CountTokensRequest,
   FinishReason,
   FunctionDeclarationSchemaType,
@@ -314,29 +316,38 @@ describe('countTokens', () => {
     ).toBeRejected();
   });
 
-  it('throw ClientError when not OK and 4XX', async () => {
+  it('throw ApiClientError when not OK and 4XX', async () => {
     const fetch400Obj = {
       status: 400,
       statusText: 'Bad Request',
       ok: false,
     };
     const body = {
-      code: 400,
-      message: 'request is invalid',
-      status: 'INVALID_ARGUMENT',
+      error: {
+        code: 400,
+        message: 'request is invalid',
+        status: 'INVALID_ARGUMENT',
+      },
     };
     const response = new Response(JSON.stringify(body), fetch400Obj);
     spyOn(global, 'fetch').and.resolveTo(response);
 
-    await expectAsync(
-      countTokens(
+    let error: any;
+    try {
+      await countTokens(
         TEST_LOCATION,
         TEST_RESOURCE_PATH,
         TEST_TOKEN_PROMISE,
         req,
         TEST_API_ENDPOINT
-      )
-    ).toBeRejected();
+      );
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error).toBeInstanceOf(ClientErrorApi);
+    expect(error).toBeInstanceOf(ClientError);
+    expect(error.apiError).toEqual(body.error);
   });
 });
 

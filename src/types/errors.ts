@@ -15,6 +15,13 @@
  * limitations under the License.
  */
 
+// https://cloud.google.com/apis/design/errors
+type ErrorModal = {
+  code: number;
+  message: string;
+  status: string;
+};
+
 /**
  * GoogleAuthError is thrown when there is authentication issue with the request
  */
@@ -29,16 +36,27 @@ class GoogleAuthError extends Error {
 }
 
 /**
- * ClientError is thrown when http 4XX status is received.
- * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses
+ * ClientError is thrown when there is something wrong with the input.
  */
 class ClientError extends Error {
-  public readonly stackTrace: any = undefined;
-  constructor(message: string, stackTrace: any = undefined) {
+  constructor(message: string) {
     super(message);
     this.message = constructErrorMessage('ClientError', message);
     this.name = 'ClientError';
-    this.stackTrace = stackTrace;
+  }
+}
+
+/**
+ * ClientErrorApi is thrown when http 4XX status is received.
+ * The [error object](https://cloud.google.com/apis/design/errors) can be found on the `apiError` property.
+ * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses
+ */
+class ClientErrorApi extends ClientError {
+  constructor(
+    message: string,
+    public readonly apiError: ErrorModal
+  ) {
+    super(message);
   }
 }
 
@@ -63,4 +81,10 @@ function constructErrorMessage(
   return `[VertexAI.${exceptionClass}]: ${message}`;
 }
 
-export {ClientError, GoogleAuthError, GoogleGenerativeAIError};
+export {
+  ClientError,
+  ClientErrorApi,
+  ErrorModal,
+  GoogleAuthError,
+  GoogleGenerativeAIError,
+};
