@@ -22,12 +22,16 @@ import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
  * Params used to initialize the Vertex SDK.
  */
 export declare interface VertexInit {
-  /** The Google Cloud project name. It is not the numeric project ID. */
-  project: string;
+  /**
+   * Optional. The Google Cloud project ID. It is not the numeric project name.
+   * If not provided, SDK will try to resolve it from runtime environment.
+   * If still not cannot resovle project ID, SDK will throw exception.
+   */
+  project?: string;
   /**
    * Optional. The Google Cloud project location. If not provided, SDK will
-   * firtly try to resolve it from run time environment. If no location resolved
-   * from run time environment, SDK will use default value `us-central1`.
+   * firtly try to resolve it from runtime environment. If no location resolved
+   * from runtime environment, SDK will use default value `us-central1`.
    */
   location?: string;
   /**
