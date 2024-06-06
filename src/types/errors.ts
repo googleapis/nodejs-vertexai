@@ -74,6 +74,19 @@ class GoogleGenerativeAIError extends Error {
   }
 }
 
+/**
+ * IllegalArgumentError is thrown when the request or operation is invalid
+ */
+class IllegalArgumentError extends Error {
+  public readonly stackTrace: any = undefined;
+  constructor(message: string, stackTrace: any = undefined) {
+    super(message);
+    this.message = constructErrorMessage('IllegalArgumentError', message);
+    this.name = 'IllegalArgumentError';
+    this.stackTrace = stackTrace;
+  }
+}
+
 function constructErrorMessage(
   exceptionClass: string,
   message: string
@@ -87,4 +100,5 @@ export {
   ErrorModal,
   GoogleAuthError,
   GoogleGenerativeAIError,
+  IllegalArgumentError,
 };

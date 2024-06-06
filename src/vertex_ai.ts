@@ -25,7 +25,7 @@ import {
   RequestOptions,
   VertexInit,
 } from './types/content';
-import {GoogleAuthError} from './types/errors';
+import {GoogleAuthError, IllegalArgumentError} from './types/errors';
 
 /**
  * The `VertexAI` class is the base class for authenticating to Vertex AI.
@@ -45,14 +45,16 @@ export class VertexAI {
    * @param init - assign authentication related information,
    *     including the project and location strings, to instantiate a Vertex AI
    * client.
+   * @throws {IllegalArgumentError}
+
    */
   constructor(init: VertexInit) {
     const opts = validateGoogleAuthOptions(
       init.project,
       init.googleAuthOptions
     );
-    this.project = init.project;
     this.location = resolveLocation(init.location);
+    this.project = resolveProject(init.project);
     this.googleAuth = new GoogleAuth(opts);
     this.apiEndpoint = init.apiEndpoint;
     this.preview = new VertexAIPreview(
@@ -126,6 +128,14 @@ export class VertexAI {
     };
     return new GenerativeModel(getGenerativeModelParams);
   }
+
+  protected getProject(): string {
+    return this.project;
+  }
+
+  protected getLocation(): string {
+    return this.location;
+  }
 }
 
 /**
@@ -191,7 +201,7 @@ class VertexAIPreview {
 }
 
 function validateGoogleAuthOptions(
-  project: string,
+  project?: string,
   googleAuthOptions?: GoogleAuthOptions
 ): GoogleAuthOptions {
   let opts: GoogleAuthOptions;
@@ -221,6 +231,22 @@ function validateGoogleAuthOptions(
     );
   }
   return opts;
+}
+
+function resolveProject(projectFromInput?: string): string {
+  const projectNotFoundErrorMessage =
+    'Unable to infer your project.' +
+    'Please provide a project Id by one of the following:' +
+    '\n- Passing a constructor argument by using new VertexAI({project: my-project})' +
+    '\n- Setting project using `gcloud config set project my-project`';
+  if (projectFromInput) {
+    return projectFromInput;
+  }
+  const inferredProjectFromEnv = process.env['GOOGLE_CLOUD_PROJECT'];
+  if (inferredProjectFromEnv) {
+    return inferredProjectFromEnv;
+  }
+  throw new IllegalArgumentError(projectNotFoundErrorMessage);
 }
 
 function resolveLocation(locationFromInput?: string): string {

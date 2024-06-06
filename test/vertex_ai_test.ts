@@ -17,14 +17,25 @@
 
 import {VertexAI} from '../src/vertex_ai';
 import {GenerativeModelPreview, GenerativeModel} from '../src/models';
-import {GoogleAuthError} from '../src/types/errors';
+import {GoogleAuthError, IllegalArgumentError} from '../src/types/errors';
 
 const PROJECT = 'test_project';
 const LOCATION = 'test_location';
+
+class VertexAIForTest extends VertexAI {
+  public override getProject(): string {
+    return super.getProject();
+  }
+  public override getLocation(): string {
+    return super.getLocation();
+  }
+}
+
 describe('VertexAI', () => {
   let vertexai: VertexAI;
 
   beforeEach(() => {
+    cleanupEnvironmentVariable();
     vertexai = new VertexAI({
       project: PROJECT,
       location: LOCATION,
@@ -32,7 +43,9 @@ describe('VertexAI', () => {
   });
 
   it('no location given, should instantiate VertexAI and VertexAIPreview', () => {
-    const vertexaiNoLocation = new VertexAI({project: PROJECT});
+    const vertexaiNoLocation = new VertexAI({
+      project: PROJECT,
+    }) as VertexAIForTest;
     const generativeModel = vertexaiNoLocation.getGenerativeModel({
       model: 'gemini-pro',
     });
@@ -40,14 +53,18 @@ describe('VertexAI', () => {
       vertexaiNoLocation.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
+    expect(vertexaiNoLocation.getLocation()).toEqual('us-central1');
     expect(vertexaiNoLocation).toBeInstanceOf(VertexAI);
     expect(generativeModel).toBeInstanceOf(GenerativeModel);
     expect(generativeModelPreview).toBeInstanceOf(GenerativeModelPreview);
   });
 
   it('location in run time env GOOGLE_CLOUD_REGION, should instantiate VertexAI and VertexAIPreview', () => {
-    process.env['GOOGLE_CLOUD_REGION'] = 'us-central1';
-    const vertexaiNoLocation = new VertexAI({project: PROJECT});
+    process.env['GOOGLE_CLOUD_REGION'] = 'us-central2';
+    process.env['CLOUD_ML_REGION'] = 'us-central3';
+    const vertexaiNoLocation = new VertexAI({
+      project: PROJECT,
+    }) as VertexAIForTest;
     const generativeModel = vertexaiNoLocation.getGenerativeModel({
       model: 'gemini-pro',
     });
@@ -55,14 +72,17 @@ describe('VertexAI', () => {
       vertexaiNoLocation.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
+    expect(vertexaiNoLocation.getLocation()).toEqual('us-central2');
     expect(vertexaiNoLocation).toBeInstanceOf(VertexAI);
     expect(generativeModel).toBeInstanceOf(GenerativeModel);
     expect(generativeModelPreview).toBeInstanceOf(GenerativeModelPreview);
   });
 
   it('location in run time env CLOUD_ML_REGION, should instantiate VertexAI and VertexAIPreview', () => {
-    process.env['CLOUD_ML_REGION'] = 'us-central1';
-    const vertexaiNoLocation = new VertexAI({project: PROJECT});
+    process.env['CLOUD_ML_REGION'] = 'us-central3';
+    const vertexaiNoLocation = new VertexAI({
+      project: PROJECT,
+    }) as VertexAIForTest;
     const generativeModel = vertexaiNoLocation.getGenerativeModel({
       model: 'gemini-pro',
     });
@@ -70,9 +90,39 @@ describe('VertexAI', () => {
       vertexaiNoLocation.preview.getGenerativeModel({
         model: 'gemini-pro',
       });
+    expect(vertexaiNoLocation.getLocation()).toEqual('us-central3');
     expect(vertexaiNoLocation).toBeInstanceOf(VertexAI);
     expect(generativeModel).toBeInstanceOf(GenerativeModel);
     expect(generativeModelPreview).toBeInstanceOf(GenerativeModelPreview);
+  });
+
+  it('location in run time env GOOGLE_CLOUD_REGION, project in GOOGLE_CLOUD_PROJECT, should instantiate VertexAI and VertexAIPreview', () => {
+    process.env['GOOGLE_CLOUD_REGION'] = 'us-central2';
+    process.env['CLOUD_ML_REGION'] = 'us-central3';
+    process.env['GOOGLE_CLOUD_PROJECT'] = 'my-project';
+    const vertexaiNoArgs = new VertexAI({}) as VertexAIForTest;
+    const generativeModel = vertexaiNoArgs.getGenerativeModel({
+      model: 'gemini-pro',
+    });
+    const generativeModelPreview = vertexaiNoArgs.preview.getGenerativeModel({
+      model: 'gemini-pro',
+    });
+    expect(vertexaiNoArgs.getLocation()).toEqual('us-central2');
+    expect(vertexaiNoArgs.getProject()).toEqual('my-project');
+    expect(vertexaiNoArgs).toBeInstanceOf(VertexAI);
+    expect(generativeModel).toBeInstanceOf(GenerativeModel);
+    expect(generativeModelPreview).toBeInstanceOf(GenerativeModelPreview);
+  });
+
+  it('cannot resolve project, should throw', () => {
+    const expectedProjectNotFoundErrorMessage =
+      'Unable to infer your project.' +
+      'Please provide a project Id by one of the following:' +
+      '\n- Passing a constructor argument by using new VertexAI({project: my-project})' +
+      '\n- Setting project using `gcloud config set project my-project`';
+    expect(() => {
+      new VertexAI({});
+    }).toThrow(new IllegalArgumentError(expectedProjectNotFoundErrorMessage));
   });
 
   it('given undefined google auth options, should be instantiated', () => {
@@ -158,3 +208,9 @@ describe('VertexAI', () => {
     expect(generativeModel).toBeInstanceOf(GenerativeModel);
   });
 });
+
+function cleanupEnvironmentVariable() {
+  delete process.env['GOOGLE_CLOUD_REGION'];
+  delete process.env['CLOUD_ML_REGION'];
+  delete process.env['GOOGLE_CLOUD_PROJECT'];
+}
