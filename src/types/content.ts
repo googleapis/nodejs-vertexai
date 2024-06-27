@@ -489,7 +489,7 @@ export declare interface GenerateContentResult {
    * All GenerateContentResponses received so far. {@link
    * GenerateContentResponse}
    */
-  response: GenerateContentResponse;
+  response: Promise<GenerateContentResponse>;
 }
 
 /**
