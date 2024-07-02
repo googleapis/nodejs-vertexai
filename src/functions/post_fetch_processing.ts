@@ -131,7 +131,7 @@ function getResponseStream(
             if (currentText.trim()) {
               controller.error(
                 new GoogleGenerativeAIError(
-                  'Failed to parse final chunk of stream'
+                  `Failed to parse final chunk of stream: ${currentText}`
                 )
               );
               return;

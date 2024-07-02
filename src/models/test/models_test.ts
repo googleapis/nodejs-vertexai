@@ -2280,7 +2280,6 @@ describe('ChatSession', () => {
       const expectedResourcePath =
         'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
       await chatSessionWithLongName.sendMessage(req);
-      console.log('hey\n', generateContentSpy.calls.allArgs());
       // @ts-ignore
       expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
         expectedResourcePath
@@ -2528,7 +2527,6 @@ describe('ChatSession', () => {
       const expectedResourcePath =
         'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
       await chatSessionWithLongName.sendMessageStream(req);
-      console.log('hey\n', generateContentSpy.calls.allArgs());
       // @ts-ignore
       expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
         expectedResourcePath
@@ -2729,7 +2727,6 @@ describe('ChatSessionPreview', () => {
       const expectedResourcePath =
         'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
       await chatSessionWithLongName.sendMessage(req);
-      console.log('hey\n', generateContentSpy.calls.allArgs());
       // @ts-ignore
       expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
         expectedResourcePath
@@ -2967,7 +2964,6 @@ describe('ChatSessionPreview', () => {
       const expectedResourcePath =
         'projects/test_project/locations/test_location/publishers/google/models/gemini-pro';
       await chatSessionWithLongName.sendMessageStream(req);
-      console.log('hey\n', generateContentSpy.calls.allArgs());
       // @ts-ignore
       expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
         expectedResourcePath
