@@ -617,6 +617,73 @@ export declare interface SearchEntryPoint {
 }
 
 /**
+ * Grounding chunk from the web.
+ */
+export declare interface GroundingChunkWeb {
+  /** Optional. URI reference of the grounding chunk. */
+  uri?: string;
+  /** Optional. Title of the grounding chunk. */
+  title?: string;
+}
+
+/**
+ * Grounding chunk from context retrieved by the retrieval tools.
+ */
+export declare interface GroundingChunkRetrievedContext {
+  /** Optional. URI reference of the attribution. */
+  uri?: string;
+  /** Optional. Title of the attribution. */
+  title?: string;
+}
+
+/**
+ * Grounding chunk.
+ */
+export declare interface GroundingChunk {
+  /** Optional. Grounding chunk from the web. */
+  web?: GroundingChunkWeb;
+  /** Optional. Grounding chunk from context retrieved by the retrieval tools. */
+  retrievedContext?: GroundingChunkRetrievedContext;
+}
+
+/**
+ * Grounding support segment.
+ */
+export declare interface GroundingSupportSegment {
+  /** Optional. The index of a Part object within its parent Content object. */
+  partIndex?: number;
+  /** Optional. Start index in the given Part, measured in bytes.
+   * Offset from the start of the Part, inclusive, starting at zero.
+   */
+  startIndex?: number;
+  /** Optional. End index in the given Part, measured in bytes.
+   * Offset from the start of the Part, exclusive, starting at zero.
+   */
+  endIndex?: number;
+  /** Optional. The text corresponding to the segment from the response. */
+  text?: string;
+}
+
+/**
+ * Grounding support.
+ */
+export declare interface GroundingSupport {
+  /** Optional. Segment of the content this support belongs to. */
+  segment?: GroundingSupportSegment;
+  /** Optional. A arrau of indices (into {@link GroundingChunk}) specifying the
+   * citations associated with the claim. For instance [1,3,4] means
+   * that grounding_chunk[1], grounding_chunk[3],
+   * grounding_chunk[4] are the retrieved content attributed to the claim.
+   */
+  groundingChunkIndices?: number[];
+  /** Confidence score of the support references. Ranges from 0 to 1. 1 is the
+   * most confident. This list must have the same size as the
+   * groundingChunkIndices.
+   */
+  confidenceScores?: number[];
+}
+
+/**
  * A collection of grounding attributions for a piece of content.
  */
 export declare interface GroundingMetadata {
@@ -630,9 +697,14 @@ export declare interface GroundingMetadata {
   groundingAttributions?: GroundingAttribution[];
   /** Optional. Google search entry for the following-up web searches. {@link SearchEntryPoint} */
   searchEntryPoint?: SearchEntryPoint;
+  /** Optional. Array of supporting references retrieved from specified grounding source. {@link GroundingChunk}. */
+  groundingChunks?: GroundingChunk[];
+  /** Optional. Array of grounding support. {@link GroundingSupport}. */
+  groundingSupports?: GroundingSupport[];
 }
 
 /**
+ * @deprecated
  * Grounding attribution.
  */
 export declare interface GroundingAttribution {
@@ -650,6 +722,7 @@ export declare interface GroundingAttribution {
 }
 
 /**
+ * @deprecated
  * Segment of the content this attribution belongs to.
  */
 export declare interface GroundingAttributionSegment {
@@ -668,6 +741,7 @@ export declare interface GroundingAttributionSegment {
 }
 
 /**
+ * @deprecated
  * Attribution from the web.
  */
 export declare interface GroundingAttributionWeb {
@@ -678,6 +752,7 @@ export declare interface GroundingAttributionWeb {
 }
 
 /**
+ * @deprecated
  * Attribution from context retrieved by the retrieval tools.
  */
 export declare interface GroundingAttributionRetrievedContext {
