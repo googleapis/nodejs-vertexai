@@ -177,6 +177,8 @@ export declare interface GenerationConfig {
   topP?: number;
   /** Optional. If specified, topK sampling will be used. */
   topK?: number;
+  /** Optional. Output response schema of the generated candidate text when response mime type can have schema. */
+  responseMimeType?: string;
 }
 
 /**
