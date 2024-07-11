@@ -969,6 +969,26 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_3: GenerateContentRespon
       },
     ],
   } as GenerateContentResponse;
+
+export const STREAM_RESPONSE_CHUNKS_4: GenerateContentResponse[] = [
+  {
+    candidates: [{}],
+  },
+] as GenerateContentResponse[];
+
+export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_4: GenerateContentResponse =
+  {
+    candidates: [
+      {
+        index: 0,
+        content: {
+          role: 'model',
+          parts: [{text: ''}],
+        },
+      },
+    ],
+  } as GenerateContentResponse;
+
 export const UNARY_RESPONSE_1: GenerateContentResponse = {
   candidates: [
     {

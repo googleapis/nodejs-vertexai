@@ -204,7 +204,7 @@ export function aggregateResponses(
         aggregatedResponse.candidates[i] = {
           index: response.candidates[i].index ?? i,
           content: {
-            role: response.candidates[i].content.role ?? constants.MODEL_ROLE,
+            role: response.candidates[i].content?.role ?? constants.MODEL_ROLE,
             parts: [{text: ''}],
           },
         } as GenerateContentCandidate;
