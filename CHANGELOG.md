@@ -1,12 +1,5 @@
 # Changelog
 
-## [1.3.1](https://github.com/googleapis/nodejs-vertexai/compare/v1.3.0...v1.3.1) (2024-07-11)
-
-
-### Bug Fixes
-
-* handle case when content is undefined in candidate. ([f16f040](https://github.com/googleapis/nodejs-vertexai/commit/f16f0405c0419152119385780ba21b2d9c18dc9b))
-
 ## [1.3.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.2.0...v1.3.0) (2024-06-26)
 
 
