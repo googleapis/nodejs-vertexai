@@ -60,7 +60,7 @@ const generativeModel = vertexAI.getGenerativeModel({
     generationConfig: {maxOutputTokens: 256},
     systemInstruction: {
       parts: [{"text": `For example, you are a helpful customer service agent.`}]
-      },
+    },
   });
 
 const generativeVisionModel = vertexAI.getGenerativeModel({
