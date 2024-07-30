@@ -48,7 +48,7 @@ fi
 # Switch to 'fail at end' to allow tar command to complete before exiting.
 set +e
 
-npm run cover:unit && npm run cover:integration
+npm run cover:unit && npm run cover:integration && npm run sdk-schema-test
 EXIT=$?
 
 tar cvfz build.tar.gz build
