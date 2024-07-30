@@ -64,7 +64,7 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
       },
       {
         content: {
-          role: 'model',
+          role: 'model1',
           parts: [
             {
               text: 'chunk1Candidate2',
