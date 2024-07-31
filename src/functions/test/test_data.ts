@@ -213,6 +213,23 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
               },
             },
           ],
+          groundingChunks: [
+            {
+              web: {
+                uri: 'url for former chunk for first candidate',
+                title: 'title for former chunk for first candidate',
+              },
+            },
+          ],
+          groundingSupports: [
+            {
+              segment: {
+                startIndex: 0,
+                endIndex: 421,
+                text: 'grounding support for former chunk for first candidate',
+              },
+            },
+          ],
         },
         safetyRatings: [
           {
@@ -265,6 +282,23 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
               web: {
                 uri: 'url for former chunk for second candidate',
                 title: 'title for former chunk for second candidate',
+              },
+            },
+          ],
+          groundingChunks: [
+            {
+              web: {
+                uri: 'url for former chunk for second candidate',
+                title: 'title for former chunk for second candidate',
+              },
+            },
+          ],
+          groundingSupports: [
+            {
+              segment: {
+                startIndex: 0,
+                endIndex: 421,
+                text: 'grounding support for former chunk for second candidate',
               },
             },
           ],
@@ -323,6 +357,23 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
               },
             },
           ],
+          groundingChunks: [
+            {
+              web: {
+                uri: 'url for later chunk for first candidate',
+                title: 'title for later chunk for first candidate',
+              },
+            },
+          ],
+          groundingSupports: [
+            {
+              segment: {
+                startIndex: 0,
+                endIndex: 421,
+                text: 'grounding support for later chunk for first candidate',
+              },
+            },
+          ],
           searchEntryPoint: {
             renderedContent:
               'rendered content for later chunk for first candidate',
@@ -345,6 +396,23 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
               web: {
                 uri: 'url for later chunk for second candidate',
                 title: 'title for later chunk for second candidate',
+              },
+            },
+          ],
+          groundingChunks: [
+            {
+              web: {
+                uri: 'url for later chunk for second candidate',
+                title: 'title for later chunk for second candidate',
+              },
+            },
+          ],
+          groundingSupports: [
+            {
+              segment: {
+                startIndex: 0,
+                endIndex: 421,
+                text: 'grounding support for later chunk for second candidate',
               },
             },
           ],
@@ -375,11 +443,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
         index: 0,
         content: {
           role: 'model',
-          parts: [
-            {
-              text: 'chunk1Candidate1chunk2Candidate1chunk3Candidate1',
-            },
-          ],
+          parts: [{text: 'chunk1Candidate1chunk2Candidate1chunk3Candidate1'}],
         },
         safetyRatings: [
           {
@@ -418,9 +482,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
           ],
           groundingAttributions: [
             {
-              segment: {
-                endIndex: 421,
-              },
+              segment: {endIndex: 421},
               confidenceScore: 0.8585608,
               web: {
                 uri: 'url for former chunk for first candidate',
@@ -428,9 +490,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
               },
             },
             {
-              segment: {
-                endIndex: 421,
-              },
+              segment: {endIndex: 421},
               confidenceScore: 0.8585608,
               web: {
                 uri: 'url for later chunk for first candidate',
@@ -439,6 +499,36 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
             },
           ],
           retrievalQueries: [],
+          groundingChunks: [
+            {
+              web: {
+                uri: 'url for former chunk for first candidate',
+                title: 'title for former chunk for first candidate',
+              },
+            },
+            {
+              web: {
+                uri: 'url for later chunk for first candidate',
+                title: 'title for later chunk for first candidate',
+              },
+            },
+          ],
+          groundingSupports: [
+            {
+              segment: {
+                startIndex: 0,
+                endIndex: 421,
+                text: 'grounding support for former chunk for first candidate',
+              },
+            },
+            {
+              segment: {
+                startIndex: 0,
+                endIndex: 421,
+                text: 'grounding support for later chunk for first candidate',
+              },
+            },
+          ],
           searchEntryPoint: {
             renderedContent:
               'rendered content for later chunk for first candidate',
@@ -450,11 +540,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
         index: 1,
         content: {
           role: 'model',
-          parts: [
-            {
-              text: 'chunk1Candidate2chunk2Candidate2chunk3Candidate2',
-            },
-          ],
+          parts: [{text: 'chunk1Candidate2chunk2Candidate2chunk3Candidate2'}],
         },
         safetyRatings: [
           {
@@ -493,9 +579,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
           ],
           groundingAttributions: [
             {
-              segment: {
-                endIndex: 421,
-              },
+              segment: {endIndex: 421},
               confidenceScore: 0.8585608,
               web: {
                 uri: 'url for former chunk for second candidate',
@@ -503,9 +587,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
               },
             },
             {
-              segment: {
-                endIndex: 421,
-              },
+              segment: {endIndex: 421},
               confidenceScore: 0.8585608,
               web: {
                 uri: 'url for later chunk for second candidate',
@@ -514,6 +596,36 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
             },
           ],
           retrievalQueries: [],
+          groundingChunks: [
+            {
+              web: {
+                uri: 'url for former chunk for second candidate',
+                title: 'title for former chunk for second candidate',
+              },
+            },
+            {
+              web: {
+                uri: 'url for later chunk for second candidate',
+                title: 'title for later chunk for second candidate',
+              },
+            },
+          ],
+          groundingSupports: [
+            {
+              segment: {
+                startIndex: 0,
+                endIndex: 421,
+                text: 'grounding support for former chunk for second candidate',
+              },
+            },
+            {
+              segment: {
+                startIndex: 0,
+                endIndex: 421,
+                text: 'grounding support for later chunk for second candidate',
+              },
+            },
+          ],
           searchEntryPoint: {
             renderedContent:
               'rendered content for later chunk for second candidate',
@@ -857,6 +969,26 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_3: GenerateContentRespon
       },
     ],
   } as GenerateContentResponse;
+
+export const STREAM_RESPONSE_CHUNKS_4: GenerateContentResponse[] = [
+  {
+    candidates: [{}],
+  },
+] as GenerateContentResponse[];
+
+export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_4: GenerateContentResponse =
+  {
+    candidates: [
+      {
+        index: 0,
+        content: {
+          role: 'model',
+          parts: [{text: ''}],
+        },
+      },
+    ],
+  } as GenerateContentResponse;
+
 export const UNARY_RESPONSE_1: GenerateContentResponse = {
   candidates: [
     {
