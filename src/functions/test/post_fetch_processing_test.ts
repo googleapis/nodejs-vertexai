@@ -19,10 +19,12 @@ import {
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1,
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2,
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_3,
+  AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_4,
   COUNT_TOKENS_RESPONSE_1,
   STREAM_RESPONSE_CHUNKS_1,
   STREAM_RESPONSE_CHUNKS_2,
   STREAM_RESPONSE_CHUNKS_3,
+  STREAM_RESPONSE_CHUNKS_4,
   UNARY_RESPONSE_1,
   UNARY_RESPONSE_MISSING_ROLE_INDEX,
 } from './test_data';
@@ -72,6 +74,14 @@ describe('aggregateResponses', () => {
 
     expect(JSON.stringify(actualResult)).toEqual(
       JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_3)
+    );
+  });
+
+  it('missing content, should add role and return empty content', () => {
+    const actualResult = aggregateResponses(STREAM_RESPONSE_CHUNKS_4);
+
+    expect(JSON.stringify(actualResult)).toEqual(
+      JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_4)
     );
   });
 });
