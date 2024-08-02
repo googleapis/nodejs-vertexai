@@ -26,6 +26,7 @@ page in Vertex AI documentation.
     ```sh
     gcloud auth application-default login
     ```
+1.  Official documentation is available in the [Vertex AI SDK Overview](https://cloud.google.com/vertex-ai/generative-ai/docs/reference/nodejs/latest/overview) page. From here, a complete list of documentation on classes, interfaces, and enums are available.
 
 ## Install the SDK
 
