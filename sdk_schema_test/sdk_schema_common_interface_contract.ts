@@ -14,3 +14,97 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+export interface TextPart {
+  text: string;
+  inlineData?: never;
+  fileData?: never;
+  functionResponse?: never;
+  functionCall?: never;
+}
+
+export interface InlineDataPart {
+  text?: never;
+  inlineData: GenerativeContentBlob;
+  functionCall?: never;
+  functionResponse?: never;
+  fileData?: never;
+}
+
+export interface GenerativeContentBlob {
+  mimeType: string;
+  data: string;
+}
+
+export interface FileDataPart {
+  text?: never;
+  inlineData?: never;
+  fileData: FileData;
+  functionResponse?: never;
+  functionCall?: never;
+}
+
+export interface FileData {
+  mimeType: string;
+  fileUri: string;
+}
+
+export interface FunctionResponsePart {
+  text?: never;
+  inlineData?: never;
+  fileData?: never;
+  functionResponse: FunctionResponse;
+  functionCall?: never;
+}
+
+export interface FunctionResponse {
+  name: string;
+  response: object;
+}
+
+export interface FunctionCallPart {
+  text?: never;
+  inlineData?: never;
+  fileData?: never;
+  functionResponse?: never;
+  functionCall: FunctionCall;
+}
+
+export interface FunctionCall {
+  name: string;
+  args: object;
+}
+
+export type Part =
+  | TextPart
+  | InlineDataPart
+  | FileDataPart
+  | FunctionResponsePart
+  | FunctionCallPart;
+
+export interface Content {
+  parts: Part[];
+  role: string;
+}
+
+export interface GenerateContentRequest {
+  contents: Content[];
+}
+
+export interface GenerateContentCandidate {
+  content: Content;
+  index: number;
+}
+
+export interface PromptFeedback {
+  blockReasonMessage?: string;
+}
+
+//eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface UsageMetadata {}
+
+export interface GenerateContentResponse {
+  candidates?: GenerateContentCandidate[];
+  promptFeedback?: PromptFeedback;
+  usageMetadata?: UsageMetadata;
+}
