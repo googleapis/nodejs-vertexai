@@ -19,8 +19,14 @@ page in Vertex AI documentation.
 1.  [Select](https://console.cloud.google.com/project) or [create](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) a Google Cloud project.
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 1.  [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-1.  [Set up authentication with a service account](https://cloud.google.com/docs/authentication/getting-started)
-    so you can access the API from your local workstation.
+1.  [Install the gcloud CLI](https://cloud.google.com/sdk/docs/install).
+1.  [Initialize the gcloud CLI](https://cloud.google.com/sdk/docs/initializing).
+1.  Create local authentication credentials for your user account:
+
+    ```sh
+    gcloud auth application-default login
+    ```
+1.  Official documentation is available in the [Vertex AI SDK Overview](https://cloud.google.com/vertex-ai/generative-ai/docs/reference/nodejs/latest/overview) page. From here, a complete list of documentation on classes, interfaces, and enums are available.
 
 ## Install the SDK
 
