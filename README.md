@@ -59,9 +59,10 @@ const generativeModel = vertexAI.getGenerativeModel({
     safetySettings: [{category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE}],
     generationConfig: {maxOutputTokens: 256},
     systemInstruction: {
+      role: 'system',
       parts: [{"text": `For example, you are a helpful customer service agent.`}]
     },
-  });
+});
 
 const generativeVisionModel = vertexAI.getGenerativeModel({
     model: visionModel,
@@ -423,6 +424,39 @@ async function generateContentWithVertexAISearchGrounding() {
 }
 generateContentWithVertexAISearchGrounding();
 
+```
+## System Instruction
+
+You can include an optional system instruction when instantiating a generative model to provide additional context to the model.
+The system instruction can also be passed to individual content generation requests.
+
+### Include system instruction in generative model instantiation
+
+```javascript
+const generativeModel = vertexAI.getGenerativeModel({
+    model: textModel,
+    // The following parameter is optional.
+    systemInstruction: {
+      role: 'system',
+      parts: [{"text": `For example, you are a helpful customer service agent.`}]
+    },
+});
+```
+
+### Include system instruction in text prompt request
+
+```javascript
+async function generateContent() {
+  const request = {
+    contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+    systemInstruction: { role: 'system', parts: [{ text: `For example, you are a helpful customer service agent.` }] },
+  };
+  const result = await generativeModel.generateContent(request);
+  const response = result.response;
+  console.log('Response: ', JSON.stringify(response));
+};
+
+generateContent();
 ```
 
 ## License
