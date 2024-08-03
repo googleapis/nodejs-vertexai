@@ -434,7 +434,8 @@ generateContentWithVertexAISearchGrounding();
 ## System Instruction
 
 You can include an optional system instruction when instantiating a generative model to provide additional context to the model.
-The system instruction can also be passed to individual content generation requests.
+
+The system instruction can also be passed to individual text prompt requests.
 
 ### Include system instruction in generative model instantiation
 
