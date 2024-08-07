@@ -26,7 +26,7 @@ import {
   StreamGenerateContentResult,
 } from '../types/content';
 import {constants} from '../util';
-import {ClientError, GoogleGenerativeAIError} from '../types/errors';
+import {ClientErrorApi, GoogleGenerativeAIError} from '../types/errors';
 
 export async function throwErrorIfNotOK(response: Response | undefined) {
   if (response === undefined) {
@@ -40,7 +40,7 @@ export async function throwErrorIfNotOK(response: Response | undefined) {
       errorBody
     )}`;
     if (status >= 400 && status < 500) {
-      throw new ClientError(errorMessage);
+      throw new ClientErrorApi(errorMessage, errorBody.error);
     }
     throw new GoogleGenerativeAIError(errorMessage);
   }

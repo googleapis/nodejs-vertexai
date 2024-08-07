@@ -19,7 +19,7 @@
     "docs-test": "linkinator docs",
     "compile:oss": "tsc -p tsconfig.json.oss",
     "fix": "gts fix",
-    "test": "jasmine build/test/*.js --reporter=test/spec/reporter.js",
+    "test": "jasmine build/**/test/*.js --reporter=test/spec/reporter.js",
     "system-test": "jasmine build/system_test/*.js --reporter=test/spec/reporter.js",
     "lint": "gts lint",
     "clean-js-files": "find . -type f -name \"*.js\" -exec rm -f {} +",
