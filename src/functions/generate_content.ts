@@ -15,12 +15,6 @@
  * limitations under the License.
  */
 
-/**
- * Make a async call to generate content.
- * @param request A GenerateContentRequest object with the request contents.
- * @returns The GenerateContentResponse object with the response candidates.
- */
-
 import {
   GenerateContentRequest,
   GenerateContentResult,
@@ -47,6 +41,11 @@ import {
   getApiVersion,
 } from './pre_fetch_processing';
 
+/**
+ * Make a async call to generate content.
+ * @param request A GenerateContentRequest object with the request contents.
+ * @returns The GenerateContentResponse object with the response candidates.
+ */
 export async function generateContent(
   location: string,
   resourcePath: string,

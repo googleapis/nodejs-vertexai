@@ -1,4 +1,5 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/%40google-cloud%2Fvertexai)](https://www.npmjs.com/package/@google-cloud/vertexai)
+[![Node Current](https://img.shields.io/node/v/%40google-cloud%2Fvertexai)](https://www.npmjs.com/package/@google-cloud/vertexai)
 
 # Vertex AI SDK for Node.js quickstart
 
