@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/googleapis/nodejs-vertexai/compare/v1.4.0...v1.4.1) (2024-08-09)
+
+
+### Bug Fixes
+
+* Fix docstring order and add node version badge in README ([d330fe3](https://github.com/googleapis/nodejs-vertexai/commit/d330fe3352713226794ac3e8c7a7a21474a32ec1))
+
 ## [1.4.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.3.0...v1.4.0) (2024-07-15)
 
 
