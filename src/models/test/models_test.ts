@@ -280,6 +280,26 @@ describe('GenerativeModel startChat', () => {
 
     expect(chat).toBeInstanceOf(ChatSession);
   });
+  it('returns ChatSession when pass an arg with generationConfig including responseMimeType', async () => {
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(TEST_MODEL_RESPONSE), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const chat = model.startChat({
+      generationConfig: {
+        ...TEST_GENERATION_CONFIG,
+        responseMimeType: 'application/json',
+      },
+    });
+
+    expect(chat).toBeInstanceOf(ChatSession);
+  });
   it('set timeout info in ChatSession', () => {
     const model = new GenerativeModel({
       model: 'gemini-pro',
@@ -478,6 +498,22 @@ describe('GenerativeModelPreview startChat', () => {
     });
     const chat = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
+    });
+
+    expect(chat).toBeInstanceOf(ChatSessionPreview);
+  });
+  it('returns ChatSessionPreview when pass an arg with generationConfig including responseMimeType', async () => {
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+    });
+    const chat = model.startChat({
+      generationConfig: {
+        ...TEST_GENERATION_CONFIG,
+        responseMimeType: 'application/json',
+      },
     });
 
     expect(chat).toBeInstanceOf(ChatSessionPreview);
@@ -1053,6 +1089,21 @@ describe('GenerativeModel generateContent', () => {
     }
   });
 
+  it('includes responseMimeType', async () => {
+    const reqWithEmptyConfigs: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+      generationConfig: {responseMimeType: 'application/json'},
+      safetySettings: [],
+    };
+    await model.generateContent(reqWithEmptyConfigs);
+    const requestArgs = fetchSpy.calls.allArgs()[0][1];
+    if (typeof requestArgs === 'object' && requestArgs) {
+      expect(
+        JSON.parse(requestArgs['body'])['generationConfig']['responseMimeType']
+      ).toEqual('application/json');
+    }
+  });
+
   it('aggregates citation metadata', async () => {
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
@@ -1509,6 +1560,21 @@ describe('GenerativeModelPreview generateContent', () => {
     const requestArgs = fetchSpy.calls.allArgs()[0][1];
     if (typeof requestArgs === 'object' && requestArgs) {
       expect(JSON.stringify(requestArgs['body'])).toContain('topK');
+    }
+  });
+
+  it('includes responseMimeType', async () => {
+    const reqWithEmptyConfigs: GenerateContentRequest = {
+      contents: TEST_USER_CHAT_MESSAGE_WITH_GCS_FILE,
+      generationConfig: {responseMimeType: 'application/json'},
+      safetySettings: [],
+    };
+    await model.generateContent(reqWithEmptyConfigs);
+    const requestArgs = fetchSpy.calls.allArgs()[0][1];
+    if (typeof requestArgs === 'object' && requestArgs) {
+      expect(
+        JSON.parse(requestArgs['body'])['generationConfig']['responseMimeType']
+      ).toEqual('application/json');
     }
   });
 
@@ -2309,6 +2375,30 @@ describe('ChatSession', () => {
         expectedResourcePath
       );
     });
+
+    it('send a message body with the responseMimeType property to functions', async () => {
+      const model = new GenerativeModel({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chat = model.startChat({
+        generationConfig: {
+          ...TEST_GENERATION_CONFIG,
+          responseMimeType: 'application/json',
+        },
+      });
+      const req = 'How are you doing today?';
+      await chat.sendMessage(req);
+      const expectedBody =
+        '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]}],"generationConfig":{"candidateCount":1,"stopSequences":["hello"],"responseMimeType":"application/json"}}';
+
+      // @ts-ignore
+      const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+      expect(actualBody).toEqual(expectedBody);
+    });
+
     it('send timeout to functions', async () => {
       const modelWithRequestOptions = new GenerativeModel({
         model: 'gemini-pro',
@@ -2755,6 +2845,32 @@ describe('ChatSessionPreview', () => {
       expect(generateContentSpy.calls.allArgs()[0][1]).toEqual(
         expectedResourcePath
       );
+    });
+    it('send a message with responseMimeType to functions', async () => {
+      const expectedResult = TEST_MODEL_RESPONSE;
+      const fetchResult = Promise.resolve(
+        new Response(JSON.stringify(expectedResult), fetchResponseObj)
+      );
+      const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+      const model = new GenerativeModelPreview({
+        model: 'gemini-pro',
+        project: PROJECT,
+        location: LOCATION,
+        googleAuth: FAKE_GOOGLE_AUTH,
+      });
+      const chat = model.startChat({
+        generationConfig: {
+          ...TEST_GENERATION_CONFIG,
+          responseMimeType: 'application/json',
+        },
+      });
+      const req = 'How are you doing today?';
+      await chat.sendMessage(req);
+      const expectedBody =
+        '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]}],"generationConfig":{"candidateCount":1,"stopSequences":["hello"],"responseMimeType":"application/json"}}';
+      // @ts-ignore
+      const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+      expect(actualBody).toEqual(expectedBody);
     });
     it('send timeout to functions', async () => {
       const modelWithRequestOptions = new GenerativeModelPreview({
