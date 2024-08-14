@@ -48,9 +48,9 @@ echo "Node.js installation or upgrade process completed."
 
 npm install
 git clone https://github.com/google-gemini/generative-ai-js.git
-sudo npm install -g ts-node && sudo npm install -g typescript
-ts-node sdk_schema_test/vertex_ai/*test.ts
-ts-node sdk_schema_test/google_ai/*test.ts
+npm install ts-node && npm install typescript
+npx ts-node sdk_schema_test/vertex_ai/*test.ts
+npx ts-node sdk_schema_test/google_ai/*test.ts
 rm -rf generative-ai-js
 rm -rf build
 rm -rf node_modules
