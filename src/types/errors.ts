@@ -19,9 +19,9 @@
  * GoogleAuthError is thrown when there is authentication issue with the request
  */
 class GoogleAuthError extends Error {
-  public readonly stackTrace: any = undefined;
-  constructor(message: string, stackTrace: any = undefined) {
-    super(message);
+  public readonly stackTrace?: Error;
+  constructor(message: string, stackTrace?: Error) {
+    super(message, {cause: stackTrace});
     this.message = constructErrorMessage('GoogleAuthError', message);
     this.name = 'GoogleAuthError';
     this.stackTrace = stackTrace;
@@ -33,9 +33,9 @@ class GoogleAuthError extends Error {
  * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses
  */
 class ClientError extends Error {
-  public readonly stackTrace: any = undefined;
-  constructor(message: string, stackTrace: any = undefined) {
-    super(message);
+  public readonly stackTrace?: Error;
+  constructor(message: string, stackTrace?: Error) {
+    super(message, {cause: stackTrace});
     this.message = constructErrorMessage('ClientError', message);
     this.name = 'ClientError';
     this.stackTrace = stackTrace;
@@ -47,9 +47,9 @@ class ClientError extends Error {
  * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
  */
 class GoogleGenerativeAIError extends Error {
-  public readonly stackTrace: any = undefined;
-  constructor(message: string, stackTrace: any = undefined) {
-    super(message);
+  public readonly stackTrace?: Error;
+  constructor(message: string, stackTrace?: Error) {
+    super(message, {cause: stackTrace});
     this.message = constructErrorMessage('GoogleGenerativeAIError', message);
     this.name = 'GoogleGenerativeAIError';
     this.stackTrace = stackTrace;
@@ -60,9 +60,9 @@ class GoogleGenerativeAIError extends Error {
  * IllegalArgumentError is thrown when the request or operation is invalid
  */
 class IllegalArgumentError extends Error {
-  public readonly stackTrace: any = undefined;
-  constructor(message: string, stackTrace: any = undefined) {
-    super(message);
+  public readonly stackTrace?: Error;
+  constructor(message: string, stackTrace?: Error) {
+    super(message, {cause: stackTrace});
     this.message = constructErrorMessage('IllegalArgumentError', message);
     this.name = 'IllegalArgumentError';
     this.stackTrace = stackTrace;
