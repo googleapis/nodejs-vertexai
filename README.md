@@ -1,4 +1,5 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/%40google-cloud%2Fvertexai)](https://www.npmjs.com/package/@google-cloud/vertexai)
+[![Node Current](https://img.shields.io/node/v/%40google-cloud%2Fvertexai)](https://www.npmjs.com/package/@google-cloud/vertexai)
 
 # Vertex AI SDK for Node.js quickstart
 
@@ -26,6 +27,8 @@ page in Vertex AI documentation.
     ```sh
     gcloud auth application-default login
     ```
+A list of accepted authentication options are listed in [GoogleAuthOptions](https://github.com/googleapis/google-auth-library-nodejs/blob/3ae120d0a45c95e36c59c9ac8286483938781f30/src/auth/googleauth.ts#L87) interface of google-auth-library-node.js GitHub repo.
+1.  Official documentation is available in the [Vertex AI SDK Overview](https://cloud.google.com/vertex-ai/generative-ai/docs/reference/nodejs/latest/overview) page. From here, a complete list of documentation on classes, interfaces, and enums are available.
 
 ## Install the SDK
 
@@ -63,7 +66,11 @@ const generativeModel = vertexAI.getGenerativeModel({
     // They can also be passed to individual content generation requests
     safetySettings: [{category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE}],
     generationConfig: {maxOutputTokens: 256},
-  });
+    systemInstruction: {
+      role: 'system',
+      parts: [{"text": `For example, you are a helpful customer service agent.`}]
+    },
+});
 
 const generativeVisionModel = vertexAI.getGenerativeModel({
     model: visionModel,
@@ -425,6 +432,60 @@ async function generateContentWithVertexAISearchGrounding() {
 }
 generateContentWithVertexAISearchGrounding();
 
+```
+## System Instruction
+
+You can include an optional system instruction when instantiating a generative model to provide additional context to the model.
+
+The system instruction can also be passed to individual text prompt requests.
+
+### Include system instruction in generative model instantiation
+
+```javascript
+const generativeModel = vertexAI.getGenerativeModel({
+    model: textModel,
+    // The following parameter is optional.
+    systemInstruction: {
+      role: 'system',
+      parts: [{"text": `For example, you are a helpful customer service agent.`}]
+    },
+});
+```
+
+### Include system instruction in text prompt request
+
+```javascript
+async function generateContent() {
+  const request = {
+    contents: [{role: 'user', parts: [{text: 'How are you doing today?'}]}],
+    systemInstruction: { role: 'system', parts: [{ text: `For example, you are a helpful customer service agent.` }] },
+  };
+  const result = await generativeModel.generateContent(request);
+  const response = result.response;
+  console.log('Response: ', JSON.stringify(response));
+};
+
+generateContent();
+```
+## FAQ
+### What if I want to specify authentication options instead of using default options?
+
+**Step1**: Find a list of accepted authentication options in [GoogleAuthOptions](https://github.com/googleapis/google-auth-library-nodejs/blob/3ae120d0a45c95e36c59c9ac8286483938781f30/src/auth/googleauth.ts#L87) interface of google-auth-library-node.js GitHub repo.
+
+**Step2:** Instantiate the `VertexAI` class by passing in the `GoogleAuthOptions` interface as follows:
+
+
+```javascript
+
+const { VertexAI } = require('@google-cloud/vertexai');
+const { GoogleAuthOptions } = require('google-auth-library');
+const vertexAI = new VertexAI(
+  {
+    googleAuthOptions: {
+      // your GoogleAuthOptions interface
+    }
+  }
+)
 ```
 
 ## License
