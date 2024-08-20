@@ -1095,14 +1095,13 @@ describe('GenerativeModel generateContent', () => {
       generationConfig: {responseMimeType: 'application/json'},
       safetySettings: [],
     };
+    const expectedRequestArgBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"},{"fileData":{"fileUri":"gs://test_bucket/test_image.jpeg","mimeType":"image/jpeg"}}]}],"generationConfig":{"responseMimeType":"application/json"},"safetySettings":[]}';
+
     await model.generateContent(reqWithEmptyConfigs);
-    const requestArgs = fetchSpy.calls.allArgs()[0][1];
-    if (typeof requestArgs === 'object' && requestArgs) {
-      expect(
-        // @ts-ignore: Object is of type 'unknown'
-        JSON.parse(requestArgs['body'])['generationConfig']['responseMimeType']
-      ).toEqual('application/json');
-    }
+    const actualRequestArgsBody = fetchSpy.calls.allArgs()[0][1].body as string;
+
+    expect(actualRequestArgsBody).toEqual(expectedRequestArgBody);
   });
 
   it('aggregates citation metadata', async () => {
@@ -1570,14 +1569,13 @@ describe('GenerativeModelPreview generateContent', () => {
       generationConfig: {responseMimeType: 'application/json'},
       safetySettings: [],
     };
+    const expectedRequestArgsBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"},{"fileData":{"fileUri":"gs://test_bucket/test_image.jpeg","mimeType":"image/jpeg"}}]}],"generationConfig":{"responseMimeType":"application/json"},"safetySettings":[]}';
+
     await model.generateContent(reqWithEmptyConfigs);
-    const requestArgs = fetchSpy.calls.allArgs()[0][1];
-    if (typeof requestArgs === 'object' && requestArgs) {
-      expect(
-        // @ts-ignore: Object is of type 'unknown'
-        JSON.parse(requestArgs['body'])['generationConfig']['responseMimeType']
-      ).toEqual('application/json');
-    }
+    const actualRequestArgsBody = fetchSpy.calls.allArgs()[0][1].body as string;
+
+    expect(actualRequestArgsBody).toEqual(expectedRequestArgsBody);
   });
 
   it('aggregates citation metadata', async () => {
@@ -1617,7 +1615,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const expectedBody =
       '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"functionDeclarations":[{"name":"get_current_weather","description":"get weather in a given location","parameters":{"type":"OBJECT","properties":{"location":{"type":"STRING"},"unit":{"type":"STRING","enum":["celsius","fahrenheit"]}},"required":["location"]}}]}]}';
     await model.generateContent(TEST_CHAT_MESSSAGE_TEXT);
-    // @ts-ignore
+
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
     expect(actualBody).toEqual(expectedBody);
   });
