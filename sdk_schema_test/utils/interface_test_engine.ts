@@ -22,7 +22,7 @@ import {
   isInterfaceDeclaration,
   isIdentifier,
   TypeChecker,
-  // eslint-disable-next-line n/no-unpublished-import
+  // eslint-disable-next-line node/no-unpublished-import
 } from 'typescript';
 import {strict as assert} from 'assert';
 import * as fs from 'fs';
@@ -178,7 +178,9 @@ export function interfaceTestEngine(
     );
     assert(
       isPropertyMatch(sdkInterface.properties, contractInterface.properties),
-      `${sdkName}: interface ${JSON.stringify(sdkInterface)} does not match the contract ${JSON.stringify(contractInterface)}`
+      `${sdkName}: interface ${JSON.stringify(
+        sdkInterface
+      )} does not match the contract ${JSON.stringify(contractInterface)}`
     );
   });
 }
