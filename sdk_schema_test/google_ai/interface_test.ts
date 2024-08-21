@@ -22,7 +22,7 @@ const TEST_REPO = process.env['TEST_REPO'];
 let sdkInterfaceDirs: string[];
 let contractInterfaceFiles: string[];
 if (TEST_REPO === 'generative-ai-js') {
-  sdkInterfaceDirs = [path.resolve('packages/main/types')];
+  sdkInterfaceDirs = [path.resolve('types')];
   contractInterfaceFiles = [
     path.resolve(
       'nodejs-vertexai/sdk_schema_test/sdk_schema_common_interface_contract.ts'
@@ -32,7 +32,7 @@ if (TEST_REPO === 'generative-ai-js') {
     ),
   ];
 } else if (TEST_REPO === 'nodejs-vertexai') {
-  sdkInterfaceDirs = [path.resolve('generative-ai-js/packages/main/types')];
+  sdkInterfaceDirs = [path.resolve('generative-ai-js/types')];
   contractInterfaceFiles = [
     path.resolve('sdk_schema_test/sdk_schema_common_interface_contract.ts'),
     path.resolve('sdk_schema_test/google_ai_only_interface_contract.ts'),
