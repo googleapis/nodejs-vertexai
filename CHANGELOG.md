@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.5.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.4.1...v1.5.0) (2024-08-21)
+
+
+### Features
+
+* Add .gitignore file. ([#362](https://github.com/googleapis/nodejs-vertexai/issues/362)) ([1c00922](https://github.com/googleapis/nodejs-vertexai/commit/1c00922ffb329185241f686ffff1c0cfec28a152))
+* Execute all test cases. ([#363](https://github.com/googleapis/nodejs-vertexai/issues/363)) ([dccd44c](https://github.com/googleapis/nodejs-vertexai/commit/dccd44c317a168a767e21cee231ac207137766cf))
+
+
+### Bug Fixes
+
+* missing property frequencyPenalty in type defintions ([#394](https://github.com/googleapis/nodejs-vertexai/issues/394)) ([7557a83](https://github.com/googleapis/nodejs-vertexai/commit/7557a839b96a9fddc17c6516dd9c8c12772b6c59))
+
 ## [1.4.1](https://github.com/googleapis/nodejs-vertexai/compare/v1.4.0...v1.4.1) (2024-08-09)
 
 
