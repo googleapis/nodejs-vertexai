@@ -131,7 +131,7 @@ function getResponseStream(
             if (currentText.trim()) {
               controller.error(
                 new GoogleGenerativeAIError(
-                  'Failed to parse final chunk of stream'
+                  `Failed to parse final chunk of stream: ${currentText}`
                 )
               );
               return;
@@ -204,7 +204,7 @@ export function aggregateResponses(
         aggregatedResponse.candidates[i] = {
           index: response.candidates[i].index ?? i,
           content: {
-            role: response.candidates[i].content.role ?? constants.MODEL_ROLE,
+            role: response.candidates[i].content?.role ?? constants.MODEL_ROLE,
             parts: [{text: ''}],
           },
         } as GenerateContentCandidate;
@@ -297,6 +297,8 @@ function aggregateGroundingMetadataForCandidate(
     webSearchQueries: [],
     groundingAttributions: [],
     retrievalQueries: [],
+    groundingChunks: [],
+    groundingSupports: [],
   };
   const groundingMetadataAggregated: GroundingMetadata =
     aggregatedCandidate.groundingMetadata ?? emptyGroundingMetadata;
@@ -318,6 +320,18 @@ function aggregateGroundingMetadataForCandidate(
     groundingMetadataAggregated.retrievalQueries =
       groundingMetadataAggregated.retrievalQueries!.concat(
         groundingMetadataChunk.retrievalQueries
+      );
+  }
+  if (groundingMetadataChunk.groundingChunks) {
+    groundingMetadataAggregated.groundingChunks =
+      groundingMetadataAggregated.groundingChunks!.concat(
+        groundingMetadataChunk.groundingChunks
+      );
+  }
+  if (groundingMetadataChunk.groundingSupports) {
+    groundingMetadataAggregated.groundingSupports =
+      groundingMetadataAggregated.groundingSupports!.concat(
+        groundingMetadataChunk.groundingSupports
       );
   }
   if (groundingMetadataChunk.searchEntryPoint) {

@@ -1,5 +1,36 @@
 # Changelog
 
+## [1.4.1](https://github.com/googleapis/nodejs-vertexai/compare/v1.4.0...v1.4.1) (2024-08-09)
+
+
+### Bug Fixes
+
+* Fix docstring order and add node version badge in README ([d330fe3](https://github.com/googleapis/nodejs-vertexai/commit/d330fe3352713226794ac3e8c7a7a21474a32ec1))
+
+## [1.4.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.3.0...v1.4.0) (2024-07-15)
+
+
+### Features
+
+* support responseMimeType in GenerationConfig to allow users specify output response mimetype of the generated candidate text. ([93f6d70](https://github.com/googleapis/nodejs-vertexai/commit/93f6d70660dbee44f81766544047da7baf427e30))
+
+
+### Bug Fixes
+
+* handle case when content is undefined in candidate. ([f16f040](https://github.com/googleapis/nodejs-vertexai/commit/f16f0405c0419152119385780ba21b2d9c18dc9b))
+
+## [1.3.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.2.0...v1.3.0) (2024-06-26)
+
+
+### Features
+
+* infer project ID when user don't specify and throw if inference fails ([6b3e68e](https://github.com/googleapis/nodejs-vertexai/commit/6b3e68e3b869659d17ef584995de7d7bfc1b1f3b))
+
+
+### Bug Fixes
+
+* improve error message to help with debugging ([8a937d5](https://github.com/googleapis/nodejs-vertexai/commit/8a937d5f534f54867fd62a988dbd84ebafb5b76a))
+
 ## [1.2.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.1.0...v1.2.0) (2024-05-22)
 
 
