@@ -19,10 +19,8 @@
     "docs-test": "linkinator docs",
     "compile:oss": "tsc -p tsconfig.json.oss",
     "fix": "gts fix",
-    "test": "npm run test:src && npm run test:test",
-    "test:test": "jasmine build/test/*.js --reporter=test/spec/reporter.js",
-    "test:src": "jasmine build/src/functions/test/*.js build/src/models/test/*.js --reporter=test/spec/reporter.js",
-    "test:system": "jasmine build/system_test/*.js --reporter=test/spec/reporter.js",
+    "test": "jasmine build/test/*.js --reporter=test/spec/reporter.js",
+    "system-test": "jasmine build/system_test/*.js --reporter=test/spec/reporter.js",
     "lint": "gts lint",
     "clean-js-files": "find . -type f -name \"*.js\" -exec rm -f {} +",
     "clean-js-map-files": "find . -type f -name \"*.js.map\" -exec rm -f {} +",
@@ -34,7 +32,7 @@
     "postpack": "if [ \"${CLEAN}\" ]; then npm run clean-after-pack; fi",
     "cover": "npm run cover:unit && npm run cover:integration && npm run cover:report",
     "cover:unit": "nyc npm run test",
-    "cover:integration": "nyc --no-clean npm run test:system",
+    "cover:integration": "nyc --no-clean npm run system-test",
     "cover:report": "nyc report --reporter=lcov"
   },
   "dependencies": {
