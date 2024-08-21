@@ -177,6 +177,11 @@ export declare interface GenerationConfig {
   topP?: number;
   /** Optional. If specified, topK sampling will be used. */
   topK?: number;
+  /**
+   * Optional. Positive values penalize tokens that repeatedly appear in the generated text, decreasing the probability of repeating content.
+   * This maximum value for frequencyPenalty is up to, but not including, 2.0. Its minimum value is -2.0.
+   * Supported by gemini-1.5-pro and gemini-1.5-flash only. */
+  frequencyPenalty?: number;
   /** Optional. Output response mimetype of the generated candidate text.
    * Supported mimetype:
    * - `text/plain`: (default) Text output.
