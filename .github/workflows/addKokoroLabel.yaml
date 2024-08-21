@@ -7,8 +7,8 @@ jobs:
   add-label:
     runs-on: ubuntu-latest
     steps:
-    - name: Add kokoro force run label to the PR
+    - name: Add kokoro run label to the PR
       uses: actions-ecosystem/action-add-labels@v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        labels: "kokoro:force-run"
+        labels: "kokoro:run"
