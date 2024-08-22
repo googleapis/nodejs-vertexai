@@ -1,8 +1,0 @@
-# Ignore directories generated automatically.
-node_modules/
-build/
-docs/
-.nyc_output/
-
-# Ignore files generated automatically.
-test/spec/sponge_log.xml
