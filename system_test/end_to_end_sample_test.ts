@@ -18,6 +18,7 @@
 // @ts-ignore
 import {
   ClientError,
+  ClientErrorApi,
   FunctionDeclarationsTool,
   GoogleSearchRetrievalTool,
   Part,
@@ -326,7 +327,7 @@ describe('generateContentStream', () => {
     );
   });
 
-  it('should throw ClientError when having invalid input', async () => {
+  it('should throw ClientErrorApi when having invalid input', async () => {
     const badRequest = {
       contents: [
         {
@@ -340,14 +341,18 @@ describe('generateContentStream', () => {
     };
     await generativeVisionModel.generateContentStream(badRequest).catch(e => {
       expect(e).toBeInstanceOf(ClientError);
+      expect(e).toBeInstanceOf(ClientErrorApi);
       expect(e.message).toContain(
         '[VertexAI.ClientError]: got status: 400 Bad Request',
         `sys test failure on generateContentStream when having bad request
           got wrong error message: ${e.message}`
       );
+      expect(e.apiError.code).toBe(400);
+      expect(e.apiError.status).toBe('INVALID_ARGUMENT');
+      expect(e.apiError.message).toBeInstanceOf(String);
     });
   });
-  it('in preview should throw ClientError when having invalid input', async () => {
+  it('in preview should throw ClientErrorApi when having invalid input', async () => {
     const badRequest = {
       contents: [
         {
@@ -363,11 +368,15 @@ describe('generateContentStream', () => {
       .generateContentStream(badRequest)
       .catch(e => {
         expect(e).toBeInstanceOf(ClientError);
+        expect(e).toBeInstanceOf(ClientErrorApi);
         expect(e.message).toContain(
           '[VertexAI.ClientError]: got status: 400 Bad Request',
           `sys test failure on generateContentStream in preview when having bad request
           got wrong error message: ${e.message}`
         );
+        expect(e.apiError.code).toBe(400);
+        expect(e.apiError.status).toBe('INVALID_ARGUMENT');
+        expect(e.apiError.message).toBeInstanceOf(String);
       });
   });
 
