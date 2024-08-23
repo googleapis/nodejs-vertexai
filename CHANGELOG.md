@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.4.1...v1.5.0) (2024-08-21)
+
+
+### Features
+
+* missing property frequencyPenalty in type defintions ([#394](https://github.com/googleapis/nodejs-vertexai/issues/394)) ([7557a83](https://github.com/googleapis/nodejs-vertexai/commit/7557a839b96a9fddc17c6516dd9c8c12772b6c59))
+
 ## [1.4.1](https://github.com/googleapis/nodejs-vertexai/compare/v1.4.0...v1.4.1) (2024-08-09)
 
 
