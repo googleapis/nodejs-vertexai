@@ -17,7 +17,7 @@
 
 // @ts-nocheck
 import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
-import {Schema} from './common';
+import {SchemaType, Schema} from './common';
 
 /**
  * Params used to initialize the Vertex SDK.
@@ -971,27 +971,15 @@ export declare interface VertexAISearch {
  * Contains the list of OpenAPI data types
  * as defined by https://swagger.io/docs/specification/data-models/data-types/
  */
-export enum FunctionDeclarationSchemaType {
-  /** String type. */
-  STRING = 'STRING',
-  /** Number type. */
-  NUMBER = 'NUMBER',
-  /** Integer type. */
-  INTEGER = 'INTEGER',
-  /** Boolean type. */
-  BOOLEAN = 'BOOLEAN',
-  /** Array type. */
-  ARRAY = 'ARRAY',
-  /** Object type. */
-  OBJECT = 'OBJECT',
-}
+export declare type FunctionDeclarationSchemaType = SchemaType;
+export const FunctionDeclarationSchemaType = {...SchemaType};
 
 /**
  * Schema for parameters passed to {@link FunctionDeclaration.parameters}.
  */
 export interface FunctionDeclarationSchema {
   /** The type of the parameter. */
-  type: FunctionDeclarationSchemaType;
+  type: SchemaType;
   /** The format of the parameter. */
   properties: {[k: string]: FunctionDeclarationSchemaProperty};
   /** Optional. Description of the parameter. */
@@ -1001,33 +989,11 @@ export interface FunctionDeclarationSchema {
 }
 
 /**
- * Schema is used to define the format of input/output data.
- * Represents a select subset of an OpenAPI 3.0 schema object.
+ * FunctionDeclarationSchemaProperty is used to define the format of
+ * input/output data. Represents a select subset of an OpenAPI 3.0 schema object.
  * More fields may be added in the future as needed.
  */
-export interface FunctionDeclarationSchemaProperty {
-  /**
-   * Optional. The type of the property. {@link
-   * FunctionDeclarationSchemaType}.
-   */
-  type?: FunctionDeclarationSchemaType;
-  /** Optional. The format of the property. */
-  format?: string;
-  /** Optional. The description of the property. */
-  description?: string;
-  /** Optional. Whether the property is nullable. */
-  nullable?: boolean;
-  /** Optional. The items of the property. {@link FunctionDeclarationSchema} */
-  items?: FunctionDeclarationSchema;
-  /** Optional. The enum of the property. */
-  enum?: string[];
-  /** Optional. Map of {@link FunctionDeclarationSchema}. */
-  properties?: {[k: string]: FunctionDeclarationSchema};
-  /** Optional. Array of required property. */
-  required?: string[];
-  /** Optional. The example of the property. */
-  example?: unknown;
-}
+export type FunctionDeclarationSchemaProperty = Schema;
 
 /**
  * Params to initiate a multiturn chat with the model via startChat.
