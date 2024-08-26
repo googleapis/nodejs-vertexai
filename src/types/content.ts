@@ -17,6 +17,7 @@
 
 // @ts-nocheck
 import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
+import {Schema} from './common';
 
 /**
  * Params used to initialize the Vertex SDK.
@@ -162,6 +163,13 @@ export declare interface SafetySetting {
 }
 
 /**
+ * Schema passed to `GenerationConfig.responseSchema`
+ * @public
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ResponseSchema extends Schema {}
+
+/**
  * Configuration options for model generation and outputs.
  */
 export declare interface GenerationConfig {
@@ -182,14 +190,23 @@ export declare interface GenerationConfig {
    * This maximum value for frequencyPenalty is up to, but not including, 2.0. Its minimum value is -2.0.
    * Supported by gemini-1.5-pro and gemini-1.5-flash only. */
   frequencyPenalty?: number;
-  /** Optional. Output response mimetype of the generated candidate text.
+  /**
+   * Optional. Output response mimetype of the generated candidate text.
    * Supported mimetype:
    * - `text/plain`: (default) Text output.
    * - `application/json`: JSON response in the candidates.
    * The model needs to be prompted to output the appropriate response type,
    * otherwise the behavior is undefined.
-   * This is a preview feature. */
+   */
   responseMimeType?: string;
+
+  /**
+   * Optional. The schema that generated candidate text must follow.  For more
+   * information, see
+   * https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/control-generated-output.
+   * If set, a compatible responseMimeType must also be set.
+   */
+  responseSchema?: ResponseSchema;
 }
 
 /**
@@ -623,7 +640,10 @@ export declare interface Citation {
  * Google search entry point.
  */
 export declare interface SearchEntryPoint {
-  /** Optional. Web content snippet that can be embedded in a web page or an app webview. */
+  /**
+   * Optional. Web content snippet that can be embedded in a web page or an app
+   * webview.
+   */
   renderedContent?: string;
   /** Optional. Base64 encoded JSON representing array of tuple. */
   sdkBlob?: string;
@@ -655,7 +675,9 @@ export declare interface GroundingChunkRetrievedContext {
 export declare interface GroundingChunk {
   /** Optional. Grounding chunk from the web. */
   web?: GroundingChunkWeb;
-  /** Optional. Grounding chunk from context retrieved by the retrieval tools. */
+  /**
+   * Optional. Grounding chunk from context retrieved by the retrieval tools.
+   */
   retrievedContext?: GroundingChunkRetrievedContext;
 }
 
@@ -665,11 +687,13 @@ export declare interface GroundingChunk {
 export declare interface GroundingSupportSegment {
   /** Optional. The index of a Part object within its parent Content object. */
   partIndex?: number;
-  /** Optional. Start index in the given Part, measured in bytes.
+  /**
+   * Optional. Start index in the given Part, measured in bytes.
    * Offset from the start of the Part, inclusive, starting at zero.
    */
   startIndex?: number;
-  /** Optional. End index in the given Part, measured in bytes.
+  /**
+   * Optional. End index in the given Part, measured in bytes.
    * Offset from the start of the Part, exclusive, starting at zero.
    */
   endIndex?: number;
@@ -683,13 +707,15 @@ export declare interface GroundingSupportSegment {
 export declare interface GroundingSupport {
   /** Optional. Segment of the content this support belongs to. */
   segment?: GroundingSupportSegment;
-  /** Optional. A arrau of indices (into {@link GroundingChunk}) specifying the
+  /**
+   * Optional. A arrau of indices (into {@link GroundingChunk}) specifying the
    * citations associated with the claim. For instance [1,3,4] means
    * that grounding_chunk[1], grounding_chunk[3],
    * grounding_chunk[4] are the retrieved content attributed to the claim.
    */
   groundingChunkIndices?: number[];
-  /** Confidence score of the support references. Ranges from 0 to 1. 1 is the
+  /**
+   * Confidence score of the support references. Ranges from 0 to 1. 1 is the
    * most confident. This list must have the same size as the
    * groundingChunkIndices.
    */
@@ -704,13 +730,20 @@ export declare interface GroundingMetadata {
   webSearchQueries?: string[];
   /** Optional. Queries executed by the retrieval tools. */
   retrievalQueries?: string[];
-  /** @deprecated
+  /**
+   * @deprecated
    * Optional. Array of {@link GroundingAttribution}
    */
   groundingAttributions?: GroundingAttribution[];
-  /** Optional. Google search entry for the following-up web searches. {@link SearchEntryPoint} */
+  /**
+   * Optional. Google search entry for the following-up web searches. {@link
+   * SearchEntryPoint}
+   */
   searchEntryPoint?: SearchEntryPoint;
-  /** Optional. Array of supporting references retrieved from specified grounding source. {@link GroundingChunk}. */
+  /**
+   * Optional. Array of supporting references retrieved from specified
+   * grounding source. {@link GroundingChunk}.
+   */
   groundingChunks?: GroundingChunk[];
   /** Optional. Array of grounding support. {@link GroundingSupport}. */
   groundingSupports?: GroundingSupport[];
@@ -879,7 +912,10 @@ export declare interface VertexRagStore {
   /** Optional. Number of top k results to return from the selected corpora. */
   similarityTopK?: number;
 
-  /** Optional. If set this field, results with vector distance smaller than this threshold will be returned. */
+  /**
+   * Optional. If set this field, results with vector distance smaller than
+   * this threshold will be returned.
+   */
   vectorDistanceThreshold?: number;
 }
 
@@ -942,7 +978,8 @@ export declare interface Retrieval {
  */
 export declare interface GoogleSearchRetrieval {
   /**
-   * @deprecated groundingAttributions field in {@link GroundingMetadata} is also deprecated.
+   * @deprecated groundingAttributions field in {@link GroundingMetadata} is
+   *     also deprecated.
    * Optional. Disable using the result from this tool in detecting grounding
    * attribution. This does not affect how the result is given to the model for
    * generation.
