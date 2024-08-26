@@ -730,15 +730,7 @@ export declare interface GroundingMetadata {
   webSearchQueries?: string[];
   /** Optional. Queries executed by the retrieval tools. */
   retrievalQueries?: string[];
-  /**
-   * @deprecated
-   * Optional. Array of {@link GroundingAttribution}
-   */
-  groundingAttributions?: GroundingAttribution[];
-  /**
-   * Optional. Google search entry for the following-up web searches. {@link
-   * SearchEntryPoint}
-   */
+  /** Optional. Google search entry for the following-up web searches. {@link SearchEntryPoint} */
   searchEntryPoint?: SearchEntryPoint;
   /**
    * Optional. Array of supporting references retrieved from specified
@@ -747,24 +739,6 @@ export declare interface GroundingMetadata {
   groundingChunks?: GroundingChunk[];
   /** Optional. Array of grounding support. {@link GroundingSupport}. */
   groundingSupports?: GroundingSupport[];
-}
-
-/**
- * @deprecated
- * Grounding attribution.
- */
-export declare interface GroundingAttribution {
-  /** Optional. Attribution from the web. */
-  web?: GroundingAttributionWeb;
-  /** Optional. Attribution from context retrieved by the retrieval tools. */
-  retrievedContext?: GroundingAttributionRetrievedContext;
-  /** Optional. Segment of the content this attribution belongs to. */
-  segment?: GroundingAttributionSegment;
-  /**
-   * Optional. Confidence score of the attribution. Ranges from 0 to 1. 1 is
-   * the most confident.
-   */
-  confidenceScore?: number;
 }
 
 /**
@@ -976,16 +950,8 @@ export declare interface Retrieval {
 /**
  * Tool to retrieve public web data for grounding, powered by Google.
  */
-export declare interface GoogleSearchRetrieval {
-  /**
-   * @deprecated groundingAttributions field in {@link GroundingMetadata} is
-   *     also deprecated.
-   * Optional. Disable using the result from this tool in detecting grounding
-   * attribution. This does not affect how the result is given to the model for
-   * generation.
-   */
-  disableAttribution?: boolean;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export declare interface GoogleSearchRetrieval {}
 
 /**
  * Retrieve from Vertex AI Search datastore for grounding.

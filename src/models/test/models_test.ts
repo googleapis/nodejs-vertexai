@@ -34,7 +34,7 @@ import {
   SafetySetting,
   StreamGenerateContentResult,
   Tool,
-} from '../../types/content';
+} from '../../types';
 import * as PostFetchFunctions from '../../functions/post_fetch_processing';
 import * as GenerateContentFunctions from '../../functions/generate_content';
 import * as CountTokensFunctions from '../../functions/count_tokens';

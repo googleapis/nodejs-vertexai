@@ -535,9 +535,6 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on generateContentStream for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on generateContentStream for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -557,9 +554,6 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on generateContentStream for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on generateContentStream for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -579,9 +573,6 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream in preview for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on generateContentStream in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on generateContentStream in preview for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -601,9 +592,6 @@ describe('generateContentStream', () => {
       `sys test failure on generateContentStream in preview for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on generateContentStream in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on generateContentStream in preview for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -681,9 +669,6 @@ describe('generateContent', () => {
       `sys test failure on generateContent for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on generateContent for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on generateContent for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -703,9 +688,6 @@ describe('generateContent', () => {
       `sys test failure on generateContent for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on generateContent for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on generateContent for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -725,9 +707,6 @@ describe('generateContent', () => {
       `sys test failure on generateContent in preview for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on generateContent in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on generateContent in preview for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -747,9 +726,6 @@ describe('generateContent', () => {
       `sys test failure on generateContent in preview for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on generateContent in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on generateContent in preview for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -918,9 +894,6 @@ describe('sendMessage', () => {
       `sys test failure on sendMessage for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on sendMessage for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on sendMessage for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -940,9 +913,6 @@ describe('sendMessage', () => {
       `sys test failure on sendMessage for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on sendMessage for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on sendMessage for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -961,9 +931,6 @@ describe('sendMessage', () => {
       `sys test failure on sendMessage in preview for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on sendMessage in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on sendMessage in preview for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -983,9 +950,6 @@ describe('sendMessage', () => {
       `sys test failure on sendMessage in preview for grounding metadata: ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on sendMessage in preview for grounding attributions: ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on sendMessage in preview for web search queries: ${groundingMetadata.webSearchQueries}`
       );
@@ -1189,9 +1153,6 @@ describe('sendMessageStream', () => {
       `sys test failure on groundingMetadata, ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on groundingMetadata.groundingAttributions, ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on groundingMetadata.webSearchQueries, ${groundingMetadata.webSearchQueries}`
       );
@@ -1211,9 +1172,6 @@ describe('sendMessageStream', () => {
       `sys test failure on groundingMetadata, ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on groundingMetadata.groundingAttributions, ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on groundingMetadata.webSearchQueries, ${groundingMetadata.webSearchQueries}`
       );
@@ -1232,9 +1190,6 @@ describe('sendMessageStream', () => {
       `sys test failure on groundingMetadata in preview, ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on groundingMetadata.groundingAttributions in preview, ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on groundingMetadata.webSearchQueries in preview, ${groundingMetadata.webSearchQueries}`
       );
@@ -1254,9 +1209,6 @@ describe('sendMessageStream', () => {
       `sys test failure on groundingMetadata in preview, ${groundingMetadata}`
     );
     if (groundingMetadata) {
-      expect(!!groundingMetadata.groundingAttributions).toBeTruthy(
-        `sys test failure on groundingMetadata.groundingAttributions in preview, ${groundingMetadata.groundingAttributions}`
-      );
       expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
         `sys test failure on groundingMetadata.webSearchQueries in preview, ${groundingMetadata.webSearchQueries}`
       );

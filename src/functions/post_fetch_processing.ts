@@ -295,7 +295,6 @@ function aggregateGroundingMetadataForCandidate(
   }
   const emptyGroundingMetadata: GroundingMetadata = {
     webSearchQueries: [],
-    groundingAttributions: [],
     retrievalQueries: [],
     groundingChunks: [],
     groundingSupports: [],
@@ -308,12 +307,6 @@ function aggregateGroundingMetadataForCandidate(
     groundingMetadataAggregated.webSearchQueries =
       groundingMetadataAggregated.webSearchQueries!.concat(
         groundingMetadataChunk.webSearchQueries
-      );
-  }
-  if (groundingMetadataChunk.groundingAttributions) {
-    groundingMetadataAggregated.groundingAttributions =
-      groundingMetadataAggregated.groundingAttributions!.concat(
-        groundingMetadataChunk.groundingAttributions
       );
   }
   if (groundingMetadataChunk.retrievalQueries) {

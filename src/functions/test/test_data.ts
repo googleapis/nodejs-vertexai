@@ -201,18 +201,6 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
         },
         groundingMetadata: {
           webSearchQueries: ['query for former chunk for first candidate'],
-          groundingAttributions: [
-            {
-              segment: {
-                endIndex: 421,
-              },
-              confidenceScore: 0.8585608,
-              web: {
-                uri: 'url for former chunk for first candidate',
-                title: 'title for former chunk for first candidate',
-              },
-            },
-          ],
           groundingChunks: [
             {
               web: {
@@ -273,18 +261,6 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
         },
         groundingMetadata: {
           webSearchQueries: ['query for former chunk for second candidate'],
-          groundingAttributions: [
-            {
-              segment: {
-                endIndex: 421,
-              },
-              confidenceScore: 0.8585608,
-              web: {
-                uri: 'url for former chunk for second candidate',
-                title: 'title for former chunk for second candidate',
-              },
-            },
-          ],
           groundingChunks: [
             {
               web: {
@@ -345,18 +321,6 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
         finishReason: 'STOP',
         groundingMetadata: {
           webSearchQueries: ['query for later chunk for first candidate'],
-          groundingAttributions: [
-            {
-              segment: {
-                endIndex: 421,
-              },
-              confidenceScore: 0.8585608,
-              web: {
-                uri: 'url for later chunk for first candidate',
-                title: 'title for later chunk for first candidate',
-              },
-            },
-          ],
           groundingChunks: [
             {
               web: {
@@ -387,18 +351,6 @@ export const STREAM_RESPONSE_CHUNKS_1: GenerateContentResponse[] = [
         finishReason: 'STOP',
         groundingMetadata: {
           webSearchQueries: ['query for later chunk for second candidate'],
-          groundingAttributions: [
-            {
-              segment: {
-                endIndex: 421,
-              },
-              confidenceScore: 0.8585608,
-              web: {
-                uri: 'url for later chunk for second candidate',
-                title: 'title for later chunk for second candidate',
-              },
-            },
-          ],
           groundingChunks: [
             {
               web: {
@@ -480,24 +432,6 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
             'query for former chunk for first candidate',
             'query for later chunk for first candidate',
           ],
-          groundingAttributions: [
-            {
-              segment: {endIndex: 421},
-              confidenceScore: 0.8585608,
-              web: {
-                uri: 'url for former chunk for first candidate',
-                title: 'title for former chunk for first candidate',
-              },
-            },
-            {
-              segment: {endIndex: 421},
-              confidenceScore: 0.8585608,
-              web: {
-                uri: 'url for later chunk for first candidate',
-                title: 'title for later chunk for first candidate',
-              },
-            },
-          ],
           retrievalQueries: [],
           groundingChunks: [
             {
@@ -576,24 +510,6 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_1: GenerateContentRespon
           webSearchQueries: [
             'query for former chunk for second candidate',
             'query for later chunk for second candidate',
-          ],
-          groundingAttributions: [
-            {
-              segment: {endIndex: 421},
-              confidenceScore: 0.8585608,
-              web: {
-                uri: 'url for former chunk for second candidate',
-                title: 'title for former chunk for second candidate',
-              },
-            },
-            {
-              segment: {endIndex: 421},
-              confidenceScore: 0.8585608,
-              web: {
-                uri: 'url for later chunk for second candidate',
-                title: 'title for later chunk for second candidate',
-              },
-            },
           ],
           retrievalQueries: [],
           groundingChunks: [
