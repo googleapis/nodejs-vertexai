@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.5.0...v1.6.0) (2024-08-26)
+
+
+### Features
+
+* Add responseSchema to GenerateContentRequest. ([d3715da](https://github.com/googleapis/nodejs-vertexai/commit/d3715daa793fda8063b379d16a0bf844a90b4087))
+* Add tool config ([f618132](https://github.com/googleapis/nodejs-vertexai/commit/f618132b7b5f9a05ba32b5968ccec14c9c18baaa))
+
 ## [1.5.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.4.1...v1.5.0) (2024-08-21)
 
 
