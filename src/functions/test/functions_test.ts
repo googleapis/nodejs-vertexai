@@ -31,6 +31,7 @@ import {
   SafetySetting,
   StreamGenerateContentResult,
   Tool,
+  ToolConfig,
 } from '../../types';
 import {constants} from '../../util';
 import {countTokens} from '../count_tokens';
@@ -192,6 +193,8 @@ const TEST_MULTIPART_MESSAGE_BASE64 = [
 ];
 
 const TEST_EMPTY_TOOLS: Tool[] = [];
+
+const TEST_EMPTY_TOOL_CONFIG: ToolConfig = {};
 
 const TEST_TOOLS_WITH_FUNCTION_DECLARATION: Tool[] = [
   {
@@ -366,6 +369,7 @@ describe('generateContent', () => {
         TEST_GENERATION_CONFIG,
         TEST_SAFETY_SETTINGS,
         TEST_EMPTY_TOOLS,
+        TEST_EMPTY_TOOL_CONFIG,
         TEST_REQUEST_OPTIONS
       )
     ).toBeRejected();
@@ -684,6 +688,7 @@ describe('generateContentStream', () => {
         TEST_GENERATION_CONFIG,
         TEST_SAFETY_SETTINGS,
         TEST_EMPTY_TOOLS,
+        TEST_EMPTY_TOOL_CONFIG,
         TEST_REQUEST_OPTIONS
       )
     ).toBeRejected();

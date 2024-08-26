@@ -123,6 +123,7 @@ export class VertexAI {
       safetySettings: modelParams.safetySettings,
       generationConfig: modelParams.generationConfig,
       tools: modelParams.tools,
+      toolConfig: modelParams.toolConfig,
       requestOptions: requestOptions,
       systemInstruction: modelParams.systemInstruction,
     };
@@ -193,6 +194,7 @@ class VertexAIPreview {
       safetySettings: modelParams.safetySettings,
       generationConfig: modelParams.generationConfig,
       tools: modelParams.tools,
+      toolConfig: modelParams.toolConfig,
       requestOptions: requestOptions,
       systemInstruction: modelParams.systemInstruction,
     };

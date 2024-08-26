@@ -35,6 +35,7 @@ import {
   StreamGenerateContentResult,
   Tool,
 } from '../types/content';
+import {ToolConfig} from '../types';
 import {ClientError, GoogleAuthError} from '../types/errors';
 import {constants} from '../util';
 
@@ -57,6 +58,7 @@ export class ChatSession {
   private readonly generationConfig?: GenerationConfig;
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
+  private readonly toolConfig?: ToolConfig;
   private readonly apiEndpoint?: string;
   private readonly systemInstruction?: Content;
 
@@ -80,6 +82,7 @@ export class ChatSession {
     this.generationConfig = request.generationConfig;
     this.safetySettings = request.safetySettings;
     this.tools = request.tools;
+    this.toolConfig = request.toolConfig;
     this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
     if (request.systemInstruction) {
@@ -130,6 +133,7 @@ export class ChatSession {
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
       tools: this.tools,
+      toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
     };
 
@@ -142,6 +146,7 @@ export class ChatSession {
       this.generationConfig,
       this.safetySettings,
       this.tools,
+      this.toolConfig,
       this.requestOptions
     ).catch(e => {
       throw e;
@@ -213,6 +218,7 @@ export class ChatSession {
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
       tools: this.tools,
+      toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
     };
 
@@ -225,6 +231,7 @@ export class ChatSession {
       this.generationConfig,
       this.safetySettings,
       this.tools,
+      this.toolConfig,
       this.requestOptions
     ).catch(e => {
       throw e;
@@ -261,6 +268,7 @@ export class ChatSessionPreview {
   private readonly generationConfig?: GenerationConfig;
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
+  private readonly toolConfig?: ToolConfig;
   private readonly apiEndpoint?: string;
   private readonly systemInstruction?: Content;
 
@@ -284,6 +292,7 @@ export class ChatSessionPreview {
     this.generationConfig = request.generationConfig;
     this.safetySettings = request.safetySettings;
     this.tools = request.tools;
+    this.toolConfig = request.toolConfig;
     this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
     if (request.systemInstruction) {
@@ -333,6 +342,7 @@ export class ChatSessionPreview {
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
       tools: this.tools,
+      toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
     };
 
@@ -345,6 +355,7 @@ export class ChatSessionPreview {
       this.generationConfig,
       this.safetySettings,
       this.tools,
+      this.toolConfig,
       this.requestOptions
     ).catch(e => {
       throw e;
@@ -417,6 +428,7 @@ export class ChatSessionPreview {
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
       tools: this.tools,
+      toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
     };
 
@@ -429,6 +441,7 @@ export class ChatSessionPreview {
       this.generationConfig,
       this.safetySettings,
       this.tools,
+      this.toolConfig,
       this.requestOptions
     ).catch(e => {
       throw e;

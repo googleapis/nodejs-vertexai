@@ -17,6 +17,7 @@
 
 // @ts-nocheck
 import {GoogleAuth, GoogleAuthOptions} from 'google-auth-library';
+import {ToolConfig} from './tool';
 import {SchemaType, Schema} from './common';
 
 /**
@@ -114,6 +115,8 @@ export declare interface GetGenerativeModelParams extends ModelParams {
   safetySettings?: SafetySetting[];
   /** Optional. The tools to use for generation. */
   tools?: Tool[];
+  /** Optional. This config is shared for all tools provided in the request. */
+  toolConfig?: ToolConfig;
   /** Optional. The request options to use for generation. */
   requestOptions?: RequestOptions;
   /**
@@ -145,6 +148,8 @@ export declare interface BaseModelParams {
   generationConfig?: GenerationConfig;
   /** Optional. Array of {@link Tool}. */
   tools?: Tool[];
+  /** Optional. This config is shared for all tools provided in the request. */
+  toolConfig?: ToolConfig;
   /**
    * Optional. The user provided system instructions for the model.
    * Note: only text should be used in parts of {@link Content}
@@ -1007,6 +1012,8 @@ export declare interface StartChatParams {
   generationConfig?: GenerationConfig;
   /** Optional. Array of {@link Tool}. */
   tools?: Tool[];
+  /** Optional. This config is shared for all tools provided in the request. */
+  toolConfig?: ToolConfig;
   /** Optional. The base Vertex AI endpoint to use for the request. */
   apiEndpoint?: string;
   /**

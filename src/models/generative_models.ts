@@ -39,6 +39,7 @@ import {
   StreamGenerateContentResult,
   Tool,
 } from '../types/content';
+import {ToolConfig} from '../types/tool';
 import {ClientError, GoogleAuthError} from '../types/errors';
 import {constants} from '../util';
 
@@ -55,6 +56,7 @@ export class GenerativeModel {
   private readonly generationConfig?: GenerationConfig;
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
+  private readonly toolConfig?: ToolConfig;
   private readonly requestOptions?: RequestOptions;
   private readonly systemInstruction?: Content;
   private readonly project: string;
@@ -77,6 +79,7 @@ export class GenerativeModel {
     this.generationConfig = getGenerativeModelParams.generationConfig;
     this.safetySettings = getGenerativeModelParams.safetySettings;
     this.tools = getGenerativeModelParams.tools;
+    this.toolConfig = getGenerativeModelParams.toolConfig;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
     if (getGenerativeModelParams.systemInstruction) {
       this.systemInstruction = formulateSystemInstructionIntoContent(
@@ -140,6 +143,7 @@ export class GenerativeModel {
       this.generationConfig,
       this.safetySettings,
       this.tools,
+      this.toolConfig,
       this.requestOptions
     );
   }
@@ -186,6 +190,7 @@ export class GenerativeModel {
       this.generationConfig,
       this.safetySettings,
       this.tools,
+      this.toolConfig,
       this.requestOptions
     );
   }
@@ -251,6 +256,7 @@ export class GenerativeModel {
       publisherModelEndpoint: this.publisherModelEndpoint,
       resourcePath: this.resourcePath,
       tools: this.tools,
+      toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
     };
 
@@ -280,6 +286,7 @@ export class GenerativeModelPreview {
   private readonly generationConfig?: GenerationConfig;
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
+  private readonly toolConfig?: ToolConfig;
   private readonly requestOptions?: RequestOptions;
   private readonly systemInstruction?: Content;
   private readonly project: string;
@@ -302,6 +309,7 @@ export class GenerativeModelPreview {
     this.generationConfig = getGenerativeModelParams.generationConfig;
     this.safetySettings = getGenerativeModelParams.safetySettings;
     this.tools = getGenerativeModelParams.tools;
+    this.toolConfig = getGenerativeModelParams.toolConfig;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
     if (getGenerativeModelParams.systemInstruction) {
       this.systemInstruction = formulateSystemInstructionIntoContent(
@@ -364,6 +372,7 @@ export class GenerativeModelPreview {
       this.generationConfig,
       this.safetySettings,
       this.tools,
+      this.toolConfig,
       this.requestOptions
     );
   }
@@ -410,6 +419,7 @@ export class GenerativeModelPreview {
       this.generationConfig,
       this.safetySettings,
       this.tools,
+      this.toolConfig,
       this.requestOptions
     );
   }

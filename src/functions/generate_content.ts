@@ -25,6 +25,7 @@ import {
   Tool,
 } from '../types/content';
 import {GoogleGenerativeAIError} from '../types/errors';
+import {ToolConfig} from '../types/tool';
 import * as constants from '../util/constants';
 
 import {
@@ -55,6 +56,7 @@ export async function generateContent(
   generationConfig?: GenerationConfig,
   safetySettings?: SafetySetting[],
   tools?: Tool[],
+  toolConfig?: ToolConfig,
   requestOptions?: RequestOptions
 ): Promise<GenerateContentResult> {
   request = formatContentRequest(request, generationConfig, safetySettings);
@@ -73,6 +75,7 @@ export async function generateContent(
     generationConfig: request.generationConfig ?? generationConfig,
     safetySettings: request.safetySettings ?? safetySettings,
     tools: request.tools ?? tools,
+    toolConfig: request.toolConfig ?? toolConfig,
   };
   const response: Response | undefined = await postRequest({
     region: location,
@@ -108,6 +111,7 @@ export async function generateContentStream(
   generationConfig?: GenerationConfig,
   safetySettings?: SafetySetting[],
   tools?: Tool[],
+  toolConfig?: ToolConfig,
   requestOptions?: RequestOptions
 ): Promise<StreamGenerateContentResult> {
   request = formatContentRequest(request, generationConfig, safetySettings);
@@ -125,6 +129,7 @@ export async function generateContentStream(
     generationConfig: request.generationConfig ?? generationConfig,
     safetySettings: request.safetySettings ?? safetySettings,
     tools: request.tools ?? tools,
+    toolConfig: request.toolConfig ?? toolConfig,
   };
   const response = await postRequest({
     region: location,

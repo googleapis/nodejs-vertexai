@@ -17,5 +17,6 @@
 
 export * from './content';
 export * from './errors';
+export * from './tool';
 export * from './common';
 export {GenerateContentResponseHandler} from './generate_content_response_handler';
