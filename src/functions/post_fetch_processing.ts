@@ -26,7 +26,11 @@ import {
   StreamGenerateContentResult,
 } from '../types/content';
 import {constants} from '../util';
-import {ClientErrorApi, GoogleGenerativeAIError} from '../types/errors';
+import {
+  ClientError,
+  GoogleApiError,
+  GoogleGenerativeAIError,
+} from '../types/errors';
 
 export async function throwErrorIfNotOK(response: Response | undefined) {
   if (response === undefined) {
@@ -40,7 +44,14 @@ export async function throwErrorIfNotOK(response: Response | undefined) {
       errorBody
     )}`;
     if (status >= 400 && status < 500) {
-      throw new ClientErrorApi(errorMessage, errorBody.error);
+      const error = new ClientError(errorMessage);
+      error.cause = new GoogleApiError(
+        errorBody.error.message,
+        errorBody.error.code,
+        errorBody.error.status,
+        errorBody.error.details
+      );
+      throw error;
     }
     throw new GoogleGenerativeAIError(errorMessage);
   }

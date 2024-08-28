@@ -24,6 +24,7 @@
     "test:src": "jasmine build/src/functions/test/*.js build/src/models/test/*.js --reporter=test/spec/reporter.js",
     "test:system": "jasmine build/system_test/*.js --reporter=test/spec/reporter.js",
     "lint": "gts lint",
+    "format": "gts fix",
     "clean-js-files": "find . -type f -name \"*.js\" -exec rm -f {} +",
     "clean-js-map-files": "find . -type f -name \"*.js.map\" -exec rm -f {} +",
     "postpack": "if [ \"${CLEAN}\" ]; then npm run clean-after-pack; fi",

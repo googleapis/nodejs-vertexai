@@ -17,7 +17,6 @@
 
 import {
   ClientError,
-  ClientErrorApi,
   CountTokensRequest,
   FinishReason,
   FunctionDeclarationSchemaType,
@@ -25,6 +24,7 @@ import {
   GenerateContentResponse,
   GenerateContentResponseHandler,
   GenerateContentResult,
+  GoogleApiError,
   HarmBlockThreshold,
   HarmCategory,
   HarmProbability,
@@ -345,9 +345,10 @@ describe('countTokens', () => {
       error = e;
     }
 
-    expect(error).toBeInstanceOf(ClientErrorApi);
     expect(error).toBeInstanceOf(ClientError);
-    expect(error.apiError).toEqual(body.error);
+    expect(error.cause).toBeInstanceOf(GoogleApiError);
+    expect(error.cause.code).toBe(400);
+    expect(error.cause.status).toEqual('INVALID_ARGUMENT');
   });
 });
 

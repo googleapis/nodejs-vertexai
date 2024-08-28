@@ -15,13 +15,6 @@
  * limitations under the License.
  */
 
-// https://cloud.google.com/apis/design/errors
-type ErrorModal = {
-  code: number;
-  message: string;
-  status: string;
-};
-
 /**
  * GoogleAuthError is thrown when there is authentication issue with the request
  */
@@ -47,14 +40,28 @@ class ClientError extends Error {
 }
 
 /**
- * ClientErrorApi is thrown when http 4XX status is received.
- * The [error object](https://cloud.google.com/apis/design/errors) can be found on the `apiError` property.
- * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses
+ * Google API Error Details object that may be included in an error response.
+ * See https://cloud.google.com/apis/design/errors
+ * @public
  */
-class ClientErrorApi extends ClientError {
+export declare interface ErrorDetails {
+  '@type'?: string;
+  reason?: string;
+  domain?: string;
+  metadata?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+/**
+ * GoogleApiError is thrown when http 4XX status is received.
+ * See https://cloud.google.com/apis/design/errors
+ */
+class GoogleApiError extends Error {
   constructor(
     message: string,
-    public readonly apiError: ErrorModal
+    public code?: number,
+    public status?: string,
+    public errorDetails?: ErrorDetails[]
   ) {
     super(message);
   }
@@ -96,8 +103,7 @@ function constructErrorMessage(
 
 export {
   ClientError,
-  ClientErrorApi,
-  ErrorModal,
+  GoogleApiError,
   GoogleAuthError,
   GoogleGenerativeAIError,
   IllegalArgumentError,
