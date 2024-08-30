@@ -43,6 +43,34 @@ class ClientError extends Error {
 }
 
 /**
+ * Google API Error Details object that may be included in an error response.
+ * See https://cloud.google.com/apis/design/errors
+ * @public
+ */
+export declare interface ErrorDetails {
+  '@type'?: string;
+  reason?: string;
+  domain?: string;
+  metadata?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+/**
+ * GoogleApiError is thrown when http 4XX status is received.
+ * See https://cloud.google.com/apis/design/errors
+ */
+class GoogleApiError extends Error {
+  constructor(
+    message: string,
+    public code?: number,
+    public status?: string,
+    public errorDetails?: ErrorDetails[]
+  ) {
+    super(message);
+  }
+}
+
+/**
  * GoogleGenerativeAIError is thrown when http response is not ok and status code is not 4XX
  * For details please refer to https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
  */
@@ -78,6 +106,7 @@ function constructErrorMessage(
 
 export {
   ClientError,
+  GoogleApiError,
   GoogleAuthError,
   GoogleGenerativeAIError,
   IllegalArgumentError,

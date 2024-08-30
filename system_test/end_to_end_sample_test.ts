@@ -24,6 +24,7 @@ import {
   TextPart,
   VertexAI,
   GenerateContentResponseHandler,
+  GoogleApiError,
 } from '../src';
 import {FunctionDeclarationSchemaType} from '../src/types';
 
@@ -345,6 +346,10 @@ describe('generateContentStream', () => {
         `sys test failure on generateContentStream when having bad request
           got wrong error message: ${e.message}`
       );
+      expect(e.cause).toBeInstanceOf(GoogleApiError);
+      expect(e.cause.code).toBe(400);
+      expect(e.cause.status).toBe('INVALID_ARGUMENT');
+      expect(e.cause.message).toBeInstanceOf(String);
     });
   });
   it('in preview should throw ClientError when having invalid input', async () => {
@@ -368,6 +373,10 @@ describe('generateContentStream', () => {
           `sys test failure on generateContentStream in preview when having bad request
           got wrong error message: ${e.message}`
         );
+        expect(e.cause).toBeInstanceOf(GoogleApiError);
+        expect(e.cause.code).toBe(400);
+        expect(e.cause.status).toBe('INVALID_ARGUMENT');
+        expect(e.cause.message).toBeInstanceOf(String);
       });
   });
 
