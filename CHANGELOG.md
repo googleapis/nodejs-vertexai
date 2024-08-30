@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.6.0...v1.7.0) (2024-08-30)
+
+
+### Features
+
+* Add GoogleApi error in ClientError.cause ([d5c67bd](https://github.com/googleapis/nodejs-vertexai/commit/d5c67bdbb7d40f0c8eecca505c90bac21e4fe36d))
+
 ## [1.6.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.5.0...v1.6.0) (2024-08-26)
 
 
