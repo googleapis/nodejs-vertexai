@@ -26,7 +26,7 @@ import {
   VertexInit,
 } from './types/content';
 import {GoogleAuthError, IllegalArgumentError} from './types/errors';
-
+import * as Resources from './resources';
 /**
  * The `VertexAI` class is the base class for authenticating to Vertex AI.
  * To use Vertex AI's generative AI models, use the `getGenerativeModel` method.
@@ -149,6 +149,9 @@ class VertexAIPreview {
   private readonly googleAuth: GoogleAuth;
   private readonly apiEndpoint?: string;
 
+  private readonly apiClient: Resources.ApiClient;
+  readonly cachedContents: Resources.CachedContents;
+
   /**
    * @constructor
    * @param project - The Google Cloud project to use for the request
@@ -174,6 +177,14 @@ class VertexAIPreview {
     this.location = location;
     this.googleAuth = googleAuth;
     this.apiEndpoint = apiEndpoint;
+
+    this.apiClient = new Resources.ApiClient(
+      this.project,
+      this.location,
+      'v1beta1',
+      this.googleAuth
+    );
+    this.cachedContents = new Resources.CachedContents(this.apiClient);
   }
 
   /**

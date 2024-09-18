@@ -1061,3 +1061,90 @@ export interface RequestOptions {
    */
   customHeaders?: Headers;
 }
+
+/**
+ * A resource used in LLM queries for users to explicitly specify
+ * what to cache and how to cache.
+ */
+export interface CachedContent {
+  /**
+   * Immutable. Identifier. The server-generated resource name of the cached content.
+   * Format: projects/{project}/locations/{location}/cachedContents/{cached_content}
+   */
+  name?: string;
+
+  /** Optional. Immutable. The user-generated meaningful display name of the cached content. */
+  displayName?: string;
+
+  /**
+   * Immutable. The name of the publisher model to use for cached content.
+   * Format: projects/{project}/locations/{location}/publishers/{publisher}/models/{model}
+   */
+  model?: string;
+
+  /** Developer set system instruction. Currently, text only. */
+  systemInstruction?: Content;
+
+  /** Optional. Input only. Immutable. The content to cache. */
+  contents?: Content[];
+
+  /** Optional. Input only. Immutable. A list of `Tools` the model may use to generate the next response. */
+  tools?: Tool[];
+
+  /** Optional. Input only. Immutable. Tool config. This config is shared for all tools. */
+  toolConfig?: ToolConfig;
+
+  /**
+   * Output only. Creatation time of the cache entry.
+   * Format: google-datetime. See {@link https://cloud.google.com/docs/discovery/type-format}
+   */
+  createTime?: string;
+
+  /**
+   * Output only. When the cache entry was last updated in UTC time.
+   * Format: google-datetime. See {@link https://cloud.google.com/docs/discovery/type-format}
+   */
+  updateTime?: string;
+
+  /** Output only. Metadata on the usage of the cached content. */
+  usageMetadata?: CachedContentUsageMetadata;
+
+  /**
+   * Timestamp of when this resource is considered expired.
+   * This is *always* provided on output, regardless of what was sent on input.
+   */
+  expireTime?: string;
+
+  /**
+   * Input only. The TTL seconds for this resource. The expiration time
+   * is computed: now + TTL.
+   * Format: google-duration. See {@link https://cloud.google.com/docs/discovery/type-format}
+   */
+  ttl?: string;
+}
+
+/** Metadata on the usage of the cached content. */
+export interface CachedContentUsageMetadata {
+  /** Total number of tokens that the cached content consumes. */
+  totalTokenCount?: number;
+
+  /** Number of text characters. */
+  textCount?: number;
+
+  /** Number of images. */
+  imageCount?: number;
+
+  /** Duration of video in seconds. */
+  videoDurationSeconds?: number;
+
+  /** Duration of audio in seconds. */
+  audioDurationSeconds?: number;
+}
+
+/** Response with a list of CachedContents. */
+export interface ListCachedContentsResponse {
+  /** List of cached contents. */
+  cachedContents?: CachedContent[];
+  /** A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages. */
+  nextPageToken?: string;
+}
