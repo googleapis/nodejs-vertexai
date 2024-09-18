@@ -62,6 +62,12 @@ export declare interface GenerateContentRequest extends BaseModelParams {
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
+
+  /**
+   * Optional. The name of the cached content used as context to serve the prediction.
+   * This is the name of a `CachedContent` and not the cache object itself.
+   */
+  cachedContent?: string;
 }
 
 /**
@@ -136,6 +142,13 @@ export declare interface ModelParams extends BaseModelParams {
    * @example "gemini-1.0-pro".
    */
   model: string;
+
+  /**
+   * Optional. The cached content used as context to serve the prediction.
+   * Note: only used in explicit caching, where users can have control over caching
+   * (e.g. what content to cache) and enjoy guaranteed cost savings.
+   */
+  cachedContent?: CachedContent;
 }
 
 /**
@@ -1021,6 +1034,11 @@ export declare interface StartChatParams {
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
+  /**
+   * Optional. The name of the cached content used as context to serve the prediction.
+   * This is the name of a `CachedContent` and not the cache object itself.
+   */
+  cachedContent?: string;
 }
 
 /**
@@ -1083,7 +1101,7 @@ export interface CachedContent {
   model?: string;
 
   /** Developer set system instruction. Currently, text only. */
-  systemInstruction?: Content;
+  systemInstruction?: Content | string;
 
   /** Optional. Input only. Immutable. The content to cache. */
   contents?: Content[];

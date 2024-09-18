@@ -1347,6 +1347,7 @@ describe('GenerativeModelPreview generateContent', () => {
           },
         ],
       },
+      cachedContent: undefined,
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
@@ -1386,6 +1387,7 @@ describe('GenerativeModelPreview generateContent', () => {
           },
         ],
       },
+      cachedContent: undefined,
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
@@ -1425,6 +1427,7 @@ describe('GenerativeModelPreview generateContent', () => {
           },
         ],
       },
+      cachedContent: undefined,
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
@@ -1464,6 +1467,7 @@ describe('GenerativeModelPreview generateContent', () => {
           },
         ],
       },
+      cachedContent: undefined,
     };
     await modelWithSystemInstruction.generateContent(req);
     // @ts-ignore
@@ -2117,6 +2121,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
           },
         ],
       },
+      cachedContent: undefined,
     };
     await modelWithSystemInstruction.generateContentStream(req);
     // @ts-ignore
@@ -2156,6 +2161,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
           },
         ],
       },
+      cachedContent: undefined,
     };
     await modelWithSystemInstruction.generateContentStream(req);
     // @ts-ignore

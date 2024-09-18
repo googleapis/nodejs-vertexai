@@ -18,13 +18,14 @@
 /* tslint:disable */
 import {GoogleAuth} from 'google-auth-library';
 
-import {formulateSystemInstructionIntoContent} from './util';
+import {formulateSystemInstructionIntoContent} from '../functions/util';
 import {countTokens} from '../functions/count_tokens';
 import {
   generateContent,
   generateContentStream,
 } from '../functions/generate_content';
 import {
+  CachedContent,
   Content,
   CountTokensRequest,
   CountTokensResponse,
@@ -295,6 +296,7 @@ export class GenerativeModelPreview {
   private readonly publisherModelEndpoint: string;
   private readonly resourcePath: string;
   private readonly apiEndpoint?: string;
+  private readonly cachedContent?: CachedContent;
 
   /**
    * @constructor
@@ -310,6 +312,7 @@ export class GenerativeModelPreview {
     this.safetySettings = getGenerativeModelParams.safetySettings;
     this.tools = getGenerativeModelParams.tools;
     this.toolConfig = getGenerativeModelParams.toolConfig;
+    this.cachedContent = getGenerativeModelParams.cachedContent;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
     if (getGenerativeModelParams.systemInstruction) {
       this.systemInstruction = formulateSystemInstructionIntoContent(
@@ -358,11 +361,13 @@ export class GenerativeModelPreview {
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
     request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest =
-      formulateSystemInstructionIntoGenerateContentRequest(
+    const formulatedRequest = {
+      ...formulateSystemInstructionIntoGenerateContentRequest(
         request,
         this.systemInstruction
-      );
+      ),
+      cachedContent: this.cachedContent?.name,
+    };
     return generateContent(
       this.location,
       this.resourcePath,
@@ -405,11 +410,13 @@ export class GenerativeModelPreview {
     request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
     request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest =
-      formulateSystemInstructionIntoGenerateContentRequest(
+    const formulatedRequest = {
+      ...formulateSystemInstructionIntoGenerateContentRequest(
         request,
         this.systemInstruction
-      );
+      ),
+      cachedContent: this.cachedContent?.name,
+    };
     return generateContentStream(
       this.location,
       this.resourcePath,
@@ -486,6 +493,7 @@ export class GenerativeModelPreview {
       resourcePath: this.resourcePath,
       tools: this.tools,
       systemInstruction: this.systemInstruction,
+      cachedContent: this.cachedContent?.name,
     };
 
     if (request) {
@@ -497,8 +505,22 @@ export class GenerativeModelPreview {
       startChatRequest.tools = request.tools ?? this.tools;
       startChatRequest.systemInstruction =
         request.systemInstruction ?? this.systemInstruction;
+      startChatRequest.cachedContent =
+        request.cachedContent ?? this.cachedContent?.name;
     }
     return new ChatSessionPreview(startChatRequest, this.requestOptions);
+  }
+
+  getModelName(): string {
+    return this.model;
+  }
+
+  getCachedContent(): CachedContent | undefined {
+    return this.cachedContent;
+  }
+
+  getSystemInstruction(): Content | undefined {
+    return this.systemInstruction;
   }
 }
 

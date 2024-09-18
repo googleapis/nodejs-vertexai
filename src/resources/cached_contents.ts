@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
+import {formulateSystemInstructionIntoContent} from '../functions/util';
 import {ClientError} from '../types';
 import {CachedContent, ListCachedContentsResponse} from '../types';
 import {ApiClient} from './shared/api_client';
 
-export function camelToSnake(str: string): string {
+function camelToSnake(str: string): string {
   return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 }
 
-export class CachedContentsClient {
+class CachedContentsClient {
   constructor(readonly apiClient: ApiClient) {}
 
   create(cachedContent: CachedContent): Promise<CachedContent> {
@@ -110,6 +111,11 @@ export function inferFullResourceName(
   );
 }
 
+/**
+ * Infers the full model name based on the provided project, location, and model.
+ *
+ * @internal
+ */
 export function inferModelName(
   project: string,
   location: string,
@@ -145,6 +151,9 @@ export class CachedContents {
   create(cachedContent: CachedContent): Promise<CachedContent> {
     const curatedCachedContent = {
       ...cachedContent,
+      systemInstruction: cachedContent.systemInstruction
+        ? formulateSystemInstructionIntoContent(cachedContent.systemInstruction)
+        : undefined,
       model: inferModelName(
         this.client.apiClient.project,
         this.client.apiClient.location,
@@ -174,6 +183,9 @@ export class CachedContents {
     }
     const curatedCachedContent = {
       ...cachedContent,
+      systemInstruction: cachedContent.systemInstruction
+        ? formulateSystemInstructionIntoContent(cachedContent.systemInstruction)
+        : undefined,
       name: inferFullResourceName(
         this.client.apiClient.project,
         this.client.apiClient.location,

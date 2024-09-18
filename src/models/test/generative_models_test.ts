@@ -107,16 +107,25 @@ const BASE_MODEL_PARAMS = {
   auth: FAKE_GOOGLE_AUTH,
 };
 
-describe('GenerativeModel', () => {
+describe('', () => {
   const modelTestCases = [
-    (param: GetGenerativeModelParams) => new GenerativeModel(param),
-    (param: GetGenerativeModelParams) => new GenerativeModelPreview(param),
+    {
+      createModel: (param: GetGenerativeModelParams) =>
+        new GenerativeModel(param),
+      isPreviewModel: false,
+    },
+    {
+      createModel: (param: GetGenerativeModelParams) =>
+        new GenerativeModelPreview(param),
+      isPreviewModel: true,
+    },
   ];
 
   describe('generate method should call internal function', () => {
     const testCases = [
       {
         name: 'when passed a string prompt',
+        previewOnly: false,
         modelParams: {
           ...BASE_MODEL_PARAMS,
           model: MODEL_NAME,
@@ -127,7 +136,7 @@ describe('GenerativeModel', () => {
           location: LOCATION,
           resourcePath: RESOURCE_PATH,
           token: jasmine.any(Promise),
-          request: TEST_USER_CONTENT_MESSAGE,
+          request: jasmine.objectContaining(TEST_USER_CONTENT_MESSAGE),
           apiEndpoint: undefined,
           generationConfig: undefined,
           safetySettings: undefined,
@@ -138,6 +147,7 @@ describe('GenerativeModel', () => {
       },
       {
         name: 'when passed a object prompt',
+        previewOnly: false,
         modelParams: {
           ...BASE_MODEL_PARAMS,
           model: MODEL_NAME,
@@ -148,7 +158,7 @@ describe('GenerativeModel', () => {
           location: LOCATION,
           resourcePath: RESOURCE_PATH,
           token: jasmine.any(Promise),
-          request: TEST_USER_CONTENT_MESSAGE,
+          request: jasmine.objectContaining(TEST_USER_CONTENT_MESSAGE),
           apiEndpoint: undefined,
           generationConfig: undefined,
           safetySettings: undefined,
@@ -159,6 +169,7 @@ describe('GenerativeModel', () => {
       },
       {
         name: 'when the model name has `models` prefix',
+        previewOnly: false,
         modelParams: {
           ...BASE_MODEL_PARAMS,
           model: 'models/model-name',
@@ -169,7 +180,7 @@ describe('GenerativeModel', () => {
           location: LOCATION,
           resourcePath: RESOURCE_PATH,
           token: jasmine.any(Promise),
-          request: TEST_USER_CONTENT_MESSAGE,
+          request: jasmine.objectContaining(TEST_USER_CONTENT_MESSAGE),
           apiEndpoint: undefined,
           generationConfig: undefined,
           safetySettings: undefined,
@@ -180,6 +191,7 @@ describe('GenerativeModel', () => {
       },
       {
         name: 'when the model name has `project` prefix',
+        previewOnly: false,
         modelParams: {
           ...BASE_MODEL_PARAMS,
           model:
@@ -192,7 +204,7 @@ describe('GenerativeModel', () => {
           resourcePath:
             'projects/my-project/locations/my-location/models/my-tuned-model',
           token: jasmine.any(Promise),
-          request: TEST_USER_CONTENT_MESSAGE,
+          request: jasmine.objectContaining(TEST_USER_CONTENT_MESSAGE),
           apiEndpoint: undefined,
           generationConfig: undefined,
           safetySettings: undefined,
@@ -203,6 +215,7 @@ describe('GenerativeModel', () => {
       },
       {
         name: 'when pass params at model constructor level',
+        previewOnly: false,
         modelParams: {
           ...BASE_MODEL_PARAMS,
           model: MODEL_NAME,
@@ -220,10 +233,44 @@ describe('GenerativeModel', () => {
           location: LOCATION,
           resourcePath: RESOURCE_PATH,
           token: jasmine.any(Promise),
-          request: {
+          request: jasmine.objectContaining({
             systemInstruction: TEST_SYSTEM_INSTRUCTION,
             ...TEST_USER_CONTENT_MESSAGE,
-          },
+          }),
+          apiEndpoint: TEST_ENDPOINT_BASE_PATH,
+          generationConfig: TEST_GENERATION_CONFIG,
+          safetySettings: TEST_SAFETY_SETTINGS,
+          tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+          toolConfig: TEST_TOOLS_CONFIG,
+          requestOptions: TEST_REQUEST_OPTIONS,
+        }),
+      },
+      {
+        name: 'when pass params at model constructor level',
+        previewOnly: true,
+        modelParams: {
+          ...BASE_MODEL_PARAMS,
+          model: MODEL_NAME,
+          googleAuth: FAKE_GOOGLE_AUTH,
+          apiEndpoint: TEST_ENDPOINT_BASE_PATH,
+          generationConfig: TEST_GENERATION_CONFIG,
+          systemInstruction: TEST_SYSTEM_INSTRUCTION,
+          tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+          toolConfig: TEST_TOOLS_CONFIG,
+          safetySettings: TEST_SAFETY_SETTINGS,
+          requestOptions: TEST_REQUEST_OPTIONS,
+          cachedContent: {name: 'cachedContentName'},
+        },
+        generateContentParams: TEST_CHAT_MESSSAGE_TEXT,
+        expectedParams: Object.values({
+          location: LOCATION,
+          resourcePath: RESOURCE_PATH,
+          token: jasmine.any(Promise),
+          request: jasmine.objectContaining({
+            systemInstruction: TEST_SYSTEM_INSTRUCTION,
+            ...TEST_USER_CONTENT_MESSAGE,
+            cachedContent: 'cachedContentName',
+          }),
           apiEndpoint: TEST_ENDPOINT_BASE_PATH,
           generationConfig: TEST_GENERATION_CONFIG,
           safetySettings: TEST_SAFETY_SETTINGS,
@@ -234,6 +281,7 @@ describe('GenerativeModel', () => {
       },
       {
         name: 'when pass params at model method level',
+        previewOnly: false,
         modelParams: {
           ...BASE_MODEL_PARAMS,
           model: MODEL_NAME,
@@ -258,14 +306,14 @@ describe('GenerativeModel', () => {
           location: LOCATION,
           resourcePath: RESOURCE_PATH,
           token: jasmine.any(Promise),
-          request: {
+          request: jasmine.objectContaining({
             ...TEST_USER_CONTENT_MESSAGE,
             systemInstruction: TEST_SYSTEM_INSTRUCTION,
             generationConfig: TEST_GENERATION_CONFIG,
             tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
             toolConfig: TEST_TOOLS_CONFIG,
             safetySettings: TEST_SAFETY_SETTINGS,
-          },
+          }),
           apiEndpoint: TEST_ENDPOINT_BASE_PATH,
           generationConfig: undefined,
           tools: undefined,
@@ -276,6 +324,7 @@ describe('GenerativeModel', () => {
       },
       {
         name: 'when set system instruction(wrong role) in model constructor',
+        previewOnly: false,
         modelParams: {
           ...BASE_MODEL_PARAMS,
           model: MODEL_NAME,
@@ -287,10 +336,10 @@ describe('GenerativeModel', () => {
           location: LOCATION,
           resourcePath: RESOURCE_PATH,
           token: jasmine.any(Promise),
-          request: {
+          request: jasmine.objectContaining({
             systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
             ...TEST_USER_CONTENT_MESSAGE,
-          },
+          }),
           apiEndpoint: undefined,
           generationConfig: undefined,
           safetySettings: undefined,
@@ -301,6 +350,7 @@ describe('GenerativeModel', () => {
       },
       {
         name: 'when set system instruction(wrong role) in model method level',
+        previewOnly: false,
         modelParams: {
           ...BASE_MODEL_PARAMS,
           model: MODEL_NAME,
@@ -314,10 +364,10 @@ describe('GenerativeModel', () => {
           location: LOCATION,
           resourcePath: RESOURCE_PATH,
           token: jasmine.any(Promise),
-          request: {
+          request: jasmine.objectContaining({
             ...TEST_USER_CONTENT_MESSAGE,
             systemInstruction: TEST_SYSTEM_INSTRUCTION_WRONG_ROLE,
-          },
+          }),
           apiEndpoint: undefined,
           generationConfig: undefined,
           safetySettings: undefined,
@@ -326,15 +376,22 @@ describe('GenerativeModel', () => {
           requestOptions: {},
         }),
       },
-    ].flatMap(testCase =>
-      modelTestCases.map(createModel => ({
-        createModel,
-        ...testCase,
-      }))
-    );
+    ]
+      .flatMap(testCase =>
+        modelTestCases.map((modelTestCase: any) => ({
+          createModel: modelTestCase.createModel,
+          isPreviewModel: modelTestCase.isPreviewModel,
+          ...testCase,
+        }))
+      )
+      .filter(
+        (testCase: any) =>
+          !testCase.previewOnly ||
+          (testCase.previewOnly && testCase.isPreviewModel)
+      );
 
     testCases.forEach((testCase: any) => {
-      it(`${testCase.name} when call generateContent`, async () => {
+      it(`${testCase.name} when call generateContent (isPreviewModel=${testCase.isPreviewModel})`, async () => {
         const model = testCase.createModel(testCase.modelParams);
         const generateContentSpy: jasmine.Spy = spyOn(
           GenerateContentFunctions,
@@ -348,20 +405,26 @@ describe('GenerativeModel', () => {
       });
     });
 
-    testCases.forEach((testCase: any) => {
-      it(`${testCase.name} when call generateContentStream`, async () => {
-        const model = testCase.createModel(testCase.modelParams);
-        const generateContentSpy: jasmine.Spy = spyOn(
-          GenerateContentFunctions,
-          'generateContentStream'
-        );
+    testCases
+      .filter(
+        (testCase: any) =>
+          !testCase.previewOnly ||
+          (testCase.previewOnly && testCase.isPreviewModel)
+      )
+      .forEach((testCase: any) => {
+        it(`${testCase.name} when call generateContentStream (isPreviewModel=${testCase.isPreviewModel})`, async () => {
+          const model = testCase.createModel(testCase.modelParams);
+          const generateContentSpy: jasmine.Spy = spyOn(
+            GenerateContentFunctions,
+            'generateContentStream'
+          );
 
-        await model.generateContentStream(testCase.generateContentParams);
+          await model.generateContentStream(testCase.generateContentParams);
 
-        const expectedParams = testCase.expectedParams;
-        expect(generateContentSpy).toHaveBeenCalledWith(...expectedParams);
+          const expectedParams = testCase.expectedParams;
+          expect(generateContentSpy).toHaveBeenCalledWith(...expectedParams);
+        });
       });
-    });
   });
 
   describe('countTokens method should call internal function', () => {
@@ -401,12 +464,19 @@ describe('GenerativeModel', () => {
           requestOptions: TEST_REQUEST_OPTIONS,
         }),
       },
-    ].flatMap(testCase =>
-      modelTestCases.map(createModel => ({
-        createModel,
-        ...testCase,
-      }))
-    );
+    ]
+      .flatMap(testCase =>
+        modelTestCases.map((modelTestCase: any) => ({
+          createModel: modelTestCase.createModel,
+          isPreviewModel: modelTestCase.isPreviewModel,
+          ...testCase,
+        }))
+      )
+      .filter(
+        (testCase: any) =>
+          !testCase.previewOnly ||
+          (testCase.previewOnly && testCase.isPreviewModel)
+      );
     testCases.forEach((testCase: any) => {
       it(`${testCase.name} when call countTokens`, async () => {
         const model = testCase.createModel(testCase.modelParams);

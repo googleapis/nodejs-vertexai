@@ -80,7 +80,9 @@ export function validateGenerationConfig(
 export function getApiVersion(
   request: GenerateContentRequest
 ): 'v1' | 'v1beta1' {
-  return hasVertexRagStore(request) ? 'v1beta1' : 'v1';
+  return hasVertexRagStore(request) || hasCachedContent(request)
+    ? 'v1beta1'
+    : 'v1';
 }
 
 export function hasVertexRagStore(request: GenerateContentRequest): boolean {
@@ -92,6 +94,10 @@ export function hasVertexRagStore(request: GenerateContentRequest): boolean {
     }
   }
   return false;
+}
+
+function hasCachedContent(request: GenerateContentRequest): boolean {
+  return !!request.cachedContent;
 }
 
 export function hasVertexAISearch(request: GenerateContentRequest): boolean {
