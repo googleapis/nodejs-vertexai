@@ -73,7 +73,10 @@ class CachedContentsClient {
     pageToken?: string
   ): Promise<ListCachedContentsResponse> {
     const url = new URL(
-      this.apiClient.getBaseUrl() + '/' + this.apiClient.getBaseResourePath()
+      this.apiClient.getBaseUrl() +
+        '/' +
+        this.apiClient.getBaseResourePath() +
+        '/cachedContents'
     );
     if (pageSize) url.searchParams.append('pageSize', String(pageSize));
     if (pageToken) url.searchParams.append('pageToken', pageToken);
