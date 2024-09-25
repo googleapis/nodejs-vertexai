@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.7.0...v1.8.0) (2024-09-18)
+
+
+### Features
+
+* Add CachedContent resource to Vertex AI client library. ([8c8963e](https://github.com/googleapis/nodejs-vertexai/commit/8c8963e5c62bf491d5a47f7c5a0db64fafaea0cd))
+* Implement cached_content with generateContent methods ([c604b8c](https://github.com/googleapis/nodejs-vertexai/commit/c604b8caf4138537b38bdf9f57e8086d55216981))
+
 ## [1.7.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.6.0...v1.7.0) (2024-08-30)
 
 
