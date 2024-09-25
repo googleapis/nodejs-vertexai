@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/googleapis/nodejs-vertexai/compare/v1.8.0...v1.8.1) (2024-09-25)
+
+
+### Bug Fixes
+
+* Fix cached contents list url ([2c4b769](https://github.com/googleapis/nodejs-vertexai/commit/2c4b7692e369385e5cd82a9b753d037d31e4e8ce))
+
 ## [1.8.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.7.0...v1.8.0) (2024-09-18)
 
 
