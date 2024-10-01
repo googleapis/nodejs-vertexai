@@ -271,6 +271,7 @@ export class ChatSessionPreview {
   private readonly toolConfig?: ToolConfig;
   private readonly apiEndpoint?: string;
   private readonly systemInstruction?: Content;
+  private readonly cachedContent?: string;
 
   async getHistory(): Promise<Content[]> {
     return Promise.resolve(this.historyInternal);
@@ -295,6 +296,7 @@ export class ChatSessionPreview {
     this.toolConfig = request.toolConfig;
     this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
+    this.cachedContent = request.cachedContent;
     if (request.systemInstruction) {
       this.systemInstruction = formulateSystemInstructionIntoContent(
         request.systemInstruction
@@ -423,20 +425,21 @@ export class ChatSessionPreview {
   ): Promise<StreamGenerateContentResult> {
     const newContent: Content[] =
       formulateNewContentFromSendMessageRequest(request);
-    const generateContentrequest: GenerateContentRequest = {
+    const generateContentRequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
       tools: this.tools,
       toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
+      cachedContent: this.cachedContent,
     };
 
     const streamGenerateContentResultPromise = generateContentStream(
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      generateContentrequest,
+      generateContentRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,

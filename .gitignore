@@ -6,3 +6,5 @@ docs/
 
 # Ignore files generated automatically.
 test/spec/sponge_log.xml
+
+.idea/

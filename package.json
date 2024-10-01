@@ -26,7 +26,6 @@
     "lint": "gts lint",
     "clean-js-files": "find . -type f -name \"*.js\" -exec rm -f {} +",
     "clean-js-map-files": "find . -type f -name \"*.js.map\" -exec rm -f {} +",
-    "postpack": "if [ \"${CLEAN}\" ]; then npm run clean-after-pack; fi",
     "cover": "npm run cover:unit && npm run cover:integration && npm run cover:report",
     "cover:unit": "nyc npm run test",
     "cover:integration": "nyc --no-clean npm run test:system",
