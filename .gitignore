@@ -7,4 +7,5 @@ docs/
 # Ignore files generated automatically.
 test/spec/sponge_log.xml
 
+# Ignore JetBrains IDE files
 .idea/

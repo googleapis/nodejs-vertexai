@@ -73,8 +73,6 @@ export async function postRequest({
     necessaryHeaders,
     requestOptions
   );
-  console.log('vertexEndpoint', vertexEndpoint);
-  console.log('json.stringify vertexai data', JSON.stringify(data));
   return fetch(vertexEndpoint, {
     ...getFetchOptions(requestOptions),
     method: 'POST',
