@@ -1,9 +1,9 @@
 # Changelog
 
-## [1.8.2](https://github.com/googleapis/nodejs-vertexai/compare/v1.8.1...v1.8.2) (2024-10-08)
+## [1.9.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.8.1...v1.8.2) (2024-10-08)
 
 
-### Bug Fixes
+### Features
 
 * Add Context Cache support for ChatSessionPreview class ([#433](https://github.com/googleapis/nodejs-vertexai/issues/433)) ([f8a3bdf](https://github.com/googleapis/nodejs-vertexai/commit/f8a3bdf55b6ee694a8fd41df29bdba54d7f8cdc2))
 
