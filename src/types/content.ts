@@ -459,6 +459,8 @@ export declare interface UsageMetadata {
   candidatesTokenCount?: number;
   /** Optional. Total number of tokens. */
   totalTokenCount?: number;
+  /** Optional. Number of tokens in the cached content. */
+  cachedContentTokenCount?: number;
 }
 
 /**
