@@ -420,8 +420,8 @@ export interface FunctionCallPart extends BasePart {
 
 /**
  * A datatype containing media that is part of a multi-part {@link Content}
- * message. A `Part` is a union type of {@link TextPart}, {@link
- * InlineDataPart}, {@link FileDataPart}, and {@link FunctionResponsePart}. A
+ * message. A `Part` is a union type of {@link TextPart}, {@link InlineDataPart},
+ * {@link FileDataPart}, and {@link FunctionResponsePart}. A
  * `Part` has one of the following mutually exclusive fields:
  * 1. text
  * 2. inlineData
