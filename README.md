@@ -5,7 +5,7 @@
 
 The Vertex AI SDK for Node.js lets you use the Vertex AI Gemini API to build
 AI-powered features and applications. Both TypeScript and JavaScript are supported.
-For the sake of brevity, the sample code in this document is written in JavaScript.
+The sample code in this document is written in JavaScript.
 
 For detailed samples using the Vertex AI Node.js SDK, see the
 [samples repository](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/main/generative-ai/snippets)
