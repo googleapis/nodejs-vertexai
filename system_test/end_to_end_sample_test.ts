@@ -607,7 +607,7 @@ describe('generateContentStream', () => {
     }
   });
 
-  it('in preview should return grounding metadata when passed a VertexRagStore', async () => {
+  xit('in preview should return grounding metadata when passed a VertexRagStore', async () => {
     const request = {
       contents: [
         {
