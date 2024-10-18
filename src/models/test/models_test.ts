@@ -248,11 +248,11 @@ async function* testGeneratorMultiStream(): AsyncGenerator<GenerateContentRespon
 }
 
 class ChatSessionForTest extends ChatSession {
-  public override readonly requestOptions?: RequestOptions;
+  public declare readonly requestOptions?: RequestOptions;
 }
 
 class ChatSessionPreviewForTest extends ChatSessionPreview {
-  public override readonly requestOptions?: RequestOptions;
+  public declare readonly requestOptions?: RequestOptions;
 }
 
 describe('GenerativeModel startChat', () => {
