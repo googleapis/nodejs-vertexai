@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* fix: extend UsageMetadata interface ([#433](https://github.com/googleapis/nodejs-vertexai/issues/439))
+* extend UsageMetadata interface ([#439](https://github.com/googleapis/nodejs-vertexai/issues/439))
 
 
 ### Documentation
