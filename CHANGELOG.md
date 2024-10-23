@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.9.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.9.0...v1.9.1) (2024-10-23)
+## [1.9.1](https://github.com/googleapis/nodejs-vertexai/compare/v1.9.0...v1.9.1) (2024-10-23)
 
 
 ### Bug Fixes
