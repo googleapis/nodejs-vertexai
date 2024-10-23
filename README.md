@@ -468,6 +468,7 @@ async function generateContent() {
 
 generateContent();
 ```
+
 ## FAQ
 ### What if I want to specify authentication options instead of using default options?
 
