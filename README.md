@@ -42,8 +42,8 @@ npm install @google-cloud/vertexai
 ## Initialize the `VertexAI` class
 
 To use the Vertex AI SDK for Node.js, create an instance of `VertexAI` by
-passing it your Google Cloud project ID and location. Then create a reference to
-a generative model.
+passing it your Google Cloud project ID and location. Then create an instance of
+the GenerativeModel class using the VertexAI class methods.
 
 ```javascript
 const {
