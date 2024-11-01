@@ -36,7 +36,6 @@ import {
 import {postRequest} from './post_request';
 import {
   formatContentRequest,
-  validateGenerateContentRequest,
   validateGenerationConfig,
   hasVertexRagStore,
   getApiVersion,
@@ -60,8 +59,6 @@ export async function generateContent(
   requestOptions?: RequestOptions
 ): Promise<GenerateContentResult> {
   request = formatContentRequest(request, generationConfig, safetySettings);
-
-  validateGenerateContentRequest(request);
 
   if (request.generationConfig) {
     request.generationConfig = validateGenerationConfig(
@@ -116,7 +113,6 @@ export async function generateContentStream(
   requestOptions?: RequestOptions
 ): Promise<StreamGenerateContentResult> {
   request = formatContentRequest(request, generationConfig, safetySettings);
-  validateGenerateContentRequest(request);
 
   if (request.generationConfig) {
     request.generationConfig = validateGenerationConfig(
