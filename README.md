@@ -55,8 +55,8 @@ const {
 
 const project = 'your-cloud-project';
 const location = 'us-central1';
-const textModel =  'gemini-1.0-pro';
-const visionModel = 'gemini-1.0-pro-vision';
+const textModel =  'gemini-1.5-flash';
+const visionModel = 'gemini-1.5-flash';
 
 const vertexAI = new VertexAI({project: project, location: location});
 
