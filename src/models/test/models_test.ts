@@ -180,9 +180,7 @@ const TEST_TOOLS_WITH_FUNCTION_DECLARATION: Tool[] = [
 ];
 const TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL: GoogleSearchRetrievalTool[] = [
   {
-    googleSearchRetrieval: {
-      disableAttribution: false,
-    },
+    googleSearchRetrieval: {},
   },
 ];
 const TEST_GCS_FILENAME = 'gs://test_bucket/test_image.jpeg';

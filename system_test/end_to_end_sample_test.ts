@@ -86,9 +86,7 @@ const TOOLS_WITH_FUNCTION_DECLARATION: FunctionDeclarationsTool[] = [
 
 const TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL: GoogleSearchRetrievalTool[] = [
   {
-    googleSearchRetrieval: {
-      disableAttribution: false,
-    },
+    googleSearchRetrieval: {},
   },
 ];
 

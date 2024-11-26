@@ -973,7 +973,39 @@ export declare interface Retrieval {
  * Tool to retrieve public web data for grounding, powered by Google.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export declare interface GoogleSearchRetrieval {}
+export declare interface GoogleSearchRetrieval {
+  /**
+   * Specifies the dynamic retrieval configuration for the given source.
+   * {@link DynamicRetrievalConfig}
+   */
+  dynamicRetrievalConfig?: DynamicRetrievalConfig;
+}
+
+/**
+ * Harm categories that will block the content.
+ */
+export enum DynamicRetrievalConfigMode {
+  /** Always trigger retrieval. */
+  MODE_UNSPECIFIED = 'MODE_UNSPECIFIED',
+  /** Run retrieval only when system decides it is necessary. */
+  MODE_DYNAMIC = 'MODE_DYNAMIC',
+}
+
+/**
+ * Describes the options to customize dynamic retrieval.
+ */
+export declare interface DynamicRetrievalConfig {
+  /**
+   * The mode of the predictor to be used in dynamic retrieval.
+   * {@link DynamicRetrievalConfigMode}
+   */
+  mode?: DynamicRetrievalConfigMode;
+  /**
+   * The threshold to be used in dynamic retrieval. If not set,
+   * a system default value is used.
+   */
+  dynamicThreshold?: number;
+}
 
 /**
  * Retrieve from Vertex AI Search datastore for grounding.
