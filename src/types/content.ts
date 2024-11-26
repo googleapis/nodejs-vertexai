@@ -191,6 +191,8 @@ export interface ResponseSchema extends Schema {}
  * Configuration options for model generation and outputs.
  */
 export declare interface GenerationConfig {
+  /** Optional. If true, the timestamp of the audio will be included in the response. */
+  audioTimestamp?: boolean;
   /** Optional. Number of candidates to generate. */
   candidateCount?: number;
   /** Optional. Stop sequences. */
