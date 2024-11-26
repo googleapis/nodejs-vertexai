@@ -969,11 +969,26 @@ export declare interface Retrieval {
   disableAttribution?: boolean;
 }
 
+export enum Mode {
+  MODE_UNSPECIFIED = 'MODE_UNSPECIFIED',
+  MODE_DYNAMIC = 'MODE_DYNAMIC',
+}
+
+/** Describes the options to customize dynamic retrieval. */
+export declare interface DynamicRetrievalConfig {
+  /** Optional. The threshold to be used in dynamic retrieval. If not set, a system default value is used. */
+  dynamicThreshold?: number;
+  /** The mode of the predictor to be used in dynamic retrieval. */
+  mode?: Mode;
+}
+
 /**
  * Tool to retrieve public web data for grounding, powered by Google.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export declare interface GoogleSearchRetrieval {}
+export declare interface GoogleSearchRetrieval {
+  /** Specifies the dynamic retrieval configuration for the given source. */
+  dynamicRetrievalConfig?: DynamicRetrievalConfig;
+}
 
 /**
  * Retrieve from Vertex AI Search datastore for grounding.

@@ -29,6 +29,7 @@ import {
   HarmBlockThreshold,
   HarmCategory,
   HarmProbability,
+  Mode,
   RequestOptions,
   SafetyRating,
   SafetySetting,
@@ -181,7 +182,10 @@ const TEST_TOOLS_WITH_FUNCTION_DECLARATION: Tool[] = [
 const TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL: GoogleSearchRetrievalTool[] = [
   {
     googleSearchRetrieval: {
-      disableAttribution: false,
+      dynamicRetrievalConfig: {
+        dynamicThreshold: 0.5,
+        mode: Mode.MODE_DYNAMIC,
+      },
     },
   },
 ];
@@ -332,7 +336,7 @@ describe('GenerativeModel startChat', () => {
       history: TEST_USER_CHAT_MESSAGE,
     });
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"disableAttribution":false}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
     await chat.sendMessage(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -357,7 +361,7 @@ describe('GenerativeModel startChat', () => {
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"disableAttribution":false}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
     await chat.sendMessage(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -550,7 +554,7 @@ describe('GenerativeModelPreview startChat', () => {
       history: TEST_USER_CHAT_MESSAGE,
     });
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"disableAttribution":false}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
     await chat.sendMessage(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -575,7 +579,7 @@ describe('GenerativeModelPreview startChat', () => {
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"disableAttribution":false}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
     await chat.sendMessage(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -1161,7 +1165,7 @@ describe('GenerativeModel generateContent', () => {
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     };
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"disableAttribution":false}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
     await model.generateContent(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -1638,7 +1642,7 @@ describe('GenerativeModelPreview generateContent', () => {
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     };
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"disableAttribution":false}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
     await model.generateContent(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -1942,7 +1946,7 @@ describe('GenerativeModel generateContentStream', () => {
     };
     spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"disableAttribution":false}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
     await model.generateContent(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -2259,7 +2263,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
     };
     spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"disableAttribution":false}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
     await model.generateContent(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
