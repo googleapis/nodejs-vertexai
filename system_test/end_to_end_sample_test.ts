@@ -25,6 +25,7 @@ import {
   VertexAI,
   GenerateContentResponseHandler,
   GoogleApiError,
+  Mode,
 } from '../src';
 import {FunctionDeclarationSchemaType} from '../src/types';
 
@@ -87,7 +88,10 @@ const TOOLS_WITH_FUNCTION_DECLARATION: FunctionDeclarationsTool[] = [
 const TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL: GoogleSearchRetrievalTool[] = [
   {
     googleSearchRetrieval: {
-      disableAttribution: false,
+      dynamicRetrievalConfig: {
+        dynamicThreshold: 0.2,
+        mode: Mode.MODE_DYNAMIC,
+      },
     },
   },
 ];
