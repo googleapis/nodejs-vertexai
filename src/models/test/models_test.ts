@@ -1018,15 +1018,6 @@ describe('GenerativeModel generateContent', () => {
     expect(resp).toEqual(expectedResult);
   });
 
-  it('raises an error when passed an invalid GCS URI', async () => {
-    const req: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE,
-    };
-    await expectAsync(model.generateContent(req)).toBeRejectedWithError(
-      URIError
-    );
-  });
-
   it('returns a GenerateContentResponse when passed safetySettings and generationConfig', async () => {
     const req: GenerateContentRequest = {
       contents: TEST_USER_CHAT_MESSAGE,
@@ -1494,15 +1485,6 @@ describe('GenerativeModelPreview generateContent', () => {
     };
     const resp = await model.generateContent(req);
     expect(resp).toEqual(expectedResult);
-  });
-
-  it('raises an error when passed an invalid GCS URI', async () => {
-    const req: GenerateContentRequest = {
-      contents: TEST_USER_CHAT_MESSAGE_WITH_INVALID_GCS_FILE,
-    };
-    await expectAsync(model.generateContent(req)).toBeRejectedWithError(
-      URIError
-    );
   });
 
   it('returns a GenerateContentResponse when passed safetySettings and generationConfig', async () => {

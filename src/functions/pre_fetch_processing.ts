@@ -44,21 +44,6 @@ export function formatContentRequest(
 export function validateGenerateContentRequest(
   request: GenerateContentRequest
 ) {
-  const contents = request.contents;
-  for (const content of contents) {
-    for (const part of content.parts) {
-      if ('fileData' in part) {
-        // @ts-ignore
-        const uri = part['fileData']['fileUri'];
-        if (!uri.startsWith('gs://')) {
-          throw new URIError(
-            `Found invalid Google Cloud Storage URI ${uri}, Google Cloud Storage URIs must start with gs://`
-          );
-        }
-      }
-    }
-  }
-
   if (hasVertexAISearch(request) && hasVertexRagStore(request)) {
     throw new ClientError(
       'Found both vertexAiSearch and vertexRagStore field are set in tool. Either set vertexAiSearch or vertexRagStore.'
