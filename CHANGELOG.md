@@ -10,7 +10,7 @@
 
 
 ### Bug Fixes
-
+* fix: extend UsageMetadata interface ([#439](https://github.com/googleapis/nodejs-vertexai/pull/439))
 * Add Context Cache support for ChatSessionPreview class ([#433](https://github.com/googleapis/nodejs-vertexai/issues/433)) ([df6f040](https://github.com/googleapis/nodejs-vertexai/commit/df6f0406fbaa72cd64a8f51015e51fee88518db8))
 * Add Context Cache support for ChatSessionPreview class ([#433](https://github.com/googleapis/nodejs-vertexai/issues/433)) ([a3beab1](https://github.com/googleapis/nodejs-vertexai/commit/a3beab1f30540749fbeba40a13327ea078dbed69))
 * include cachedContent in generate request ([#469](https://github.com/googleapis/nodejs-vertexai/issues/469)) ([a16b9d4](https://github.com/googleapis/nodejs-vertexai/commit/a16b9d48df1e3d3b8784604de08f28167f3e85bf))
@@ -19,8 +19,7 @@
 
 ### Documentation
 
-* update README ([e9705cb](https://github.com/googleapis/nodejs-vertexai/commit/e9705cbd44154435a6ad32979e80005a8eef137d))
-* update README ([a052132](https://github.com/googleapis/nodejs-vertexai/commit/a052132b91bad5ee9a42c6fe2057afceab36b542))
+* Fix link in Part JSDoc([#440](https://github.com/googleapis/nodejs-vertexai/pull/440))
 
 
 ### Miscellaneous Chores
