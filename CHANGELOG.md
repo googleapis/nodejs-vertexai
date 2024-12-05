@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.9.2](https://github.com/googleapis/nodejs-vertexai/compare/v1.9.0...v1.9.2) (2024-12-05)
+
+
+### Features
+
+* add support for audioTimestamp in GenerationConfig ([#467](https://github.com/googleapis/nodejs-vertexai/issues/467)) ([598d955](https://github.com/googleapis/nodejs-vertexai/commit/598d95580fb8302bced40837b5c4bbebc84946cf))
+* enable dynamic retrieval for Google Search Retrieval grounding ([3f9eee6](https://github.com/googleapis/nodejs-vertexai/commit/3f9eee6589967164b8c1b86481468eaa5347afbd))
+
+
+### Bug Fixes
+
+* Add Context Cache support for ChatSessionPreview class ([#433](https://github.com/googleapis/nodejs-vertexai/issues/433)) ([df6f040](https://github.com/googleapis/nodejs-vertexai/commit/df6f0406fbaa72cd64a8f51015e51fee88518db8))
+* Add Context Cache support for ChatSessionPreview class ([#433](https://github.com/googleapis/nodejs-vertexai/issues/433)) ([a3beab1](https://github.com/googleapis/nodejs-vertexai/commit/a3beab1f30540749fbeba40a13327ea078dbed69))
+* include cachedContent in generate request ([#469](https://github.com/googleapis/nodejs-vertexai/issues/469)) ([a16b9d4](https://github.com/googleapis/nodejs-vertexai/commit/a16b9d48df1e3d3b8784604de08f28167f3e85bf))
+* remove restriction on gsc uri for file data part. ([e694c44](https://github.com/googleapis/nodejs-vertexai/commit/e694c441b456ea7bfb3d09f89c17d71641ef355c))
+
+
+### Documentation
+
+* update README ([e9705cb](https://github.com/googleapis/nodejs-vertexai/commit/e9705cbd44154435a6ad32979e80005a8eef137d))
+* update README ([a052132](https://github.com/googleapis/nodejs-vertexai/commit/a052132b91bad5ee9a42c6fe2057afceab36b542))
+
+
+### Miscellaneous Chores
+
+* release as 1.9.2 ([d54a91b](https://github.com/googleapis/nodejs-vertexai/commit/d54a91bce84980ddfa90b38318a789787912833a))
+
 ## [1.9.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.8.1...v1.9.0) (2024-10-14)
 
 
