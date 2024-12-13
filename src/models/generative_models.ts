@@ -268,6 +268,7 @@ export class GenerativeModel {
       startChatRequest.safetySettings =
         request.safetySettings ?? this.safetySettings;
       startChatRequest.tools = request.tools ?? this.tools;
+      startChatRequest.toolConfig = request.toolConfig ?? this.toolConfig;
       startChatRequest.apiEndpoint = request.apiEndpoint ?? this.apiEndpoint;
       startChatRequest.systemInstruction =
         request.systemInstruction ?? this.systemInstruction;
@@ -492,6 +493,7 @@ export class GenerativeModelPreview {
       publisherModelEndpoint: this.publisherModelEndpoint,
       resourcePath: this.resourcePath,
       tools: this.tools,
+      toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
       cachedContent: this.cachedContent?.name,
     };
@@ -503,6 +505,7 @@ export class GenerativeModelPreview {
       startChatRequest.safetySettings =
         request.safetySettings ?? this.safetySettings;
       startChatRequest.tools = request.tools ?? this.tools;
+      startChatRequest.toolConfig = request.toolConfig ?? this.toolConfig;
       startChatRequest.systemInstruction =
         request.systemInstruction ?? this.systemInstruction;
       startChatRequest.cachedContent =

@@ -128,7 +128,7 @@ export class ChatSession {
   ): Promise<GenerateContentResult> {
     const newContent: Content[] =
       formulateNewContentFromSendMessageRequest(request);
-    const generateContentrequest: GenerateContentRequest = {
+    const generateContentRequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
       safetySettings: this.safetySettings,
       generationConfig: this.generationConfig,
@@ -141,7 +141,7 @@ export class ChatSession {
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      generateContentrequest,
+      generateContentRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
