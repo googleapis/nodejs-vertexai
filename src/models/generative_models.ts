@@ -297,7 +297,7 @@ export class GenerativeModelPreview {
   private readonly publisherModelEndpoint: string;
   private readonly resourcePath: string;
   private readonly apiEndpoint?: string;
-  private readonly cachedContent?: CachedContent;
+  private cachedContent?: CachedContent;
 
   /**
    * @constructor
