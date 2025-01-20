@@ -367,7 +367,7 @@ export class GenerativeModelPreview {
         request,
         this.systemInstruction
       ),
-      cachedContent: this.cachedContent?.name,
+      cachedContent: request.cachedContent,
     };
     return generateContent(
       this.location,
