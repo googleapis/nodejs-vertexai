@@ -1,7 +1,7 @@
 {
   "name": "@google-cloud/vertexai",
   "description": "Vertex Generative AI client for Node.js",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "license": "Apache-2.0",
   "author": "Google LLC",
   "engines": {
