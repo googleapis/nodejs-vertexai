@@ -1,12 +1,5 @@
 # Changelog
 
-## [1.9.3](https://github.com/googleapis/nodejs-vertexai/compare/v1.9.2...v1.9.3) (2025-01-31)
-
-
-### Bug Fixes
-
-* a typo in chat session and missed toolConfig on chat start ([b552fea](https://github.com/googleapis/nodejs-vertexai/commit/b552fea1aac80a6e471fd082dc35c40598d5d170))
-
 ## [1.9.2](https://github.com/googleapis/nodejs-vertexai/compare/v1.9.0...v1.9.2) (2024-12-13)
 
 
