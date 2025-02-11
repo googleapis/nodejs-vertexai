@@ -941,7 +941,7 @@ export declare interface GoogleSearchRetrievalTool {
   /**
    * Optional. Google Search retrieval tool for legacy models {@link GoogleSearchRetrieval}
    *
-   * For models prior to Gemini 1.5, use this field. For new models, use `googleSearch` instead.
+   * For models prior to Gemini 2.0 (i.e Gemini 1.5), use this field. For new models, use `googleSearch` instead.
    */
   googleSearchRetrieval?: GoogleSearchRetrieval;
 
