@@ -96,6 +96,12 @@ const TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL: GoogleSearchRetrievalTool[] = [
   },
 ];
 
+const TOOLS_WITH_GOOGLE_SEARCH: GoogleSearchRetrievalTool[] = [
+  {
+    googleSearch: {},
+  },
+];
+
 const TOOLS_WITH_RAG = [
   {
     retrieval: {
@@ -134,15 +140,16 @@ const vertexAI = new VertexAI({
   location: LOCATION,
 });
 
-const TEXT_MODEL_NAME = 'gemini-1.0-pro';
+const TEXT_MODEL_NAME = 'gemini-2.0-flash';
+const TEXT_MODEL_NAME_LEGACY = 'gemini-1.0-pro';
 const generativeTextModel = vertexAI.getGenerativeModel({
-  model: TEXT_MODEL_NAME,
+  model: TEXT_MODEL_NAME_LEGACY,
   generationConfig: {
     maxOutputTokens: 256,
   },
 });
 const generativeTextModelPreview = vertexAI.preview.getGenerativeModel({
-  model: TEXT_MODEL_NAME,
+  model: TEXT_MODEL_NAME_LEGACY,
   generationConfig: {
     maxOutputTokens: 256,
   },
@@ -534,13 +541,51 @@ describe('generateContentStream', () => {
       ).toEqual(functionCalls!);
     }
   });
-  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel - legacy', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
-      model: TEXT_MODEL_NAME,
+      model: TEXT_MODEL_NAME_LEGACY,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await generativeTextModel.generateContentStream({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = await result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContentStream for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContentStream for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const result = await generativeTextModel.generateContentStream({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = await result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContentStream for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContentStream for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('should return grounding metadata when passed GoogleSearchRetriever in generateContent - legacy', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME_LEGACY,
+    });
+    const result = await generativeTextModel.generateContentStream({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const response = await result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -559,7 +604,7 @@ describe('generateContentStream', () => {
     });
     const result = await generativeTextModel.generateContentStream({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
-      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
     });
     const response = await result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -572,13 +617,51 @@ describe('generateContentStream', () => {
       );
     }
   });
-  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel - legacy', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
-      model: TEXT_MODEL_NAME,
+      model: TEXT_MODEL_NAME_LEGACY,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await generativeTextModel.generateContentStream({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = await result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContentStream in preview for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContentStream in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const result = await generativeTextModel.generateContentStream({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = await result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContentStream in preview for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContentStream in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent - legacy', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME_LEGACY,
+    });
+    const result = await generativeTextModel.generateContentStream({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const response = await result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -597,7 +680,7 @@ describe('generateContentStream', () => {
     });
     const result = await generativeTextModel.generateContentStream({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
-      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
     });
     const response = await result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -610,7 +693,6 @@ describe('generateContentStream', () => {
       );
     }
   });
-
   xit('in preview should return grounding metadata when passed a VertexRagStore', async () => {
     const request = {
       contents: [
@@ -668,13 +750,51 @@ describe('generateContent', () => {
       )}`
     );
   });
-  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel - legacy', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
-      model: TEXT_MODEL_NAME,
+      model: TEXT_MODEL_NAME_LEGACY,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await generativeTextModel.generateContent({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContent for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContent for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const result = await generativeTextModel.generateContent({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContent for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContent for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('should return grounding metadata when passed GoogleSearchRetriever in generateContent - legacy', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME_LEGACY,
+    });
+    const result = await generativeTextModel.generateContent({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const response = result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -693,7 +813,7 @@ describe('generateContent', () => {
     });
     const result = await generativeTextModel.generateContent({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
-      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
     });
     const response = result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -706,13 +826,51 @@ describe('generateContent', () => {
       );
     }
   });
-  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel - legacy', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
-      model: TEXT_MODEL_NAME,
+      model: TEXT_MODEL_NAME_LEGACY,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await generativeTextModel.generateContent({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContent in preview for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContent in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const result = await generativeTextModel.generateContent({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+    });
+    const response = result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on generateContent in preview for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on generateContent in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in generateContent - legacy', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME_LEGACY,
+    });
+    const result = await generativeTextModel.generateContent({
+      contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const response = result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -731,7 +889,7 @@ describe('generateContent', () => {
     });
     const result = await generativeTextModel.generateContent({
       contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
-      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
     });
     const response = result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -894,12 +1052,49 @@ describe('sendMessage', () => {
     );
     expect((await chat.getHistory()).length).toBe(2);
   });
-  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel - legacy', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
-      model: TEXT_MODEL_NAME,
+      model: TEXT_MODEL_NAME_LEGACY,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessage('Why is the sky blue?');
+    const response = result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on sendMessage for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on sendMessage for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessage('Why is the sky blue?');
+    const response = result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on sendMessage for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on sendMessage for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('should return grounding metadata when passed GoogleSearchRetriever in startChat - legacy', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME_LEGACY,
+    });
+    const chat = generativeTextModel.startChat({
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -917,7 +1112,7 @@ describe('sendMessage', () => {
       model: TEXT_MODEL_NAME,
     });
     const chat = generativeTextModel.startChat({
-      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
     });
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
@@ -931,12 +1126,49 @@ describe('sendMessage', () => {
       );
     }
   });
-  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel - legacy', async () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
-      model: TEXT_MODEL_NAME,
+      model: TEXT_MODEL_NAME_LEGACY,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessage('Why is the sky blue?');
+    const response = result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on sendMessage in preview for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on sendMessage in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessage('Why is the sky blue?');
+    const response = result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on sendMessage in preview for grounding metadata: ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on sendMessage in preview for web search queries: ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat - legacy', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME_LEGACY,
+    });
+    const chat = generativeTextModel.startChat({
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -954,7 +1186,7 @@ describe('sendMessage', () => {
       model: TEXT_MODEL_NAME,
     });
     const chat = generativeTextModel.startChat({
-      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
     });
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
@@ -1153,9 +1385,9 @@ describe('sendMessageStream', () => {
       WEATHER_FORECAST
     );
   });
-  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel - legacy', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
-      model: TEXT_MODEL_NAME,
+      model: TEXT_MODEL_NAME_LEGACY,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const chat = generativeTextModel.startChat();
@@ -1171,9 +1403,27 @@ describe('sendMessageStream', () => {
       );
     }
   });
-  xit('should return grounding metadata when passed GoogleSearchRetriever in startChat', async () => {
+  xit('should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessageStream('Why is the sky blue?');
+    const response = await result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on groundingMetadata, ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on groundingMetadata.webSearchQueries, ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('should return grounding metadata when passed GoogleSearchRetriever in startChat - legacy', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
+      model: TEXT_MODEL_NAME_LEGACY,
     });
     const chat = generativeTextModel.startChat({
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
@@ -1190,12 +1440,68 @@ describe('sendMessageStream', () => {
       );
     }
   });
-  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
-    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+  xit('should return grounding metadata when passed GoogleSearchRetriever in startChat ', async () => {
+    const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
+    });
+    const chat = generativeTextModel.startChat({
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const result = await chat.sendMessageStream('Why is the sky blue?');
+    const response = await result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on groundingMetadata, ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on groundingMetadata.webSearchQueries, ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel - legacy', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME_LEGACY,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessageStream('Why is the sky blue?');
+    const response = await result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on groundingMetadata in preview, ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on groundingMetadata.webSearchQueries in preview, ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in getGenerativeModel', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const chat = generativeTextModel.startChat();
+    const result = await chat.sendMessageStream('Why is the sky blue?');
+    const response = await result.response;
+    const groundingMetadata = response.candidates![0].groundingMetadata;
+    expect(!!groundingMetadata).toBeTruthy(
+      `sys test failure on groundingMetadata in preview, ${groundingMetadata}`
+    );
+    if (groundingMetadata) {
+      expect(!!groundingMetadata.webSearchQueries).toBeTruthy(
+        `sys test failure on groundingMetadata.webSearchQueries in preview, ${groundingMetadata.webSearchQueries}`
+      );
+    }
+  });
+  xit('in preview should return grounding metadata when passed GoogleSearchRetriever in startChat - legacy', async () => {
+    const generativeTextModel = vertexAI.preview.getGenerativeModel({
+      model: TEXT_MODEL_NAME_LEGACY,
+    });
+    const chat = generativeTextModel.startChat({
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    });
     const result = await chat.sendMessageStream('Why is the sky blue?');
     const response = await result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -1213,7 +1519,7 @@ describe('sendMessageStream', () => {
       model: TEXT_MODEL_NAME,
     });
     const chat = generativeTextModel.startChat({
-      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
     });
     const result = await chat.sendMessageStream('Why is the sky blue?');
     const response = await result.response;

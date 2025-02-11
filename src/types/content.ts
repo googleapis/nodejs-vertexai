@@ -938,8 +938,19 @@ export declare interface RagResource {
  * Defines a retrieval tool that model can call to access external knowledge.
  */
 export declare interface GoogleSearchRetrievalTool {
-  /** Optional. {@link GoogleSearchRetrieval}. */
+  /**
+   * Optional. Google Search retrieval tool for legacy models {@link GoogleSearchRetrieval}
+   *
+   * For models prior to Gemini 1.5, use this field. For new models, use `googleSearch` instead.
+   */
   googleSearchRetrieval?: GoogleSearchRetrieval;
+
+  /**
+   * Optional. Google Search tool for Gemini 2.0 and later {@link GoogleSearch}
+   *
+   * For legacy models prior to Gemini 1.5, use `googleSearchRetrieval` instead. 
+   */
+  googleSearch?: GoogleSearch;
 }
 
 /** Defines a tool that model can call to access external knowledge. */
@@ -989,6 +1000,11 @@ export declare interface GoogleSearchRetrieval {
   /** Specifies the dynamic retrieval configuration for the given source. */
   dynamicRetrievalConfig?: DynamicRetrievalConfig;
 }
+
+/**
+ * Tool to retrieve public web data for grounding, powered by Google.
+ */
+export declare interface GoogleSearch {}
 
 /**
  * Retrieve from Vertex AI Search datastore for grounding.
