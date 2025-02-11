@@ -374,7 +374,7 @@ Grounding lets you connect model output to verifiable sources of information to
 reduce hallucination. You can specify Google Search or Vertex AI search as the
 data source for grounding.
 
-### Grounding using Google Search (Preview) - Legacy Models Prior to Gemini 2.0
+### Grounding using Google Search (Preview)
 
 ```javascript
 async function generateContentWithGoogleSearchGrounding() {
