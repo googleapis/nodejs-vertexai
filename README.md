@@ -55,8 +55,8 @@ const {
 
 const project = 'your-cloud-project';
 const location = 'us-central1';
-const textModel =  'gemini-1.5-flash';
-const visionModel = 'gemini-1.5-flash';
+const textModel =  'gemini-2.0-flash';
+const visionModel = 'gemini-2.0-flash';
 
 const vertexAI = new VertexAI({project: project, location: location});
 
@@ -386,14 +386,12 @@ async function generateContentWithGoogleSearchGrounding() {
     generationConfig: {maxOutputTokens: 256},
   });
 
-  const googleSearchRetrievalTool = {
-    googleSearchRetrieval: {
-      disableAttribution: false,
-    },
+  const googleSearchTool = {
+    googleSearch: {},
   };
   const result = await generativeModelPreview.generateContent({
     contents: [{role: 'user', parts: [{text: 'Why is the sky blue?'}]}],
-    tools: [googleSearchRetrievalTool],
+    tools: [googleSearchTool],
   })
   const response = result.response;
   const groundingMetadata = response.candidates[0].groundingMetadata;
