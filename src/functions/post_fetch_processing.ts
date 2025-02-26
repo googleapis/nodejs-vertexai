@@ -249,17 +249,21 @@ export function aggregateResponses(
         response.candidates[i].content.parts &&
         response.candidates[i].content.parts.length > 0
       ) {
+        const {parts} = aggregatedResponse.candidates[i].content;
         for (const part of response.candidates[i].content.parts) {
+          // NOTE: cannot have text and functionCall both in the same part.
+          // add functionCall(s) to new parts. When done, if the text is
+          // empty then remove the text part
           if (part.text) {
-            aggregatedResponse.candidates[i].content.parts[0].text += part.text;
+            parts[0].text += part.text;
           }
           if (part.functionCall) {
-            aggregatedResponse.candidates[i].content.parts[0].functionCall =
-              part.functionCall;
-            // the empty 'text' key should be removed if functionCall is in the
-            // response
-            delete aggregatedResponse.candidates[i].content.parts[0].text;
+            parts.push({functionCall: part.functionCall});
           }
+        }
+
+        if (parts.length > 1 && !parts[0].text) {
+          parts.shift();
         }
       }
       const groundingMetadataAggregated: GroundingMetadata | undefined =
