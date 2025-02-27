@@ -252,18 +252,13 @@ export function aggregateResponses(
         const {parts} = aggregatedResponse.candidates[i].content;
         for (const part of response.candidates[i].content.parts) {
           // NOTE: cannot have text and functionCall both in the same part.
-          // add functionCall(s) to new parts. When done, if the text is
-          // empty then remove the text part
+          // add functionCall(s) to new parts.
           if (part.text) {
             parts[0].text += part.text;
           }
           if (part.functionCall) {
             parts.push({functionCall: part.functionCall});
           }
-        }
-
-        if (parts.length > 1 && !parts[0].text) {
-          parts.shift();
         }
       }
       const groundingMetadataAggregated: GroundingMetadata | undefined =

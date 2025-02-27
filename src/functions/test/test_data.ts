@@ -911,9 +911,19 @@ export const STREAM_RESPONSE_CHUNKS_5: GenerateContentResponse[] = [
       {
         content: {
           parts: [
-            {text: 'chunk1Text1'},
             {functionCall: {name: 'fn', args: {a: 1}}},
-            {text: 'chunk1Text2'},
+            {text: 'chunk1Text1'},
+          ],
+        },
+      },
+    ],
+  },
+  {
+    candidates: [
+      {
+        content: {
+          parts: [
+            {text: 'chunk2Text1'},
           ],
         },
       },
@@ -929,7 +939,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_5: GenerateContentRespon
         content: {
           role: 'model',
           parts: [
-            {text: 'chunk1Text1chunk1Text2'},
+            {text: 'chunk1Text1chunk2Text1'},
             {functionCall: {name: 'fn', args: {a: 1}}},
           ],
         },
@@ -956,7 +966,9 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_6: GenerateContentRespon
         index: 0,
         content: {
           role: 'model',
-          parts: [{functionCall: {name: 'fn', args: {a: 1}}}],
+          parts: [
+            {text: ''},
+            {functionCall: {name: 'fn', args: {a: 1}}}],
         },
       },
     ],
