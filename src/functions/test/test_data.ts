@@ -967,7 +967,6 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_6: GenerateContentRespon
         content: {
           role: 'model',
           parts: [
-            {text: ''},
             {functionCall: {name: 'fn', args: {a: 1}}}],
         },
       },
