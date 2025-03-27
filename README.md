@@ -1,7 +1,7 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/%40google-cloud%2Fvertexai)](https://www.npmjs.com/package/@google-cloud/vertexai)
 [![Node Current](https://img.shields.io/node/v/%40google-cloud%2Fvertexai)](https://www.npmjs.com/package/@google-cloud/vertexai)
 
-> [!NOTE] A new Javascript/Typescript SDK, `google-genai`
+> [!NOTE] A new Javascript/Typescript SDK, `@google/genai`
 > ([github](https://github.com/googleapis/js-genai/tree/main)), is currently
 > available in a *experimental preview launch* - designed to work with Gemini
 > 2.0 features. and support both the Gemini API and the Vertex API.
