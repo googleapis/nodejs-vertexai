@@ -189,6 +189,11 @@ const TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL: GoogleSearchRetrievalTool[] = [
     },
   },
 ];
+const TOOLS_WITH_GOOGLE_SEARCH: GoogleSearchRetrievalTool[] = [
+  {
+    googleSearch: {},
+  },
+];
 const TEST_GCS_FILENAME = 'gs://test_bucket/test_image.jpeg';
 const TEST_MULTIPART_MESSAGE = [
   {
@@ -318,7 +323,7 @@ describe('GenerativeModel startChat', () => {
 
     expect(chat.requestOptions).toEqual(TEST_REQUEST_OPTIONS);
   });
-  it('pass tools to remote endpoint from GenerativeModel constructor', async () => {
+  it('pass tools to remote endpoint from GenerativeModel constructor - legacy', async () => {
     const expectedResult = TEST_MODEL_RESPONSE;
     const fetchResult = Promise.resolve(
       new Response(JSON.stringify(expectedResult), fetchResponseObj)
@@ -334,6 +339,55 @@ describe('GenerativeModel startChat', () => {
     });
     const chat = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(expectedBody);
+  });
+  it('pass tools to remote endpoint from GenerativeModel constructor', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearch":{}}]}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(expectedBody);
+  });
+  it('pass tools to remote endpoint from startChat - legacy', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const expectedBody =
       '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
@@ -358,10 +412,10 @@ describe('GenerativeModel startChat', () => {
     });
     const chat = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
-      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
     });
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearch":{}}]}';
     await chat.sendMessage(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -536,7 +590,7 @@ describe('GenerativeModelPreview startChat', () => {
 
     expect(chat.requestOptions).toEqual(TEST_REQUEST_OPTIONS);
   });
-  it('in preview, pass tools to remote endpoint from GenerativeModelPreview constructor', async () => {
+  it('in preview, pass tools to remote endpoint from GenerativeModelPreview constructor - legacy', async () => {
     const expectedResult = TEST_MODEL_RESPONSE;
     const fetchResult = Promise.resolve(
       new Response(JSON.stringify(expectedResult), fetchResponseObj)
@@ -552,6 +606,55 @@ describe('GenerativeModelPreview startChat', () => {
     });
     const chat = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(expectedBody);
+  });
+  it('in preview, pass tools to remote endpoint from GenerativeModelPreview constructor', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+    });
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearch":{}}]}';
+    await chat.sendMessage(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(expectedBody);
+  });
+  it('in preview, pass tools to remote endpoint from startChat - legacy', async () => {
+    const expectedResult = TEST_MODEL_RESPONSE;
+    const fetchResult = Promise.resolve(
+      new Response(JSON.stringify(expectedResult), fetchResponseObj)
+    );
+    const fetchSpy = spyOn(global, 'fetch').and.returnValue(fetchResult);
+    const req = 'How are you doing today?';
+    const model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    const chat = model.startChat({
+      history: TEST_USER_CHAT_MESSAGE,
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const expectedBody =
       '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
@@ -576,10 +679,10 @@ describe('GenerativeModelPreview startChat', () => {
     });
     const chat = model.startChat({
       history: TEST_USER_CHAT_MESSAGE,
-      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
     });
     const expectedBody =
-      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
+      '{"contents":[{"role":"user","parts":[{"text":"How are you doing today?"}]},{"role":"user","parts":[{"text":"How are you doing today?"}]}],"tools":[{"googleSearch":{}}]}';
     await chat.sendMessage(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -1141,7 +1244,7 @@ describe('GenerativeModel generateContent', () => {
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
     expect(actualBody).toEqual(expectedBody);
   });
-  it('pass tools to remote endpoint when tools are passed via generateContent', async () => {
+  it('pass tools to remote endpoint when tools are passed via generateContent - legacy', async () => {
     model = new GenerativeModel({
       model: 'gemini-pro',
       project: PROJECT,
@@ -1157,6 +1260,48 @@ describe('GenerativeModel generateContent', () => {
     };
     const expectedBody =
       '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
+    await model.generateContent(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(expectedBody);
+  });
+  it('pass tools to remote endpoint when tools are passed via generateContent - legacy', async () => {
+    model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+      ],
+      tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
+    };
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
+    await model.generateContent(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(expectedBody);
+  });
+  it('pass tools to remote endpoint when tools are passed via generateContent', async () => {
+    model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+      ],
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    };
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearch":{}}]}';
     await model.generateContent(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -1609,7 +1754,7 @@ describe('GenerativeModelPreview generateContent', () => {
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
     expect(actualBody).toEqual(expectedBody);
   });
-  it('in preview, pass tools to remote endpoint when tools are passed via generateContent', async () => {
+  it('in preview, pass tools to remote endpoint when tools are passed via generateContent - legacy', async () => {
     model = new GenerativeModelPreview({
       model: 'gemini-pro',
       project: PROJECT,
@@ -1625,6 +1770,27 @@ describe('GenerativeModelPreview generateContent', () => {
     };
     const expectedBody =
       '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
+    await model.generateContent(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(expectedBody);
+  });
+  it('in preview, pass tools to remote endpoint when tools are passed via generateContent', async () => {
+    model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+      ],
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    };
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearch":{}}]}';
     await model.generateContent(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -1908,7 +2074,7 @@ describe('GenerativeModel generateContentStream', () => {
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
     expect(actualBody).toEqual(expectedBody);
   });
-  it('pass tools to remote endpoint when tools are passed via generateContent', async () => {
+  it('pass tools to remote endpoint when tools are passed via generateContent - legacy', async () => {
     model = new GenerativeModel({
       model: 'gemini-pro',
       project: PROJECT,
@@ -1929,6 +2095,32 @@ describe('GenerativeModel generateContentStream', () => {
     spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const expectedBody =
       '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
+    await model.generateContent(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(expectedBody);
+  });
+  it('pass tools to remote endpoint when tools are passed via generateContent', async () => {
+    model = new GenerativeModel({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    const expectedResult: StreamGenerateContentResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
+      stream: testGenerator(),
+    };
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+      ],
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    };
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearch":{}}]}';
     await model.generateContent(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
@@ -2225,7 +2417,7 @@ describe('GenerativeModelPreview generateContentStream', () => {
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
     expect(actualBody).toEqual(expectedBody);
   });
-  it('in preview, pass tools to remote endpoint when tools are passed via generateContent', async () => {
+  it('in preview, pass tools to remote endpoint when tools are passed via generateContent - legacy', async () => {
     model = new GenerativeModelPreview({
       model: 'gemini-pro',
       project: PROJECT,
@@ -2246,6 +2438,32 @@ describe('GenerativeModelPreview generateContentStream', () => {
     spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
     const expectedBody =
       '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearchRetrieval":{"dynamicRetrievalConfig":{"dynamicThreshold":0.5,"mode":"MODE_DYNAMIC"}}}]}';
+    await model.generateContent(req);
+    // @ts-ignore
+    const actualBody = fetchSpy.calls.allArgs()[0][1].body;
+    expect(actualBody).toEqual(expectedBody);
+  });
+  it('in preview, pass tools to remote endpoint when tools are passed via generateContent', async () => {
+    model = new GenerativeModelPreview({
+      model: 'gemini-pro',
+      project: PROJECT,
+      location: LOCATION,
+      googleAuth: FAKE_GOOGLE_AUTH,
+      tools: TEST_TOOLS_WITH_FUNCTION_DECLARATION,
+    });
+    const expectedResult: StreamGenerateContentResult = {
+      response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_FUNCTION_CALL),
+      stream: testGenerator(),
+    };
+    const req: GenerateContentRequest = {
+      contents: [
+        {role: 'user', parts: [{text: 'What is the weater like in Boston?'}]},
+      ],
+      tools: TOOLS_WITH_GOOGLE_SEARCH,
+    };
+    spyOn(PostFetchFunctions, 'processStream').and.resolveTo(expectedResult);
+    const expectedBody =
+      '{"contents":[{"role":"user","parts":[{"text":"What is the weater like in Boston?"}]}],"tools":[{"googleSearch":{}}]}';
     await model.generateContent(req);
     // @ts-ignore
     const actualBody = fetchSpy.calls.allArgs()[0][1].body;
