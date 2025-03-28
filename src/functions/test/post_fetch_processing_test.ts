@@ -20,11 +20,15 @@ import {
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_2,
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_3,
   AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_4,
+  AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_5,
+  AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_6,
   COUNT_TOKENS_RESPONSE_1,
   STREAM_RESPONSE_CHUNKS_1,
   STREAM_RESPONSE_CHUNKS_2,
   STREAM_RESPONSE_CHUNKS_3,
   STREAM_RESPONSE_CHUNKS_4,
+  STREAM_RESPONSE_CHUNKS_5,
+  STREAM_RESPONSE_CHUNKS_6,
   UNARY_RESPONSE_1,
   UNARY_RESPONSE_MISSING_ROLE_INDEX,
 } from './test_data';
@@ -82,6 +86,22 @@ describe('aggregateResponses', () => {
 
     expect(JSON.stringify(actualResult)).toEqual(
       JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_4)
+    );
+  });
+
+  it('should aggregate text and functionCalls to separate parts', () => {
+    const actualResult = aggregateResponses(STREAM_RESPONSE_CHUNKS_5);
+
+    expect(JSON.stringify(actualResult)).toEqual(
+      JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_5)
+    );
+  });
+
+  it('should aggregate functionCalls with the empty text removed', () => {
+    const actualResult = aggregateResponses(STREAM_RESPONSE_CHUNKS_6);
+
+    expect(JSON.stringify(actualResult)).toEqual(
+      JSON.stringify(AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_6)
     );
   });
 });
