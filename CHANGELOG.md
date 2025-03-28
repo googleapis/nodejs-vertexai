@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.9.3...v1.10.0) (2025-03-27)
+
+
+### Features
+
+* enable turn off the safety filter in HarmBlockThreshold enum ([1737c66](https://github.com/googleapis/nodejs-vertexai/commit/1737c6626aed0ef8d9e1904be7a79b50b7da4676))
+
 ## [1.9.3](https://github.com/googleapis/nodejs-vertexai/compare/v1.9.2...v1.9.3) (2025-01-31)
 
 
