@@ -259,6 +259,8 @@ export enum HarmBlockThreshold {
   BLOCK_ONLY_HIGH = 'BLOCK_ONLY_HIGH',
   /** Block none. */
   BLOCK_NONE = 'BLOCK_NONE',
+  /** Turn off the safety filter. */
+  OFF = 'OFF',
 }
 
 /**
