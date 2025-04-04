@@ -43,19 +43,16 @@ export async function throwErrorIfNotOK(response: Response | undefined) {
     const errorMessage = `got status: ${status} ${statusText}. ${JSON.stringify(
       errorBody
     )}`;
+    const apiError = new GoogleApiError(
+      errorBody.error.message,
+      errorBody.error.code,
+      errorBody.error.status,
+      errorBody.error.details
+    );
     if (status >= 400 && status < 500) {
-      const error = new ClientError(
-        errorMessage,
-        new GoogleApiError(
-          errorBody.error.message,
-          errorBody.error.code,
-          errorBody.error.status,
-          errorBody.error.details
-        )
-      );
-      throw error;
+      throw new ClientError(errorMessage, apiError);
     }
-    throw new GoogleGenerativeAIError(errorMessage);
+    throw new GoogleGenerativeAIError(errorMessage, apiError);
   }
 }
 
