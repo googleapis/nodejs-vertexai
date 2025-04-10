@@ -661,11 +661,11 @@ describe('generateContent', () => {
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
 
     await generateContent(
-        TEST_LOCATION,
-        TEST_RESOURCE_PATH,
-        TEST_TOKEN_PROMISE,
-        request,
-        TEST_API_ENDPOINT
+      TEST_LOCATION,
+      TEST_RESOURCE_PATH,
+      TEST_TOKEN_PROMISE,
+      request,
+      TEST_API_ENDPOINT
     );
 
     const httpRequest = fetchSpy.calls.allArgs()[0][1];
@@ -868,11 +868,11 @@ describe('generateContentStream', () => {
     spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
 
     await generateContentStream(
-        TEST_LOCATION,
-        TEST_RESOURCE_PATH,
-        TEST_TOKEN_PROMISE,
-        request,
-        TEST_API_ENDPOINT
+      TEST_LOCATION,
+      TEST_RESOURCE_PATH,
+      TEST_TOKEN_PROMISE,
+      request,
+      TEST_API_ENDPOINT
     );
 
     const httpRequest = fetchSpy.calls.allArgs()[0][1];
