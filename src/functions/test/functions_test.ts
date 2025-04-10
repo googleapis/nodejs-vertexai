@@ -226,10 +226,6 @@ const TEST_TOOLS_WITH_RAG: Tool[] = [
   },
 ];
 
-const TEST_LABELS: Record<string, string> = {
-  test_key: 'test_value',
-};
-
 const fetchResponseObj = {
   status: 200,
   statusText: 'OK',
@@ -652,26 +648,6 @@ describe('generateContent', () => {
     const vertexEndpoint = fetchSpy.calls.allArgs()[0][0];
     expect(vertexEndpoint).toContain('/v1beta1/');
   });
-
-  it('provides labels to the vertex endpoint', async () => {
-    const request: GenerateContentRequest = {
-      contents: CONTENTS,
-      labels: TEST_LABELS,
-    };
-    fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
-
-    await generateContent(
-      TEST_LOCATION,
-      TEST_RESOURCE_PATH,
-      TEST_TOKEN_PROMISE,
-      request,
-      TEST_API_ENDPOINT
-    );
-
-    const httpRequest = fetchSpy.calls.allArgs()[0][1];
-    const body = JSON.parse(httpRequest.body);
-    expect(body.labels).toEqual(TEST_LABELS);
-  });
 });
 
 describe('generateContentStream', () => {
@@ -853,30 +829,5 @@ describe('generateContentStream', () => {
         response.candidates?.[0]
       )
     ).toHaveSize(0);
-  });
-
-  it('provides labels to the vertex endpoint', async () => {
-    const request: GenerateContentRequest = {
-      contents: CONTENTS,
-      labels: TEST_LABELS,
-    };
-    const expectedStreamResult: StreamGenerateContentResult = {
-      response: Promise.resolve(TEST_MODEL_RESPONSE_WITH_INVALID_DATA),
-      stream: testGenerator(),
-    };
-    fetchSpy = spyOn(global, 'fetch').and.resolveTo(fetchResult);
-    spyOn(StreamFunctions, 'processStream').and.resolveTo(expectedStreamResult);
-
-    await generateContentStream(
-      TEST_LOCATION,
-      TEST_RESOURCE_PATH,
-      TEST_TOKEN_PROMISE,
-      request,
-      TEST_API_ENDPOINT
-    );
-
-    const httpRequest = fetchSpy.calls.allArgs()[0][1];
-    const body = JSON.parse(httpRequest.body);
-    expect(body.labels).toEqual(TEST_LABELS);
   });
 });

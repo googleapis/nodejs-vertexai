@@ -77,7 +77,6 @@ export async function generateContent(
     safetySettings: request.safetySettings ?? safetySettings,
     tools: request.tools ?? tools,
     toolConfig: request.toolConfig ?? toolConfig,
-    labels: request.labels,
   };
   const response: Response | undefined = await postRequest({
     region: location,
@@ -133,7 +132,6 @@ export async function generateContentStream(
     safetySettings: request.safetySettings ?? safetySettings,
     tools: request.tools ?? tools,
     toolConfig: request.toolConfig ?? toolConfig,
-    labels: request.labels,
   };
   const response = await postRequest({
     region: location,
