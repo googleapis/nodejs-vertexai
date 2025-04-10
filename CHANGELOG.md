@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.10.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.9.3...v1.10.0) (2025-04-10)
+
+
+### Features
+
+* Allow labels in GenerateContentRequest ([d210d06](https://github.com/googleapis/nodejs-vertexai/commit/d210d06a2f389911850d6dc6a04b527a8cbdf68e))
+* Allow labels in GenerateContentRequest ([#466](https://github.com/googleapis/nodejs-vertexai/issues/466)) ([#501](https://github.com/googleapis/nodejs-vertexai/issues/501)) ([0075baa](https://github.com/googleapis/nodejs-vertexai/commit/0075baae578e34341afdfe3e6ec0086cca98b298))
+* enable turn off the safety filter in HarmBlockThreshold enum ([1737c66](https://github.com/googleapis/nodejs-vertexai/commit/1737c6626aed0ef8d9e1904be7a79b50b7da4676))
+
+
+### Bug Fixes
+
+* aggregate text & functionCall(s) correctly ([5a53266](https://github.com/googleapis/nodejs-vertexai/commit/5a53266835b74e6d165244a67a5cb9427220d7de))
+* aggregate text & functionCall(s) correctly ([5a53266](https://github.com/googleapis/nodejs-vertexai/commit/5a53266835b74e6d165244a67a5cb9427220d7de))
+* aggregate text & functionCall(s) correctly ([5a53266](https://github.com/googleapis/nodejs-vertexai/commit/5a53266835b74e6d165244a67a5cb9427220d7de))
+* aggregate text & functionCall(s) correctly ([#497](https://github.com/googleapis/nodejs-vertexai/issues/497)) ([b62483a](https://github.com/googleapis/nodejs-vertexai/commit/b62483a4891159ac727687ef043f7923a8f7d71d))
+
 ## [1.9.3](https://github.com/googleapis/nodejs-vertexai/compare/v1.9.2...v1.9.3) (2025-01-31)
 
 
