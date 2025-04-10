@@ -659,6 +659,7 @@ describe('generateContent', () => {
       labels: TEST_LABELS,
     };
     fetchSpy.and.resolveTo(buildFetchResponse(TEST_MODEL_RESPONSE));
+
     await generateContent(
         TEST_LOCATION,
         TEST_RESOURCE_PATH,
@@ -666,6 +667,7 @@ describe('generateContent', () => {
         request,
         TEST_API_ENDPOINT
     );
+
     const httpRequest = fetchSpy.calls.allArgs()[0][1];
     const body = JSON.parse(httpRequest.body);
     expect(body.labels).toEqual(TEST_LABELS);
@@ -874,7 +876,6 @@ describe('generateContentStream', () => {
     );
 
     const httpRequest = fetchSpy.calls.allArgs()[0][1];
-    console.log(httpRequest)
     const body = JSON.parse(httpRequest.body);
     expect(body.labels).toEqual(TEST_LABELS);
   });
