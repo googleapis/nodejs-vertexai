@@ -905,6 +905,71 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_4: GenerateContentRespon
     ],
   } as GenerateContentResponse;
 
+export const STREAM_RESPONSE_CHUNKS_5: GenerateContentResponse[] = [
+  {
+    candidates: [
+      {
+        content: {
+          parts: [
+            {functionCall: {name: 'fn', args: {a: 1}}},
+            {text: 'chunk1Text1'},
+          ],
+        },
+      },
+    ],
+  },
+  {
+    candidates: [
+      {
+        content: {
+          parts: [{text: 'chunk2Text1'}],
+        },
+      },
+    ],
+  },
+] as GenerateContentResponse[];
+
+export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_5: GenerateContentResponse =
+  {
+    candidates: [
+      {
+        index: 0,
+        content: {
+          role: 'model',
+          parts: [
+            {text: 'chunk1Text1chunk2Text1'},
+            {functionCall: {name: 'fn', args: {a: 1}}},
+          ],
+        },
+      },
+    ],
+  } as GenerateContentResponse;
+
+export const STREAM_RESPONSE_CHUNKS_6: GenerateContentResponse[] = [
+  {
+    candidates: [
+      {
+        content: {
+          parts: [{functionCall: {name: 'fn', args: {a: 1}}}],
+        },
+      },
+    ],
+  },
+] as GenerateContentResponse[];
+
+export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_6: GenerateContentResponse =
+  {
+    candidates: [
+      {
+        index: 0,
+        content: {
+          role: 'model',
+          parts: [{functionCall: {name: 'fn', args: {a: 1}}}],
+        },
+      },
+    ],
+  } as GenerateContentResponse;
+
 export const UNARY_RESPONSE_1: GenerateContentResponse = {
   candidates: [
     {
