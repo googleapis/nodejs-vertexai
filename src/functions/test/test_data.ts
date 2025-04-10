@@ -922,9 +922,7 @@ export const STREAM_RESPONSE_CHUNKS_5: GenerateContentResponse[] = [
     candidates: [
       {
         content: {
-          parts: [
-            {text: 'chunk2Text1'},
-          ],
+          parts: [{text: 'chunk2Text1'}],
         },
       },
     ],
@@ -966,8 +964,7 @@ export const AGGREGATED_RESPONSE_STREAM_RESPONSE_CHUNKS_6: GenerateContentRespon
         index: 0,
         content: {
           role: 'model',
-          parts: [
-            {functionCall: {name: 'fn', args: {a: 1}}}],
+          parts: [{functionCall: {name: 'fn', args: {a: 1}}}],
         },
       },
     ],

@@ -273,8 +273,11 @@ export function aggregateResponses(
     }
   }
   if (aggregatedResponse.candidates?.length) {
-    aggregatedResponse.candidates.forEach((candidate) => {
-      if (candidate.content.parts.length > 1 && candidate.content.parts[0].text === '') {
+    aggregatedResponse.candidates.forEach(candidate => {
+      if (
+        candidate.content.parts.length > 1 &&
+        candidate.content.parts[0].text === ''
+      ) {
         candidate.content.parts.shift(); // remove empty text parameter
       }
     });
