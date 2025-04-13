@@ -34,11 +34,17 @@ class GoogleAuthError extends Error {
  */
 class ClientError extends Error {
   public readonly stackTrace?: Error;
+  public readonly statusCode?: number;
+
   constructor(message: string, stackTrace?: Error) {
     super(message, {cause: stackTrace});
     this.message = constructErrorMessage('ClientError', message);
     this.name = 'ClientError';
     this.stackTrace = stackTrace;
+
+    if (stackTrace instanceof GoogleApiError) {
+      this.statusCode = stackTrace.code;
+    }
   }
 }
 
@@ -76,11 +82,17 @@ class GoogleApiError extends Error {
  */
 class GoogleGenerativeAIError extends Error {
   public readonly stackTrace?: Error;
+  public readonly statusCode?: number;
+
   constructor(message: string, stackTrace?: Error) {
     super(message, {cause: stackTrace});
     this.message = constructErrorMessage('GoogleGenerativeAIError', message);
     this.name = 'GoogleGenerativeAIError';
     this.stackTrace = stackTrace;
+
+    if (stackTrace instanceof GoogleApiError) {
+      this.statusCode = stackTrace.code;
+    }
   }
 }
 
