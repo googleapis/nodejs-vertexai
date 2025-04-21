@@ -323,6 +323,8 @@ export declare interface Content {
   parts: Part[];
   /** The producer of the content. */
   role: string;
+  /** The unique id of the content */
+  id?: string;
 }
 
 /**
