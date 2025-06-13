@@ -32,7 +32,7 @@ npm install --no-save @google-cloud/cloud-rad@^0.4.0
 set +e
 
 # publish docs to devsite
-NO_UPLOAD=1 DOCS_METADATA_STEM=/vertex-ai/generative-ai/docs/reference/nodejs npx @google-cloud/cloud-rad . cloud-rad
+NO_UPLOAD=1 npx @google-cloud/cloud-rad . cloud-rad
 
 tar cvfz docs.tar.gz yaml
 
