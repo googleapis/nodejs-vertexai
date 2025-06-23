@@ -60,6 +60,13 @@ export class VertexAI {
       init.project,
       init.googleAuthOptions
     );
+    console.warn(
+      'The VertexAI class and all its dependencies are deprecated' +
+        ' as of June 24, 2025 and will be removed on June 24, 2026. Please use' +
+        ' the Google Gen AI SDK (https://www.npmjs.com/package/@google/genai) to' +
+        ' access Gemini features. For details, see' +
+        ' https://cloud.google.com/vertex-ai/generative-ai/docs/deprecations/genai-vertexai-sdk.'
+    );
     this.location = resolveLocation(init.location);
     this.project = resolveProject(init.project);
     this.googleAuth = new GoogleAuth(opts);

@@ -1,10 +1,12 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/%40google-cloud%2Fvertexai)](https://www.npmjs.com/package/@google-cloud/vertexai)
 [![Node Current](https://img.shields.io/node/v/%40google-cloud%2Fvertexai)](https://www.npmjs.com/package/@google-cloud/vertexai)
 
-> [!NOTE] A new Javascript/Typescript SDK, `@google/genai`
-> ([github](https://github.com/googleapis/js-genai/tree/main)), is currently
-> available in a *experimental preview launch* - designed to work with Gemini
-> 2.0 features. and support both the Gemini API and the Vertex API.
+> [!NOTE] The `VertexAI` class and all its dependencies in the Vertex AI SDK are
+> deprecated as of June 24, 2025 and will be removed on June 24, 2026. Please
+> use the [Google Gen AI SDK](https://www.npmjs.com/package/@google/genai) to
+> access Gemini features. See
+> [the migration guide](https://cloud.google.com/vertex-ai/generative-ai/docs/deprecations/genai-vertexai-sdk)
+> for details.
 
 # Vertex AI SDK for Node.js quickstart
 
