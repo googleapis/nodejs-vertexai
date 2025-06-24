@@ -100,6 +100,17 @@ export declare interface CountTokensResponse {
 }
 
 /**
+ * The configuration for thinking features.
+ * @public
+ */
+export declare interface ThinkingConfig {
+  /** Optional. Indicates whether to include thoughts in the response. If true, thoughts are returned only when available. */
+  includeThoughts?: boolean;
+  /** Optional. Indicates the thinking budget in tokens. This is only applied when enable_thinking is true. */
+  thinkingBudget?: number;
+}
+
+/**
  * Params used to call the getGenerativeModel method.
  */
 export declare interface GetGenerativeModelParams extends ModelParams {
@@ -129,6 +140,8 @@ export declare interface GetGenerativeModelParams extends ModelParams {
   tools?: Tool[];
   /** Optional. This config is shared for all tools provided in the request. */
   toolConfig?: ToolConfig;
+  /** Optional. The configuration for thinking features. */
+  thinkingConfig?: ThinkingConfig;
   /** Optional. The request options to use for generation. */
   requestOptions?: RequestOptions;
   /**
@@ -174,6 +187,8 @@ export declare interface BaseModelParams {
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
+  /** Optional. The configuration for thinking features. */
+  thinkingConfig?: ThinkingConfig;
 }
 
 /**
@@ -1054,6 +1069,8 @@ export declare interface StartChatParams {
   tools?: Tool[];
   /** Optional. This config is shared for all tools provided in the request. */
   toolConfig?: ToolConfig;
+  /** Optional. The configuration for thinking features. */
+  thinkingConfig?: ThinkingConfig;
   /** Optional. The base Vertex AI endpoint to use for the request. */
   apiEndpoint?: string;
   /**
@@ -1087,6 +1104,8 @@ export declare interface StartChatSessionRequest extends StartChatParams {
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
+  /** Optional. The configuration for thinking features. */
+  thinkingConfig?: ThinkingConfig;
 }
 
 /**

@@ -38,6 +38,7 @@ import {
   StartChatParams,
   StartChatSessionRequest,
   StreamGenerateContentResult,
+  ThinkingConfig,
   Tool,
 } from '../types/content';
 import {ToolConfig} from '../types/tool';
@@ -58,6 +59,7 @@ export class GenerativeModel {
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
   private readonly toolConfig?: ToolConfig;
+  private readonly thinkingConfig?: ThinkingConfig;
   private readonly requestOptions?: RequestOptions;
   private readonly systemInstruction?: Content;
   private readonly project: string;
@@ -81,6 +83,7 @@ export class GenerativeModel {
     this.safetySettings = getGenerativeModelParams.safetySettings;
     this.tools = getGenerativeModelParams.tools;
     this.toolConfig = getGenerativeModelParams.toolConfig;
+    this.thinkingConfig = getGenerativeModelParams.thinkingConfig;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
     if (getGenerativeModelParams.systemInstruction) {
       this.systemInstruction = formulateSystemInstructionIntoContent(
@@ -129,17 +132,18 @@ export class GenerativeModel {
   async generateContent(
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
-    request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest =
-      formulateSystemInstructionIntoGenerateContentRequest(
-        request,
-        this.systemInstruction
-      );
+    const formulatedRequest = formulateRequestToGenerateContentRequest(request);
+    formulatedRequest.thinkingConfig =
+      formulatedRequest.thinkingConfig ?? this.thinkingConfig;
+    const finalRequest = formulateSystemInstructionIntoGenerateContentRequest(
+      formulatedRequest,
+      this.systemInstruction
+    );
     return generateContent(
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      formulatedRequest,
+      finalRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -176,17 +180,18 @@ export class GenerativeModel {
   async generateContentStream(
     request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
-    request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest =
-      formulateSystemInstructionIntoGenerateContentRequest(
-        request,
-        this.systemInstruction
-      );
+    const formulatedRequest = formulateRequestToGenerateContentRequest(request);
+    formulatedRequest.thinkingConfig =
+      formulatedRequest.thinkingConfig ?? this.thinkingConfig;
+    const finalRequest = formulateSystemInstructionIntoGenerateContentRequest(
+      formulatedRequest,
+      this.systemInstruction
+    );
     return generateContentStream(
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      formulatedRequest,
+      finalRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -259,6 +264,7 @@ export class GenerativeModel {
       tools: this.tools,
       toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
+      thinkingConfig: this.thinkingConfig,
     };
 
     if (request) {
@@ -272,6 +278,8 @@ export class GenerativeModel {
       startChatRequest.apiEndpoint = request.apiEndpoint ?? this.apiEndpoint;
       startChatRequest.systemInstruction =
         request.systemInstruction ?? this.systemInstruction;
+      startChatRequest.thinkingConfig =
+        request.thinkingConfig ?? this.thinkingConfig;
     }
     return new ChatSession(startChatRequest, this.requestOptions);
   }
@@ -289,6 +297,7 @@ export class GenerativeModelPreview {
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
   private readonly toolConfig?: ToolConfig;
+  private readonly thinkingConfig?: ThinkingConfig;
   private readonly requestOptions?: RequestOptions;
   private readonly systemInstruction?: Content;
   private readonly project: string;
@@ -313,6 +322,7 @@ export class GenerativeModelPreview {
     this.safetySettings = getGenerativeModelParams.safetySettings;
     this.tools = getGenerativeModelParams.tools;
     this.toolConfig = getGenerativeModelParams.toolConfig;
+    this.thinkingConfig = getGenerativeModelParams.thinkingConfig;
     this.cachedContent = getGenerativeModelParams.cachedContent;
     this.requestOptions = getGenerativeModelParams.requestOptions ?? {};
     if (getGenerativeModelParams.systemInstruction) {
@@ -361,19 +371,20 @@ export class GenerativeModelPreview {
   async generateContent(
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
-    request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest = {
+    const formulatedRequest = formulateRequestToGenerateContentRequest(request);
+    const finalRequest = {
       ...formulateSystemInstructionIntoGenerateContentRequest(
-        request,
+        formulatedRequest,
         this.systemInstruction
       ),
       cachedContent: this.cachedContent?.name,
+      thinkingConfig: formulatedRequest.thinkingConfig ?? this.thinkingConfig,
     };
     return generateContent(
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      formulatedRequest,
+      finalRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -410,19 +421,20 @@ export class GenerativeModelPreview {
   async generateContentStream(
     request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
-    request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest = {
+    const formulatedRequest = formulateRequestToGenerateContentRequest(request);
+    const finalRequest = {
       ...formulateSystemInstructionIntoGenerateContentRequest(
-        request,
+        formulatedRequest,
         this.systemInstruction
       ),
       cachedContent: this.cachedContent?.name,
+      thinkingConfig: formulatedRequest.thinkingConfig ?? this.thinkingConfig,
     };
     return generateContentStream(
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      formulatedRequest,
+      finalRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -496,6 +508,7 @@ export class GenerativeModelPreview {
       toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
       cachedContent: this.cachedContent?.name,
+      thinkingConfig: this.thinkingConfig,
     };
 
     if (request) {
@@ -510,6 +523,8 @@ export class GenerativeModelPreview {
         request.systemInstruction ?? this.systemInstruction;
       startChatRequest.cachedContent =
         request.cachedContent ?? this.cachedContent?.name;
+      startChatRequest.thinkingConfig =
+        request.thinkingConfig ?? this.thinkingConfig;
     }
     return new ChatSessionPreview(startChatRequest, this.requestOptions);
   }
