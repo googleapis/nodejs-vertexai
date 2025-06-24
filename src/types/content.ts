@@ -140,8 +140,6 @@ export declare interface GetGenerativeModelParams extends ModelParams {
   tools?: Tool[];
   /** Optional. This config is shared for all tools provided in the request. */
   toolConfig?: ToolConfig;
-  /** Optional. The configuration for thinking features. */
-  thinkingConfig?: ThinkingConfig;
   /** Optional. The request options to use for generation. */
   requestOptions?: RequestOptions;
   /**
@@ -187,8 +185,6 @@ export declare interface BaseModelParams {
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
-  /** Optional. The configuration for thinking features. */
-  thinkingConfig?: ThinkingConfig;
 }
 
 /**
@@ -248,6 +244,8 @@ export declare interface GenerationConfig {
    * If set, a compatible responseMimeType must also be set.
    */
   responseSchema?: ResponseSchema;
+  /** Optional. The configuration for thinking features. */
+  thinkingConfig?: ThinkingConfig;
 }
 
 /**
@@ -1069,8 +1067,6 @@ export declare interface StartChatParams {
   tools?: Tool[];
   /** Optional. This config is shared for all tools provided in the request. */
   toolConfig?: ToolConfig;
-  /** Optional. The configuration for thinking features. */
-  thinkingConfig?: ThinkingConfig;
   /** Optional. The base Vertex AI endpoint to use for the request. */
   apiEndpoint?: string;
   /**
@@ -1104,8 +1100,6 @@ export declare interface StartChatSessionRequest extends StartChatParams {
    * Note: only text should be used in parts of {@link Content}
    */
   systemInstruction?: string | Content;
-  /** Optional. The configuration for thinking features. */
-  thinkingConfig?: ThinkingConfig;
 }
 
 /**
