@@ -875,7 +875,7 @@ describe('sendMessage', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
   });
   it('should populate history and return a chat response', async () => {
-    const chat = generativeTextModel.startChat();
+    const chat = await generativeTextModel.startChat();
     const chatInput1 = 'How can I learn more about Node.js?';
     const result1 = await chat.sendMessage(chatInput1);
     const response1 = result1.response;
@@ -899,7 +899,7 @@ describe('sendMessage', () => {
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
-    const chat = generativeTextModel.startChat();
+    const chat = await generativeTextModel.startChat();
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -916,7 +916,7 @@ describe('sendMessage', () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
-    const chat = generativeTextModel.startChat({
+    const chat = await generativeTextModel.startChat({
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await chat.sendMessage('Why is the sky blue?');
@@ -936,7 +936,7 @@ describe('sendMessage', () => {
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
-    const chat = generativeTextModel.startChat();
+    const chat = await generativeTextModel.startChat();
     const result = await chat.sendMessage('Why is the sky blue?');
     const response = result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -953,7 +953,7 @@ describe('sendMessage', () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
-    const chat = generativeTextModel.startChat({
+    const chat = await generativeTextModel.startChat({
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await chat.sendMessage('Why is the sky blue?');
@@ -975,7 +975,7 @@ describe('sendMessageStream', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
   it('should should return a stream and populate history when generationConfig is passed to startChat', async () => {
-    const chat = generativeTextModel.startChat({
+    const chat = await generativeTextModel.startChat({
       generationConfig: {
         maxOutputTokens: 256,
       },
@@ -998,7 +998,7 @@ describe('sendMessageStream', () => {
     expect((await chat.getHistory()).length).toBe(2);
   });
   it('in preview should should return a stream and populate history when generationConfig is passed to startChat', async () => {
-    const chat = generativeTextModelPreview.startChat({
+    const chat = await generativeTextModelPreview.startChat({
       generationConfig: {
         maxOutputTokens: 256,
       },
@@ -1022,7 +1022,7 @@ describe('sendMessageStream', () => {
   });
 
   it('should should return a stream and populate history when startChat is passed no request obj', async () => {
-    const chat = generativeTextModel.startChat();
+    const chat = await generativeTextModel.startChat();
     const chatInput1 = 'How can I learn more about Node.js?';
     const result1 = await chat.sendMessageStream(chatInput1);
     for await (const item of result1.stream) {
@@ -1061,7 +1061,7 @@ describe('sendMessageStream', () => {
   });
 
   xit('should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
-    const chat = generativeTextModel.startChat({
+    const chat = await generativeTextModel.startChat({
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
     });
     const chatInput1 = 'What is the weather in Boston?';
@@ -1109,7 +1109,7 @@ describe('sendMessageStream', () => {
     );
   });
   xit('in preview should return a FunctionCall or text when passed a FunctionDeclaration or FunctionResponse', async () => {
-    const chat = generativeTextModelPreview.startChat({
+    const chat = await generativeTextModelPreview.startChat({
       tools: TOOLS_WITH_FUNCTION_DECLARATION,
     });
     const chatInput1 = 'What is the weather in Boston?';
@@ -1158,7 +1158,7 @@ describe('sendMessageStream', () => {
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
-    const chat = generativeTextModel.startChat();
+    const chat = await generativeTextModel.startChat();
     const result = await chat.sendMessageStream('Why is the sky blue?');
     const response = await result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -1175,7 +1175,7 @@ describe('sendMessageStream', () => {
     const generativeTextModel = vertexAI.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
-    const chat = generativeTextModel.startChat({
+    const chat = await generativeTextModel.startChat({
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await chat.sendMessageStream('Why is the sky blue?');
@@ -1195,7 +1195,7 @@ describe('sendMessageStream', () => {
       model: TEXT_MODEL_NAME,
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
-    const chat = generativeTextModel.startChat();
+    const chat = await generativeTextModel.startChat();
     const result = await chat.sendMessageStream('Why is the sky blue?');
     const response = await result.response;
     const groundingMetadata = response.candidates![0].groundingMetadata;
@@ -1212,7 +1212,7 @@ describe('sendMessageStream', () => {
     const generativeTextModel = vertexAI.preview.getGenerativeModel({
       model: TEXT_MODEL_NAME,
     });
-    const chat = generativeTextModel.startChat({
+    const chat = await generativeTextModel.startChat({
       tools: TOOLS_WITH_GOOGLE_SEARCH_RETRIEVAL,
     });
     const result = await chat.sendMessageStream('Why is the sky blue?');
