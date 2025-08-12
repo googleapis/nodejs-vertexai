@@ -32,7 +32,7 @@ export declare interface VertexInit {
   project?: string;
   /**
    * Optional. The Google Cloud project location. If not provided, SDK will
-   * firtly try to resolve it from runtime environment. If no location resolved
+   * first try to resolve it from runtime environment. If no location resolved
    * from runtime environment, SDK will use default value `us-central1`.
    */
   location?: string;
