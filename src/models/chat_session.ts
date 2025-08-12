@@ -126,8 +126,10 @@ export class ChatSession {
   async sendMessage(
     request: string | Array<string | Part>
   ): Promise<GenerateContentResult> {
-    const newContent: Content[] =
-      formulateNewContentFromSendMessageRequest(request);
+    const newContent: Content[] = formulateNewContentFromSendMessageRequest(
+      request,
+      this.historyInternal
+    );
     const generateContentRequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
       safetySettings: this.safetySettings,
@@ -211,8 +213,10 @@ export class ChatSession {
   async sendMessageStream(
     request: string | Array<string | Part>
   ): Promise<StreamGenerateContentResult> {
-    const newContent: Content[] =
-      formulateNewContentFromSendMessageRequest(request);
+    const newContent: Content[] = formulateNewContentFromSendMessageRequest(
+      request,
+      this.historyInternal
+    );
     const generateContentrequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
       safetySettings: this.safetySettings,
@@ -337,8 +341,10 @@ export class ChatSessionPreview {
   async sendMessage(
     request: string | Array<string | Part>
   ): Promise<GenerateContentResult> {
-    const newContent: Content[] =
-      formulateNewContentFromSendMessageRequest(request);
+    const newContent: Content[] = formulateNewContentFromSendMessageRequest(
+      request,
+      this.historyInternal
+    );
     const generateContentRequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
       safetySettings: this.safetySettings,
@@ -424,8 +430,10 @@ export class ChatSessionPreview {
   async sendMessageStream(
     request: string | Array<string | Part>
   ): Promise<StreamGenerateContentResult> {
-    const newContent: Content[] =
-      formulateNewContentFromSendMessageRequest(request);
+    const newContent: Content[] = formulateNewContentFromSendMessageRequest(
+      request,
+      this.historyInternal
+    );
     const generateContentRequest: GenerateContentRequest = {
       contents: this.historyInternal.concat(newContent),
       safetySettings: this.safetySettings,
@@ -464,7 +472,8 @@ export class ChatSessionPreview {
 }
 
 function formulateNewContentFromSendMessageRequest(
-  request: string | Array<string | Part>
+  request: string | Array<string | Part>,
+  historyInternal: Content[]
 ): Content[] {
   let newParts: Part[] = [];
 
@@ -480,7 +489,10 @@ function formulateNewContentFromSendMessageRequest(
     }
   }
 
-  return assignRoleToPartsAndValidateSendMessageRequest(newParts);
+  return assignRoleToPartsAndValidateSendMessageRequest(
+    newParts,
+    historyInternal
+  );
 }
 
 /**
@@ -492,10 +504,15 @@ function formulateNewContentFromSendMessageRequest(
  * @returns Array of content items
  */
 function assignRoleToPartsAndValidateSendMessageRequest(
-  parts: Array<Part>
+  parts: Array<Part>,
+  historyInternal: Content[]
 ): Content[] {
-  const userContent: Content = {role: constants.USER_ROLE, parts: []};
-  const functionContent: Content = {role: constants.USER_ROLE, parts: []};
+  let id: string = crypto.randomUUID();
+  while (historyInternal.some(content => content.id === id)) {
+    id = crypto.randomUUID();
+  }
+  const userContent: Content = {id, role: constants.USER_ROLE, parts: []};
+  const functionContent: Content = {id, role: constants.USER_ROLE, parts: []};
   let hasUserContent = false;
   let hasFunctionContent = false;
   for (const part of parts) {
