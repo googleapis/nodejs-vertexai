@@ -100,6 +100,17 @@ export declare interface CountTokensResponse {
 }
 
 /**
+ * The configuration for thinking features.
+ * @public
+ */
+export declare interface ThinkingConfig {
+  /** Optional. Indicates whether to include thoughts in the response. If true, thoughts are returned only when available. */
+  includeThoughts?: boolean;
+  /** Optional. Indicates the thinking budget in tokens. This is only applied when enable_thinking is true. */
+  thinkingBudget?: number;
+}
+
+/**
  * Params used to call the getGenerativeModel method.
  */
 export declare interface GetGenerativeModelParams extends ModelParams {
@@ -233,6 +244,8 @@ export declare interface GenerationConfig {
    * If set, a compatible responseMimeType must also be set.
    */
   responseSchema?: ResponseSchema;
+  /** Optional. The configuration for thinking features. */
+  thinkingConfig?: ThinkingConfig;
 }
 
 /**
