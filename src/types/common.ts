@@ -16,51 +16,68 @@
  */
 
 /** This file contains interfaces that are usable in the types folder. */
-
 /**
  * The list of OpenAPI data types
  * as defined by https://swagger.io/docs/specification/data-models/data-types/
  */
 export enum SchemaType {
-  /** String type. */
-  STRING = 'STRING',
-  /** Number type. */
-  NUMBER = 'NUMBER',
-  /** Integer type. */
-  INTEGER = 'INTEGER',
-  /** Boolean type. */
-  BOOLEAN = 'BOOLEAN',
-  /** Array type. */
-  ARRAY = 'ARRAY',
-  /** Object type. */
-  OBJECT = 'OBJECT',
+    /** String type. */
+    STRING = "STRING",
+    /** Number type. */
+    NUMBER = "NUMBER",
+    /** Integer type. */
+    INTEGER = "INTEGER",
+    /** Boolean type. */
+    BOOLEAN = "BOOLEAN",
+    /** Array type. */
+    ARRAY = "ARRAY",
+    /** Object type. */
+    OBJECT = "OBJECT"
 }
+
+// Helper type to map SchemaType to its corresponding value type
+type SchemaValueByType<T extends SchemaType | undefined> =
+  T extends SchemaType.STRING ? string :
+  T extends SchemaType.NUMBER ? number :
+  T extends SchemaType.INTEGER ? number :
+  T extends SchemaType.BOOLEAN ? boolean :
+  T extends SchemaType.ARRAY ? unknown[] :
+  T extends SchemaType.OBJECT ? Record<string, unknown> :
+  unknown;
 
 /**
  * Schema is used to define the format of input/output data.
  * Represents a select subset of an OpenAPI 3.0 schema object.
  * More fields may be added in the future as needed.
  */
-export interface Schema {
-  /**
-   * Optional. The type of the property. {@link
-   * SchemaType}.
-   */
-  type?: SchemaType;
-  /** Optional. The format of the property. */
+export type Schema<T extends SchemaType> = {
+  type?: T;
   format?: string;
-  /** Optional. The description of the property. */
+  title?: string;
   description?: string;
-  /** Optional. Whether the property is nullable. */
   nullable?: boolean;
-  /** Optional. The items of the property. {@link Schema} */
+  default?: SchemaValueByType<T>; // ahora depende del tipo
+  example?: SchemaValueByType<T>; // también depende del tipo
   items?: Schema;
-  /** Optional. The enum of the property. */
+  minItems?: string;
+  maxItems?: string;
   enum?: string[];
-  /** Optional. Map of {@link Schema}. */
-  properties?: {[k: string]: Schema};
-  /** Optional. Array of required property. */
+  properties?: {
+      [key: string]: Schema;
+  };
+  propertyOrdering?: string[];
   required?: string[];
-  /** Optional. The example of the property. */
-  example?: unknown;
-}
+  minProperties?: string;
+  maxProperties?: string;
+  minimum?: number;
+  maximum?: number;
+  minLength?: string;
+  maxLength?: string;
+  pattern?: string;
+  anyOf?: Schema[];
+  additionalProperties?: boolean | Schema;
+  ref?: string;
+  defs?: {
+      [key: string]: Schema;
+  };
+};
