@@ -28,4 +28,4 @@ fi
 npm install
 npm install --no-save @google-cloud/cloud-rad@^0.4.0
 # publish docs to devsite
-DOCS_METADATA_STEM=/vertex-ai/generative-ai/docs/reference/nodejs npx @google-cloud/cloud-rad . cloud-rad
+npx @google-cloud/cloud-rad . cloud-rad

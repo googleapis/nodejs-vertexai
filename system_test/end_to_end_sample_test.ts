@@ -134,7 +134,7 @@ const vertexAI = new VertexAI({
   location: LOCATION,
 });
 
-const TEXT_MODEL_NAME = 'gemini-1.0-pro';
+const TEXT_MODEL_NAME = 'gemini-2.0-flash';
 const generativeTextModel = vertexAI.getGenerativeModel({
   model: TEXT_MODEL_NAME,
   generationConfig: {
@@ -148,30 +148,30 @@ const generativeTextModelPreview = vertexAI.preview.getGenerativeModel({
   },
 });
 const generativeTextModelWithPrefix = vertexAI.getGenerativeModel({
-  model: 'models/gemini-1.0-pro',
+  model: 'models/gemini-2.0-flash',
   generationConfig: {
     maxOutputTokens: 256,
   },
 });
 const generativeTextModelWithPrefixPreview =
   vertexAI.preview.getGenerativeModel({
-    model: 'models/gemini-1.0-pro',
+    model: 'models/gemini-2.0-flash',
     generationConfig: {
       maxOutputTokens: 256,
     },
   });
 const generativeVisionModel = vertexAI.getGenerativeModel({
-  model: 'gemini-1.0-pro-vision',
+  model: 'gemini-2.0-flash',
 });
 const generativeVisionModelPreview = vertexAI.preview.getGenerativeModel({
-  model: 'gemini-1.0-pro-vision',
+  model: 'gemini-2.0-flash',
 });
 const generativeVisionModelWithPrefix = vertexAI.getGenerativeModel({
-  model: 'models/gemini-1.0-pro-vision',
+  model: 'gemini-2.0-flash',
 });
 const generativeVisionModelWithPrefixPreview =
   vertexAI.preview.getGenerativeModel({
-    model: 'models/gemini-1.0-pro-vision',
+    model: 'models/gemini-2.0-flash',
   });
 describe('generateContentStream', () => {
   beforeEach(() => {
