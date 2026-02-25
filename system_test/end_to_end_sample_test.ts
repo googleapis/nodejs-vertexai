@@ -972,7 +972,7 @@ describe('sendMessage', () => {
 
 describe('sendMessageStream', () => {
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
   it('should should return a stream and populate history when generationConfig is passed to startChat', async () => {
     const chat = generativeTextModel.startChat({
