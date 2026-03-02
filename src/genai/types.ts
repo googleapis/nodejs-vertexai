@@ -64,6 +64,22 @@ export enum ManagedTopicEnum {
   EXPLICIT_INSTRUCTIONS = 'EXPLICIT_INSTRUCTIONS',
 }
 
+/** Framework used to build the application. */
+export enum Framework {
+  /**
+   * Unspecified framework.
+   */
+  FRAMEWORK_UNSPECIFIED = 'FRAMEWORK_UNSPECIFIED',
+  /**
+   * React framework.
+   */
+  REACT = 'REACT',
+  /**
+   * Angular framework.
+   */
+  ANGULAR = 'ANGULAR',
+}
+
 /** Represents an environment variable present in a Container or Python Module. */
 export declare interface EnvVar {
   /** Required. Name of the environment variable. Must be a valid C identifier. */
@@ -110,17 +126,17 @@ export declare interface SecretEnvVar {
 export declare interface ReasoningEngineSpecDeploymentSpec {
   /** The agent server mode. */
   agentServerMode?: AgentServerMode;
-  /** Optional. The maximum number of concurrent requests that can be handled by the application. Defaults to 8. */
+  /** Optional. Concurrency for each container and agent server. Recommended value: 2 * cpu + 1. Defaults to 9. */
   containerConcurrency?: number;
   /** Optional. Environment variables to be set with the Reasoning Engine deployment. The environment variables can be updated through the UpdateReasoningEngine API. */
   env?: EnvVar[];
   /** Optional. The maximum number of application instances that can be launched to handle increased traffic. Defaults to 100. Range: [1, 1000]. If VPC-SC or PSC-I is enabled, the acceptable range is [1, 100]. */
   maxInstances?: number;
-  /** Optional. The minimum number of application instances that will be kept running at all times. Defaults to 1. */
+  /** Optional. The minimum number of application instances that will be kept running at all times. Defaults to 1. Range: [0, 10]. */
   minInstances?: number;
   /** Optional. Configuration for PSC-I. */
   pscInterfaceConfig?: PscInterfaceConfig;
-  /** Optional. Resource limits for each container. Only 'cpu' and 'memory' keys are supported. Defaults to {"cpu": "4", "memory": "4Gi"}. * The only supported values for CPU are '1', '2', '4', and '8'. For more information, go to https://cloud.google.com/run/docs/configuring/cpu. * For supported 'memory' values and syntax, go to https://cloud.google.com/run/docs/configuring/memory-limits */
+  /** Optional. Resource limits for each container. Only 'cpu' and 'memory' keys are supported. Defaults to {"cpu": "4", "memory": "4Gi"}. * The only supported values for CPU are '1', '2', '4', '6' and '8'. For more information, go to https://cloud.google.com/run/docs/configuring/cpu. * The only supported values for memory are '1Gi', '2Gi', ... '32 Gi'. * For required cpu on different memory values, go to https://cloud.google.com/run/docs/configuring/memory-limits */
   resourceLimits?: Record<string, string>;
   /** Optional. Environment variables where the value is a secret in Cloud Secret Manager. To use this feature, add 'Secret Manager Secret Accessor' role (roles/secretmanager.secretAccessor) to AI Platform Reasoning Engine Service Agent. */
   secretEnv?: SecretEnvVar[];
@@ -132,10 +148,31 @@ export declare interface ReasoningEngineSpecPackageSpec {
   dependencyFilesGcsUri?: string;
   /** Optional. The Cloud Storage URI of the pickled python object. */
   pickleObjectGcsUri?: string;
-  /** Optional. The Python version. Currently support 3.8, 3.9, 3.10, 3.11. If not specified, default value is 3.10. */
+  /** Optional. The Python version. Supported values are 3.9, 3.10, 3.11, 3.12, 3.13, 3.14. If not specified, the default value is 3.10. */
   pythonVersion?: string;
   /** Optional. The Cloud Storage URI of the `requirements.txt` file */
   requirementsGcsUri?: string;
+}
+
+/** Configuration for the Agent Development Kit (ADK). */
+export declare interface ReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfig {
+  /** Required. The value of the ADK config in JSON format. */
+  jsonConfig?: Record<string, unknown>;
+}
+
+/** Specifies source code provided as a byte stream. */
+export declare interface ReasoningEngineSpecSourceCodeSpecInlineSource {
+  /** Required. Input only. The application source code archive. It must be a compressed tarball (.tar.gz) file.
+   * @remarks Encoded as base64 string. */
+  sourceArchive?: string;
+}
+
+/** Specification for the deploying from agent config. */
+export declare interface ReasoningEngineSpecSourceCodeSpecAgentConfigSource {
+  /** Required. The ADK configuration. */
+  adkConfig?: ReasoningEngineSpecSourceCodeSpecAgentConfigSourceAdkConfig;
+  /** Optional. Any additional files needed to interpret the config. If a `requirements.txt` file is present in the `inline_source`, the corresponding packages will be installed. If no `requirements.txt` file is present in `inline_source`, then the latest version of `google-adk` will be installed for interpreting the ADK config. */
+  inlineSource?: ReasoningEngineSpecSourceCodeSpecInlineSource;
 }
 
 /** Specifies the configuration for fetching source code from a Git repository that is managed by Developer Connect.
@@ -152,27 +189,8 @@ export declare interface ReasoningEngineSpecSourceCodeSpecDeveloperConnectConfig
 
 /** Specifies source code to be fetched from a Git repository managed through the Developer Connect service. */
 export declare interface ReasoningEngineSpecSourceCodeSpecDeveloperConnectSource {
-  /** Required. The Developer Connect configuration thats defines the specific repository, revision, and directory to use as the source code root. */
+  /** Required. The Developer Connect configuration that defines the specific repository, revision, and directory to use as the source code root. */
   config?: ReasoningEngineSpecSourceCodeSpecDeveloperConnectConfig;
-}
-
-/** Specifies source code provided as a byte stream. */
-export declare interface ReasoningEngineSpecSourceCodeSpecInlineSource {
-  /** Required. Input only. The application source code archive, provided as a compressed tarball (.tar.gz) file.
-   * @remarks Encoded as base64 string. */
-  sourceArchive?: string;
-}
-
-/** Specification for running a Python application from source. */
-export declare interface ReasoningEngineSpecSourceCodeSpecPythonSpec {
-  /** Optional. The Python module to load as the entrypoint, specified as a fully qualified module name. For example: path.to.agent. If not specified, defaults to "agent". The project root will be added to Python sys.path, allowing imports to be specified relative to the root. */
-  entrypointModule?: string;
-  /** Optional. The name of the callable object within the `entrypoint_module` to use as the application If not specified, defaults to "root_agent". */
-  entrypointObject?: string;
-  /** Optional. The path to the requirements file, relative to the source root. If not specified, defaults to "requirements.txt". */
-  requirementsFile?: string;
-  /** Optional. The version of Python to use. Support version includes 3.9, 3.10, 3.11, 3.12, 3.13. If not specified, default value is 3.10. */
-  version?: string;
 }
 
 /** The image spec for building an image (within a single build step).
@@ -183,16 +201,30 @@ export declare interface ReasoningEngineSpecSourceCodeSpecImageSpec {
   buildArgs?: Record<string, string>;
 }
 
+/** Specification for running a Python application from source. */
+export declare interface ReasoningEngineSpecSourceCodeSpecPythonSpec {
+  /** Optional. The Python module to load as the entrypoint, specified as a fully qualified module name. For example: path.to.agent. If not specified, defaults to "agent". The project root will be added to Python sys.path, allowing imports to be specified relative to the root. This field should not be set if the source is `agent_config_source`. */
+  entrypointModule?: string;
+  /** Optional. The name of the callable object within the `entrypoint_module` to use as the application If not specified, defaults to "root_agent". This field should not be set if the source is `agent_config_source`. */
+  entrypointObject?: string;
+  /** Optional. The path to the requirements file, relative to the source root. If not specified, defaults to "requirements.txt". */
+  requirementsFile?: string;
+  /** Optional. The version of Python to use. Support version includes 3.9, 3.10, 3.11, 3.12, 3.13, 3.14. If not specified, default value is 3.10. */
+  version?: string;
+}
+
 /** Specification for deploying from source code. */
 export declare interface ReasoningEngineSpecSourceCodeSpec {
+  /** Source code is generated from the agent config. */
+  agentConfigSource?: ReasoningEngineSpecSourceCodeSpecAgentConfigSource;
   /** Source code is in a Git repository managed by Developer Connect. */
   developerConnectSource?: ReasoningEngineSpecSourceCodeSpecDeveloperConnectSource;
+  /** Optional. Configuration for building an image with custom config file. */
+  imageSpec?: ReasoningEngineSpecSourceCodeSpecImageSpec;
   /** Source code is provided directly in the request. */
   inlineSource?: ReasoningEngineSpecSourceCodeSpecInlineSource;
   /** Configuration for a Python application. */
   pythonSpec?: ReasoningEngineSpecSourceCodeSpecPythonSpec;
-  /** Optional. Configuration for building an image with custom config file. */
-  imageSpec?: ReasoningEngineSpecSourceCodeSpecImageSpec;
 }
 
 /** The specification of an agent engine. */
@@ -277,14 +309,14 @@ export declare interface MemoryBankCustomizationConfigMemoryTopic {
 
 /** Configuration for organizing memories for a particular scope. */
 export declare interface MemoryBankCustomizationConfig {
+  /** Optional. If true, then the memories will be generated in the third person (i.e. "The user generates memories with Memory Bank."). By default, the memories will be generated in the first person (i.e. "I generate memories with Memory Bank.") */
+  enableThirdPersonMemories?: boolean;
   /** Optional. Examples of how to generate memories for a particular scope. */
   generateMemoriesExamples?: MemoryBankCustomizationConfigGenerateMemoriesExample[];
   /** Optional. Topics of information that should be extracted from conversations and stored as memories. If not set, then Memory Bank's default topics will be used. */
   memoryTopics?: MemoryBankCustomizationConfigMemoryTopic[];
   /** Optional. The scope keys (i.e. 'user_id') for which to use this config. A request's scope must include all of the provided keys for the config to be used (order does not matter). If empty, then the config will be used for all requests that do not have a more specific config. Only one default config is allowed per Memory Bank. */
   scopeKeys?: string[];
-  /** Optional. If true, then the memories will be generated in the third person (i.e. "The user generates memories with Memory Bank."). By default, the memories will be generated in the first person (i.e. "I generate memories with Memory Bank.") */
-  enableThirdPersonMemories?: boolean;
 }
 
 /** Configuration for how to generate memories. */
@@ -323,14 +355,14 @@ export declare interface ReasoningEngineContextSpecMemoryBankConfigTtlConfig {
 export declare interface ReasoningEngineContextSpecMemoryBankConfig {
   /** Optional. Configuration for how to customize Memory Bank behavior for a particular scope. */
   customizationConfigs?: MemoryBankCustomizationConfig[];
+  /** If true, no memory revisions will be created for any requests to the Memory Bank. */
+  disableMemoryRevisions?: boolean;
   /** Optional. Configuration for how to generate memories for the Memory Bank. */
   generationConfig?: ReasoningEngineContextSpecMemoryBankConfigGenerationConfig;
   /** Optional. Configuration for how to perform similarity search on memories. If not set, the Memory Bank will use the default embedding model `text-embedding-005`. */
   similaritySearchConfig?: ReasoningEngineContextSpecMemoryBankConfigSimilaritySearchConfig;
   /** Optional. Configuration for automatic TTL ("time-to-live") of the memories in the Memory Bank. If not set, TTL will not be applied automatically. The TTL can be explicitly set by modifying the `expire_time` of each Memory resource. */
   ttlConfig?: ReasoningEngineContextSpecMemoryBankConfigTtlConfig;
-  /** If true, no memory revisions will be created for any requests to the Memory Bank. */
-  disableMemoryRevisions?: boolean;
 }
 
 /** The configuration for agent engine sub-resources to manage context. */
@@ -917,4 +949,26 @@ export declare interface AgentEngineConfig {
   buildOptions?: Record<string, string[]>;
   /** The image spec for the Agent Engine. */
   imageSpec?: ReasoningEngineSpecSourceCodeSpecImageSpec;
+  /** The agent config source for the Agent Engine. */
+  agentConfigSource?: ReasoningEngineSpecSourceCodeSpecAgentConfigSource;
+}
+
+/** A linked resource attached to the application by the user. */
+export declare interface SchemaPromptSpecAppBuilderDataLinkedResource {
+  /** A user-friendly name for the data source shown in the UI. */
+  displayName?: string;
+  /** The unique resource name of the data source. The format is determined by the 'type' field. For type "SAVED_PROMPT": projects/{project}/locations/{location}/datasets/{dataset} For type "AI_AGENT": projects/{project}/locations/{location}/agents/{agent} */
+  name?: string;
+  /** The type of the linked resource. e.g., "SAVED_PROMPT", "AI_AGENT" This string corresponds to the name of the LinkedResourceType enum member. See: google3/cloud/console/web/ai/platform/llm/prompts/build/services/specs_repository_service/linked_resources/linked_resource.ts */
+  type?: string;
+}
+
+/** Defines data for an application builder. */
+export declare interface SchemaPromptSpecAppBuilderData {
+  /** Serialized state of the code repository. This string will typically contain a JSON representation of the UI's CodeRepositoryService state (files, folders, content, and any metadata). The UI is responsible for serialization and deserialization. */
+  codeRepositoryState?: string;
+  /** Optional. Framework used to build the application. */
+  framework?: Framework;
+  /** Linked resources attached to the application by the user. */
+  linkedResources?: SchemaPromptSpecAppBuilderDataLinkedResource[];
 }
