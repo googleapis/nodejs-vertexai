@@ -12,6 +12,7 @@ import {NodeUploader} from 'google3/third_party/javascript/google_genai/src/g3_n
 import {NodeDownloader} from 'google3/third_party/javascript/google_genai/src/node/_node_downloader.js';
 
 import {AgentEngines} from './agentengines';
+import {Sessions} from './sessions';
 
 export class Client {
   private readonly apiClient: ApiClient;

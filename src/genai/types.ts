@@ -798,6 +798,211 @@ export declare interface UpdateAgentEngineRequestParameters {
   config?: UpdateAgentEngineConfig;
 }
 
+/** Config for creating a Session. */
+export declare interface CreateAgentEngineSessionConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** The display name of the session. */
+  displayName?: string;
+  /** Session state which stores key conversation points. */
+  sessionState?: Record<string, unknown>;
+  /** Waits for the operation to complete before returning. */
+  waitForCompletion?: boolean;
+  /** Optional. Input only. The TTL for this resource.
+
+      The expiration time is computed: now + TTL. */
+  ttl?: string;
+  /** Optional. Timestamp of when this resource is considered expired. This is *always* provided on output, regardless of what `expiration` was sent on input. */
+  expireTime?: string;
+  /** Optional. The labels with user-defined metadata to organize your Sessions. Label keys and values can be no longer than 64 characters (Unicode codepoints), can only contain lowercase letters, numeric characters, underscores and dashes. International characters are allowed. See https://goo.gl/xmQnxf for more information and examples of labels. */
+  labels?: Record<string, string>;
+}
+
+/** Parameters for creating Agent Engine Sessions. */
+export declare interface CreateAgentEngineSessionRequestParameters {
+  /** Name of the agent engine to create the session under. */
+  name: string;
+  /** The user ID of the session. */
+  userId: string;
+  config?: CreateAgentEngineSessionConfig;
+}
+
+/** A session. */
+export declare interface Session {
+  /** Output only. Timestamp when the session was created. */
+  createTime?: string;
+  /** Optional. The display name of the session. */
+  displayName?: string;
+  /** Optional. Timestamp of when this session is considered expired. This is *always* provided on output, regardless of what was sent on input. The minimum value is 24 hours from the time of creation. */
+  expireTime?: string;
+  /** The labels with user-defined metadata to organize your Sessions. Label keys and values can be no longer than 64 characters (Unicode codepoints), can only contain lowercase letters, numeric characters, underscores and dashes. International characters are allowed. See https://goo.gl/xmQnxf for more information and examples of labels. */
+  labels?: Record<string, string>;
+  /** Identifier. The resource name of the session. Format: 'projects/{project}/locations/{location}/reasoningEngines/{reasoning_engine}/sessions/{session}'. */
+  name?: string;
+  /** Optional. Session specific memory which stores key conversation points. */
+  sessionState?: Record<string, unknown>;
+  /** Optional. Input only. The TTL for this session. The minimum value is 24 hours. */
+  ttl?: string;
+  /** Output only. Timestamp when the session was updated. */
+  updateTime?: string;
+  /** Required. Immutable. String id provided by the user */
+  userId?: string;
+}
+
+/** Operation that has an agent engine session as a response. */
+export declare interface AgentEngineSessionOperation {
+  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
+  name?: string;
+  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
+  metadata?: Record<string, unknown>;
+  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
+  done?: boolean;
+  /** The error result of the operation in case of failure or cancellation. */
+  error?: Record<string, unknown>;
+  /** The Agent Engine Session. */
+  response?: Session;
+}
+
+/** Config for deleting an Agent Engine Session. */
+export declare interface DeleteAgentEngineSessionConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+}
+
+/** Parameters for deleting agent engine sessions. */
+export declare interface DeleteAgentEngineSessionRequestParameters {
+  /** Name of the agent engine session to delete. */
+  name: string;
+  config?: DeleteAgentEngineSessionConfig;
+}
+
+/** Operation for deleting agent engine sessions. */
+export declare interface DeleteAgentEngineSessionOperation {
+  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
+  name?: string;
+  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
+  metadata?: Record<string, unknown>;
+  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
+  done?: boolean;
+  /** The error result of the operation in case of failure or cancellation. */
+  error?: Record<string, unknown>;
+}
+
+/** Config for getting an Agent Engine Session. */
+export declare interface GetAgentEngineSessionConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+}
+
+/** Parameters for getting an agent engine session. */
+export declare interface GetAgentEngineSessionRequestParameters {
+  /** Name of the agent engine session. */
+  name: string;
+  config?: GetAgentEngineSessionConfig;
+}
+
+/** Config for listing agent engine sessions. */
+export declare interface ListAgentEngineSessionsConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  pageSize?: number;
+  pageToken?: string;
+  /** An expression for filtering the results of the request.
+      For field names both snake_case and camelCase are supported. */
+  filter?: string;
+}
+
+/** Parameters for listing agent engines. */
+export declare interface ListAgentEngineSessionsRequestParameters {
+  /** Name of the agent engine. */
+  name: string;
+  config?: ListAgentEngineSessionsConfig;
+}
+
+/** Response for listing agent engine sessions. */
+export class ListReasoningEnginesSessionsResponse {
+  /** Used to retain the full HTTP response. */
+  sdkHttpResponse?: genaiTypes.HttpResponse;
+  nextPageToken?: string;
+  /** List of agent engine sessions. */
+  sessions?: Session[];
+}
+
+/** Parameters for getting an operation with a session as a response. */
+export declare interface GetAgentEngineSessionOperationParameters {
+  /** The server-assigned name for the operation. */
+  operationName: string;
+  /** Used to override the default configuration. */
+  config?: GetAgentEngineOperationConfig;
+}
+
+/** Config for updating agent engine session. */
+export declare interface UpdateAgentEngineSessionConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** The display name of the session. */
+  displayName?: string;
+  /** Session state which stores key conversation points. */
+  sessionState?: Record<string, unknown>;
+  /** Waits for the operation to complete before returning. */
+  waitForCompletion?: boolean;
+  /** Optional. Input only. The TTL for this resource.
+
+      The expiration time is computed: now + TTL. */
+  ttl?: string;
+  /** Optional. Timestamp of when this resource is considered expired. This is *always* provided on output, regardless of what `expiration` was sent on input. */
+  expireTime?: string;
+  /** Optional. The labels with user-defined metadata to organize your Sessions. Label keys and values can be no longer than 64 characters (Unicode codepoints), can only contain lowercase letters, numeric characters, underscores and dashes. International characters are allowed. See https://goo.gl/xmQnxf for more information and examples of labels. */
+  labels?: Record<string, string>;
+  /** The update mask to apply. For the `FieldMask` definition, see
+      https://protobuf.dev/reference/protobuf/google.protobuf/#field-mask. */
+  updateMask?: string;
+  /** User ID of the agent engine session to update. */
+  userId?: string;
+}
+
+/** Parameters for updating agent engine sessions. */
+export declare interface UpdateAgentEngineSessionRequestParameters {
+  /** Name of the agent engine session to update. */
+  name: string;
+  config?: UpdateAgentEngineSessionConfig;
+}
+
 /** An agent engine instance. */
 export declare interface AgentEngine {
   /** The underlying API client. */

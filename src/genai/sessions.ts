@@ -17,30 +17,26 @@ import {
   Pager,
 } from 'google3/third_party/javascript/google_genai/src/pagers.js';
 import * as genaiTypes from 'google3/third_party/javascript/google_genai/src/types';
-import * as converters from 'google3/third_party/javascript/node_modules/vertexai/src/genai/converters/_agentengines_converters.js';
-import {Sessions} from 'google3/third_party/javascript/node_modules/vertexai/src/genai/sessions.js';
+import * as converters from 'google3/third_party/javascript/node_modules/vertexai/src/genai/converters/_sessions_converters.js';
 import * as types from 'google3/third_party/javascript/node_modules/vertexai/src/genai/types.js';
 
-export class AgentEngines extends BaseModule {
-  public readonly sessions: Sessions;
-
+export class Sessions extends BaseModule {
   constructor(private readonly apiClient: ApiClient) {
     super();
-    this.sessions = new Sessions(apiClient);
   }
 
   private async createInternal(
-    params: types.CreateAgentEngineRequestParameters,
-  ): Promise<types.AgentEngineOperation> {
-    let response: Promise<types.AgentEngineOperation>;
+    params: types.CreateAgentEngineSessionRequestParameters,
+  ): Promise<types.AgentEngineSessionOperation> {
+    let response: Promise<types.AgentEngineSessionOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.createAgentEngineRequestParametersToVertex(params);
+        converters.createAgentEngineSessionRequestParametersToVertex(params);
       path = common.formatMap(
-        'reasoningEngines',
+        '{name}/sessions',
         body['_url'] as Record<string, unknown>,
       );
       queryParams = body['_query'] as Record<string, string>;
@@ -58,26 +54,26 @@ export class AgentEngines extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineOperation>;
+        }) as Promise<types.AgentEngineSessionOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineOperation;
+        return resp as types.AgentEngineSessionOperation;
       });
     } else {
       throw new Error('This method is only supported by the Vertex AI.');
     }
   }
 
-  private async deleteInternal(
-    params: types.DeleteAgentEngineRequestParameters,
-  ): Promise<types.DeleteAgentEngineOperation> {
-    let response: Promise<types.DeleteAgentEngineOperation>;
+  async delete(
+    params: types.DeleteAgentEngineSessionRequestParameters,
+  ): Promise<types.DeleteAgentEngineSessionOperation> {
+    let response: Promise<types.DeleteAgentEngineSessionOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.deleteAgentEngineRequestParametersToVertex(params);
+        converters.deleteAgentEngineSessionRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -97,25 +93,26 @@ export class AgentEngines extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.DeleteAgentEngineOperation>;
+        }) as Promise<types.DeleteAgentEngineSessionOperation>;
 
       return response.then((resp) => {
-        return resp as types.DeleteAgentEngineOperation;
+        return resp as types.DeleteAgentEngineSessionOperation;
       });
     } else {
       throw new Error('This method is only supported by the Vertex AI.');
     }
   }
 
-  private async getInternal(
-    params: types.GetAgentEngineRequestParameters,
-  ): Promise<types.ReasoningEngine> {
-    let response: Promise<types.ReasoningEngine>;
+  async get(
+    params: types.GetAgentEngineSessionRequestParameters,
+  ): Promise<types.Session> {
+    let response: Promise<types.Session>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body = converters.getAgentEngineRequestParametersToVertex(params);
+      const body =
+        converters.getAgentEngineSessionRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -135,10 +132,10 @@ export class AgentEngines extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.ReasoningEngine>;
+        }) as Promise<types.Session>;
 
       return response.then((resp) => {
-        return resp as types.ReasoningEngine;
+        return resp as types.Session;
       });
     } else {
       throw new Error('This method is only supported by the Vertex AI.');
@@ -146,16 +143,17 @@ export class AgentEngines extends BaseModule {
   }
 
   private async listInternal(
-    params: types.ListAgentEngineRequestParameters,
-  ): Promise<types.ListReasoningEnginesResponse> {
-    let response: Promise<types.ListReasoningEnginesResponse>;
+    params: types.ListAgentEngineSessionsRequestParameters,
+  ): Promise<types.ListReasoningEnginesSessionsResponse> {
+    let response: Promise<types.ListReasoningEnginesSessionsResponse>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body = converters.listAgentEngineRequestParametersToVertex(params);
+      const body =
+        converters.listAgentEngineSessionsRequestParametersToVertex(params);
       path = common.formatMap(
-        'reasoningEngines',
+        '{name}/sessions',
         body['_url'] as Record<string, unknown>,
       );
       queryParams = body['_query'] as Record<string, string>;
@@ -173,10 +171,10 @@ export class AgentEngines extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.ListReasoningEnginesResponse>;
+        }) as Promise<types.ListReasoningEnginesSessionsResponse>;
 
       return response.then((resp) => {
-        const typedResp = new types.ListReasoningEnginesResponse();
+        const typedResp = new types.ListReasoningEnginesSessionsResponse();
         Object.assign(typedResp, resp);
         return typedResp;
       });
@@ -185,15 +183,16 @@ export class AgentEngines extends BaseModule {
     }
   }
 
-  private async getAgentOperationInternal(
-    params: types.GetAgentEngineOperationParameters,
-  ): Promise<types.AgentEngineOperation> {
-    let response: Promise<types.AgentEngineOperation>;
+  private async getSessionOperationInternal(
+    params: types.GetAgentEngineSessionOperationParameters,
+  ): Promise<types.AgentEngineSessionOperation> {
+    let response: Promise<types.AgentEngineSessionOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body = converters.getAgentEngineOperationParametersToVertex(params);
+      const body =
+        converters.getAgentEngineSessionOperationParametersToVertex(params);
       path = common.formatMap(
         '{operationName}',
         body['_url'] as Record<string, unknown>,
@@ -213,50 +212,10 @@ export class AgentEngines extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineOperation>;
+        }) as Promise<types.AgentEngineSessionOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineOperation;
-      });
-    } else {
-      throw new Error('This method is only supported by the Vertex AI.');
-    }
-  }
-
-  private async queryInternal(
-    params: types.QueryAgentEngineRequestParameters,
-  ): Promise<types.QueryReasoningEngineResponse> {
-    let response: Promise<types.QueryReasoningEngineResponse>;
-
-    let path: string = '';
-    let queryParams: Record<string, string> = {};
-    if (this.apiClient.isVertexAI()) {
-      const body = converters.queryAgentEngineRequestParametersToVertex(params);
-      path = common.formatMap(
-        '{name}:query',
-        body['_url'] as Record<string, unknown>,
-      );
-      queryParams = body['_query'] as Record<string, string>;
-      delete body['_url'];
-      delete body['_query'];
-
-      response = this.apiClient
-        .request({
-          path: path,
-          queryParams: queryParams,
-          body: JSON.stringify(body),
-          httpMethod: 'POST',
-          httpOptions: params.config?.httpOptions,
-          abortSignal: params.config?.abortSignal,
-        })
-        .then((httpResponse) => {
-          return httpResponse.json();
-        }) as Promise<types.QueryReasoningEngineResponse>;
-
-      return response.then((resp) => {
-        const typedResp = new types.QueryReasoningEngineResponse();
-        Object.assign(typedResp, resp);
-        return typedResp;
+        return resp as types.AgentEngineSessionOperation;
       });
     } else {
       throw new Error('This method is only supported by the Vertex AI.');
@@ -264,15 +223,15 @@ export class AgentEngines extends BaseModule {
   }
 
   private async updateInternal(
-    params: types.UpdateAgentEngineRequestParameters,
-  ): Promise<types.AgentEngineOperation> {
-    let response: Promise<types.AgentEngineOperation>;
+    params: types.UpdateAgentEngineSessionRequestParameters,
+  ): Promise<types.AgentEngineSessionOperation> {
+    let response: Promise<types.AgentEngineSessionOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.updateAgentEngineRequestParametersToVertex(params);
+        converters.updateAgentEngineSessionRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -292,10 +251,10 @@ export class AgentEngines extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineOperation>;
+        }) as Promise<types.AgentEngineSessionOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineOperation;
+        return resp as types.AgentEngineSessionOperation;
       });
     } else {
       throw new Error('This method is only supported by the Vertex AI.');

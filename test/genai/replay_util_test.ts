@@ -63,11 +63,24 @@ export class ReplaySession {
             });
   }
 
-  verify() {
-    if (this.interactionIndex < this.replayData.interactions.length) {
+  /**
+   * Verifies that the expected interactions were executed.
+   *
+   * @param exact - If true, throws if fewer interactions were executed than
+   *     the replay file contains. Set to false when the code intentionally
+   *     executes only a subset of the recording (e.g. skipping polling).
+   */
+  verify(exact = false) {
+    if (exact && this.interactionIndex < this.replayData.interactions.length) {
       throw new Error(`Expected ${
           this.replayData.interactions.length} interactions but only ${
           this.interactionIndex} were executed.`);
+    } else if (
+        this.interactionIndex === 0 &&
+        this.replayData.interactions.length > 0) {
+      // Safety check: ensure at least one interaction happened if the file
+      // isn't empty.
+      throw new Error('No interactions were executed.');
     }
   }
 }
