@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Google LLC
+ * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -8,110 +8,74 @@ import 'jasmine';
 
 import {NodeAuth} from '@google/genai/vertex_internal';
 
-import {Client} from '../../src/genai/client.js';
-
-import {ReplaySession} from './replay_util_test';
+import {ReplayClient} from './_replay_client.js';
 
 describe('AgentEngines', () => {
-  let client: Client;
+  let client: ReplayClient;
 
   beforeEach(() => {
-    spyOn(NodeAuth.prototype, 'addAuthHeaders')
-        .and.callFake(async (headers: Headers) => {
-          headers.set('Authorization', 'Bearer fake-token');
-        });
-
-    client = new Client({
-      project: process.env['GOOGLE_CLOUD_PROJECT'],
-      location: process.env['GOOGLE_CLOUD_LOCATION'],
+    client = new ReplayClient({
+      project: 'test-project',
+      location: 'us-central1',
     });
   });
 
   it('creates an agent engine', async () => {
-    const replay = new ReplaySession(
-        'create_agent_engine/test_create_with_labels.vertex.json');
-    replay.start();
+    const fetchSpy = client.setupReplay(
+        'agent_engine_private_create/test_private_create_with_labels.vertex.json');
 
     const createOp = await (client.agentEnginesInternal as any).createInternal({
       config: {labels: {'test-label': 'test-value'}}
     });
+
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
     expect(createOp.name).toBeDefined();
 
-    // TODO: remove polling when new replay recordings are available.
-    let getOpResponse =
-        await (client.agentEnginesInternal as any).getAgentOperationInternal({
-          operationName: createOp.name
-        });
-    getOpResponse =
-        await (client.agentEnginesInternal as any).getAgentOperationInternal({
-          operationName: createOp.name
-        });
-    expect(getOpResponse.done).toBeTrue();
-    const engineName = getOpResponse.response.name;
-
-    await (client.agentEnginesInternal as any)
-        .deleteInternal({name: engineName, force: true});
-
-    replay.verify();
+    client.verifyAllInteractions();
   });
 
-  it('updates an agent engine', async () => {
-    const replay = new ReplaySession(
-        'update_agent_engine/test_agent_engines_update.vertex.json');
-    replay.start();
-
-    const createOp =
-        await (client.agentEnginesInternal as any).createInternal({});
-    let getOpResponse =
-        await (client.agentEnginesInternal as any).getAgentOperationInternal({
-          operationName: createOp.name
-        });
-    getOpResponse =
-        await (client.agentEnginesInternal as any).getAgentOperationInternal({
-          operationName: createOp.name
-        });
-    const engineName = getOpResponse.response.name;
+  it('udpates an agent engine', async () => {
+    const fetchSpy = client.setupReplay(
+        'agent_engine_private_update/test_private_update.vertex.json');
 
     const updateOp = await (client.agentEnginesInternal as any).updateInternal({
-      name: engineName,
-      config: {displayName: 'updated-name'}
+      name: 'reasoningEngines/2886612747586371584',
+      config: {displayName: 'test-agent-engine-updated'}
     });
+
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
     expect(updateOp.name).toBeDefined();
 
-    await (client.agentEnginesInternal as any)
-        .deleteInternal({name: engineName, force: true});
-
-    replay.verify();
+    client.verifyAllInteractions();
   });
 
-  it('deletes an agent engine', async () => {
-    const replay = new ReplaySession(
-        'delete_agent_engine/test_agent_engine_delete.vertex.json');
-    replay.start();
+  it('gets an agent engine resource', async () => {
+    const fetchSpy = client.setupReplay(
+        'agent_engine_private_get/test_private_get.vertex.json');
 
-    const op = await (client.agentEnginesInternal as any).createInternal({});
-    expect(op.name).toBeDefined();
-
-    let getOpResponse =
-        await (client.agentEnginesInternal as any).getAgentOperationInternal({
-          operationName: op.name
+    const reasoningEngine =
+        await (client.agentEnginesInternal as any).getInternal({
+          name: 'reasoningEngines/2886612747586371584',
         });
-    expect(getOpResponse.done).toBeFalsy();
 
-    getOpResponse =
-        await (client.agentEnginesInternal as any).getAgentOperationInternal({
-          operationName: op.name
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
+    expect(reasoningEngine.name).toBeDefined();
+
+    client.verifyAllInteractions();
+  });
+
+  it('deletes an agent engine resource', async () => {
+    const fetchSpy = client.setupReplay(
+        'agent_engine_private_delete/test_private_delete.vertex.json');
+
+    const reasoningEngine =
+        await (client.agentEnginesInternal as any).deleteInternal({
+          name: 'reasoningEngines/7571341522470174720',
         });
-    expect(getOpResponse.done).toBeTrue();
-    const engineName = getOpResponse.response.name;
 
-    const deleteOp = await (client.agentEnginesInternal as any).deleteInternal({
-      name: engineName
-    });
-    expect(deleteOp.name).toBeDefined();
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
+    expect(reasoningEngine.name).toBeDefined();
 
-    replay.verify();
+    client.verifyAllInteractions();
   });
 });
-
-// TODO: add more tests when new replay recordings are available.

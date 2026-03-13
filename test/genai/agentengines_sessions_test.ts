@@ -8,81 +8,79 @@ import 'jasmine';
 
 import {NodeAuth} from '@google/genai/vertex_internal';
 
-import {Client} from '../../src/genai/client.js';
-
-import {ReplaySession} from './replay_util_test';
-
+import {ReplayClient} from './_replay_client.js';
 describe('AgentEnginesSessions', () => {
-  let client: Client;
+  let client: ReplayClient;
 
   beforeEach(() => {
-    spyOn(NodeAuth.prototype, 'addAuthHeaders')
-        .and.callFake(async (headers: Headers) => {
-          headers.set('Authorization', 'Bearer fake-token');
-        });
-
-    client = new Client({
-      project: process.env['GOOGLE_CLOUD_PROJECT'],
-      location: process.env['GOOGLE_CLOUD_LOCATION'],
+    client = new ReplayClient({
+      project: 'test-project',
+      location: 'us-central1',
     });
   });
 
   it('creates an agent engine session', async () => {
-    const replay = new ReplaySession(
-        'create_agent_engine_session/test_create_session.vertex.json');
-    replay.start();
+    const fetchSpy = client.setupReplay(
+        'ae_session_private_create/test_private_create_session.vertex.json');
 
-    const createOp =
+    const createSessionOp =
         await (client.agentEnginesInternal.sessions as any).createInternal({
-          name: `projects/${process.env['GOOGLE_CLOUD_PROJECT']}/locations/${
-              process.env['GOOGLE_CLOUD_LOCATION']}/reasoningEngines/123`
+          name:
+              `projects/964831358985/locations/us-central1/reasoningEngines/2886612747586371584`,
+          userId: 'test-user-id',
         });
-    expect(createOp.name).toBeDefined();
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
+    expect(createSessionOp.name).toBeDefined();
+    client.verifyAllInteractions();
+  });
 
-    // TODO: remove polling when new replay recordings are available.
-    let getOpResponse =
-        await (client.agentEnginesInternal.sessions as any)
-            .getSessionOperationInternal({operationName: createOp.name});
-    getOpResponse =
-        await (client.agentEnginesInternal.sessions as any)
-            .getSessionOperationInternal({operationName: createOp.name});
-    expect(getOpResponse.done).toBeTrue();
-    const sessionName = getOpResponse.response.name;
+  it('updates an agent engine session', async () => {
+    const fetchSpy = client.setupReplay(
+        'ae_session_private_update/test_private_update_session.vertex.json');
 
-    replay.verify();
+    const updateSessionOp =
+        await (client.agentEnginesInternal.sessions as any).updateInternal({
+          name:
+              `reasoningEngines/2886612747586371584/sessions/3080649749292908544`,
+          config: {
+            displayName: 'test-agent-engine-session-updated',
+            userId: 'test-user-id'
+          }
+        });
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
+
+    expect(updateSessionOp.name).toBeDefined();
+    client.verifyAllInteractions();
+  });
+
+  it('gets an agent engine session operation', async () => {
+    const fetchSpy = client.setupReplay(
+        'ae_session_private_get/test_private_get_session_operation.vertex.json');
+
+    const getSessionOp =
+        await (client.agentEnginesInternal.sessions as any)
+            .getSessionOperationInternal({
+              operationName:
+                  `reasoningEngines/2886612747586371584/sessions/3080649749292908544/operations/758783840595476480`
+            });
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
+
+    expect(getSessionOp.name).toBeDefined();
+    client.verifyAllInteractions();
   });
 
   it('deletes an agent engine session', async () => {
-    const replay = new ReplaySession(
-        'delete_agent_engine_session/test_delete_session.vertex.json');
-    replay.start();
+    const fetchSpy = client.setupReplay(
+        'ae_session_delete/test_delete_session_non_blocking.vertex.json');
 
-    const createOp =
-        await (client.agentEnginesInternal.sessions as any).createInternal({
-          name: `projects/${process.env['GOOGLE_CLOUD_PROJECT']}/locations/${
-              process.env['GOOGLE_CLOUD_LOCATION']}/reasoningEngines/123`
-        });
-    expect(createOp.name).toBeDefined();
-
-    let getOpResponse =
-        await (client.agentEnginesInternal.sessions as any)
-            .getSessionOperationInternal({operationName: createOp.name});
-    expect(getOpResponse.done).toBeFalsy();
-
-    getOpResponse =
-        await (client.agentEnginesInternal.sessions as any)
-            .getSessionOperationInternal({operationName: createOp.name});
-    expect(getOpResponse.done).toBeTrue();
-    const sessionName = getOpResponse.response.name;
-
-    const deleteOp =
+    const deleteSessionOp =
         await (client.agentEnginesInternal.sessions as any).delete({
-          name: sessionName
+          name:
+              `reasoningEngines/2886612747586371584/sessions/8521561049109889024`
         });
-    expect(deleteOp.name).toBeDefined();
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
 
-    replay.verify();
+    expect(deleteSessionOp.name).toBeDefined();
+    client.verifyAllInteractions();
   });
 });
-
-// TODO: add more tests when new replay recordings are available.

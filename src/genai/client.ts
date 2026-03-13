@@ -12,7 +12,7 @@ import {Sessions} from './sessions';
 export const SDK_VERSION = '1.10.1';  // x-release-please-version
 
 export class Client {
-  private readonly apiClient: ApiClient;
+  protected readonly apiClient: ApiClient;
   public readonly agentEnginesInternal: AgentEngines;
 
   constructor(
