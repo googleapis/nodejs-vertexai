@@ -61,11 +61,7 @@ export function createAgentEngineSessionRequestParametersToVertex(
 
   const fromConfig = common.getValueByPath(fromObject, ['config']);
   if (fromConfig != null) {
-    common.setValueByPath(
-      toObject,
-      ['config'],
-      createAgentEngineSessionConfigToVertex(fromConfig, toObject),
-    );
+    createAgentEngineSessionConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;
@@ -79,11 +75,6 @@ export function deleteAgentEngineSessionRequestParametersToVertex(
   const fromName = common.getValueByPath(fromObject, ['name']);
   if (fromName != null) {
     common.setValueByPath(toObject, ['_url', 'name'], fromName);
-  }
-
-  const fromConfig = common.getValueByPath(fromObject, ['config']);
-  if (fromConfig != null) {
-    common.setValueByPath(toObject, ['config'], fromConfig);
   }
 
   return toObject;
@@ -105,11 +96,6 @@ export function getAgentEngineSessionOperationParametersToVertex(
     );
   }
 
-  const fromConfig = common.getValueByPath(fromObject, ['config']);
-  if (fromConfig != null) {
-    common.setValueByPath(toObject, ['config'], fromConfig);
-  }
-
   return toObject;
 }
 
@@ -121,11 +107,6 @@ export function getAgentEngineSessionRequestParametersToVertex(
   const fromName = common.getValueByPath(fromObject, ['name']);
   if (fromName != null) {
     common.setValueByPath(toObject, ['_url', 'name'], fromName);
-  }
-
-  const fromConfig = common.getValueByPath(fromObject, ['config']);
-  if (fromConfig != null) {
-    common.setValueByPath(toObject, ['config'], fromConfig);
   }
 
   return toObject;
@@ -167,11 +148,7 @@ export function listAgentEngineSessionsRequestParametersToVertex(
 
   const fromConfig = common.getValueByPath(fromObject, ['config']);
   if (fromConfig != null) {
-    common.setValueByPath(
-      toObject,
-      ['config'],
-      listAgentEngineSessionsConfigToVertex(fromConfig, toObject),
-    );
+    listAgentEngineSessionsConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;
@@ -237,11 +214,7 @@ export function updateAgentEngineSessionRequestParametersToVertex(
 
   const fromConfig = common.getValueByPath(fromObject, ['config']);
   if (fromConfig != null) {
-    common.setValueByPath(
-      toObject,
-      ['config'],
-      updateAgentEngineSessionConfigToVertex(fromConfig, toObject),
-    );
+    updateAgentEngineSessionConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;
