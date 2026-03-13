@@ -2,3 +2,5 @@
 build/
 docs/
 test/spec/
+src/genai/
+test/genai/

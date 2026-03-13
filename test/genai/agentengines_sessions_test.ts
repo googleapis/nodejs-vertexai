@@ -6,8 +6,9 @@
 
 import 'jasmine';
 
-import {NodeAuth} from 'google3/third_party/javascript/google_genai/src/g3_node/_g3_node_auth';
-import {Client} from 'google3/third_party/javascript/node_modules/vertexai/src/genai/client';
+import {NodeAuth} from '@google/genai/vertex_internal';
+
+import {Client} from '../../src/genai/client.js';
 
 import {ReplaySession} from './replay_util_test';
 
@@ -38,6 +39,7 @@ describe('AgentEnginesSessions', () => {
         });
     expect(createOp.name).toBeDefined();
 
+    // TODO: remove polling when new replay recordings are available.
     let getOpResponse =
         await (client.agentEnginesInternal.sessions as any)
             .getSessionOperationInternal({operationName: createOp.name});
@@ -81,41 +83,6 @@ describe('AgentEnginesSessions', () => {
 
     replay.verify();
   });
-
-
-  it('lists agent engine sessions', async () => {
-    const replay = new ReplaySession(
-        'list_agent_engine_sessions/test_list_sessions.vertex.json');
-    replay.start();
-
-    const agentEngines = client.agentEnginesInternal as any;
-    const sessions = (client.agentEnginesInternal as any).sessions as any;
-
-    const reasoningEngineName =
-        'projects/1011645623509/locations/us-central1/reasoningEngines/3679111042073362432';
-    const opName = `${reasoningEngineName}/operations/1056525481953722368`;
-    const sessionName = `${reasoningEngineName}/sessions/4377339958373908480`;
-    const sessionOpName = `${sessionName}/operations/6119978838001713152`;
-
-    await agentEngines.createInternal({});
-    await agentEngines.getAgentOperationInternal({operationName: opName});
-    await agentEngines.getAgentOperationInternal({operationName: opName});
-
-    await sessions.listInternal({name: reasoningEngineName});
-
-    await sessions.createInternal(
-        {name: reasoningEngineName, userId: 'test-user-123'});
-    await sessions.getSessionOperationInternal({operationName: sessionOpName});
-    await sessions.getSessionOperationInternal({operationName: sessionOpName});
-
-    await sessions.get({name: sessionName});
-
-    const listResponse =
-        await sessions.listInternal({name: reasoningEngineName});
-    expect(listResponse.sessions.length).toBe(1);
-
-    await sessions.delete({name: sessionName});
-
-    replay.verify(true);
-  });
 });
+
+// TODO: add more tests when new replay recordings are available.

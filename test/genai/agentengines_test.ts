@@ -6,8 +6,9 @@
 
 import 'jasmine';
 
-import {NodeAuth} from 'google3/third_party/javascript/google_genai/src/g3_node/_g3_node_auth';
-import {Client} from 'google3/third_party/javascript/node_modules/vertexai/src/genai/client';
+import {NodeAuth} from '@google/genai/vertex_internal';
+
+import {Client} from '../../src/genai/client.js';
 
 import {ReplaySession} from './replay_util_test';
 
@@ -36,6 +37,7 @@ describe('AgentEngines', () => {
     });
     expect(createOp.name).toBeDefined();
 
+    // TODO: remove polling when new replay recordings are available.
     let getOpResponse =
         await (client.agentEnginesInternal as any).getAgentOperationInternal({
           operationName: createOp.name
@@ -111,3 +113,5 @@ describe('AgentEngines', () => {
     replay.verify();
   });
 });
+
+// TODO: add more tests when new replay recordings are available.

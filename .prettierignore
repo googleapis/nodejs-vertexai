@@ -1,3 +1,5 @@
 **/node_modules
 build/
 docs/
+src/genai/
+test/genai/

@@ -36,7 +36,8 @@
     "posttest": "npm run lint"
   },
   "dependencies": {
-    "google-auth-library": "^9.1.0"
+    "google-auth-library": "^9.1.0",
+    "@google/genai": "^1.45.0"
   },
   "devDependencies": {
     "@types/jasmine": "^5.1.2",
