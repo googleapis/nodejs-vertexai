@@ -129,17 +129,16 @@ export class GenerativeModel {
   async generateContent(
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
-    request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest =
-      formulateSystemInstructionIntoGenerateContentRequest(
-        request,
-        this.systemInstruction
-      );
+    const formulatedRequest = formulateRequestToGenerateContentRequest(request);
+    const finalRequest = formulateSystemInstructionIntoGenerateContentRequest(
+      formulatedRequest,
+      this.systemInstruction
+    );
     return generateContent(
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      formulatedRequest,
+      finalRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -176,17 +175,16 @@ export class GenerativeModel {
   async generateContentStream(
     request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
-    request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest =
-      formulateSystemInstructionIntoGenerateContentRequest(
-        request,
-        this.systemInstruction
-      );
+    const formulatedRequest = formulateRequestToGenerateContentRequest(request);
+    const finalRequest = formulateSystemInstructionIntoGenerateContentRequest(
+      formulatedRequest,
+      this.systemInstruction
+    );
     return generateContentStream(
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      formulatedRequest,
+      finalRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -361,10 +359,10 @@ export class GenerativeModelPreview {
   async generateContent(
     request: GenerateContentRequest | string
   ): Promise<GenerateContentResult> {
-    request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest = {
+    const formulatedRequest = formulateRequestToGenerateContentRequest(request);
+    const finalRequest = {
       ...formulateSystemInstructionIntoGenerateContentRequest(
-        request,
+        formulatedRequest,
         this.systemInstruction
       ),
       cachedContent: this.cachedContent?.name,
@@ -373,7 +371,7 @@ export class GenerativeModelPreview {
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      formulatedRequest,
+      finalRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,
@@ -410,10 +408,10 @@ export class GenerativeModelPreview {
   async generateContentStream(
     request: GenerateContentRequest | string
   ): Promise<StreamGenerateContentResult> {
-    request = formulateRequestToGenerateContentRequest(request);
-    const formulatedRequest = {
+    const formulatedRequest = formulateRequestToGenerateContentRequest(request);
+    const finalRequest = {
       ...formulateSystemInstructionIntoGenerateContentRequest(
-        request,
+        formulatedRequest,
         this.systemInstruction
       ),
       cachedContent: this.cachedContent?.name,
@@ -422,7 +420,7 @@ export class GenerativeModelPreview {
       this.location,
       this.resourcePath,
       this.fetchToken(),
-      formulatedRequest,
+      finalRequest,
       this.apiEndpoint,
       this.generationConfig,
       this.safetySettings,

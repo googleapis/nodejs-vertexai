@@ -33,6 +33,7 @@ import {
   SafetySetting,
   StartChatSessionRequest,
   StreamGenerateContentResult,
+  ThinkingConfig,
   Tool,
 } from '../types/content';
 import {ToolConfig} from '../types';
@@ -59,6 +60,7 @@ export class ChatSession {
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
   private readonly toolConfig?: ToolConfig;
+  private readonly thinkingConfig?: ThinkingConfig;
   private readonly apiEndpoint?: string;
   private readonly systemInstruction?: Content;
 
@@ -83,6 +85,7 @@ export class ChatSession {
     this.safetySettings = request.safetySettings;
     this.tools = request.tools;
     this.toolConfig = request.toolConfig;
+    this.thinkingConfig = request.thinkingConfig;
     this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
     if (request.systemInstruction) {
@@ -135,6 +138,7 @@ export class ChatSession {
       tools: this.tools,
       toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
+      thinkingConfig: this.thinkingConfig,
     };
 
     const generateContentResult: GenerateContentResult = await generateContent(
@@ -220,6 +224,7 @@ export class ChatSession {
       tools: this.tools,
       toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
+      thinkingConfig: this.thinkingConfig,
     };
 
     const streamGenerateContentResultPromise = generateContentStream(
@@ -269,6 +274,7 @@ export class ChatSessionPreview {
   private readonly safetySettings?: SafetySetting[];
   private readonly tools?: Tool[];
   private readonly toolConfig?: ToolConfig;
+  private readonly thinkingConfig?: ThinkingConfig;
   private readonly apiEndpoint?: string;
   private readonly systemInstruction?: Content;
   private readonly cachedContent?: string;
@@ -294,6 +300,7 @@ export class ChatSessionPreview {
     this.safetySettings = request.safetySettings;
     this.tools = request.tools;
     this.toolConfig = request.toolConfig;
+    this.thinkingConfig = request.thinkingConfig;
     this.apiEndpoint = request.apiEndpoint;
     this.requestOptions = requestOptions ?? {};
     this.cachedContent = request.cachedContent;
@@ -347,6 +354,7 @@ export class ChatSessionPreview {
       toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
       cachedContent: this.cachedContent,
+      thinkingConfig: this.thinkingConfig,
     };
 
     const generateContentResult: GenerateContentResult = await generateContent(
@@ -434,6 +442,7 @@ export class ChatSessionPreview {
       toolConfig: this.toolConfig,
       systemInstruction: this.systemInstruction,
       cachedContent: this.cachedContent,
+      thinkingConfig: this.thinkingConfig,
     };
 
     const streamGenerateContentResultPromise = generateContentStream(
