@@ -222,6 +222,7 @@ class VertexAIPreview {
       toolConfig: modelParams.toolConfig,
       requestOptions: requestOptions,
       systemInstruction: modelParams.systemInstruction,
+      cachedContent: modelParams.cachedContent,
     };
     return new GenerativeModelPreview(getGenerativeModelParams);
   }
