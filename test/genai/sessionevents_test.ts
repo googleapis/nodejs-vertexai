@@ -29,7 +29,7 @@ describe('SessionEvents', () => {
               'reasoningEngines/2886612747586371584/sessions/6922431337672474624',
           author: 'test-user-123',
           invocationId: 'test-invocation-id',
-          timestamp: '2009-02-13T23:31:30+00:00',
+          timestamp: '2009-02-13T23:31:00+00:00',
         });
     client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
     client.verifyAllInteractions();
