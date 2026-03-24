@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.10.3](https://github.com/googleapis/nodejs-vertexai/compare/v1.10.2...v1.10.3) (2026-03-24)
+
+
+### Features
+
+* Add AgentEngine Sessions module ([286401c](https://github.com/googleapis/nodejs-vertexai/commit/286401cc3634d10eed0599cd3c0d240a19de537c))
+* Add model_status to GenerateContentResponse (Gemini API only) ([5a3101b](https://github.com/googleapis/nodejs-vertexai/commit/5a3101b56fa254a038fc5c2d88175bbb3aad3766))
+* Add part_metadata in Part (Gemini API only) ([5a3101b](https://github.com/googleapis/nodejs-vertexai/commit/5a3101b56fa254a038fc5c2d88175bbb3aad3766))
+* Adds run_query_job and check_query_job to SDK for long running async tasks. ([ff93dc5](https://github.com/googleapis/nodejs-vertexai/commit/ff93dc5fe93fbca7f7e9233e26d493be1abaff6a))
+* Support rendered_parts in GroundingSupport ([5a3101b](https://github.com/googleapis/nodejs-vertexai/commit/5a3101b56fa254a038fc5c2d88175bbb3aad3766))
+
+
+### Miscellaneous Chores
+
+* release 1.10.3 ([6a68cbe](https://github.com/googleapis/nodejs-vertexai/commit/6a68cbe24119a879f963587646fd9d69fecb9fc2))
+
 ## [1.10.2](https://github.com/googleapis/nodejs-vertexai/compare/v1.10.1...v1.10.2) (2026-03-19)
 
 
