@@ -41,6 +41,11 @@ export function createAgentEngineSessionConfigToVertex(
     common.setValueByPath(parentObject, ['labels'], fromLabels);
   }
 
+  const fromSessionId = common.getValueByPath(fromObject, ['sessionId']);
+  if (parentObject !== undefined && fromSessionId != null) {
+    common.setValueByPath(parentObject, ['_query', 'sessionId'], fromSessionId);
+  }
+
   return toObject;
 }
 
@@ -183,6 +188,11 @@ export function updateAgentEngineSessionConfigToVertex(
   const fromLabels = common.getValueByPath(fromObject, ['labels']);
   if (parentObject !== undefined && fromLabels != null) {
     common.setValueByPath(parentObject, ['labels'], fromLabels);
+  }
+
+  const fromSessionId = common.getValueByPath(fromObject, ['sessionId']);
+  if (parentObject !== undefined && fromSessionId != null) {
+    common.setValueByPath(parentObject, ['_query', 'sessionId'], fromSessionId);
   }
 
   const fromUpdateMask = common.getValueByPath(fromObject, ['updateMask']);
