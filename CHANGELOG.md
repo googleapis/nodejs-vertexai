@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.10.4](https://github.com/googleapis/nodejs-vertexai/compare/v1.10.3...v1.10.4) (2026-03-31)
+
+
+### Features
+
+* Add memory_id to Create Memory ([73207d3](https://github.com/googleapis/nodejs-vertexai/commit/73207d37f72df9475c8919bbace08e8d531daa7f))
+* Add raw_event to Append Event ([73207d3](https://github.com/googleapis/nodejs-vertexai/commit/73207d37f72df9475c8919bbace08e8d531daa7f))
+* add support for container_spec in AgentEngines ([274e0ff](https://github.com/googleapis/nodejs-vertexai/commit/274e0ff4861a5d7ec5a157300b4675ca6aa70695))
+
+
+### Miscellaneous Chores
+
+* release 1.10.4 ([15988b8](https://github.com/googleapis/nodejs-vertexai/commit/15988b8e5810d9faebebfaca2c0963b74dea5b90))
+
 ## [1.10.3](https://github.com/googleapis/nodejs-vertexai/compare/v1.10.2...v1.10.3) (2026-03-24)
 
 
