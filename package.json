@@ -22,7 +22,7 @@
     "test": "npm run test:src && npm run test:test",
     "test:test": "jasmine build/test/*.js --reporter=test/spec/reporter.js",
     "test:src": "jasmine build/src/functions/test/*.js build/src/models/test/*.js --reporter=test/spec/reporter.js",
-    "test:system": "jasmine build/system_test/*.js --reporter=test/spec/reporter.js",
+    "test:system": "jasmine build/system_test/*.js --reporter=test/spec/reporter.js --fail-fast=false",
     "lint": "ESLINT_USE_FLAT_CONFIG=true eslint src/genai --no-ignore --config src/genai/eslint.config.mjs",
     "format": "prettier 'src/genai/**/*.ts' 'src/genai/**/*.mjs' --write",
     "clean-js-files": "find . -type f -name \"*.js\" -exec rm -f {} +",
@@ -35,6 +35,13 @@
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "posttest": "npm run lint"
+  },
+  "nyc": {
+    "exclude": [
+      "test/**",
+      "system_test/**",
+      "src/genai/converters/**"
+    ]
   },
   "dependencies": {
     "@google/genai": "^1.45.0",
