@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.10.4...v1.11.0) (2026-04-07)
+
+
+### Features
+
+* Add consolidation customization to Memory Bank ([9df74eb](https://github.com/googleapis/nodejs-vertexai/commit/9df74eb4c128084d9746b8cf26570a7a04452178))
+* Add session_id to Create Session to allow custom session id ([fed70af](https://github.com/googleapis/nodejs-vertexai/commit/fed70afa92c42331efa5633c80184d27b8d0a1c4))
+* In run_query_job, rename gcs_bucket to gcs_uri and allow the case that user sets the filename for the output. ([4a1a387](https://github.com/googleapis/nodejs-vertexai/commit/4a1a3870cb368e574cb51ef7a284b82a3b09f935))
+
 ## [1.10.4](https://github.com/googleapis/nodejs-vertexai/compare/v1.10.3...v1.10.4) (2026-03-31)
 
 
