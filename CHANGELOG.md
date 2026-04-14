@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.12.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.11.0...v1.12.0) (2026-04-14)
+
+
+### Features
+
+* Add Agent Engine-level configuration for generation_trigger_config. ([365a14a](https://github.com/googleapis/nodejs-vertexai/commit/365a14ae4b05f81df52fd9fbfe2d3ac3371a2b97))
+* Add ingest_events method for Memory Bank. ([365a14a](https://github.com/googleapis/nodejs-vertexai/commit/365a14ae4b05f81df52fd9fbfe2d3ac3371a2b97))
+* Add memory_types filter to RetrieveMemories ([90e3f69](https://github.com/googleapis/nodejs-vertexai/commit/90e3f6922caebb65535958081d18b200246cef60))
+* Add RetrieveProfiles. ([90e3f69](https://github.com/googleapis/nodejs-vertexai/commit/90e3f6922caebb65535958081d18b200246cef60))
+* Add structured data and context to MemoryRevision. ([90e3f69](https://github.com/googleapis/nodejs-vertexai/commit/90e3f6922caebb65535958081d18b200246cef60))
+* Add structured data and memory type to Memory. ([90e3f69](https://github.com/googleapis/nodejs-vertexai/commit/90e3f6922caebb65535958081d18b200246cef60))
+* Add subset_topics to Memory Bank GenerateMemories ([7932c2b](https://github.com/googleapis/nodejs-vertexai/commit/7932c2b49a05d26c5656bb996cd09709d60670c9))
+* Add support for agent gateway in agent engine ([b3ea8e3](https://github.com/googleapis/nodejs-vertexai/commit/b3ea8e3a8fdb90e05c5531e01f4ec1284c105af6))
+* add support for keep alive probe in agent engines ([088c5ad](https://github.com/googleapis/nodejs-vertexai/commit/088c5ad3edabb13e49dc520a945ac0f48b145704))
+* Adds cancel_query_job to SDK for agent engine long running async tasks. ([bc19f31](https://github.com/googleapis/nodejs-vertexai/commit/bc19f31d0f86bdd9f42572a8d0a4ef94e82684e5))
+
 ## [1.11.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.10.4...v1.11.0) (2026-04-07)
 
 
