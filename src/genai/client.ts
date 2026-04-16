@@ -26,6 +26,9 @@ export class Client {
     const uploader = new NodeUploader();
     const downloader = new NodeDownloader();
 
+    const nodeVersion =
+        typeof process !== 'undefined' ? process.version : 'unknown';
+
     this.apiClient = new ApiClient({
       auth,
       uploader,
@@ -35,7 +38,8 @@ export class Client {
       vertexai: true,
       httpOptions: options.apiEndpoint ? {baseUrl: options.apiEndpoint} :
                                          undefined,
-      userAgentExtra: `vertex-genai-modules/${SDK_VERSION}`,
+      userAgentExtra:
+          `vertex-genai-modules/${SDK_VERSION} gl-node/${nodeVersion}`,
     });
 
     this._agentEnginesInternal = new AgentEngines(this.apiClient);

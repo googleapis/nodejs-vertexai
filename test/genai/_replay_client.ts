@@ -86,6 +86,18 @@ export class ReplayClient extends Client {
     }
 
     const [url, init] = actualArgs;
+
+
+    const actualHeaders = new Headers(init?.headers || {});
+    const xGoogApiClient = actualHeaders.get('x-goog-api-client') || '';
+    const userAgent = actualHeaders.get('user-agent') || '';
+
+    // Validate that user-agent is set correctly.
+    expect(xGoogApiClient).toContain('vertex-genai-modules/');
+    expect(xGoogApiClient).toContain('gl-node/');
+    expect(userAgent).toContain('vertex-genai-modules/');
+    expect(userAgent).toContain('gl-node/');
+
     const normalizedActual = normalizeRequest(init || {}, url.toString());
     assertMessagesEqual(normalizedActual, expectedRequestCamel);
   }
