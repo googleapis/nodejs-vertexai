@@ -212,6 +212,12 @@ export declare interface GenerationConfig {
   /** Optional. If specified, topK sampling will be used. */
   topK?: number;
   /**
+   * Optional. Positive penalties.
+   * Positive values penalize tokens that already appear in the generated text, increasing the probability of generating more diverse content.
+   * The maximum value for presencePenalty is up to, but not including, 2.0. Its minimum value is -2.0.
+   * Supported by gemini-2.0-flash-lite-001 and gemini-2.0-flash-001. */
+  presencePenalty?: number;
+  /**
    * Optional. Positive values penalize tokens that repeatedly appear in the generated text, decreasing the probability of repeating content.
    * This maximum value for frequencyPenalty is up to, but not including, 2.0. Its minimum value is -2.0.
    * Supported by gemini-1.5-pro and gemini-1.5-flash only. */
