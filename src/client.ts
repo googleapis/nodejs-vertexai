@@ -6,14 +6,17 @@
 import {ApiClient, NodeAuth, NodeDownloader, NodeUploader,} from '@google/genai/vertex_internal';
 
 import {AgentEngines} from './agentengines';
+import {Prompts} from './prompts';
 
 export const SDK_VERSION = '1.12.0';  // x-release-please-version
 
 let agentEnginesInternalWarned = false;
+let promptsWarned = false;
 
 export class Client {
   protected readonly apiClient: ApiClient;
   public readonly _agentEnginesInternal: AgentEngines;
+  public readonly _prompts: Prompts;
 
   constructor(
       options: {project?: string; location?: string; apiEndpoint?: string;}) {
@@ -43,6 +46,7 @@ export class Client {
     });
 
     this._agentEnginesInternal = new AgentEngines(this.apiClient);
+    this._prompts = new Prompts(this.apiClient);
   }
 
   /**
@@ -56,5 +60,18 @@ export class Client {
       agentEnginesInternalWarned = true;
     }
     return this._agentEnginesInternal;
+  }
+
+  /**
+   * Getter for prompts that logs a warning on first use.
+   */
+  public get prompts(): Prompts {
+    if (!promptsWarned) {
+      console.warn(
+          'The prompts implementation is experimental, and may change in future versions.',
+      );
+      promptsWarned = true;
+    }
+    return this._prompts;
   }
 }
