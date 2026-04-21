@@ -9,27 +9,46 @@ import {Client} from '../src/genai/client';
 const PROJECT = process.env['GCLOUD_PROJECT'];
 const LOCATION = 'us-central1';
 
+async function pollOperation(client: Client, operationName: string) {
+  let isDone = false;
+  let pollCount = 0;
+  while (!isDone && pollCount < 40) {
+    const status = await client.agentEnginesInternal.getAgentOperationInternal({
+      operationName,
+    });
+    if (status.done) {
+      return status;
+    }
+    pollCount++;
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+  }
+  throw new Error(
+      `Operation ${operationName} did not complete within the timeout.`,
+  );
+}
+
 describe('agentEnginesInternal', () => {
   let client: Client;
   let agentEngineName: string|undefined;
-  let operationName: string|undefined;
+  let createOperationName: string|undefined;
+  let updateOperationName: string|undefined;
 
-  beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
+  beforeAll(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
     client = new Client({
       project: PROJECT as string,
       location: LOCATION,
     });
-  });
+  }, 600000);
 
   afterAll(async () => {
     // If the test failed during the create operation, try to recover
     // the resource name from the operation to cleanup.
-    if (!agentEngineName && operationName) {
+    if (!agentEngineName && createOperationName) {
       try {
         const status =
             await client.agentEnginesInternal.getAgentOperationInternal({
-              operationName,
+              operationName: createOperationName,
             });
         if (status.done && status.response?.name) {
           agentEngineName = status.response.name;
@@ -60,25 +79,42 @@ describe('agentEnginesInternal', () => {
     });
 
     expect(createOp.name).toBeDefined();
-    operationName = createOp.name;
+    createOperationName = createOp.name;
 
-    // Poll for operation completion to get the Agent Engine resource name.
-    let isDone = false;
-    let pollCount = 0;
-    while (!isDone && pollCount < 40) {
-      const status =
-          await client.agentEnginesInternal.getAgentOperationInternal({
-            operationName: operationName!,
-          });
-      if (status.done) {
-        isDone = true;
-        agentEngineName = status.response?.name;
-      } else {
-        pollCount++;
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-      }
-    }
+    const status = await pollOperation(client, createOperationName!);
+    agentEngineName = status.response?.name;
 
     expect(agentEngineName).toBeDefined();
+  });
+
+  it('should get an Agent Engine', async () => {
+    const agentEngine = await client.agentEnginesInternal.getInternal({
+      name: agentEngineName!,
+    });
+    expect(agentEngine.name).toBeDefined();
+    expect(agentEngine.displayName).toEqual('test-agent-engine-sample');
+    expect(agentEngine.labels).toEqual({'test-label': 'test-value'});
+  });
+
+  it('should update an Agent Engine', async () => {
+    const updateOp = await client.agentEnginesInternal.updateInternal({
+      name: agentEngineName!,
+      config: {
+        displayName: 'test-agent-engine-updated',
+        description: 'Updated from the Vertex JS SDK system tests',
+      },
+    });
+
+    expect(updateOp.name).toBeDefined();
+    updateOperationName = updateOp.name;
+
+    const status = await pollOperation(client, updateOperationName!);
+
+    if (status.response) {
+      expect(status.response.displayName)
+          .toEqual(
+              'test-agent-engine-updated',
+          );
+    }
   });
 });
