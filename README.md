@@ -7,6 +7,7 @@
 > access Gemini features. See
 > [the migration guide](https://cloud.google.com/vertex-ai/generative-ai/docs/deprecations/genai-vertexai-sdk)
 > for details.
+> Vertex AI is now the Gemini Enterprise Agent Platform.
 
 # Vertex AI SDK for Node.js quickstart
 
