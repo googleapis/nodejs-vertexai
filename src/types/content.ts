@@ -233,6 +233,8 @@ export declare interface GenerationConfig {
    * If set, a compatible responseMimeType must also be set.
    */
   responseSchema?: ResponseSchema;
+  /** Optional. The seed to use for generation. */
+  seed?: number;
 }
 
 /**
