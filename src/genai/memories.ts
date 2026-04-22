@@ -56,7 +56,9 @@ export class Memories extends BaseModule {
         return resp as types.AgentEngineMemoryOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -96,7 +98,9 @@ export class Memories extends BaseModule {
         return resp as types.DeleteAgentEngineMemoryOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -136,7 +140,9 @@ export class Memories extends BaseModule {
         return resp as types.AgentEngineGenerateMemoriesOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -176,7 +182,9 @@ export class Memories extends BaseModule {
         return resp as types.Memory;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -215,7 +223,9 @@ export class Memories extends BaseModule {
         return resp as types.MemoryBankIngestEventsOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -257,7 +267,9 @@ export class Memories extends BaseModule {
         return typedResp;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -297,7 +309,9 @@ export class Memories extends BaseModule {
         return resp as types.AgentEngineMemoryOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -339,7 +353,9 @@ export class Memories extends BaseModule {
         return resp as types.AgentEngineGenerateMemoriesOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -381,7 +397,9 @@ export class Memories extends BaseModule {
         return typedResp;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -423,7 +441,9 @@ export class Memories extends BaseModule {
         return typedResp;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -463,7 +483,9 @@ export class Memories extends BaseModule {
         return resp as types.AgentEngineRollbackMemoryOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -503,7 +525,9 @@ export class Memories extends BaseModule {
         return resp as types.AgentEngineMemoryOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -543,7 +567,9 @@ export class Memories extends BaseModule {
         return resp as types.AgentEnginePurgeMemoriesOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 }

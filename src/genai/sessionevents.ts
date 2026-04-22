@@ -56,7 +56,9 @@ export class SessionEvents extends BaseModule {
         return typedResp;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -100,7 +102,9 @@ export class SessionEvents extends BaseModule {
         return typedResp;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 }

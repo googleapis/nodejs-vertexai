@@ -52,7 +52,9 @@ export class Sandboxes extends BaseModule {
         return resp as types.AgentEngineSandboxOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -92,7 +94,9 @@ export class Sandboxes extends BaseModule {
         return resp as types.DeleteAgentEngineSandboxOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -136,7 +140,9 @@ export class Sandboxes extends BaseModule {
         return typedResp;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -176,7 +182,9 @@ export class Sandboxes extends BaseModule {
         return resp as types.SandboxEnvironment;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -218,7 +226,9 @@ export class Sandboxes extends BaseModule {
         return typedResp;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -258,7 +268,9 @@ export class Sandboxes extends BaseModule {
         return resp as types.AgentEngineSandboxOperation;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 }

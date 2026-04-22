@@ -54,7 +54,9 @@ export class MemoryRevisions extends BaseModule {
         return resp as types.MemoryRevision;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 
@@ -98,7 +100,9 @@ export class MemoryRevisions extends BaseModule {
         return typedResp;
       });
     } else {
-      throw new Error('This method is only supported by the Vertex AI.');
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
     }
   }
 }
