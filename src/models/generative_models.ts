@@ -249,7 +249,7 @@ export class GenerativeModel {
    * @param request - {@link StartChatParams}
    * @returns {@link ChatSession}
    */
-  startChat(request?: StartChatParams): ChatSession {
+  async startChat(request?: StartChatParams): Promise<ChatSession> {
     const startChatRequest: StartChatSessionRequest = {
       project: this.project,
       location: this.location,
@@ -273,6 +273,7 @@ export class GenerativeModel {
       startChatRequest.systemInstruction =
         request.systemInstruction ?? this.systemInstruction;
     }
+    await this.fetchToken();
     return new ChatSession(startChatRequest, this.requestOptions);
   }
 }
