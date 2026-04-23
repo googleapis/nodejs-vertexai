@@ -21,10 +21,7 @@
   "include": [
     "src/**/*.ts",
     "test/**/*.ts",
-    "system_test/**/*.ts",
-    "vertexai/src/**/*.ts",
-    "vertexai/test/**/*.ts",
-    "vertexai/system_test/**/*.ts"
+    "system_test/**/*.ts"
   ],
   "exclude": [
     "build",

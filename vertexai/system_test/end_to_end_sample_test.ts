@@ -173,7 +173,7 @@ const generativeVisionModelWithPrefixPreview =
   vertexAI.preview.getGenerativeModel({
     model: 'models/gemini-2.0-flash',
   });
-xdescribe('generateContentStream', () => {
+describe('generateContentStream', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
@@ -643,7 +643,7 @@ xdescribe('generateContentStream', () => {
   });
 });
 
-xdescribe('generateContent', () => {
+describe('generateContent', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
   });
@@ -870,7 +870,7 @@ xdescribe('generateContent', () => {
   });
 });
 
-xdescribe('sendMessage', () => {
+describe('sendMessage', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
   });
@@ -970,7 +970,7 @@ xdescribe('sendMessage', () => {
   });
 });
 
-xdescribe('sendMessageStream', () => {
+describe('sendMessageStream', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });
@@ -1229,7 +1229,11 @@ xdescribe('sendMessageStream', () => {
   });
 });
 
-xdescribe('countTokens', () => {
+describe('countTokens', () => {
+  beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+  });
+
   it('should should return a CountTokensResponse', async () => {
     const countTokensResp = await generativeTextModel.countTokens(TEXT_REQUEST);
     expect(countTokensResp.totalTokens).toBeTruthy(
@@ -1245,7 +1249,7 @@ xdescribe('countTokens', () => {
   });
 });
 
-xdescribe('generateContentStream using models/model-id', () => {
+describe('generateContentStream using models/model-id', () => {
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
   });

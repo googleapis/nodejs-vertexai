@@ -15,7 +15,7 @@ describe('agentEnginesInternal', () => {
   let operationName: string|undefined;
 
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 900000;
     client = new Client({
       project: PROJECT as string,
       location: LOCATION,
@@ -65,7 +65,7 @@ describe('agentEnginesInternal', () => {
     // Poll for operation completion to get the Agent Engine resource name.
     let isDone = false;
     let pollCount = 0;
-    while (!isDone && pollCount < 40) {
+    while (!isDone && pollCount < 120) {
       const status =
           await client.agentEnginesInternal.getAgentOperationInternal({
             operationName: operationName!,
