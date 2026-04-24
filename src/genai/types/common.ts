@@ -300,7 +300,7 @@ export declare interface ReasoningEngineSpecDeploymentSpec {
   env?: EnvVar[];
   /** Optional. The maximum number of application instances that can be launched to handle increased traffic. Defaults to 100. Range: [1, 1000]. If VPC-SC or PSC-I is enabled, the acceptable range is [1, 100]. */
   maxInstances?: number;
-  /** Optional. The minimum number of application instances that will be kept running at all times. Defaults to 1. Range: [0, 10]. */
+  /** Optional. The minimum number of application instances that will be kept running at all times. Defaults to 1. Range: [0, 75]. */
   minInstances?: number;
   /** Optional. Configuration for PSC-I. */
   pscInterfaceConfig?: PscInterfaceConfig;
@@ -1937,6 +1937,8 @@ export declare interface SandboxEnvironmentConnectionInfo {
   sandboxInternalIp?: string;
   /** Output only. The hostname of the SandboxEnvironment. */
   sandboxHostname?: string;
+  /** Output only. The routing token for the SandboxEnvironment. */
+  routingToken?: string;
 }
 
 /** A sandbox environment. */
@@ -1960,6 +1962,14 @@ export declare interface SandboxEnvironment {
   ttl?: string;
   /** Output only. The timestamp when this SandboxEnvironment was most recently updated. */
   updateTime?: string;
+  /** Output only. The resource name of the latest snapshot taken for this SandboxEnvironment. */
+  latestSandboxEnvironmentSnapshot?: string;
+  /** Optional. Owner information for this sandbox environment. A Sandbox can only be restored from a snapshot that belongs to the same owner. If not set, sandbox will be created as the default owner. */
+  owner?: string;
+  /** Optional. The resource name of the SandboxEnvironmentSnapshot to use for creating this SandboxEnvironment. Format: `projects/{project}/locations/{location}/reasoningEngines/{reasoning_engine}/sandboxEnvironmentSnapshots/{sandbox_environment_snapshot}` */
+  sandboxEnvironmentSnapshot?: string;
+  /** Optional. The name of the SandboxEnvironmentTemplate specified in the parent Agent Engine resource that this SandboxEnvironment is created from. Only one of `sandbox_environment_template` and `spec` should be set. */
+  sandboxEnvironmentTemplate?: string;
 }
 
 /** Operation that has an agent engine sandbox as a response. */
