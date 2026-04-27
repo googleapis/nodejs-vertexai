@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {Client} from '../src/genai/client';
+import {Client} from '../src/client';
 
 const PROJECT = process.env['GCLOUD_PROJECT'];
 const LOCATION = 'us-central1';

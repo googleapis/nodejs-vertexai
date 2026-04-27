@@ -8,7 +8,7 @@ import {Pager} from '@google/genai';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {Client} from '../../src/genai/client.js';
+import {Client} from '../../src/client.js';
 
 /**
  * Bypass real credential fetching during replay.

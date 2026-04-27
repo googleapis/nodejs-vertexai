@@ -8,7 +8,7 @@ import 'jasmine';
 
 import {NodeAuth} from '@google/genai/vertex_internal';
 
-import * as types from '../../src/genai/types.js';
+import * as types from '../../src/types.js';
 
 import {ReplayClient} from './_replay_client.js';
 

@@ -15,8 +15,5 @@
  * limitations under the License.
  */
 
-export {VertexAI} from '../vertexai/src/vertex_ai';
-export {Client} from './genai/client';
-
-export * from '../vertexai/src/types';
-export * from '../vertexai/src/models';
+export {Client} from './client';
+export * from './types';
