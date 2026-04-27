@@ -701,9 +701,9 @@ export declare interface CreateAgentEngineConfig {
     | 'custom';
   /** The Python version to be used for the Agent Engine.
       If not specified, it will use the current Python version of the environment.
-      Supported versions: "3.9", "3.10", "3.11", "3.12", "3.13", "3.14".
+      Supported versions: "3.10", "3.11", "3.12", "3.13", "3.14".
        */
-  pythonVersion?: '3.9' | '3.10' | '3.11' | '3.12' | '3.13' | '3.14';
+  pythonVersion?: '3.10' | '3.11' | '3.12' | '3.13' | '3.14';
   /** The build options for the Agent Engine.
       The following keys are supported:
       - installation_scripts:
@@ -1033,9 +1033,9 @@ export declare interface UpdateAgentEngineConfig {
     | 'custom';
   /** The Python version to be used for the Agent Engine.
       If not specified, it will use the current Python version of the environment.
-      Supported versions: "3.9", "3.10", "3.11", "3.12", "3.13", "3.14".
+      Supported versions: "3.10", "3.11", "3.12", "3.13", "3.14".
        */
-  pythonVersion?: '3.9' | '3.10' | '3.11' | '3.12' | '3.13' | '3.14';
+  pythonVersion?: '3.10' | '3.11' | '3.12' | '3.13' | '3.14';
   /** The build options for the Agent Engine.
       The following keys are supported:
       - installation_scripts:
@@ -2608,9 +2608,9 @@ export declare interface AgentEngineConfig {
     | 'custom';
   /** The Python version to be used for the Agent Engine.
       If not specified, it will use the current Python version of the environment.
-      Supported versions: "3.9", "3.10", "3.11", "3.12", "3.13", "3.14".
+      Supported versions: "3.10", "3.11", "3.12", "3.13", "3.14".
        */
-  pythonVersion?: '3.9' | '3.10' | '3.11' | '3.12' | '3.13' | '3.14';
+  pythonVersion?: '3.10' | '3.11' | '3.12' | '3.13' | '3.14';
   /** The build options for the Agent Engine.
       The following keys are supported:
       - installation_scripts:
