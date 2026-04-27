@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.13.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.12.0...v1.13.0) (2026-04-27)
+
+
+### Features
+
+* BREAKING CHANGE - Update minimum supported Node version to Node 20 ([e2a384e](https://github.com/googleapis/nodejs-vertexai/commit/e2a384e88744914fe8daab01d4ea1f5765cd8700))
+
+
+### Bug Fixes
+
+* Removing Python 3.9 support due to EOL ([bce97bd](https://github.com/googleapis/nodejs-vertexai/commit/bce97bdfd2cc97702bf163d05b9bf5ea092445c7))
+
 ## [1.12.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.11.0...v1.12.0) (2026-04-14)
 
 
