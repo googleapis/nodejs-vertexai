@@ -1,5 +1,5 @@
 {
-  "name": "@google-cloud/vertexai",
+  "name": "@google-cloud/agentplatform",
   "description": "Vertex Generative AI client for Node.js",
   "version": "1.12.0",
   "license": "Apache-2.0",
@@ -60,7 +60,6 @@
   },
   "files": [
     "build/src",
-    "build/vertexai/src",
     "!build/**/*.map"
   ]
 }

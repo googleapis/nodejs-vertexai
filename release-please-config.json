@@ -5,8 +5,7 @@
   "packages": {
     ".": {
       "extra-files": [
-        "vertexai/src/util/constants.ts",
-        "src/genai/client.ts"
+        "src/client.ts"
       ]
     }
   }
