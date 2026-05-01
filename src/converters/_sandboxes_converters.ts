@@ -30,6 +30,33 @@ export function createAgentEngineSandboxConfigToVertex(
     common.setValueByPath(parentObject, ['ttl'], fromTtl);
   }
 
+  const fromSandboxEnvironmentTemplate = common.getValueByPath(fromObject, [
+    'sandboxEnvironmentTemplate',
+  ]);
+  if (parentObject !== undefined && fromSandboxEnvironmentTemplate != null) {
+    common.setValueByPath(
+      parentObject,
+      ['sandboxEnvironmentTemplate'],
+      fromSandboxEnvironmentTemplate,
+    );
+  }
+
+  const fromSandboxEnvironmentSnapshot = common.getValueByPath(fromObject, [
+    'sandboxEnvironmentSnapshot',
+  ]);
+  if (parentObject !== undefined && fromSandboxEnvironmentSnapshot != null) {
+    common.setValueByPath(
+      parentObject,
+      ['sandboxEnvironmentSnapshot'],
+      fromSandboxEnvironmentSnapshot,
+    );
+  }
+
+  const fromOwner = common.getValueByPath(fromObject, ['owner']);
+  if (parentObject !== undefined && fromOwner != null) {
+    common.setValueByPath(parentObject, ['owner'], fromOwner);
+  }
+
   return toObject;
 }
 
