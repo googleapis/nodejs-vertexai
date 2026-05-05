@@ -1916,6 +1916,14 @@ export declare interface CreateAgentEngineSandboxConfig {
   waitForCompletion?: boolean;
   /** The TTL for this resource. The expiration time is computed: now + TTL. */
   ttl?: string;
+  /** The name of the sandbox environment template to create the sandbox from. The sandbox environment template should be in the format:
+      projects/{project}/locations/{location}/agentEngines/{agent_engine}/sandboxEnvironmentTemplates/{sandbox_environment_template} */
+  sandboxEnvironmentTemplate?: string;
+  /** The name of the sandbox environment snapshot to restore the sandbox from. The sandbox environment snapshot should be in the format:
+      projects/{project}/locations/{location}/agentEngines/{agent_engine}/sandboxEnvironmentSnapshots/{sandbox_environment_snapshot} */
+  sandboxEnvironmentSnapshot?: string;
+  /** Owner information for this sandbox environment. A sandbox can only be restored from a snapshot belonging to the same owner. */
+  owner?: string;
 }
 
 /** Parameters for creating Agent Engine Sandboxes. */
