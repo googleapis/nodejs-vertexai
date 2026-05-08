@@ -129,7 +129,7 @@ export enum MachineConfig {
 }
 
 /** Output only. The runtime state of the SandboxEnvironment. */
-export enum State {
+export enum SandboxState {
   /**
    * The default value. This value is unused.
    */
@@ -170,6 +170,22 @@ export enum Framework {
    * Angular framework.
    */
   ANGULAR = 'ANGULAR',
+}
+
+/** Output only. The state of the revision. */
+export enum State {
+  /**
+   * The unspecified state.
+   */
+  STATE_UNSPECIFIED = 'STATE_UNSPECIFIED',
+  /**
+   * Is deployed and ready to be used.
+   */
+  ACTIVE = 'ACTIVE',
+  /**
+   * Is deprecated, may not be used, only preserved for historical purposes.
+   */
+  DEPRECATED = 'DEPRECATED',
 }
 
 /** The strategy to use when applying metadata to existing memories during consolidation. */
@@ -1965,7 +1981,7 @@ export declare interface SandboxEnvironment {
   /** Optional. The configuration of the SandboxEnvironment. */
   spec?: SandboxEnvironmentSpec;
   /** Output only. The runtime state of the SandboxEnvironment. */
-  state?: State;
+  state?: SandboxState;
   /** Optional. Input only. The TTL for the sandbox environment. The expiration time is computed: now + TTL. */
   ttl?: string;
   /** Output only. The timestamp when this SandboxEnvironment was most recently updated. */
