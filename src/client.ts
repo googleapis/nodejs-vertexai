@@ -38,9 +38,24 @@ export class Client {
       vertexai: true,
       httpOptions: options.apiEndpoint ? {baseUrl: options.apiEndpoint} :
                                          undefined,
-      userAgentExtra:
-          `vertex-genai-modules/${SDK_VERSION} gl-node/${nodeVersion}`,
+      userAgentExtra: '',
     });
+
+    const headers = this.apiClient.clientOptions.httpOptions?.headers as
+            Record<string, string>|
+        undefined;
+    if (headers) {
+      const telemetryStr =
+          `+vertex-genai-modules/${SDK_VERSION} gl-node/${nodeVersion}`;
+
+      if (headers['User-Agent']) {
+        headers['User-Agent'] = headers['User-Agent'].trim() + telemetryStr;
+      }
+      if (headers['x-goog-api-client']) {
+        headers['x-goog-api-client'] =
+            headers['x-goog-api-client'].trim() + telemetryStr;
+      }
+    }
 
     this._agentEnginesInternal = new AgentEngines(this.apiClient);
   }
