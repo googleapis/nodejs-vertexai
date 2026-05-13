@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.5.0...v0.6.0) (2026-05-13)
+
+
+### Features
+
+* Update minimum supported Node version to Node 20 ([e2a384e](https://github.com/googleapis/nodejs-vertexai/commit/e2a384e88744914fe8daab01d4ea1f5765cd8700))
+* BREAKING CHANGE - Rename the package `@google-cloud/agentplatform` ([adf4388](https://github.com/googleapis/nodejs-vertexai/commit/adf438868e497a4b0118950bc6ed7ba467ec02f6))
+
 ## [1.12.0](https://github.com/googleapis/nodejs-vertexai/compare/v1.11.0...v1.12.0) (2026-04-14)
 
 
