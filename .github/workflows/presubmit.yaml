@@ -13,7 +13,7 @@ jobs:
         with:
           version: ^6.24.1
       - run: node --version
-      - run: npm install
+      - run: npm ci
       - run: npm run test
         name: Run unit tests
         env:
