@@ -156,6 +156,30 @@ export enum SandboxState {
   STATE_DELETED = 'STATE_DELETED',
 }
 
+/** State of the Skill. */
+export enum SkillState {
+  /**
+   * The state of the Skill is unspecified.
+   */
+  STATE_UNSPECIFIED = 'STATE_UNSPECIFIED',
+  /**
+   * The Skill is active.
+   */
+  ACTIVE = 'ACTIVE',
+  /**
+   * The Skill is being created.
+   */
+  CREATING = 'CREATING',
+  /**
+   * The Skill was created, but failed to process.
+   */
+  FAILED = 'FAILED',
+  /**
+   * The Skill is being deleted.
+   */
+  DELETING = 'DELETING',
+}
+
 /** Framework used to build the application. */
 export enum Framework {
   /**
@@ -2493,6 +2517,50 @@ export class ListAgentEngineSessionEventsResponse {
   nextPageToken?: string;
   /** List of session events. */
   sessionEvents?: SessionEvent[];
+}
+
+/** Config for getting a skill. */
+export declare interface GetSkillConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+}
+
+/** Parameters for GetSkillRequest. */
+export declare interface GetSkillRequestParameters {
+  /** The resource name of the Skill to retrieve. Format: projects/{project}/locations/{location}/skills/{skill} */
+  name: string;
+  config?: GetSkillConfig;
+}
+
+/** Represents a Skill resource.
+
+Patches the type from the discovery document. */
+export declare interface Skill {
+  /** Required. Provides the zipped filesystem of the Skill. This should contain the `SKILL.md` file at the root of the zip and optional directories for scripts, references, and assets. Directory should align with the directory structure specified at https://agentskills.io/specification#directory-structure. */
+  zippedFilesystem?: string;
+  /** Output only. The state of the Skill. */
+  state?: SkillState;
+  /** Identifier. The resource name of the Skill. Format: `projects/{project}/locations/{location}/skills/{skill}` */
+  name?: string;
+  /** Output only. Timestamp when this Skill was created. */
+  createTime?: string;
+  /** Output only. Timestamp when this Skill was most recently updated. */
+  updateTime?: string;
+  /** Required. Provides the display name of the Skill. This should align with `name` in the `SKILL.md` file. */
+  displayName?: string;
+  /** Required. Describes the Skill. Should describe both what the skill does and when to use it. Should include specific keywords that help agents identify relevant tasks. This should align with `description` in the `SKILL.md` file. */
+  description?: string;
+  /** Optional. Specifies the license of the Skill. This should be an SPDX license identifier (e.g., "MIT", "Apache-2.0"). See https://spdx.org/licenses/. This should align with `license` in the `SKILL.md` file. */
+  license?: string;
+  /** Optional. Specifies the compatibility of the Skill. Indicates environment requirements (intended product, system packages, network access, etc.). This should align with `compatibility` in the `SKILL.md` file. */
+  compatibility?: string;
 }
 
 /** An agent engine instance. */

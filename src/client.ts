@@ -6,6 +6,7 @@
 import {ApiClient, NodeAuth, NodeDownloader, NodeUploader,} from '@google/genai/vertex_internal';
 
 import {AgentEngines} from './agentengines';
+import {Skills} from './skills';
 
 export const SDK_VERSION = '0.6.0';  // x-release-please-version
 
@@ -14,6 +15,7 @@ let agentEnginesInternalWarned = false;
 export class Client {
   protected readonly apiClient: ApiClient;
   public readonly _agentEnginesInternal: AgentEngines;
+  public readonly skills: Skills;
 
   constructor(
       options: {project?: string; location?: string; apiEndpoint?: string;}) {
@@ -58,6 +60,7 @@ export class Client {
     }
 
     this._agentEnginesInternal = new AgentEngines(this.apiClient);
+    this.skills = new Skills(this.apiClient);
   }
 
   /**
