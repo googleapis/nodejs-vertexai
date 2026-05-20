@@ -23,4 +23,36 @@ describe('Skills', () => {
     expect(skill.name).toBeDefined();
     client.verifyAllInteractions();
   });
+
+  it('creates a skill resource with polling', async () => {
+    const fetchSpy = client.setupReplay(
+        'skills_create/test_create_skill.vertex.json');
+    const skill = await client.skills.create({
+      skillId: 'my-replay-skill-v2',
+      displayName: 'My Replay Skill',
+      description: 'My Replay Skill Description',
+      config: {
+        zippedFilesystem: 'UEsDBBQAAAAIAAAAIQCqBr3MMAAAADgAAAAIAAAAU0tJTEwubWRTVvCtVAhKLchJrFQIzs7MyeEKycgsVgCiRIWS1OIShWKQoEJafpFCEUQVSLRYDwBQSwECFAMUAAAACAAAACEAqga9zDAAAAA4AAAACAAAAAAAAAAAAAAApAEAAAAAU0tJTEwubWRQSwUGAAAAAAEAAQA2AAAAVgAAAAAA',
+      }
+    });
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
+    expect(skill.name).toBeDefined();
+    client.verifyAllInteractions();
+  });
+
+  it('creates a skill resource using prezipped bytes with polling', async () => {
+    const fetchSpy = client.setupReplay(
+        'skills_create/test_create_skill_with_prezipped_bytes.vertex.json');
+    const skill = await client.skills.create({
+      skillId: 'my-zipped-replay-skill-v2',
+      displayName: 'My Zipped Replay Skill',
+      description: 'My Zipped Replay Skill Description',
+      config: {
+        zippedFilesystem: 'UEsDBBQAAAAAAAAAIQDhyOqPKAAAACgAAAAIAAAAU0tJTEwubWQjIE15IFppcHBlZCBSZXBsYXkgU2tpbGwKVGhpcyBpcyBhIHRlc3QuUEsBAhQDFAAAAAAAAAAhAOHI6o8oAAAAKAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAAE4AAAAAAA==',
+      }
+    });
+    client.verifyInteraction(0, fetchSpy.calls.argsFor(0));
+    expect(skill.name).toBeDefined();
+    client.verifyAllInteractions();
+  });
 });

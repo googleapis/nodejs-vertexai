@@ -9,6 +9,73 @@
 import * as common from '@google/genai/vertex_internal';
 import * as types from '../types.js';
 
+export function createSkillConfigToVertex(
+  fromObject: types.CreateSkillConfig,
+  parentObject: Record<string, unknown>,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromZippedFilesystem = common.getValueByPath(fromObject, [
+    'zippedFilesystem',
+  ]);
+  if (parentObject !== undefined && fromZippedFilesystem != null) {
+    common.setValueByPath(
+      parentObject,
+      ['zippedFilesystem'],
+      fromZippedFilesystem,
+    );
+  }
+
+  return toObject;
+}
+
+export function createSkillRequestParametersToVertex(
+  fromObject: types.CreateSkillRequestParameters,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromDisplayName = common.getValueByPath(fromObject, ['displayName']);
+  if (fromDisplayName != null) {
+    common.setValueByPath(toObject, ['displayName'], fromDisplayName);
+  }
+
+  const fromDescription = common.getValueByPath(fromObject, ['description']);
+  if (fromDescription != null) {
+    common.setValueByPath(toObject, ['description'], fromDescription);
+  }
+
+  const fromConfig = common.getValueByPath(fromObject, ['config']);
+  if (fromConfig != null) {
+    createSkillConfigToVertex(fromConfig, toObject);
+  }
+
+  const fromSkillId = common.getValueByPath(fromObject, ['skillId']);
+  if (fromSkillId != null) {
+    common.setValueByPath(toObject, ['_query', 'skillId'], fromSkillId);
+  }
+
+  return toObject;
+}
+
+export function getSkillOperationParametersToVertex(
+  fromObject: types.GetSkillOperationParameters,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromOperationName = common.getValueByPath(fromObject, [
+    'operationName',
+  ]);
+  if (fromOperationName != null) {
+    common.setValueByPath(
+      toObject,
+      ['_url', 'operationName'],
+      fromOperationName,
+    );
+  }
+
+  return toObject;
+}
+
 export function getSkillRequestParametersToVertex(
   fromObject: types.GetSkillRequestParameters,
 ): Record<string, unknown> {

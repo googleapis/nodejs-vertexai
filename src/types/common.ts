@@ -2563,6 +2563,74 @@ export declare interface Skill {
   compatibility?: string;
 }
 
+/** Config for creating a skill. */
+export declare interface CreateSkillConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** Whether to wait for the long running operation to complete. */
+  waitForCompletion?: boolean;
+  /** Optional. The local path to the directory containing the Skill to
+      be zipped and uploaded.
+       */
+  localPath?: string;
+  /** Optional. The zipped filesystem of the Skill. */
+  zippedFilesystem?: unknown;
+}
+
+/** Parameters for creating a skill. */
+export declare interface CreateSkillRequestParameters {
+  /** Required. The display name of the Skill. */
+  displayName: string;
+  /** Required. The description of the Skill. */
+  description: string;
+  config?: CreateSkillConfig;
+  /** Required. The ID to use for the Skill, which will become the final
+      component of the Skill's resource name.
+       */
+  skillId: string;
+}
+
+/** Operation that has a skill as a response. */
+export declare interface SkillOperation {
+  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
+  name?: string;
+  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
+  metadata?: Record<string, unknown>;
+  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
+  done?: boolean;
+  /** The error result of the operation in case of failure or cancellation. */
+  error?: Record<string, unknown>;
+  /** The created Skill. */
+  response?: Skill;
+}
+
+export declare interface GetSkillOperationConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+}
+
+/** Parameters for getting an operation. */
+export declare interface GetSkillOperationParameters {
+  /** The server-assigned name for the operation. */
+  operationName: string;
+  /** Used to override the default configuration. */
+  config?: GetSkillOperationConfig;
+}
+
 /** An agent engine instance. */
 export declare interface AgentEngine {
   /** The underlying API client. */
