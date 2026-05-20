@@ -93,3 +93,60 @@ export function getSkillRequestParametersToVertex(
 
   return toObject;
 }
+
+export function updateSkillConfigToVertex(
+  fromObject: types.UpdateSkillConfig,
+  parentObject: Record<string, unknown>,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromDisplayName = common.getValueByPath(fromObject, ['displayName']);
+  if (parentObject !== undefined && fromDisplayName != null) {
+    common.setValueByPath(parentObject, ['displayName'], fromDisplayName);
+  }
+
+  const fromDescription = common.getValueByPath(fromObject, ['description']);
+  if (parentObject !== undefined && fromDescription != null) {
+    common.setValueByPath(parentObject, ['description'], fromDescription);
+  }
+
+  const fromZippedFilesystem = common.getValueByPath(fromObject, [
+    'zippedFilesystem',
+  ]);
+  if (parentObject !== undefined && fromZippedFilesystem != null) {
+    common.setValueByPath(
+      parentObject,
+      ['zippedFilesystem'],
+      fromZippedFilesystem,
+    );
+  }
+
+  const fromUpdateMask = common.getValueByPath(fromObject, ['updateMask']);
+  if (parentObject !== undefined && fromUpdateMask != null) {
+    common.setValueByPath(
+      parentObject,
+      ['_query', 'updateMask'],
+      fromUpdateMask,
+    );
+  }
+
+  return toObject;
+}
+
+export function updateSkillRequestParametersToVertex(
+  fromObject: types.UpdateSkillRequestParameters,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromName = common.getValueByPath(fromObject, ['name']);
+  if (fromName != null) {
+    common.setValueByPath(toObject, ['_url', 'name'], fromName);
+  }
+
+  const fromConfig = common.getValueByPath(fromObject, ['config']);
+  if (fromConfig != null) {
+    updateSkillConfigToVertex(fromConfig, toObject);
+  }
+
+  return toObject;
+}

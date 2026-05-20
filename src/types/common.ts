@@ -2611,6 +2611,40 @@ export declare interface SkillOperation {
   response?: Skill;
 }
 
+/** Config for updating a skill. */
+export declare interface UpdateSkillConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** Whether to wait for the long running operation to complete. */
+  waitForCompletion?: boolean;
+  /** Optional. The local path to the directory containing the Skill to
+      be zipped and uploaded.
+       */
+  localPath?: string;
+  /** Optional. The display name of the Skill. */
+  displayName?: string;
+  /** Optional. The description of the Skill. */
+  description?: string;
+  /** Optional. The zipped filesystem of the Skill. */
+  zippedFilesystem?: unknown;
+  /** Optional. The update mask to apply. */
+  updateMask?: string;
+}
+
+/** Parameters for updating a skill. */
+export declare interface UpdateSkillRequestParameters {
+  /** Required. The resource name of the Skill to update. */
+  name: string;
+  config?: UpdateSkillConfig;
+}
+
 export declare interface GetSkillOperationConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;

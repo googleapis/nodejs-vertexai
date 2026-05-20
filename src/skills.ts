@@ -151,6 +151,148 @@ export class Skills extends BaseModule {
     return operation;
   }
 
+  /**
+   * Updates an existing Skill.
+   *
+   * @param params Parameters for updating a Skill.
+   * @return A Promise resolving to the updated Skill if waitForCompletion is true, or the SkillOperation otherwise.
+   */
+  async update(
+    params: types.UpdateSkillRequestParameters,
+  ): Promise<types.Skill | types.SkillOperation> {
+    const config = params.config ? {...params.config} : {};
+    const displayName = config.displayName;
+    const description = config.description;
+    const localPath = config.localPath;
+    const zippedFilesystem = config.zippedFilesystem;
+
+    if (localPath && zippedFilesystem) {
+      throw new Error(
+        'Only one of `localPath` or `zippedFilesystem` can be provided in config.',
+      );
+    }
+
+    const updateMaskPaths: string[] = [];
+    if (displayName !== undefined) {
+      updateMaskPaths.push('displayName');
+    }
+    if (description !== undefined) {
+      updateMaskPaths.push('description');
+    }
+
+    let zippedFilesystemPayload: unknown = zippedFilesystem;
+
+    if (localPath) {
+      // Document that local path deployment is only available in Node.js environments.
+      // Using dynamic imports ensures compatibility with non-Node runtime environments (e.g. browsers)
+      // as long as this code path is not executed.
+      let archiverModule;
+      let streamModule;
+      let bufferModule;
+      try {
+        const archiverName = 'archiver';
+        archiverModule = await import(archiverName);
+        streamModule = await import('stream');
+        bufferModule = await import('buffer');
+      } catch {
+        throw new Error(
+          'Zipping localPath is only supported in Node.js environments with `archiver` installed.',
+        );
+      }
+      const archiver = archiverModule.default;
+      const {Writable} = streamModule;
+      const {Buffer} = bufferModule;
+
+      const chunks: Uint8Array[] = [];
+      const writable = new Writable({
+        write(
+          chunk: unknown,
+          encoding: string,
+          callback: (error?: Error | null) => void,
+        ) {
+          chunks.push(
+            Buffer.from(chunk as Uint8Array | string) as unknown as Uint8Array,
+          );
+          callback();
+        },
+      });
+
+      const archive = archiver('zip', {zlib: {level: 9}});
+      archive.pipe(writable);
+      archive.directory(localPath, false);
+      await archive.finalize();
+
+      await new Promise((resolve, reject) => {
+        writable.on('finish', resolve);
+        writable.on('error', reject);
+        archive.on('error', reject);
+      });
+
+      zippedFilesystemPayload = Buffer.concat(chunks).toString('base64');
+      updateMaskPaths.push('zippedFilesystem');
+    } else if (zippedFilesystemPayload != null) {
+      if (
+        typeof zippedFilesystemPayload === 'object' &&
+        zippedFilesystemPayload instanceof Uint8Array
+      ) {
+        const bufferModule = await import('buffer');
+        const {Buffer} = bufferModule;
+        zippedFilesystemPayload = Buffer.from(zippedFilesystemPayload).toString(
+          'base64',
+        );
+      }
+      updateMaskPaths.push('zippedFilesystem');
+    }
+
+    if (updateMaskPaths.length === 0) {
+      throw new Error('At least one field must be specified for update.');
+    }
+
+    config.updateMask = updateMaskPaths.join(',');
+    config.zippedFilesystem = zippedFilesystemPayload;
+
+    const requestParams: types.UpdateSkillRequestParameters = {
+      ...params,
+      config: config,
+    };
+
+    let operation = await this.updateInternal(requestParams);
+
+    const waitForCompletion = config.waitForCompletion ?? true;
+    if (waitForCompletion) {
+      while (!operation.done) {
+        // Wait 2 seconds before polling again
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        if (!operation.name) {
+          throw new Error('Operation name is missing.');
+        }
+        operation = await this.getSkillOperationInternal({
+          operationName: operation.name,
+          config: {
+            httpOptions: config.httpOptions,
+            abortSignal: config.abortSignal,
+          },
+        });
+      }
+
+      if (operation.error) {
+        throw new Error(
+          `Failed to update Skill: ${JSON.stringify(operation.error)}`,
+        );
+      }
+
+      return await this.get({
+        name: params.name,
+        config: {
+          httpOptions: config.httpOptions,
+          abortSignal: config.abortSignal,
+        },
+      });
+    }
+
+    return operation;
+  }
+
   async get(params: types.GetSkillRequestParameters): Promise<types.Skill> {
     let response: Promise<types.Skill>;
 
@@ -214,6 +356,47 @@ export class Skills extends BaseModule {
           queryParams: queryParams,
           body: JSON.stringify(body),
           httpMethod: 'POST',
+          httpOptions: params.config?.httpOptions,
+          abortSignal: params.config?.abortSignal,
+        })
+        .then((httpResponse) => {
+          return httpResponse.json();
+        }) as Promise<types.SkillOperation>;
+
+      return response.then((resp) => {
+        return resp as types.SkillOperation;
+      });
+    } else {
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
+    }
+  }
+
+  private async updateInternal(
+    params: types.UpdateSkillRequestParameters,
+  ): Promise<types.SkillOperation> {
+    let response: Promise<types.SkillOperation>;
+
+    let path: string = '';
+    let queryParams: Record<string, string> = {};
+    if (this.apiClient.isVertexAI()) {
+      const body = converters.updateSkillRequestParametersToVertex(params);
+      path = common.formatMap(
+        '{name}',
+        body['_url'] as Record<string, unknown>,
+      );
+      queryParams = body['_query'] as Record<string, string>;
+      delete body['_url'];
+      delete body['_query'];
+      delete body['config'];
+
+      response = this.apiClient
+        .request({
+          path: path,
+          queryParams: queryParams,
+          body: JSON.stringify(body),
+          httpMethod: 'PATCH',
           httpOptions: params.config?.httpOptions,
           abortSignal: params.config?.abortSignal,
         })
