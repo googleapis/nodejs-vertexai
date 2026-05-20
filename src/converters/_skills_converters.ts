@@ -57,6 +57,19 @@ export function createSkillRequestParametersToVertex(
   return toObject;
 }
 
+export function deleteSkillRequestParametersToVertex(
+  fromObject: types.DeleteSkillRequestParameters,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromName = common.getValueByPath(fromObject, ['name']);
+  if (fromName != null) {
+    common.setValueByPath(toObject, ['_url', 'name'], fromName);
+  }
+
+  return toObject;
+}
+
 export function getSkillOperationParametersToVertex(
   fromObject: types.GetSkillOperationParameters,
 ): Record<string, unknown> {
@@ -89,6 +102,104 @@ export function getSkillRequestParametersToVertex(
   const fromConfig = common.getValueByPath(fromObject, ['config']);
   if (fromConfig != null) {
     common.setValueByPath(toObject, ['config'], fromConfig);
+  }
+
+  return toObject;
+}
+
+export function listSkillsConfigToVertex(
+  fromObject: types.ListSkillsConfig,
+  parentObject: Record<string, unknown>,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromPageSize = common.getValueByPath(fromObject, ['pageSize']);
+  if (parentObject !== undefined && fromPageSize != null) {
+    common.setValueByPath(parentObject, ['_query', 'pageSize'], fromPageSize);
+  }
+
+  const fromPageToken = common.getValueByPath(fromObject, ['pageToken']);
+  if (parentObject !== undefined && fromPageToken != null) {
+    common.setValueByPath(parentObject, ['_query', 'pageToken'], fromPageToken);
+  }
+
+  const fromFilter = common.getValueByPath(fromObject, ['filter']);
+  if (parentObject !== undefined && fromFilter != null) {
+    common.setValueByPath(parentObject, ['_query', 'filter'], fromFilter);
+  }
+
+  return toObject;
+}
+
+export function listSkillsRequestParametersToVertex(
+  fromObject: types.ListSkillsRequestParameters,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromConfig = common.getValueByPath(fromObject, ['config']);
+  if (fromConfig != null) {
+    common.setValueByPath(
+      toObject,
+      ['config'],
+      listSkillsConfigToVertex(fromConfig, toObject),
+    );
+  }
+
+  return toObject;
+}
+
+export function updateSkillConfigToVertex(
+  fromObject: types.UpdateSkillConfig,
+  parentObject: Record<string, unknown>,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromDisplayName = common.getValueByPath(fromObject, ['displayName']);
+  if (parentObject !== undefined && fromDisplayName != null) {
+    common.setValueByPath(parentObject, ['displayName'], fromDisplayName);
+  }
+
+  const fromDescription = common.getValueByPath(fromObject, ['description']);
+  if (parentObject !== undefined && fromDescription != null) {
+    common.setValueByPath(parentObject, ['description'], fromDescription);
+  }
+
+  const fromZippedFilesystem = common.getValueByPath(fromObject, [
+    'zippedFilesystem',
+  ]);
+  if (parentObject !== undefined && fromZippedFilesystem != null) {
+    common.setValueByPath(
+      parentObject,
+      ['zippedFilesystem'],
+      fromZippedFilesystem,
+    );
+  }
+
+  const fromUpdateMask = common.getValueByPath(fromObject, ['updateMask']);
+  if (parentObject !== undefined && fromUpdateMask != null) {
+    common.setValueByPath(
+      parentObject,
+      ['_query', 'updateMask'],
+      fromUpdateMask,
+    );
+  }
+
+  return toObject;
+}
+
+export function updateSkillRequestParametersToVertex(
+  fromObject: types.UpdateSkillRequestParameters,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromName = common.getValueByPath(fromObject, ['name']);
+  if (fromName != null) {
+    common.setValueByPath(toObject, ['_url', 'name'], fromName);
+  }
+
+  const fromConfig = common.getValueByPath(fromObject, ['config']);
+  if (fromConfig != null) {
+    updateSkillConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;
