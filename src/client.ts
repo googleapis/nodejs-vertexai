@@ -8,7 +8,7 @@ import {ApiClient, NodeAuth, NodeDownloader, NodeUploader,} from '@google/genai/
 import {AgentEngines} from './agentengines';
 import {Skills} from './skills';
 
-export const SDK_VERSION = '0.6.0';  // x-release-please-version
+export const SDK_VERSION = '0.7.0';  // x-release-please-version
 
 let agentEnginesInternalWarned = false;
 
