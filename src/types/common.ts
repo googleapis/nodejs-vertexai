@@ -180,6 +180,22 @@ export enum SkillState {
   DELETING = 'DELETING',
 }
 
+/** Output only. The source of the Skill. */
+export enum SkillSource {
+  /**
+   * The skill source is unspecified.
+   */
+  SKILL_SOURCE_UNSPECIFIED = 'SKILL_SOURCE_UNSPECIFIED',
+  /**
+   * The skill is created by a user.
+   */
+  USER = 'USER',
+  /**
+   * The skill is a system skill.
+   */
+  SYSTEM = 'SYSTEM',
+}
+
 /** Framework used to build the application. */
 export enum Framework {
   /**
@@ -316,7 +332,7 @@ export declare interface ReasoningEngineSpecDeploymentSpecAgentGatewayConfig {
 
 /** Specifies the HTTP GET configuration for the probe. */
 export declare interface KeepAliveProbeHttpGet {
-  /** Required. Specifies the path of the HTTP GET request (e.g., "/is_busy"). */
+  /** Required. Specifies the path of the HTTP GET request (e.g., `"/is_busy"`). */
   path?: string;
   /** Optional. Specifies the port number on the container to which the request is sent. */
   port?: number;
@@ -360,7 +376,7 @@ export declare interface ReasoningEngineSpecPackageSpec {
   dependencyFilesGcsUri?: string;
   /** Optional. The Cloud Storage URI of the pickled python object. */
   pickleObjectGcsUri?: string;
-  /** Optional. The Python version. Supported values are 3.9, 3.10, 3.11, 3.12, 3.13, 3.14. If not specified, the default value is 3.10. */
+  /** Optional. The Python version. Supported values are 3.10, 3.11, 3.12, 3.13, 3.14. If not specified, the default value is 3.10. */
   pythonVersion?: string;
   /** Optional. The Cloud Storage URI of the `requirements.txt` file */
   requirementsGcsUri?: string;
@@ -419,7 +435,7 @@ export declare interface ReasoningEngineSpecSourceCodeSpecPythonSpec {
   entrypointObject?: string;
   /** Optional. The path to the requirements file, relative to the source root. If not specified, defaults to "requirements.txt". */
   requirementsFile?: string;
-  /** Optional. The version of Python to use. Support version includes 3.9, 3.10, 3.11, 3.12, 3.13, 3.14. If not specified, default value is 3.10. */
+  /** Optional. The version of Python to use. Supported versions include 3.10, 3.11, 3.12, 3.13, 3.14. If not specified, default value is 3.10. */
   version?: string;
 }
 
@@ -549,11 +565,11 @@ export declare interface MemoryBankCustomizationConfig {
 
 /** Represents the active rule that determines when to flush the buffer. */
 export declare interface MemoryGenerationTriggerConfigGenerationTriggerRule {
-  /** Specifies to trigger generation when the event count reaches this limit. */
+  /** Optional. Specifies to trigger generation when the event count reaches this limit. */
   eventCount?: number;
-  /** Specifies to trigger generation at a fixed interval. The duration must have a minute-level granularity. */
+  /** Optional. Specifies to trigger generation at a fixed interval. The duration must have a minute-level granularity. */
   fixedInterval?: string;
-  /** Specifies to trigger generation if the stream is inactive for the specified duration after the most recent event. The duration must have a minute-level granularity. */
+  /** Optional. Specifies to trigger generation if the stream is inactive for the specified duration after the most recent event. The duration must have a minute-level granularity. */
   idleDuration?: string;
 }
 
@@ -1983,8 +1999,6 @@ export declare interface SandboxEnvironmentConnectionInfo {
   loadBalancerIp?: string;
   /** Output only. The internal IP address of the SandboxEnvironment. */
   sandboxInternalIp?: string;
-  /** Output only. The hostname of the SandboxEnvironment. */
-  sandboxHostname?: string;
   /** Output only. The routing token for the SandboxEnvironment. */
   routingToken?: string;
 }
@@ -2561,6 +2575,12 @@ export declare interface Skill {
   license?: string;
   /** Optional. Specifies the compatibility of the Skill. Indicates environment requirements (intended product, system packages, network access, etc.). This should align with `compatibility` in the `SKILL.md` file. */
   compatibility?: string;
+  /** The labels with user-defined metadata to organize Skills. */
+  labels?: Record<string, string>;
+  /** Output only. The SHA256 checksum of the zipped filesystem. */
+  sha256?: string;
+  /** Output only. The source of the Skill. */
+  skillSource?: SkillSource;
 }
 
 /** Config for creating a skill. */
@@ -2932,4 +2952,10 @@ export declare interface SchemaPromptSpecAppBuilderData {
   framework?: Framework;
   /** Linked resources attached to the application by the user. */
   linkedResources?: SchemaPromptSpecAppBuilderDataLinkedResource[];
+}
+
+/** Defines data for an interaction prompt. */
+export declare interface SchemaPromptSpecInteractionData {
+  /** Optional. Lists interaction IDs associated with the prompt. This maps 1:1 to PromptMessage.contents. If InteractionData is present, every prompt message has an interaction ID. */
+  interactionIds?: string[];
 }
