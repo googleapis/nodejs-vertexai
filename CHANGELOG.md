@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.7.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.6.0...v0.7.0) (2026-05-21)
+
+
+### Features
+
+* add new fields ([bcd2504](https://github.com/googleapis/nodejs-vertexai/commit/bcd2504c665d413e4fd95a45cb20b87b74871076))
+* Add Skill Registry CreateSkill to SDK ([9886bf3](https://github.com/googleapis/nodejs-vertexai/commit/9886bf31d8be6c7b0cebb481fbb929bd9d3168d6))
+* Add Skill Registry module to Vertex AI client - Get Skill method ([77d9564](https://github.com/googleapis/nodejs-vertexai/commit/77d9564445667c0fe3d32afe0cc3c6a7fdaf7b1b))
+
 ## [0.6.0](https://github.com/googleapis/nodejs-vertexai/compare/v0.5.0...v0.6.0) (2026-05-13)
 
 
