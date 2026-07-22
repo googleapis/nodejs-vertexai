@@ -491,6 +491,12 @@ export declare interface ReasoningEngineSpecContainerSpec {
   imageUri?: string;
 }
 
+/** Specification for building container image. */
+export declare interface ReasoningEngineSpecBuildSpec {
+  /** Optional. Identifier. The resource name of the Cloud Build WorkerPool to use for the build. Format: `projects/{project}/locations/{location}/workerPools/{worker_pool}` */
+  workerPool?: string;
+}
+
 /** The specification of an agent engine. */
 export declare interface ReasoningEngineSpec {
   /** Optional. The A2A Agent Card for the agent (if available). It follows the specification at https://a2a-protocol.org/latest/specification/#5-agent-discovery-the-agent-card. */
@@ -513,6 +519,8 @@ export declare interface ReasoningEngineSpec {
   sourceCodeSpec?: ReasoningEngineSpecSourceCodeSpec;
   /** Deploy from a container image with a defined entrypoint and commands. */
   containerSpec?: ReasoningEngineSpecContainerSpec;
+  /** Optional. Configuration for building container image. */
+  buildSpec?: ReasoningEngineSpecBuildSpec;
 }
 
 /** The conversation source event for generating memories. */
