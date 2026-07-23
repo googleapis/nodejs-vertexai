@@ -8,33 +8,28 @@
 
 import * as common from '@google/genai/vertex_internal';
 import {ApiClient, BaseModule} from '@google/genai/vertex_internal';
-import * as converters from './converters/_sandboxes_converters.js';
-import {SandboxSnapshots} from './sandboxsnapshots.js';
-import {SandboxTemplates} from './sandboxtemplates.js';
+import * as converters from './converters/_sandboxsnapshots_converters.js';
 import * as types from './types.js';
 
-export class Sandboxes extends BaseModule {
-  public readonly templates: SandboxTemplates;
-  public readonly snapshots: SandboxSnapshots;
-
+export class SandboxSnapshots extends BaseModule {
   constructor(private readonly apiClient: ApiClient) {
     super();
-    this.templates = new SandboxTemplates(apiClient);
-    this.snapshots = new SandboxSnapshots(apiClient);
   }
 
   async createInternal(
-    params: types.CreateAgentEngineSandboxRequestParameters,
-  ): Promise<types.AgentEngineSandboxOperation> {
-    let response: Promise<types.AgentEngineSandboxOperation>;
+    params: types.CreateSandboxEnvironmentSnapshotRequestParameters,
+  ): Promise<types.AgentEngineSandboxSnapshotOperation> {
+    let response: Promise<types.AgentEngineSandboxSnapshotOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.createAgentEngineSandboxRequestParametersToVertex(params);
+        converters.createSandboxEnvironmentSnapshotRequestParametersToVertex(
+          params,
+        );
       path = common.formatMap(
-        '{name}/sandboxEnvironments',
+        '{name}:snapshot',
         body['_url'] as Record<string, unknown>,
       );
       queryParams = body['_query'] as Record<string, string>;
@@ -53,10 +48,10 @@ export class Sandboxes extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineSandboxOperation>;
+        }) as Promise<types.AgentEngineSandboxSnapshotOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineSandboxOperation;
+        return resp as types.AgentEngineSandboxSnapshotOperation;
       });
     } else {
       throw new Error(
@@ -66,15 +61,17 @@ export class Sandboxes extends BaseModule {
   }
 
   async deleteInternal(
-    params: types.DeleteAgentEngineSandboxRequestParameters,
-  ): Promise<types.DeleteAgentEngineSandboxOperation> {
-    let response: Promise<types.DeleteAgentEngineSandboxOperation>;
+    params: types.DeleteSandboxEnvironmentSnapshotRequestParameters,
+  ): Promise<types.DeleteSandboxEnvironmentSnapshotOperation> {
+    let response: Promise<types.DeleteSandboxEnvironmentSnapshotOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.deleteAgentEngineSandboxRequestParametersToVertex(params);
+        converters.deleteSandboxEnvironmentSnapshotRequestParametersToVertex(
+          params,
+        );
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -95,56 +92,10 @@ export class Sandboxes extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.DeleteAgentEngineSandboxOperation>;
+        }) as Promise<types.DeleteSandboxEnvironmentSnapshotOperation>;
 
       return response.then((resp) => {
-        return resp as types.DeleteAgentEngineSandboxOperation;
-      });
-    } else {
-      throw new Error(
-        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
-      );
-    }
-  }
-
-  async executeCodeInternal(
-    params: types.ExecuteCodeAgentEngineSandboxRequestParameters,
-  ): Promise<types.ExecuteSandboxEnvironmentResponse> {
-    let response: Promise<types.ExecuteSandboxEnvironmentResponse>;
-
-    let path: string = '';
-    let queryParams: Record<string, string> = {};
-    if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.executeCodeAgentEngineSandboxRequestParametersToVertex(
-          params,
-        );
-      path = common.formatMap(
-        '{name}/:execute',
-        body['_url'] as Record<string, unknown>,
-      );
-      queryParams = body['_query'] as Record<string, string>;
-      delete body['_url'];
-      delete body['_query'];
-      delete body['config'];
-
-      response = this.apiClient
-        .request({
-          path: path,
-          queryParams: queryParams,
-          body: JSON.stringify(body),
-          httpMethod: 'POST',
-          httpOptions: params.config?.httpOptions,
-          abortSignal: params.config?.abortSignal,
-        })
-        .then((httpResponse) => {
-          return httpResponse.json();
-        }) as Promise<types.ExecuteSandboxEnvironmentResponse>;
-
-      return response.then((resp) => {
-        const typedResp = new types.ExecuteSandboxEnvironmentResponse();
-        Object.assign(typedResp, resp);
-        return typedResp;
+        return resp as types.DeleteSandboxEnvironmentSnapshotOperation;
       });
     } else {
       throw new Error(
@@ -154,15 +105,17 @@ export class Sandboxes extends BaseModule {
   }
 
   async getInternal(
-    params: types.GetAgentEngineSandboxRequestParameters,
-  ): Promise<types.SandboxEnvironment> {
-    let response: Promise<types.SandboxEnvironment>;
+    params: types.GetSandboxEnvironmentSnapshotRequestParameters,
+  ): Promise<types.SandboxEnvironmentSnapshot> {
+    let response: Promise<types.SandboxEnvironmentSnapshot>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.getAgentEngineSandboxRequestParametersToVertex(params);
+        converters.getSandboxEnvironmentSnapshotRequestParametersToVertex(
+          params,
+        );
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -183,10 +136,10 @@ export class Sandboxes extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.SandboxEnvironment>;
+        }) as Promise<types.SandboxEnvironmentSnapshot>;
 
       return response.then((resp) => {
-        return resp as types.SandboxEnvironment;
+        return resp as types.SandboxEnvironmentSnapshot;
       });
     } else {
       throw new Error(
@@ -196,17 +149,19 @@ export class Sandboxes extends BaseModule {
   }
 
   async listInternal(
-    params: types.ListAgentEngineSandboxesRequestParameters,
-  ): Promise<types.ListAgentEngineSandboxesResponse> {
-    let response: Promise<types.ListAgentEngineSandboxesResponse>;
+    params: types.ListSandboxEnvironmentSnapshotsRequestParameters,
+  ): Promise<types.ListSandboxEnvironmentSnapshotsResponse> {
+    let response: Promise<types.ListSandboxEnvironmentSnapshotsResponse>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.listAgentEngineSandboxesRequestParametersToVertex(params);
+        converters.listSandboxEnvironmentSnapshotsRequestParametersToVertex(
+          params,
+        );
       path = common.formatMap(
-        '{name}/sandboxEnvironments',
+        '{name}/sandboxEnvironmentSnapshots',
         body['_url'] as Record<string, unknown>,
       );
       queryParams = body['_query'] as Record<string, string>;
@@ -225,10 +180,10 @@ export class Sandboxes extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.ListAgentEngineSandboxesResponse>;
+        }) as Promise<types.ListSandboxEnvironmentSnapshotsResponse>;
 
       return response.then((resp) => {
-        const typedResp = new types.ListAgentEngineSandboxesResponse();
+        const typedResp = new types.ListSandboxEnvironmentSnapshotsResponse();
         Object.assign(typedResp, resp);
         return typedResp;
       });
@@ -239,16 +194,18 @@ export class Sandboxes extends BaseModule {
     }
   }
 
-  async getSandboxOperationInternal(
-    params: types.GetAgentEngineSandboxOperationParameters,
-  ): Promise<types.AgentEngineSandboxOperation> {
-    let response: Promise<types.AgentEngineSandboxOperation>;
+  async getSandboxSnapshotOperation(
+    params: types.GetAgentEngineSandboxSnapshotOperationParameters,
+  ): Promise<types.AgentEngineSandboxSnapshotOperation> {
+    let response: Promise<types.AgentEngineSandboxSnapshotOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.getAgentEngineSandboxOperationParametersToVertex(params);
+        converters.getAgentEngineSandboxSnapshotOperationParametersToVertex(
+          params,
+        );
       path = common.formatMap(
         '{operationName}',
         body['_url'] as Record<string, unknown>,
@@ -269,10 +226,10 @@ export class Sandboxes extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineSandboxOperation>;
+        }) as Promise<types.AgentEngineSandboxSnapshotOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineSandboxOperation;
+        return resp as types.AgentEngineSandboxSnapshotOperation;
       });
     } else {
       throw new Error(
