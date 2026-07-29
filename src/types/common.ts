@@ -3339,6 +3339,8 @@ export declare interface DeletePromptConfig {
   abortSignal?: AbortSignal;
   /** Timeout for the delete prompt operation in seconds. Defaults to 90. */
   timeout?: number;
+  /** Maximum interval between polling requests in seconds. Defaults to 60. */
+  maxWaitTime?: number;
 }
 
 /** Parameters for deleting a prompt dataset. */
@@ -3392,6 +3394,10 @@ export declare interface RestoreVersionConfig {
   be charged usage for any applicable operations.
        */
   abortSignal?: AbortSignal;
+  /** Timeout for the restore prompt version operation in seconds. Defaults to 90. */
+  timeout?: number;
+  /** Maximum interval between polling requests in seconds. Defaults to 60. */
+  maxWaitTime?: number;
 }
 
 /** Parameters for restoring a prompt version. */
@@ -3434,6 +3440,8 @@ export declare interface UpdatePromptConfig {
   timeout?: number;
   /** Customer-managed encryption key spec for a prompt dataset. If set, this prompt dataset and all sub-resources of this prompt dataset will be secured by this key. */
   encryptionSpec?: genaiTypes.EncryptionSpec;
+  /** The maximum interval between polling requests in seconds. If not set, the default interval is 60 seconds. */
+  maxWaitTime?: number;
 }
 
 /** Parameters for creating a dataset resource to store prompts. */
@@ -3766,6 +3774,8 @@ export declare interface CreatePromptConfig {
   encryptionSpec?: genaiTypes.EncryptionSpec;
   /** The display name for the prompt version. If not set, a default name with a timestamp will be used. */
   versionDisplayName?: string;
+  /** The maximum interval between requests in seconds. If not set, the default interval is 60 seconds. */
+  maxWaitTime?: number;
 }
 
 /** Config for creating a prompt version. */
@@ -3787,6 +3797,8 @@ export declare interface CreatePromptVersionConfig {
   promptDisplayName?: string;
   /** Customer-managed encryption key spec for a prompt dataset. If set, this prompt dataset and all sub-resources of this prompt dataset will be secured by this key. */
   encryptionSpec?: genaiTypes.EncryptionSpec;
+  /** The maximum interval between requests in seconds. If not set, the default interval is 60 seconds. */
+  maxWaitTime?: number;
 }
 
 /** Config for getting a prompt. */

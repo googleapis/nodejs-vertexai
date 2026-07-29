@@ -16,10 +16,14 @@ export class Prompts extends BaseModule {
     super();
   }
 
+  private static readonly _DEFAULT_TIMEOUT = 90;
+  private static readonly _DEFAULT_MAX_WAIT_TIME = 60;
+
   /* eslint-disable @typescript-eslint/no-explicit-any */
   private async _waitForOperation(
     operation: any,
-    timeout = 90,
+    timeout = Prompts._DEFAULT_TIMEOUT,
+    maxWaitTime = Prompts._DEFAULT_MAX_WAIT_TIME * 1000,
   ): Promise<string> {
     let done = false;
     let promptDatasetOperation: any;
@@ -44,7 +48,6 @@ export class Prompts extends BaseModule {
 
     const startTime = Date.now();
     let sleepDuration = 5000; // ms
-    const maxWaitTime = 60000; // ms
 
     while (!done) {
       if (Date.now() - startTime > timeout * 1000) {
@@ -76,12 +79,12 @@ export class Prompts extends BaseModule {
 
   private async _waitForProjectOperation(
     operation: any,
-    timeout = 90,
+    timeout = Prompts._DEFAULT_TIMEOUT,
+    maxWaitTime = Prompts._DEFAULT_MAX_WAIT_TIME * 1000,
   ): Promise<void> {
     let done = false;
     const startTime = Date.now();
     let sleepDuration = 5000; // ms
-    const maxWaitTime = 60000; // ms
 
     if (!operation?.name) {
       throw new Error('Invalid operation name.');
@@ -257,7 +260,8 @@ export class Prompts extends BaseModule {
 
     const datasetResourceName = await this._waitForOperation(
       createPromptDatasetOperation,
-      config?.timeout || 90,
+      config?.timeout ?? Prompts._DEFAULT_TIMEOUT,
+      (config?.maxWaitTime ?? Prompts._DEFAULT_MAX_WAIT_TIME) * 1000,
     );
 
     const datasetId = datasetResourceName.split('/').pop();
@@ -279,7 +283,8 @@ export class Prompts extends BaseModule {
 
     const datasetVersionResourceName = await this._waitForOperation(
       createDatasetVersionOperation,
-      config?.timeout || 90,
+      config?.timeout ?? Prompts._DEFAULT_TIMEOUT,
+      (config?.maxWaitTime ?? Prompts._DEFAULT_MAX_WAIT_TIME) * 1000,
     );
 
     const versionId = datasetVersionResourceName.split('/').pop();
@@ -455,7 +460,8 @@ export class Prompts extends BaseModule {
     });
     await this._waitForProjectOperation(
       deletePromptOperation,
-      config?.timeout || 90,
+      config?.timeout ?? Prompts._DEFAULT_TIMEOUT,
+      (config?.maxWaitTime ?? Prompts._DEFAULT_MAX_WAIT_TIME) * 1000,
     );
   }
 
@@ -481,7 +487,8 @@ export class Prompts extends BaseModule {
     });
     await this._waitForProjectOperation(
       deleteVersionOperation,
-      config?.timeout || 90,
+      config?.timeout ?? Prompts._DEFAULT_TIMEOUT,
+      (config?.maxWaitTime ?? Prompts._DEFAULT_MAX_WAIT_TIME) * 1000,
     );
   }
 
@@ -505,7 +512,11 @@ export class Prompts extends BaseModule {
       versionId,
       config,
     });
-    await this._waitForProjectOperation(restorePromptOperation, 90);
+    await this._waitForProjectOperation(
+      restorePromptOperation,
+      config?.timeout ?? Prompts._DEFAULT_TIMEOUT,
+      (config?.maxWaitTime ?? Prompts._DEFAULT_MAX_WAIT_TIME) * 1000,
+    );
     const datasetVersionResource = await this.getDatasetVersionResourceInternal(
       {
         datasetId: promptId,
@@ -584,7 +595,8 @@ export class Prompts extends BaseModule {
 
     const datasetVersionResourceName = await this._waitForOperation(
       createDatasetVersionOperation,
-      config?.timeout || 90,
+      config?.timeout ?? Prompts._DEFAULT_TIMEOUT,
+      (config?.maxWaitTime ?? Prompts._DEFAULT_MAX_WAIT_TIME) * 1000,
     );
 
     const versionId = datasetVersionResourceName.split('/').pop();
