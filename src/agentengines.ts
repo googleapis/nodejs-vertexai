@@ -17,13 +17,11 @@ import * as types from './types.js';
 export class AgentEngines extends BaseModule {
   public readonly sessions: Sessions;
   public readonly sandboxes: Sandboxes;
-  public readonly memories: Memories;
 
   constructor(private readonly apiClient: ApiClient) {
     super();
     this.sessions = new Sessions(apiClient);
     this.sandboxes = new Sandboxes(apiClient);
-    this.memories = new Memories(apiClient);
   }
 
   async createInternal(
