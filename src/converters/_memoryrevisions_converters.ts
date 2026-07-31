@@ -9,8 +9,8 @@
 import * as common from '@google/genai/vertex_internal';
 import * as types from '../types.js';
 
-export function getAgentEngineMemoryRevisionRequestParametersToVertex(
-  fromObject: types.GetAgentEngineMemoryRevisionRequestParameters,
+export function getMemoryRevisionRequestParametersToVertex(
+  fromObject: types.GetMemoryRevisionRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -22,8 +22,8 @@ export function getAgentEngineMemoryRevisionRequestParametersToVertex(
   return toObject;
 }
 
-export function listAgentEngineMemoryRevisionsConfigToVertex(
-  fromObject: types.ListAgentEngineMemoryRevisionsConfig,
+export function listMemoryRevisionsConfigToVertex(
+  fromObject: types.ListMemoryRevisionsConfig,
   parentObject: Record<string, unknown>,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
@@ -46,8 +46,8 @@ export function listAgentEngineMemoryRevisionsConfigToVertex(
   return toObject;
 }
 
-export function listAgentEngineMemoryRevisionsRequestParametersToVertex(
-  fromObject: types.ListAgentEngineMemoryRevisionsRequestParameters,
+export function listMemoryRevisionsRequestParametersToVertex(
+  fromObject: types.ListMemoryRevisionsRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -58,7 +58,7 @@ export function listAgentEngineMemoryRevisionsRequestParametersToVertex(
 
   const fromConfig = common.getValueByPath(fromObject, ['config']);
   if (fromConfig != null) {
-    listAgentEngineMemoryRevisionsConfigToVertex(fromConfig, toObject);
+    listMemoryRevisionsConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;

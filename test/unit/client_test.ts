@@ -25,6 +25,5 @@ describe('GenAI Client Instantiation', () => {
     const ae = client.agentEnginesInternal;
     expect(ae.sessions).toBeDefined();
     expect(ae.sandboxes).toBeDefined();
-    expect(ae.memories).toBeDefined();
   });
 });

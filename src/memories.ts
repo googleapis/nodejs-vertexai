@@ -21,15 +21,14 @@ export class Memories extends BaseModule {
   }
 
   async createInternal(
-    params: types.CreateAgentEngineMemoryRequestParameters,
-  ): Promise<types.AgentEngineMemoryOperation> {
-    let response: Promise<types.AgentEngineMemoryOperation>;
+    params: types.CreateMemoryRequestParameters,
+  ): Promise<types.MemoryOperation> {
+    let response: Promise<types.MemoryOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.createAgentEngineMemoryRequestParametersToVertex(params);
+      const body = converters.createMemoryRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}/memories',
         body['_url'] as Record<string, unknown>,
@@ -50,10 +49,10 @@ export class Memories extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineMemoryOperation>;
+        }) as Promise<types.MemoryOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineMemoryOperation;
+        return resp as types.MemoryOperation;
       });
     } else {
       throw new Error(
@@ -63,15 +62,14 @@ export class Memories extends BaseModule {
   }
 
   async delete(
-    params: types.DeleteAgentEngineMemoryRequestParameters,
-  ): Promise<types.DeleteAgentEngineMemoryOperation> {
-    let response: Promise<types.DeleteAgentEngineMemoryOperation>;
+    params: types.DeleteMemoryRequestParameters,
+  ): Promise<types.DeleteMemoryOperation> {
+    let response: Promise<types.DeleteMemoryOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.deleteAgentEngineMemoryRequestParametersToVertex(params);
+      const body = converters.deleteMemoryRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -92,10 +90,10 @@ export class Memories extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.DeleteAgentEngineMemoryOperation>;
+        }) as Promise<types.DeleteMemoryOperation>;
 
       return response.then((resp) => {
-        return resp as types.DeleteAgentEngineMemoryOperation;
+        return resp as types.DeleteMemoryOperation;
       });
     } else {
       throw new Error(
@@ -105,15 +103,14 @@ export class Memories extends BaseModule {
   }
 
   async generateInternal(
-    params: types.GenerateAgentEngineMemoriesRequestParameters,
-  ): Promise<types.AgentEngineGenerateMemoriesOperation> {
-    let response: Promise<types.AgentEngineGenerateMemoriesOperation>;
+    params: types.GenerateMemoriesRequestParameters,
+  ): Promise<types.GenerateMemoriesOperation> {
+    let response: Promise<types.GenerateMemoriesOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.generateAgentEngineMemoriesRequestParametersToVertex(params);
+      const body = converters.generateMemoriesRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}/memories:generate',
         body['_url'] as Record<string, unknown>,
@@ -134,10 +131,10 @@ export class Memories extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineGenerateMemoriesOperation>;
+        }) as Promise<types.GenerateMemoriesOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineGenerateMemoriesOperation;
+        return resp as types.GenerateMemoriesOperation;
       });
     } else {
       throw new Error(
@@ -146,16 +143,13 @@ export class Memories extends BaseModule {
     }
   }
 
-  async get(
-    params: types.GetAgentEngineMemoryRequestParameters,
-  ): Promise<types.Memory> {
+  async get(params: types.GetMemoryRequestParameters): Promise<types.Memory> {
     let response: Promise<types.Memory>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.getAgentEngineMemoryRequestParametersToVertex(params);
+      const body = converters.getMemoryRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -188,57 +182,15 @@ export class Memories extends BaseModule {
     }
   }
 
-  async ingestEventsInternal(
-    params: types.IngestEventsRequestParameters,
-  ): Promise<types.MemoryBankIngestEventsOperation> {
-    let response: Promise<types.MemoryBankIngestEventsOperation>;
-
-    let path: string = '';
-    let queryParams: Record<string, string> = {};
-    if (this.apiClient.isVertexAI()) {
-      const body = converters.ingestEventsRequestParametersToVertex(params);
-      path = common.formatMap(
-        '{name}/memories:ingestEvents',
-        body['_url'] as Record<string, unknown>,
-      );
-      queryParams = body['_query'] as Record<string, string>;
-      delete body['_url'];
-      delete body['_query'];
-      delete body['config'];
-
-      response = this.apiClient
-        .request({
-          path: path,
-          queryParams: queryParams,
-          body: JSON.stringify(body),
-          httpMethod: 'POST',
-          httpOptions: params.config?.httpOptions,
-          abortSignal: params.config?.abortSignal,
-        })
-        .then((httpResponse) => {
-          return httpResponse.json();
-        }) as Promise<types.MemoryBankIngestEventsOperation>;
-
-      return response.then((resp) => {
-        return resp as types.MemoryBankIngestEventsOperation;
-      });
-    } else {
-      throw new Error(
-        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
-      );
-    }
-  }
-
   async listInternal(
-    params: types.ListAgentEngineMemoryRequestParameters,
-  ): Promise<types.ListReasoningEnginesMemoriesResponse> {
-    let response: Promise<types.ListReasoningEnginesMemoriesResponse>;
+    params: types.ListMemoriesRequestParameters,
+  ): Promise<types.ListMemoriesResponse> {
+    let response: Promise<types.ListMemoriesResponse>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.listAgentEngineMemoryRequestParametersToVertex(params);
+      const body = converters.listMemoriesRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}/memories',
         body['_url'] as Record<string, unknown>,
@@ -259,10 +211,10 @@ export class Memories extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.ListReasoningEnginesMemoriesResponse>;
+        }) as Promise<types.ListMemoriesResponse>;
 
       return response.then((resp) => {
-        const typedResp = new types.ListReasoningEnginesMemoriesResponse();
+        const typedResp = new types.ListMemoriesResponse();
         Object.assign(typedResp, resp);
         return typedResp;
       });
@@ -274,15 +226,14 @@ export class Memories extends BaseModule {
   }
 
   async getMemoryOperationInternal(
-    params: types.GetAgentEngineMemoryOperationParameters,
-  ): Promise<types.AgentEngineMemoryOperation> {
-    let response: Promise<types.AgentEngineMemoryOperation>;
+    params: types.GetMemoryOperationParameters,
+  ): Promise<types.MemoryOperation> {
+    let response: Promise<types.MemoryOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.getAgentEngineMemoryOperationParametersToVertex(params);
+      const body = converters.getMemoryOperationParametersToVertex(params);
       path = common.formatMap(
         '{operationName}',
         body['_url'] as Record<string, unknown>,
@@ -303,10 +254,10 @@ export class Memories extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineMemoryOperation>;
+        }) as Promise<types.MemoryOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineMemoryOperation;
+        return resp as types.MemoryOperation;
       });
     } else {
       throw new Error(
@@ -316,17 +267,15 @@ export class Memories extends BaseModule {
   }
 
   async getGenerateMemoriesOperationInternal(
-    params: types.GetAgentEngineGenerateMemoriesOperationParameters,
-  ): Promise<types.AgentEngineGenerateMemoriesOperation> {
-    let response: Promise<types.AgentEngineGenerateMemoriesOperation>;
+    params: types.GetGenerateMemoriesOperationParameters,
+  ): Promise<types.GenerateMemoriesOperation> {
+    let response: Promise<types.GenerateMemoriesOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.getAgentEngineGenerateMemoriesOperationParametersToVertex(
-          params,
-        );
+        converters.getGenerateMemoriesOperationParametersToVertex(params);
       path = common.formatMap(
         '{operationName}',
         body['_url'] as Record<string, unknown>,
@@ -347,10 +296,10 @@ export class Memories extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineGenerateMemoriesOperation>;
+        }) as Promise<types.GenerateMemoriesOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineGenerateMemoriesOperation;
+        return resp as types.GenerateMemoriesOperation;
       });
     } else {
       throw new Error(
@@ -360,15 +309,14 @@ export class Memories extends BaseModule {
   }
 
   async retrieveInternal(
-    params: types.RetrieveAgentEngineMemoriesRequestParameters,
+    params: types.RetrieveMemoriesRequestParameters,
   ): Promise<types.RetrieveMemoriesResponse> {
     let response: Promise<types.RetrieveMemoriesResponse>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.retrieveAgentEngineMemoriesRequestParametersToVertex(params);
+      const body = converters.retrieveMemoriesRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}/memories:retrieve',
         body['_url'] as Record<string, unknown>,
@@ -448,15 +396,14 @@ export class Memories extends BaseModule {
   }
 
   async rollbackInternal(
-    params: types.RollbackAgentEngineMemoryRequestParameters,
-  ): Promise<types.AgentEngineRollbackMemoryOperation> {
-    let response: Promise<types.AgentEngineRollbackMemoryOperation>;
+    params: types.RollbackMemoryRequestParameters,
+  ): Promise<types.RollbackMemoryOperation> {
+    let response: Promise<types.RollbackMemoryOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.rollbackAgentEngineMemoryRequestParametersToVertex(params);
+      const body = converters.rollbackMemoryRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}:rollback',
         body['_url'] as Record<string, unknown>,
@@ -477,10 +424,10 @@ export class Memories extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineRollbackMemoryOperation>;
+        }) as Promise<types.RollbackMemoryOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineRollbackMemoryOperation;
+        return resp as types.RollbackMemoryOperation;
       });
     } else {
       throw new Error(
@@ -490,15 +437,14 @@ export class Memories extends BaseModule {
   }
 
   async updateInternal(
-    params: types.UpdateAgentEngineMemoryRequestParameters,
-  ): Promise<types.AgentEngineMemoryOperation> {
-    let response: Promise<types.AgentEngineMemoryOperation>;
+    params: types.UpdateMemoryRequestParameters,
+  ): Promise<types.MemoryOperation> {
+    let response: Promise<types.MemoryOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.updateAgentEngineMemoryRequestParametersToVertex(params);
+      const body = converters.updateMemoryRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -519,10 +465,10 @@ export class Memories extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineMemoryOperation>;
+        }) as Promise<types.MemoryOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineMemoryOperation;
+        return resp as types.MemoryOperation;
       });
     } else {
       throw new Error(
@@ -532,15 +478,14 @@ export class Memories extends BaseModule {
   }
 
   async purgeInternal(
-    params: types.PurgeAgentEngineMemoriesRequestParameters,
-  ): Promise<types.AgentEnginePurgeMemoriesOperation> {
-    let response: Promise<types.AgentEnginePurgeMemoriesOperation>;
+    params: types.PurgeMemoriesRequestParameters,
+  ): Promise<types.PurgeMemoriesOperation> {
+    let response: Promise<types.PurgeMemoriesOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body =
-        converters.purgeAgentEngineMemoriesRequestParametersToVertex(params);
+      const body = converters.purgeMemoriesRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}/memories:purge',
         body['_url'] as Record<string, unknown>,
@@ -561,10 +506,10 @@ export class Memories extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEnginePurgeMemoriesOperation>;
+        }) as Promise<types.PurgeMemoriesOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEnginePurgeMemoriesOperation;
+        return resp as types.PurgeMemoriesOperation;
       });
     } else {
       throw new Error(
