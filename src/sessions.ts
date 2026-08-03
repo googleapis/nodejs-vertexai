@@ -234,8 +234,8 @@ export class Sessions extends BaseModule {
 
   async updateInternal(
     params: types.UpdateAgentEngineSessionRequestParameters,
-  ): Promise<types.AgentEngineSessionOperation> {
-    let response: Promise<types.AgentEngineSessionOperation>;
+  ): Promise<types.Session> {
+    let response: Promise<types.Session>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
@@ -262,10 +262,10 @@ export class Sessions extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineSessionOperation>;
+        }) as Promise<types.Session>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineSessionOperation;
+        return resp as types.Session;
       });
     } else {
       throw new Error(
