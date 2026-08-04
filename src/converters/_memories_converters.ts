@@ -9,85 +9,8 @@
 import * as common from '@google/genai/vertex_internal';
 import * as types from '../types.js';
 
-export function agentEngineMemoryConfigToVertex(
-  fromObject: types.AgentEngineMemoryConfig,
-  parentObject: Record<string, unknown>,
-): Record<string, unknown> {
-  const toObject: Record<string, unknown> = {};
-
-  const fromDisplayName = common.getValueByPath(fromObject, ['displayName']);
-  if (parentObject !== undefined && fromDisplayName != null) {
-    common.setValueByPath(parentObject, ['displayName'], fromDisplayName);
-  }
-
-  const fromDescription = common.getValueByPath(fromObject, ['description']);
-  if (parentObject !== undefined && fromDescription != null) {
-    common.setValueByPath(parentObject, ['description'], fromDescription);
-  }
-
-  const fromTtl = common.getValueByPath(fromObject, ['ttl']);
-  if (parentObject !== undefined && fromTtl != null) {
-    common.setValueByPath(parentObject, ['ttl'], fromTtl);
-  }
-
-  const fromExpireTime = common.getValueByPath(fromObject, ['expireTime']);
-  if (parentObject !== undefined && fromExpireTime != null) {
-    common.setValueByPath(parentObject, ['expireTime'], fromExpireTime);
-  }
-
-  const fromRevisionExpireTime = common.getValueByPath(fromObject, [
-    'revisionExpireTime',
-  ]);
-  if (parentObject !== undefined && fromRevisionExpireTime != null) {
-    common.setValueByPath(
-      parentObject,
-      ['revisionExpireTime'],
-      fromRevisionExpireTime,
-    );
-  }
-
-  const fromRevisionTtl = common.getValueByPath(fromObject, ['revisionTtl']);
-  if (parentObject !== undefined && fromRevisionTtl != null) {
-    common.setValueByPath(parentObject, ['revisionTtl'], fromRevisionTtl);
-  }
-
-  const fromDisableMemoryRevisions = common.getValueByPath(fromObject, [
-    'disableMemoryRevisions',
-  ]);
-  if (parentObject !== undefined && fromDisableMemoryRevisions != null) {
-    common.setValueByPath(
-      parentObject,
-      ['disableMemoryRevisions'],
-      fromDisableMemoryRevisions,
-    );
-  }
-
-  const fromTopics = common.getValueByPath(fromObject, ['topics']);
-  if (parentObject !== undefined && fromTopics != null) {
-    let transformedList = fromTopics;
-    if (Array.isArray(transformedList)) {
-      transformedList = transformedList.map((item) => {
-        return item;
-      });
-    }
-    common.setValueByPath(parentObject, ['topics'], transformedList);
-  }
-
-  const fromMetadata = common.getValueByPath(fromObject, ['metadata']);
-  if (parentObject !== undefined && fromMetadata != null) {
-    common.setValueByPath(parentObject, ['metadata'], fromMetadata);
-  }
-
-  const fromMemoryId = common.getValueByPath(fromObject, ['memoryId']);
-  if (parentObject !== undefined && fromMemoryId != null) {
-    common.setValueByPath(parentObject, ['_query', 'memoryId'], fromMemoryId);
-  }
-
-  return toObject;
-}
-
-export function createAgentEngineMemoryRequestParametersToVertex(
-  fromObject: types.CreateAgentEngineMemoryRequestParameters,
+export function createMemoryRequestParametersToVertex(
+  fromObject: types.CreateMemoryRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -108,14 +31,14 @@ export function createAgentEngineMemoryRequestParametersToVertex(
 
   const fromConfig = common.getValueByPath(fromObject, ['config']);
   if (fromConfig != null) {
-    agentEngineMemoryConfigToVertex(fromConfig, toObject);
+    memoryConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;
 }
 
-export function deleteAgentEngineMemoryRequestParametersToVertex(
-  fromObject: types.DeleteAgentEngineMemoryRequestParameters,
+export function deleteMemoryRequestParametersToVertex(
+  fromObject: types.DeleteMemoryRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -127,8 +50,8 @@ export function deleteAgentEngineMemoryRequestParametersToVertex(
   return toObject;
 }
 
-export function generateAgentEngineMemoriesConfigToVertex(
-  fromObject: types.GenerateAgentEngineMemoriesConfig,
+export function generateMemoriesConfigToVertex(
+  fromObject: types.GenerateMemoriesConfig,
   parentObject: Record<string, unknown>,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
@@ -210,8 +133,8 @@ export function generateAgentEngineMemoriesConfigToVertex(
   return toObject;
 }
 
-export function generateAgentEngineMemoriesRequestParametersToVertex(
-  fromObject: types.GenerateAgentEngineMemoriesRequestParameters,
+export function generateMemoriesRequestParametersToVertex(
+  fromObject: types.GenerateMemoriesRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -260,14 +183,14 @@ export function generateAgentEngineMemoriesRequestParametersToVertex(
 
   const fromConfig = common.getValueByPath(fromObject, ['config']);
   if (fromConfig != null) {
-    generateAgentEngineMemoriesConfigToVertex(fromConfig, toObject);
+    generateMemoriesConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;
 }
 
-export function getAgentEngineGenerateMemoriesOperationParametersToVertex(
-  fromObject: types.GetAgentEngineGenerateMemoriesOperationParameters,
+export function getGenerateMemoriesOperationParametersToVertex(
+  fromObject: types.GetGenerateMemoriesOperationParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -285,8 +208,8 @@ export function getAgentEngineGenerateMemoriesOperationParametersToVertex(
   return toObject;
 }
 
-export function getAgentEngineMemoryOperationParametersToVertex(
-  fromObject: types.GetAgentEngineMemoryOperationParameters,
+export function getMemoryOperationParametersToVertex(
+  fromObject: types.GetMemoryOperationParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -304,8 +227,8 @@ export function getAgentEngineMemoryOperationParametersToVertex(
   return toObject;
 }
 
-export function getAgentEngineMemoryRequestParametersToVertex(
-  fromObject: types.GetAgentEngineMemoryRequestParameters,
+export function getMemoryRequestParametersToVertex(
+  fromObject: types.GetMemoryRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -317,22 +240,77 @@ export function getAgentEngineMemoryRequestParametersToVertex(
   return toObject;
 }
 
-export function ingestEventsConfigToVertex(
-  fromObject: types.IngestEventsConfig,
+export function listMemoriesConfigToVertex(
+  fromObject: types.ListMemoriesConfig,
   parentObject: Record<string, unknown>,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
-  const fromForceFlush = common.getValueByPath(fromObject, ['forceFlush']);
-  if (parentObject !== undefined && fromForceFlush != null) {
-    common.setValueByPath(parentObject, ['forceFlush'], fromForceFlush);
+  const fromPageSize = common.getValueByPath(fromObject, ['pageSize']);
+  if (parentObject !== undefined && fromPageSize != null) {
+    common.setValueByPath(parentObject, ['_query', 'pageSize'], fromPageSize);
   }
 
-  const fromRevisionLabels = common.getValueByPath(fromObject, [
-    'revisionLabels',
-  ]);
-  if (parentObject !== undefined && fromRevisionLabels != null) {
-    common.setValueByPath(parentObject, ['revisionLabels'], fromRevisionLabels);
+  const fromPageToken = common.getValueByPath(fromObject, ['pageToken']);
+  if (parentObject !== undefined && fromPageToken != null) {
+    common.setValueByPath(parentObject, ['_query', 'pageToken'], fromPageToken);
+  }
+
+  const fromFilter = common.getValueByPath(fromObject, ['filter']);
+  if (parentObject !== undefined && fromFilter != null) {
+    common.setValueByPath(parentObject, ['_query', 'filter'], fromFilter);
+  }
+
+  const fromOrderBy = common.getValueByPath(fromObject, ['orderBy']);
+  if (parentObject !== undefined && fromOrderBy != null) {
+    common.setValueByPath(parentObject, ['_query', 'orderBy'], fromOrderBy);
+  }
+
+  return toObject;
+}
+
+export function listMemoriesRequestParametersToVertex(
+  fromObject: types.ListMemoriesRequestParameters,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromName = common.getValueByPath(fromObject, ['name']);
+  if (fromName != null) {
+    common.setValueByPath(toObject, ['_url', 'name'], fromName);
+  }
+
+  const fromConfig = common.getValueByPath(fromObject, ['config']);
+  if (fromConfig != null) {
+    listMemoriesConfigToVertex(fromConfig, toObject);
+  }
+
+  return toObject;
+}
+
+export function memoryConfigToVertex(
+  fromObject: types.MemoryConfig,
+  parentObject: Record<string, unknown>,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromDisplayName = common.getValueByPath(fromObject, ['displayName']);
+  if (parentObject !== undefined && fromDisplayName != null) {
+    common.setValueByPath(parentObject, ['displayName'], fromDisplayName);
+  }
+
+  const fromDescription = common.getValueByPath(fromObject, ['description']);
+  if (parentObject !== undefined && fromDescription != null) {
+    common.setValueByPath(parentObject, ['description'], fromDescription);
+  }
+
+  const fromTtl = common.getValueByPath(fromObject, ['ttl']);
+  if (parentObject !== undefined && fromTtl != null) {
+    common.setValueByPath(parentObject, ['ttl'], fromTtl);
+  }
+
+  const fromExpireTime = common.getValueByPath(fromObject, ['expireTime']);
+  if (parentObject !== undefined && fromExpireTime != null) {
+    common.setValueByPath(parentObject, ['expireTime'], fromExpireTime);
   }
 
   const fromRevisionExpireTime = common.getValueByPath(fromObject, [
@@ -362,124 +340,32 @@ export function ingestEventsConfigToVertex(
     );
   }
 
+  const fromTopics = common.getValueByPath(fromObject, ['topics']);
+  if (parentObject !== undefined && fromTopics != null) {
+    let transformedList = fromTopics;
+    if (Array.isArray(transformedList)) {
+      transformedList = transformedList.map((item) => {
+        return item;
+      });
+    }
+    common.setValueByPath(parentObject, ['topics'], transformedList);
+  }
+
   const fromMetadata = common.getValueByPath(fromObject, ['metadata']);
   if (parentObject !== undefined && fromMetadata != null) {
     common.setValueByPath(parentObject, ['metadata'], fromMetadata);
   }
 
-  const fromMetadataMergeStrategy = common.getValueByPath(fromObject, [
-    'metadataMergeStrategy',
-  ]);
-  if (parentObject !== undefined && fromMetadataMergeStrategy != null) {
-    common.setValueByPath(
-      parentObject,
-      ['metadataMergeStrategy'],
-      fromMetadataMergeStrategy,
-    );
+  const fromMemoryId = common.getValueByPath(fromObject, ['memoryId']);
+  if (parentObject !== undefined && fromMemoryId != null) {
+    common.setValueByPath(parentObject, ['_query', 'memoryId'], fromMemoryId);
   }
 
   return toObject;
 }
 
-export function ingestEventsRequestParametersToVertex(
-  fromObject: types.IngestEventsRequestParameters,
-): Record<string, unknown> {
-  const toObject: Record<string, unknown> = {};
-
-  const fromName = common.getValueByPath(fromObject, ['name']);
-  if (fromName != null) {
-    common.setValueByPath(toObject, ['_url', 'name'], fromName);
-  }
-
-  const fromStreamId = common.getValueByPath(fromObject, ['streamId']);
-  if (fromStreamId != null) {
-    common.setValueByPath(toObject, ['streamId'], fromStreamId);
-  }
-
-  const fromDirectContentsSource = common.getValueByPath(fromObject, [
-    'directContentsSource',
-  ]);
-  if (fromDirectContentsSource != null) {
-    common.setValueByPath(
-      toObject,
-      ['directContentsSource'],
-      fromDirectContentsSource,
-    );
-  }
-
-  const fromScope = common.getValueByPath(fromObject, ['scope']);
-  if (fromScope != null) {
-    common.setValueByPath(toObject, ['scope'], fromScope);
-  }
-
-  const fromGenerationTriggerConfig = common.getValueByPath(fromObject, [
-    'generationTriggerConfig',
-  ]);
-  if (fromGenerationTriggerConfig != null) {
-    common.setValueByPath(
-      toObject,
-      ['generationTriggerConfig'],
-      fromGenerationTriggerConfig,
-    );
-  }
-
-  const fromConfig = common.getValueByPath(fromObject, ['config']);
-  if (fromConfig != null) {
-    ingestEventsConfigToVertex(fromConfig, toObject);
-  }
-
-  return toObject;
-}
-
-export function listAgentEngineMemoryConfigToVertex(
-  fromObject: types.ListAgentEngineMemoryConfig,
-  parentObject: Record<string, unknown>,
-): Record<string, unknown> {
-  const toObject: Record<string, unknown> = {};
-
-  const fromPageSize = common.getValueByPath(fromObject, ['pageSize']);
-  if (parentObject !== undefined && fromPageSize != null) {
-    common.setValueByPath(parentObject, ['_query', 'pageSize'], fromPageSize);
-  }
-
-  const fromPageToken = common.getValueByPath(fromObject, ['pageToken']);
-  if (parentObject !== undefined && fromPageToken != null) {
-    common.setValueByPath(parentObject, ['_query', 'pageToken'], fromPageToken);
-  }
-
-  const fromFilter = common.getValueByPath(fromObject, ['filter']);
-  if (parentObject !== undefined && fromFilter != null) {
-    common.setValueByPath(parentObject, ['_query', 'filter'], fromFilter);
-  }
-
-  const fromOrderBy = common.getValueByPath(fromObject, ['orderBy']);
-  if (parentObject !== undefined && fromOrderBy != null) {
-    common.setValueByPath(parentObject, ['_query', 'orderBy'], fromOrderBy);
-  }
-
-  return toObject;
-}
-
-export function listAgentEngineMemoryRequestParametersToVertex(
-  fromObject: types.ListAgentEngineMemoryRequestParameters,
-): Record<string, unknown> {
-  const toObject: Record<string, unknown> = {};
-
-  const fromName = common.getValueByPath(fromObject, ['name']);
-  if (fromName != null) {
-    common.setValueByPath(toObject, ['_url', 'name'], fromName);
-  }
-
-  const fromConfig = common.getValueByPath(fromObject, ['config']);
-  if (fromConfig != null) {
-    listAgentEngineMemoryConfigToVertex(fromConfig, toObject);
-  }
-
-  return toObject;
-}
-
-export function purgeAgentEngineMemoriesRequestParametersToVertex(
-  fromObject: types.PurgeAgentEngineMemoriesRequestParameters,
+export function purgeMemoriesRequestParametersToVertex(
+  fromObject: types.PurgeMemoriesRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -512,8 +398,8 @@ export function purgeAgentEngineMemoriesRequestParametersToVertex(
   return toObject;
 }
 
-export function retrieveAgentEngineMemoriesConfigToVertex(
-  fromObject: types.RetrieveAgentEngineMemoriesConfig,
+export function retrieveMemoriesConfigToVertex(
+  fromObject: types.RetrieveMemoriesConfig,
   parentObject: Record<string, unknown>,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
@@ -542,8 +428,8 @@ export function retrieveAgentEngineMemoriesConfigToVertex(
   return toObject;
 }
 
-export function retrieveAgentEngineMemoriesRequestParametersToVertex(
-  fromObject: types.RetrieveAgentEngineMemoriesRequestParameters,
+export function retrieveMemoriesRequestParametersToVertex(
+  fromObject: types.RetrieveMemoriesRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -581,7 +467,7 @@ export function retrieveAgentEngineMemoriesRequestParametersToVertex(
 
   const fromConfig = common.getValueByPath(fromObject, ['config']);
   if (fromConfig != null) {
-    retrieveAgentEngineMemoriesConfigToVertex(fromConfig, toObject);
+    retrieveMemoriesConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;
@@ -605,8 +491,8 @@ export function retrieveMemoryProfilesRequestParametersToVertex(
   return toObject;
 }
 
-export function rollbackAgentEngineMemoryRequestParametersToVertex(
-  fromObject: types.RollbackAgentEngineMemoryRequestParameters,
+export function rollbackMemoryRequestParametersToVertex(
+  fromObject: types.RollbackMemoryRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -625,8 +511,8 @@ export function rollbackAgentEngineMemoryRequestParametersToVertex(
   return toObject;
 }
 
-export function updateAgentEngineMemoryConfigToVertex(
-  fromObject: types.UpdateAgentEngineMemoryConfig,
+export function updateMemoryConfigToVertex(
+  fromObject: types.UpdateMemoryConfig,
   parentObject: Record<string, unknown>,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
@@ -711,8 +597,8 @@ export function updateAgentEngineMemoryConfigToVertex(
   return toObject;
 }
 
-export function updateAgentEngineMemoryRequestParametersToVertex(
-  fromObject: types.UpdateAgentEngineMemoryRequestParameters,
+export function updateMemoryRequestParametersToVertex(
+  fromObject: types.UpdateMemoryRequestParameters,
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
@@ -733,7 +619,7 @@ export function updateAgentEngineMemoryRequestParametersToVertex(
 
   const fromConfig = common.getValueByPath(fromObject, ['config']);
   if (fromConfig != null) {
-    updateAgentEngineMemoryConfigToVertex(fromConfig, toObject);
+    updateMemoryConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;
