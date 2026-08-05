@@ -364,6 +364,17 @@ export function reasoningEngineContextSpecFromVertex(
     );
   }
 
+  const fromExampleStoreConfig = common.getValueByPath(fromObject, [
+    'exampleStoreConfig',
+  ]);
+  if (fromExampleStoreConfig != null) {
+    common.setValueByPath(
+      toObject,
+      ['exampleStoreConfig'],
+      fromExampleStoreConfig,
+    );
+  }
+
   return toObject;
 }
 
@@ -527,6 +538,17 @@ export function reasoningEngineContextSpecToVertex(
     );
   }
 
+  const fromExampleStoreConfig = common.getValueByPath(fromObject, [
+    'exampleStoreConfig',
+  ]);
+  if (fromExampleStoreConfig != null) {
+    common.setValueByPath(
+      toObject,
+      ['exampleStoreConfig'],
+      fromExampleStoreConfig,
+    );
+  }
+
   return toObject;
 }
 
@@ -596,6 +618,30 @@ export function reasoningEngineFromVertex(
   ]);
   if (fromTrafficConfig != null) {
     common.setValueByPath(toObject, ['trafficConfig'], fromTrafficConfig);
+  }
+
+  const fromExperimentConfig = common.getValueByPath(fromObject, [
+    'experimentConfig',
+  ]);
+  if (fromExperimentConfig != null) {
+    common.setValueByPath(toObject, ['experimentConfig'], fromExperimentConfig);
+  }
+
+  const fromRevisionGarbageCollectionStrategy = common.getValueByPath(
+    fromObject,
+    ['revisionGarbageCollectionStrategy'],
+  );
+  if (fromRevisionGarbageCollectionStrategy != null) {
+    common.setValueByPath(
+      toObject,
+      ['revisionGarbageCollectionStrategy'],
+      fromRevisionGarbageCollectionStrategy,
+    );
+  }
+
+  const fromUrl = common.getValueByPath(fromObject, ['url']);
+  if (fromUrl != null) {
+    common.setValueByPath(toObject, ['url'], fromUrl);
   }
 
   return toObject;

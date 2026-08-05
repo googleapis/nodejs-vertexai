@@ -100,6 +100,18 @@ export enum Operator {
   LESS_THAN = 'LESS_THAN',
 }
 
+/** The machine config of the code execution environment. */
+export enum MachineConfig {
+  /**
+   * The default value: milligcu 2000, memory 1.5Gib
+   */
+  MACHINE_CONFIG_UNSPECIFIED = 'MACHINE_CONFIG_UNSPECIFIED',
+  /**
+   * The default value: milligcu 4000, memory 4 Gib
+   */
+  MACHINE_CONFIG_VCPU4_RAM4GIB = 'MACHINE_CONFIG_VCPU4_RAM4GIB',
+}
+
 /** The coding language supported in this environment. */
 export enum Language {
   /**
@@ -114,18 +126,6 @@ export enum Language {
    * The coding language is JavaScript.
    */
   LANGUAGE_JAVASCRIPT = 'LANGUAGE_JAVASCRIPT',
-}
-
-/** The machine config of the code execution environment. */
-export enum MachineConfig {
-  /**
-   * The default value: milligcu 2000, memory 1.5Gib
-   */
-  MACHINE_CONFIG_UNSPECIFIED = 'MACHINE_CONFIG_UNSPECIFIED',
-  /**
-   * The default value: milligcu 4000, memory 4 Gib
-   */
-  MACHINE_CONFIG_VCPU4_RAM4GIB = 'MACHINE_CONFIG_VCPU4_RAM4GIB',
 }
 
 /** Output only. The runtime state of the SandboxEnvironment. */
@@ -154,22 +154,86 @@ export enum SandboxState {
    * Sandbox runtime has been deleted.
    */
   STATE_DELETED = 'STATE_DELETED',
+  /**
+   * Sandbox runtime is paused.
+   */
+  STATE_PAUSED = 'STATE_PAUSED',
+  /**
+   * Sandbox runtime is pausing.
+   */
+  STATE_PAUSING = 'STATE_PAUSING',
+  /**
+   * Sandbox runtime is resuming.
+   */
+  STATE_RESUMING = 'STATE_RESUMING',
 }
 
-/** Output only. The source of the Skill. */
-export enum SkillSource {
+/** Output only. The state of the session. */
+export enum State {
   /**
-   * The skill source is unspecified.
+   * State unspecified.
    */
-  SKILL_SOURCE_UNSPECIFIED = 'SKILL_SOURCE_UNSPECIFIED',
+  STATE_UNSPECIFIED = 'STATE_UNSPECIFIED',
   /**
-   * The skill is created by a user.
+   * The session is idle.
    */
-  USER = 'USER',
+  SESSION_IDLE = 'SESSION_IDLE',
   /**
-   * The skill is a system skill.
+   * The session is in progress.
    */
-  SYSTEM = 'SYSTEM',
+  SESSION_IN_PROGRESS = 'SESSION_IN_PROGRESS',
+}
+
+/** Output only. The traffic type for this request. */
+export enum TrafficType {
+  /**
+   * Unspecified request traffic type.
+   */
+  TRAFFIC_TYPE_UNSPECIFIED = 'TRAFFIC_TYPE_UNSPECIFIED',
+  /**
+   * Type for Pay-As-You-Go traffic.
+   */
+  ON_DEMAND = 'ON_DEMAND',
+  /**
+   * Type for Priority Pay-As-You-Go traffic.
+   */
+  ON_DEMAND_PRIORITY = 'ON_DEMAND_PRIORITY',
+  /**
+   * Type for Flex traffic.
+   */
+  ON_DEMAND_FLEX = 'ON_DEMAND_FLEX',
+  /**
+   * Type for Provisioned Throughput traffic.
+   */
+  PROVISIONED_THROUGHPUT = 'PROVISIONED_THROUGHPUT',
+}
+
+/** The modality that this token count applies to. */
+export enum MediaModality {
+  /**
+   * When a modality is not specified, it is treated as `TEXT`.
+   */
+  MODALITY_UNSPECIFIED = 'MODALITY_UNSPECIFIED',
+  /**
+   * The `Part` contains plain text.
+   */
+  TEXT = 'TEXT',
+  /**
+   * The `Part` contains an image.
+   */
+  IMAGE = 'IMAGE',
+  /**
+   * The `Part` contains a video.
+   */
+  VIDEO = 'VIDEO',
+  /**
+   * The `Part` contains audio.
+   */
+  AUDIO = 'AUDIO',
+  /**
+   * The `Part` contains a document, such as a PDF.
+   */
+  DOCUMENT = 'DOCUMENT',
 }
 
 /** State of the Skill. */
@@ -196,28 +260,20 @@ export enum SkillState {
   DELETING = 'DELETING',
 }
 
-/** Output only. The state of the Skill Revision. */
-export enum State {
+/** Output only. The source of the Skill. */
+export enum SkillSource {
   /**
-   * The state of the Skill Revision is unspecified.
+   * The skill source is unspecified.
    */
-  STATE_UNSPECIFIED = 'STATE_UNSPECIFIED',
+  SKILL_SOURCE_UNSPECIFIED = 'SKILL_SOURCE_UNSPECIFIED',
   /**
-   * The Skill Revision is active.
+   * The skill is created by a user.
    */
-  ACTIVE = 'ACTIVE',
+  USER = 'USER',
   /**
-   * The Skill Revision is being created.
+   * The skill is a system skill.
    */
-  CREATING = 'CREATING',
-  /**
-   * The Skill Revision was created, but failed to process.
-   */
-  FAILED = 'FAILED',
-  /**
-   * The Skill Revision is being deleted.
-   */
-  DELETING = 'DELETING',
+  SYSTEM = 'SYSTEM',
 }
 
 /** Framework used to build the application. */
@@ -400,6 +456,8 @@ export declare interface ReasoningEngineSpecDeploymentSpec {
   agentGatewayConfig?: ReasoningEngineSpecDeploymentSpecAgentGatewayConfig;
   /** Optional. Specifies the configuration for keep-alive probe. Contains configuration on a specified endpoint that a deployment host should use to keep the container alive based on the probe settings. */
   keepAliveProbe?: KeepAliveProbe;
+  /** Optional. If true, the Reasoning Engine will be deployed with a dedicated ingress endpoint. */
+  dedicatedIngressEndpointEnabled?: boolean;
 }
 
 /** User-provided package specification, containing pickled object and package requirements. */
@@ -491,6 +549,12 @@ export declare interface ReasoningEngineSpecContainerSpec {
   imageUri?: string;
 }
 
+/** Specification for building container image. */
+export declare interface ReasoningEngineSpecBuildSpec {
+  /** Optional. Identifier. The resource name of the Cloud Build WorkerPool to use for the build. Format: `projects/{project}/locations/{location}/workerPools/{worker_pool}` */
+  workerPool?: string;
+}
+
 /** The specification of an agent engine. */
 export declare interface ReasoningEngineSpec {
   /** Optional. The A2A Agent Card for the agent (if available). It follows the specification at https://a2a-protocol.org/latest/specification/#5-agent-discovery-the-agent-card. */
@@ -513,6 +577,12 @@ export declare interface ReasoningEngineSpec {
   sourceCodeSpec?: ReasoningEngineSpecSourceCodeSpec;
   /** Deploy from a container image with a defined entrypoint and commands. */
   containerSpec?: ReasoningEngineSpecContainerSpec;
+  /** Optional. The resource name of the linked ExampleStore. At query time, examples can be used to guide the performance of the agent by providing the expected response or demonstrating when and how tools should be called. Format: `projects/{project}/locations/{location}/exampleStores/{example_store}` */
+  exampleStore?: string;
+  /** Output only. Boolean signifying if this agent engine has a runtime currently or not. */
+  runtimeActive?: boolean;
+  /** Optional. Configuration for building container image. */
+  buildSpec?: ReasoningEngineSpecBuildSpec;
 }
 
 /** The conversation source event for generating memories. */
@@ -533,6 +603,8 @@ export declare interface MemoryTopicId {
   customMemoryTopicLabel?: string;
   /** Optional. Represents the managed memory topic. */
   managedMemoryTopic?: ManagedTopicEnum;
+  /** Optional. Deprecated: Use `schema_id` in top-level protos instead. */
+  schemaId?: string;
 }
 
 /** A memory generated by the operation. */
@@ -605,6 +677,8 @@ export declare interface MemoryGenerationTriggerConfigGenerationTriggerRule {
   idleDuration?: string;
   /** Optional. Re-include the last N already-processed events in the next window. */
   overlapEventCount?: number;
+  /** Optional. Specifies to trigger generation when the token count reaches this limit. */
+  tokenLimit?: number;
 }
 
 /** The configuration for triggering memory generation for ingested events. */
@@ -619,6 +693,8 @@ export declare interface ReasoningEngineContextSpecMemoryBankConfigGenerationCon
   model?: string;
   /** Optional. Specifies the default trigger configuration for generating memories using `IngestEvents`. */
   generationTriggerConfig?: MemoryGenerationTriggerConfig;
+  /** Optional. A custom prompt to use for extracting memories from conversations. If not set, a default prompt will be used. */
+  memoryExtractionInstructions?: string;
 }
 
 /** Configuration for how to perform similarity search on memories. */
@@ -681,10 +757,24 @@ export declare interface ReasoningEngineContextSpecMemoryBankConfig {
   structuredMemoryConfigs?: StructuredMemoryConfig[];
 }
 
+/** Configuration for how to perform similarity search on examples. */
+export declare interface ReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfig {
+  /** Required. The Gemini model used to generate embeddings to lookup similar examples. Format: `projects/{project}/locations/{location}/publishers/google/models/{model}`. */
+  embeddingModel?: string;
+}
+
+/** Specification for an Example Store. */
+export declare interface ReasoningEngineContextSpecExampleStoreConfig {
+  /** Optional. Configuration for how to perform similarity search on examples. If not set, the Example Store will use the default embedding model `text-embedding-005`. */
+  similaritySearchConfig?: ReasoningEngineContextSpecExampleStoreConfigSimilaritySearchConfig;
+}
+
 /** Configuration for how Agent Engine sub-resources should manage context. */
 export declare interface ReasoningEngineContextSpec {
   /** Optional. Specification for a Memory Bank, which manages memories for the Agent Engine. */
   memoryBankConfig?: ReasoningEngineContextSpecMemoryBankConfig;
+  /** Optional. Specification for an Example Store, which manages few-shot examples for the Agent Engine. */
+  exampleStoreConfig?: ReasoningEngineContextSpecExampleStoreConfig;
 }
 
 /** Config for create agent engine. */
@@ -841,6 +931,26 @@ export declare interface ReasoningEngineTrafficConfig {
   trafficSplitManual?: ReasoningEngineTrafficConfigTrafficSplitManual;
 }
 
+/** The experiment config to control feature experiments. */
+export declare interface ExperimentConfig {}
+
+/** Performs no automatic garbage collection on Runtime Revisions. */
+export declare interface ReasoningEngineRevisionGarbageCollectionStrategyNoGarbageCollection {}
+
+/** Keeps only the latest N Runtime Revisions active. */
+export declare interface ReasoningEngineRevisionGarbageCollectionStrategyKeepNLatest {
+  /** Required. Specifies the maximum number of Runtime Revisions to keep active. If an update to Reasoning Engine would result in exceeding this number of active Runtime Revisions, a new Runtime Revision will be created, while the oldest Runtime Revision will be automatically deprecated, providing it's not configured to serve traffic via `traffic_config`. If the oldest Runtime Revision is configured to serve traffic, the update will fail validation. No changes will be made to the Reasoning Engine, existing Runtime Revisions, and no new Runtime Revision will be created. */
+  maxActiveRevisions?: number;
+}
+
+/** Configures garbage collection of Runtime Revisions. */
+export declare interface ReasoningEngineRevisionGarbageCollectionStrategy {
+  /** Optional. Performs no automatic garbage collection on Runtime Revisions. */
+  noGarbageCollection?: ReasoningEngineRevisionGarbageCollectionStrategyNoGarbageCollection;
+  /** Optional. Keeps only the latest N Runtime Revisions active. */
+  keepNLatest?: ReasoningEngineRevisionGarbageCollectionStrategyKeepNLatest;
+}
+
 /** An agent engine. */
 export declare interface ReasoningEngine {
   /** Customer-managed encryption key spec for a ReasoningEngine. If set, this ReasoningEngine and all sub-resources of this ReasoningEngine will be secured by this key. */
@@ -865,6 +975,12 @@ export declare interface ReasoningEngine {
   updateTime?: string;
   /** Optional. Traffic distribution configuration for the Reasoning Engine. */
   trafficConfig?: ReasoningEngineTrafficConfig;
+  /** Optional. The experiment config used to control which features to enable in this API call. */
+  experimentConfig?: ExperimentConfig;
+  /** Optional. Configures garbage collection of Runtime Revisions. */
+  revisionGarbageCollectionStrategy?: ReasoningEngineRevisionGarbageCollectionStrategy;
+  /** Output only. The URL of the reasoning engine. */
+  url?: string;
 }
 
 /** Operation that has an agent engine as a response. */
@@ -1431,6 +1547,8 @@ export declare interface Memory {
   memoryType?: MemoryType;
   /** Optional. Represents the structured content of the memory. */
   structuredContent?: MemoryStructuredContent;
+  /** Optional. Deprecated: Use `structured_content` instead. */
+  structuredData?: Record<string, unknown>;
 }
 
 /** Operation that has a memory as a response. */
@@ -1492,6 +1610,8 @@ export declare interface GenerateMemoriesRequestVertexSessionSource {
 export declare interface GenerateMemoriesRequestDirectContentsSourceEvent {
   /** Required. A single piece of content from which to generate memories. */
   content?: genaiTypes.Content;
+  /** Optional. The time at which the event occurred. */
+  eventTime?: string;
 }
 
 /** The direct contents source for generating memories. */
@@ -2018,6 +2138,8 @@ export declare interface IntermediateExtractedMemory {
   context?: string;
   /** Output only. Represents the structured value of the extracted memory. */
   structuredData?: Record<string, unknown>;
+  /** Output only. Indicates that the extracted memory originated from an explicit instruction to remember or forget information. */
+  isExplicit?: boolean;
 }
 
 /** A memory revision. */
@@ -2081,7 +2203,10 @@ export declare interface SandboxEnvironmentSpecCodeExecutionEnvironment {
 }
 
 /** The computer use environment with customized settings. */
-export declare interface SandboxEnvironmentSpecComputerUseEnvironment {}
+export declare interface SandboxEnvironmentSpecComputerUseEnvironment {
+  /** Optional. The Artifact Registry Docker image URI (e.g., us-docker.dev.pkg/my-proj/my-repo/my-image:my-tag). When unspecified, the default Computer Use container image will be used. */
+  imageUri?: string;
+}
 
 /** The specification of a sandbox environment. */
 export declare interface SandboxEnvironmentSpec {
@@ -2139,6 +2264,8 @@ export declare interface SandboxEnvironmentConnectionInfo {
   sandboxInternalIp?: string;
   /** Output only. The routing token for the SandboxEnvironment. */
   routingToken?: string;
+  /** Output only. The hostname of the SandboxEnvironment. */
+  sandboxHostname?: string;
 }
 
 /** A sandbox environment. */
@@ -2383,6 +2510,14 @@ export declare interface Session {
   updateTime?: string;
   /** Required. Immutable. String id provided by the user */
   userId?: string;
+  /** Output only. The resource names of the Agents that interacted within the session. Each resource name has the format: `projects/{project}/locations/{location}/agents/{agent}`. */
+  agents?: string[];
+  /** The default limit of the number of steps each child Run can contain. Default to 20 if not specified. */
+  defaultRunStepLimit?: string;
+  /** Output only. The state of the session. */
+  state?: State;
+  /** Optional. Custom metadata for the session. */
+  customMetadata?: Record<string, unknown>;
 }
 
 /** Operation that has an agent engine session as a response. */
@@ -2548,6 +2683,107 @@ export declare interface EventActions {
   stateDelta?: Record<string, unknown>;
   /** Optional. If set, the event transfers to the specified agent. */
   transferAgent?: string;
+  /** Optional. If set, the event transfers to the specified agent. This field is intended to replace 'transfer_agent'. Not in use pending data migration. */
+  transferToAgent?: string;
+  /** Optional. A dict of tool confirmation requested by this event, keyed by function call id. */
+  requestedToolConfirmations?: Record<string, unknown>;
+  /** Optional. If true, the current agent has finished its current run. */
+  endOfAgent?: boolean;
+  /** Optional. The agent state at the current event. */
+  agentState?: Record<string, unknown>;
+}
+
+/** Represents a whole or partial calendar date, such as a birthday. The time of day and time zone are either specified elsewhere or are insignificant. The date is relative to the Gregorian Calendar. This can represent one of the following: * A full date, with non-zero year, month, and day values. * A month and day, with a zero year (for example, an anniversary). * A year on its own, with a zero month and a zero day. * A year and month, with a zero day (for example, a credit card expiration date). Related types: * google.type.TimeOfDay * google.type.DateTime * google.protobuf.Timestamp */
+export declare interface GoogleTypeDate {
+  /** Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year. */
+  year?: number;
+  /** Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day. */
+  month?: number;
+  /** Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant. */
+  day?: number;
+}
+
+/** A citation for a piece of generatedcontent. */
+export declare interface Citation {
+  /** Output only. The start index of the citation in the content. */
+  startIndex?: number;
+  /** Output only. The end index of the citation in the content. */
+  endIndex?: number;
+  /** Output only. The URI of the source of the citation. */
+  uri?: string;
+  /** Output only. The title of the source of the citation. */
+  title?: string;
+  /** Output only. The license of the source of the citation. */
+  license?: string;
+  /** Output only. The publication date of the source of the citation. */
+  publicationDate?: GoogleTypeDate;
+}
+
+/** A collection of citations that apply to a piece of generated content. */
+export declare interface CitationMetadata {
+  /** Output only. A list of citations for the content. */
+  citations?: Citation[];
+}
+
+/** Represents a breakdown of token usage by modality. This message is used in CountTokensResponse and GenerateContentResponse.UsageMetadata to provide a detailed view of how many tokens are used by each modality (e.g., text, image, video) in a request. This is particularly useful for multimodal models, allowing you to track and manage token consumption for billing and quota purposes. */
+export declare interface ModalityTokenCount {
+  /** The modality that this token count applies to. */
+  modality?: MediaModality;
+  /** The number of tokens counted for this modality. */
+  tokenCount?: number;
+}
+
+/** [Deprecated] Billable usage information. */
+export declare interface UsageMetadataBillablleUsage {
+  /** The number of text characters. */
+  textCount?: number;
+  /** The number of images. */
+  imageCount?: number;
+  /** The duration of video in seconds. */
+  videoDurationSeconds?: number;
+  /** The duration of audio in seconds. */
+  audioDurationSeconds?: number;
+}
+
+export declare interface ToolCallStats {
+  /** Output only. Note: Assuming `ToolType` mapping or just standardizing on strings depending on Vertex's `Tool` definitions. */
+  functionName?: string;
+  /** toolCallCount */
+  toolCallCount?: number;
+  /** serverExecuted */
+  serverExecuted?: boolean;
+}
+
+/** Usage metadata about the content generation request and response. This message provides a detailed breakdown of token usage and other relevant metrics. */
+export declare interface UsageMetadata {
+  /** The total number of tokens in the prompt. This includes any text, images, or other media provided in the request. When `cached_content` is set, this also includes the number of tokens in the cached content. */
+  promptTokenCount?: number;
+  /** The total number of tokens in the generated candidates. */
+  candidatesTokenCount?: number;
+  /** The total number of tokens for the entire request. This is the sum of `prompt_token_count`, `candidates_token_count`, `tool_use_prompt_token_count`, and `thoughts_token_count`. */
+  totalTokenCount?: number;
+  /** Output only. The number of tokens in the results from tool executions, which are provided back to the model as input, if applicable. */
+  toolUsePromptTokenCount?: number;
+  /** Output only. The number of tokens that were part of the model's generated "thoughts" output, if applicable. */
+  thoughtsTokenCount?: number;
+  /** Output only. The number of tokens in the cached content that was used for this request. */
+  cachedContentTokenCount?: number;
+  /** Output only. A detailed breakdown of the token count for each modality in the prompt. */
+  promptTokensDetails?: ModalityTokenCount[];
+  /** Output only. A detailed breakdown of the token count for each modality in the cached content. */
+  cacheTokensDetails?: ModalityTokenCount[];
+  /** Output only. A detailed breakdown of the token count for each modality in the generated candidates. */
+  candidatesTokensDetails?: ModalityTokenCount[];
+  /** Output only. A detailed breakdown by modality of the token counts from the results of tool executions, which are provided back to the model as input. */
+  toolUsePromptTokensDetails?: ModalityTokenCount[];
+  /** Output only. The traffic type for this request. */
+  trafficType?: TrafficType;
+  /** Output only. [Deprecated] Billable usage for the prompt. */
+  billablePromptUsage?: UsageMetadataBillablleUsage;
+  /** Output only. [Deprecated] Billable usage for the cached content. */
+  billableCachedContentUsage?: UsageMetadataBillablleUsage;
+  /** Output only. Statistics about function calls in this generation request. */
+  toolCallStats?: ToolCallStats[];
 }
 
 /** Metadata relating to a LLM response event. */
@@ -2570,6 +2806,10 @@ export declare interface EventMetadata {
   inputTranscription?: genaiTypes.Transcription;
   /** Optional. Audio transcription of model output. */
   outputTranscription?: genaiTypes.Transcription;
+  /** Optional. Citation metadata for the response. */
+  citationMetadata?: CitationMetadata;
+  /** Optional. Usage metadata for the response. */
+  usageMetadata?: UsageMetadata;
 }
 
 /** Config for appending agent engine session event. */
@@ -2691,6 +2931,12 @@ export declare interface GetSkillRequestParameters {
   config?: GetSkillConfig;
 }
 
+/** Represents a customer-managed encryption key specification that can be applied to a Vertex AI resource. */
+export declare interface EncryptionSpec {
+  /** Required. Resource name of the Cloud KMS key used to protect the resource. The Cloud KMS key must be in the same region as the resource. It must have the format `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`. */
+  kmsKeyName?: string;
+}
+
 /** Represents a Skill resource.
 
 Patches the type from the discovery document. */
@@ -2719,6 +2965,8 @@ export declare interface Skill {
   sha256?: string;
   /** Output only. The source of the Skill. */
   skillSource?: SkillSource;
+  /** Optional. Customer-managed encryption key spec for a Skill. If set, this Skill and all sub-resources of this Skill will be secured by this key. */
+  encryptionSpec?: EncryptionSpec;
 }
 
 /** Config for retrieving skills. */
