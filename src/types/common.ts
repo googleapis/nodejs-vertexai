@@ -156,6 +156,50 @@ export enum SandboxState {
   STATE_DELETED = 'STATE_DELETED',
 }
 
+/** Protocol for port. Defaults to TCP if not specified. */
+export enum Protocol {
+  /**
+   * Unspecified protocol. Defaults to TCP.
+   */
+  PROTOCOL_UNSPECIFIED = 'PROTOCOL_UNSPECIFIED',
+  /**
+   * TCP protocol.
+   */
+  TCP = 'TCP',
+  /**
+   * UDP protocol.
+   */
+  UDP = 'UDP',
+}
+
+/** The category of the default container image. */
+export enum DefaultContainerCategory {
+  /**
+   * The default value. This value is unused.
+   */
+  DEFAULT_CONTAINER_CATEGORY_UNSPECIFIED = 'DEFAULT_CONTAINER_CATEGORY_UNSPECIFIED',
+  /**
+   * The default container image for Computer Use.
+   */
+  DEFAULT_CONTAINER_CATEGORY_COMPUTER_USE = 'DEFAULT_CONTAINER_CATEGORY_COMPUTER_USE',
+}
+
+/** Input only. Action to take on the source SandboxEnvironment after the snapshot is taken. This field is only used in CreateSandboxEnvironmentSnapshotRequest and it is not stored in the resource. */
+export enum PostSnapshotAction {
+  /**
+   * The default value. This value is unused.
+   */
+  POST_SNAPSHOT_ACTION_UNSPECIFIED = 'POST_SNAPSHOT_ACTION_UNSPECIFIED',
+  /**
+   * Sandbox environment will continue to run after snapshot is taken.
+   */
+  RUNNING = 'RUNNING',
+  /**
+   * Sandbox environment will be paused after snapshot is taken.
+   */
+  PAUSE = 'PAUSE',
+}
+
 /** Output only. The source of the Skill. */
 export enum SkillSource {
   /**
@@ -2319,6 +2363,377 @@ export class ListAgentEngineSandboxesResponse {
 
 /** Parameters for getting an operation with a sandbox as a response. */
 export declare interface GetAgentEngineSandboxOperationParameters {
+  /** The server-assigned name for the operation. */
+  operationName: string;
+  /** Used to override the default configuration. */
+  config?: GetAgentEngineOperationConfig;
+}
+
+/** Specification for deploying from a custom container image. */
+export declare interface SandboxEnvironmentTemplateCustomContainerSpec {
+  /** Required. The Artifact Registry Docker image URI (e.g., us-central1-docker.pkg.dev/my-project/my-repo/my-image:tag) of the container image that is to be run on each worker replica. */
+  imageUri?: string;
+}
+
+/** Represents a network port in a container. */
+export declare interface SandboxEnvironmentTemplateNetworkPort {
+  /** Optional. Port number to expose. This must be a valid port number, between 1 and 65535. */
+  port?: number;
+  /** Optional. Protocol for port. Defaults to TCP if not specified. */
+  protocol?: Protocol;
+}
+
+/** Message to define resource requests and limits (mirroring Kubernetes) for each sandbox instance created from this template. */
+export declare interface SandboxEnvironmentTemplateResourceRequirements {
+  /** Optional. The maximum amounts of compute resources allowed. Keys are resource names (e.g., "cpu", "memory"). Values are quantities (e.g., "500m", "1Gi"). */
+  limits?: Record<string, string>;
+  /** Optional. The requested amounts of compute resources. Keys are resource names (e.g., "cpu", "memory"). Values are quantities (e.g., "250m", "512Mi"). */
+  requests?: Record<string, string>;
+}
+
+/** The customized sandbox runtime environment for BYOC. */
+export declare interface SandboxEnvironmentTemplateCustomContainerEnvironment {
+  /** The specification of the custom container environment. */
+  customContainerSpec?: SandboxEnvironmentTemplateCustomContainerSpec;
+  /** Ports to expose from the container. */
+  ports?: SandboxEnvironmentTemplateNetworkPort[];
+  /** Resource requests and limits for the container. */
+  resources?: SandboxEnvironmentTemplateResourceRequirements;
+}
+
+/** The default sandbox runtime environment for default container workloads. */
+export declare interface SandboxEnvironmentTemplateDefaultContainerEnvironment {
+  /** Required. The category of the default container image. */
+  defaultContainerCategory?: DefaultContainerCategory;
+  /** Optional. Resource requests and limits for the default container. */
+  resources?: SandboxEnvironmentTemplateResourceRequirements;
+}
+
+/** Configuration for egress control of sandbox instances. */
+export declare interface SandboxEnvironmentTemplateEgressControlConfig {
+  /** Optional. Whether to allow internet access. */
+  internetAccess?: boolean;
+}
+
+/** Config for creating a Sandbox Template. */
+export declare interface CreateSandboxEnvironmentTemplateConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** The custom container environment for the sandbox template. */
+  customContainerEnvironment?: SandboxEnvironmentTemplateCustomContainerEnvironment;
+  /** The default container environment for the sandbox template. */
+  defaultContainerEnvironment?: SandboxEnvironmentTemplateDefaultContainerEnvironment;
+  /** The egress control config for the sandbox template. */
+  egressControlConfig?: SandboxEnvironmentTemplateEgressControlConfig;
+  /** Waits for the operation to complete before returning. */
+  waitForCompletion?: boolean;
+}
+
+/** Parameters for creating Sandbox Environment Templates. */
+export declare interface CreateSandboxEnvironmentTemplateRequestParameters {
+  /** Name of the agent engine to create the template under. */
+  name: string;
+  /** The display name of the sandbox template. */
+  displayName: string;
+  config?: CreateSandboxEnvironmentTemplateConfig;
+}
+
+/** A sandbox environment template. */
+export declare interface SandboxEnvironmentTemplate {
+  /** Output only. The timestamp when this SandboxEnvironmentTemplate was created. */
+  createTime?: string;
+  /** The sandbox environment for custom container workloads. */
+  customContainerEnvironment?: SandboxEnvironmentTemplateCustomContainerEnvironment;
+  /** The sandbox environment for default container workloads. */
+  defaultContainerEnvironment?: SandboxEnvironmentTemplateDefaultContainerEnvironment;
+  /** Required. The display name of the SandboxEnvironmentTemplate. */
+  displayName?: string;
+  /** Optional. The configuration for egress control of this template. */
+  egressControlConfig?: SandboxEnvironmentTemplateEgressControlConfig;
+  /** Identifier. The resource name of the SandboxEnvironmentTemplate. Format: `projects/{project}/locations/{location}/reasoningEngines/{reasoning_engine}/sandboxEnvironmentTemplates/{sandbox_environment_template}` */
+  name?: string;
+  /** Output only. The state of the sandbox environment template. */
+  state?:
+    | 'UNSPECIFIED'
+    | 'PROVISIONING'
+    | 'ACTIVE'
+    | 'DEPROVISIONING'
+    | 'DELETED'
+    | 'FAILED';
+  /** Output only. The timestamp when this SandboxEnvironmentTemplate was most recently updated. */
+  updateTime?: string;
+}
+
+/** Operation that has an agent engine sandbox as a response. */
+export declare interface SandboxEnvironmentTemplateOperation {
+  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
+  name?: string;
+  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
+  metadata?: Record<string, unknown>;
+  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
+  done?: boolean;
+  /** The error result of the operation in case of failure or cancellation. */
+  error?: Record<string, unknown>;
+  /** The Agent Engine Sandbox Template. */
+  response?: SandboxEnvironmentTemplate;
+}
+
+/** Config for deleting a Sandbox Template. */
+export declare interface DeleteSandboxEnvironmentTemplateConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+}
+
+/** Parameters for deleting sandbox templates. */
+export declare interface DeleteSandboxEnvironmentTemplateRequestParameters {
+  /** Name of the sandbox template to delete. */
+  name: string;
+  config?: DeleteSandboxEnvironmentTemplateConfig;
+}
+
+/** Operation for deleting sandbox templates. */
+export declare interface DeleteSandboxEnvironmentTemplateOperation {
+  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
+  name?: string;
+  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
+  metadata?: Record<string, unknown>;
+  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
+  done?: boolean;
+  /** The error result of the operation in case of failure or cancellation. */
+  error?: Record<string, unknown>;
+}
+
+/** Config for getting a Sandbox Template. */
+export declare interface GetSandboxEnvironmentTemplateConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+}
+
+/** Parameters for getting a sandbox template. */
+export declare interface GetSandboxEnvironmentTemplateRequestParameters {
+  /** Name of the sandbox template. */
+  name: string;
+  config?: GetSandboxEnvironmentTemplateConfig;
+}
+
+/** Config for listing sandbox templates. */
+export declare interface ListSandboxEnvironmentTemplatesConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  pageSize?: number;
+  pageToken?: string;
+  /** An expression for filtering the results of the request. */
+  filter?: string;
+}
+
+/** Parameters for listing sandbox templates. */
+export declare interface ListSandboxEnvironmentTemplatesRequestParameters {
+  /** Name of the agent engine. */
+  name: string;
+  config?: ListSandboxEnvironmentTemplatesConfig;
+}
+
+/** Response for listing sandbox templates. */
+export class ListSandboxEnvironmentTemplatesResponse {
+  /** Used to retain the full HTTP response. */
+  sdkHttpResponse?: genaiTypes.HttpResponse;
+  nextPageToken?: string;
+  /** List of sandbox templates. */
+  sandboxEnvironmentTemplates?: SandboxEnvironmentTemplate[];
+}
+
+/** Parameters for getting an operation with a sandbox template as a response. */
+export declare interface GetSandboxEnvironmentTemplateOperationParameters {
+  /** The server-assigned name for the operation. */
+  operationName: string;
+  /** Used to override the default configuration. */
+  config?: GetAgentEngineOperationConfig;
+}
+
+/** Config for creating a Sandbox Environment Snapshot. */
+export declare interface CreateAgentEngineSandboxSnapshotConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** The display name of the sandbox snapshot. */
+  displayName?: string;
+  /** The owner of the sandbox snapshot. */
+  owner?: string;
+  /** The TTL for this resource. The expiration time is computed: now + TTL. */
+  ttl?: string;
+  /** Waits for the operation to complete before returning. */
+  waitForCompletion?: boolean;
+}
+
+/** Parameters for creating a sandbox environment snapshot. */
+export declare interface CreateSandboxEnvironmentSnapshotRequestParameters {
+  /** Name of the sandbox environment to snapshot. */
+  sourceSandboxEnvironmentName: string;
+  config?: CreateAgentEngineSandboxSnapshotConfig;
+}
+
+/** A sandbox environment snapshot. */
+export declare interface SandboxEnvironmentSnapshot {
+  /** The display name of the sandbox environment snapshot. */
+  displayName?: string;
+  /** Expiration time of the sandbox environment snapshot.
+   */
+  expireTime?: string;
+  /** Output only. The timestamp when this SandboxEnvironmentSnapshot was created. */
+  createTime?: string;
+  /** Identifier. The resource name of the SandboxEnvironmentSnapshot. Format: `projects/{project}/locations/{location}/reasoningEngines/{reasoning_engine}/sandboxEnvironmentSnapshots/{sandbox_environment_snapshot}` */
+  name?: string;
+  /** Optional. Owner information for this sandbox snapshot. Different owners will have isolations on snapshot storage and identity. If not set, snapshot will be created as the default owner. */
+  owner?: string;
+  /** Output only. The resource name of the parent SandboxEnvironmentSnapshot. Empty if this is a root Snapshot (the first snapshot from a newly created sandbox). Can be used to reconstruct the whole ancestry tree of snapshots. */
+  parentSnapshot?: string;
+  /** Optional. Input only. Action to take on the source SandboxEnvironment after the snapshot is taken. This field is only used in CreateSandboxEnvironmentSnapshotRequest and it is not stored in the resource. */
+  postSnapshotAction?: PostSnapshotAction;
+  /** Optional. Output only. Size of the snapshot data in bytes. */
+  sizeBytes?: string;
+  /** Required. The resource name of the source SandboxEnvironment this snapshot was taken from. */
+  sourceSandboxEnvironment?: string;
+  /** Optional. Input only. The TTL for the sandbox environment snapshot. The expiration time is computed: now + TTL. */
+  ttl?: string;
+  /** Output only. The timestamp when this SandboxEnvironment was most recently updated. */
+  updateTime?: string;
+}
+
+/** Operation that has an agent engine sandbox snapshot as a response. */
+export declare interface AgentEngineSandboxSnapshotOperation {
+  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
+  name?: string;
+  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
+  metadata?: Record<string, unknown>;
+  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
+  done?: boolean;
+  /** The error result of the operation in case of failure or cancellation. */
+  error?: Record<string, unknown>;
+  /** The Agent Engine Sandbox Snapshot. */
+  response?: SandboxEnvironmentSnapshot;
+}
+
+/** Config for deleting a Sandbox Environment Snapshot. */
+export declare interface DeleteSandboxEnvironmentSnapshotConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+}
+
+/** Parameters for deleting sandbox environment snapshots. */
+export declare interface DeleteSandboxEnvironmentSnapshotRequestParameters {
+  /** Name of the sandbox environment snapshot to delete. */
+  name: string;
+  config?: DeleteSandboxEnvironmentSnapshotConfig;
+}
+
+/** Operation for deleting sandbox environment snapshots. */
+export declare interface DeleteSandboxEnvironmentSnapshotOperation {
+  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
+  name?: string;
+  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
+  metadata?: Record<string, unknown>;
+  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
+  done?: boolean;
+  /** The error result of the operation in case of failure or cancellation. */
+  error?: Record<string, unknown>;
+}
+
+/** Config for getting a Sandbox Environment Snapshot. */
+export declare interface GetSandboxEnvironmentSnapshotConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+}
+
+/** Parameters for getting a sandbox environment snapshot. */
+export declare interface GetSandboxEnvironmentSnapshotRequestParameters {
+  /** Name of the sandbox environment snapshot. */
+  name: string;
+  config?: GetSandboxEnvironmentSnapshotConfig;
+}
+
+/** Config for listing sandbox environment snapshots. */
+export declare interface ListSandboxEnvironmentSnapshotsConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  pageSize?: number;
+  pageToken?: string;
+  /** An expression for filtering the results of the request. */
+  filter?: string;
+}
+
+/** Parameters for listing sandbox environment snapshots. */
+export declare interface ListSandboxEnvironmentSnapshotsRequestParameters {
+  /** Name of the reasoning engine to list snapshots from. */
+  name: string;
+  config?: ListSandboxEnvironmentSnapshotsConfig;
+}
+
+/** Response for listing sandbox environment snapshots. */
+export class ListSandboxEnvironmentSnapshotsResponse {
+  /** Used to retain the full HTTP response. */
+  sdkHttpResponse?: genaiTypes.HttpResponse;
+  nextPageToken?: string;
+  /** List of sandbox environment snapshots. */
+  sandboxEnvironmentSnapshots?: SandboxEnvironmentSnapshot[];
+}
+
+/** Parameters for getting an operation with a sandbox snapshot as a response. */
+export declare interface GetAgentEngineSandboxSnapshotOperationParameters {
   /** The server-assigned name for the operation. */
   operationName: string;
   /** Used to override the default configuration. */
