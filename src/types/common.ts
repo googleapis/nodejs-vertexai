@@ -1197,94 +1197,6 @@ export declare interface UpdateAgentEngineRequestParameters {
   config?: UpdateAgentEngineConfig;
 }
 
-/** Config for create memory bank. */
-export declare interface CreateMemoryBankConfig {
-  /** Used to override HTTP request options. */
-  httpOptions?: genaiTypes.HttpOptions;
-  /** Abort signal which can be used to cancel the request.
-
-  NOTE: AbortSignal is a client-only operation. Using it to cancel an
-  operation will not cancel the request in the service. You will still
-  be charged usage for any applicable operations.
-       */
-  abortSignal?: AbortSignal;
-}
-
-/** Parameters for creating memory banks. */
-export declare interface CreateMemoryBankRequestParameters {
-  config?: CreateMemoryBankConfig;
-}
-
-/** A memory bank. */
-export declare interface MemoryBank {
-  /** Required. Represents the ID of the schema. Must be 1-63 characters, start with a lowercase letter, and consist of lowercase letters, numbers, and hyphens. */
-  name?: string;
-}
-
-/** Operation that has an memory bank as a response. */
-export declare interface MemoryBankOperation {
-  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
-  name?: string;
-  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
-  metadata?: Record<string, unknown>;
-  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
-  done?: boolean;
-  /** The error result of the operation in case of failure or cancellation. */
-  error?: Record<string, unknown>;
-  /** The created Memory Bank. */
-  response?: MemoryBank;
-}
-
-/** Config for delete memory bank. */
-export declare interface DeleteMemoryBankConfig {
-  /** Used to override HTTP request options. */
-  httpOptions?: genaiTypes.HttpOptions;
-  /** Abort signal which can be used to cancel the request.
-
-  NOTE: AbortSignal is a client-only operation. Using it to cancel an
-  operation will not cancel the request in the service. You will still
-  be charged usage for any applicable operations.
-       */
-  abortSignal?: AbortSignal;
-}
-
-/** Parameters for deleting a memory bank. */
-export declare interface DeleteMemoryBankRequestParameters {
-  /** Name of the memory bank. */
-  name: string;
-  /** If set to true, any child resources will also be deleted. */
-  force?: boolean;
-  config?: DeleteMemoryBankConfig;
-}
-
-/** Operation for deleting a memory bank. */
-export declare interface DeleteMemoryBankOperation {
-  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
-  name?: string;
-  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
-  metadata?: Record<string, unknown>;
-  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
-  done?: boolean;
-  /** The error result of the operation in case of failure or cancellation. */
-  error?: Record<string, unknown>;
-}
-
-/** The direct contents source event for ingesting events. */
-export declare interface IngestionDirectContentsSourceEvent {
-  /** Required. The content of the event. */
-  content?: genaiTypes.Content;
-  /** Optional. A unique identifier for the event. If an event with the same event_id is ingested multiple times, it will be de-duplicated. */
-  eventId?: string;
-  /** Optional. The time at which the event occurred. If provided, this timestamp will be used for ordering events within a stream. If not provided, the server-side ingestion time will be used. */
-  eventTime?: string;
-}
-
-/** The direct contents source for ingesting events. */
-export declare interface IngestionDirectContentsSource {
-  /** Required. The events to ingest. */
-  events?: IngestionDirectContentsSourceEvent[];
-}
-
 /** The metadata values for memories. */
 export declare interface MemoryMetadataValue {
   /** Represents a boolean value. */
@@ -1297,88 +1209,8 @@ export declare interface MemoryMetadataValue {
   timestampValue?: string;
 }
 
-/** Config for ingesting events. */
-export declare interface IngestEventsConfig {
-  /** Used to override HTTP request options. */
-  httpOptions?: genaiTypes.HttpOptions;
-  /** Abort signal which can be used to cancel the request.
-
-  NOTE: AbortSignal is a client-only operation. Using it to cancel an
-  operation will not cancel the request in the service. You will still
-  be charged usage for any applicable operations.
-       */
-  abortSignal?: AbortSignal;
-  /** Waits for the underlying memory generation operation to complete
-      before returning. Defaults to false. */
-  waitForCompletion?: boolean;
-  /** Optional. Forces a flush of all pending events in the stream and triggers memory generation immediately bypassing any conditions configured in the `generation_trigger_config`. */
-  forceFlush?: boolean;
-  /** Labels to apply to the memory revision. For example, you can use this to label a revision with its data source. */
-  revisionLabels?: Record<string, string>;
-  /** Optional. Input only. Timestamp of when the revision is considered expired. If not set, the memory revision will be kept until manually deleted. */
-  revisionExpireTime?: string;
-  /** Optional. Input only. The TTL for the revision. The expiration time is computed: now + TTL. */
-  revisionTtl?: string;
-  /** Optional. Input only. If true, no revisions will be created for this request. */
-  disableMemoryRevisions?: boolean;
-  /** Optional. User-provided metadata for the generated memories. This is not generated by Memory Bank. */
-  metadata?: Record<string, MemoryMetadataValue>;
-  /** Optional. The strategy to use when applying metadata to existing memories. */
-  metadataMergeStrategy?: MemoryMetadataMergeStrategy;
-}
-
-/** Parameters for ingesting events to Memory Bank. */
-export declare interface IngestEventsRequestParameters {
-  /** Name of the Memory Bank to ingest events into. */
-  name: string;
-  /** The ID of the stream to ingest events into. */
-  streamId?: string;
-  /** The direct memories source of the events that should be ingested. */
-  directContentsSource?: IngestionDirectContentsSource;
-  /** The scope of the memories that should be generated from the stream.
-
-      Memories will be consolidated across memories with the same scope. Scope
-      values cannot contain the wildcard character '*'. */
-  scope?: Record<string, string>;
-  /** The configuration for the memory generation trigger. */
-  generationTriggerConfig?: MemoryGenerationTriggerConfig;
-  config?: IngestEventsConfig;
-}
-
-/** Operation that ingests events into a memory bank. */
-export declare interface MemoryBankIngestEventsOperation {
-  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
-  name?: string;
-  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
-  metadata?: Record<string, unknown>;
-  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
-  done?: boolean;
-  /** The error result of the operation in case of failure or cancellation. */
-  error?: Record<string, unknown>;
-}
-
-export declare interface GetMemoryBankOperationConfig {
-  /** Used to override HTTP request options. */
-  httpOptions?: genaiTypes.HttpOptions;
-  /** Abort signal which can be used to cancel the request.
-
-  NOTE: AbortSignal is a client-only operation. Using it to cancel an
-  operation will not cancel the request in the service. You will still
-  be charged usage for any applicable operations.
-       */
-  abortSignal?: AbortSignal;
-}
-
-/** Parameters for getting an operation with a memory bank as a response. */
-export declare interface GetMemoryBankOperationParameters {
-  /** The server-assigned name for the operation. */
-  operationName: string;
-  /** Used to override the default configuration. */
-  config?: GetMemoryBankOperationConfig;
-}
-
 /** Config for creating a Memory. */
-export declare interface MemoryConfig {
+export declare interface AgentEngineMemoryConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -1414,9 +1246,9 @@ export declare interface MemoryConfig {
   memoryId?: string;
 }
 
-/** Parameters for creating Memories. */
-export declare interface CreateMemoryRequestParameters {
-  /** Name of the memory bank to create the memory under. */
+/** Parameters for creating Agent Engine Memories. */
+export declare interface CreateAgentEngineMemoryRequestParameters {
+  /** Name of the agent engine to create the memory under. */
   name: string;
   /** The fact of the memory.
 
@@ -1428,7 +1260,7 @@ export declare interface CreateMemoryRequestParameters {
       creating or generating memories. Up to 5 key-value pairs are accepted,
       and scope values cannot contain the wildcard character '*'. */
   scope: Record<string, string>;
-  config?: MemoryConfig;
+  config?: AgentEngineMemoryConfig;
 }
 
 /** Represents the structured value of the memory. */
@@ -1477,8 +1309,8 @@ export declare interface Memory {
   structuredContent?: MemoryStructuredContent;
 }
 
-/** Operation that has a memory as a response. */
-export declare interface MemoryOperation {
+/** Operation that has an agent engine memory as a response. */
+export declare interface AgentEngineMemoryOperation {
   /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
   name?: string;
   /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
@@ -1487,12 +1319,12 @@ export declare interface MemoryOperation {
   done?: boolean;
   /** The error result of the operation in case of failure or cancellation. */
   error?: Record<string, unknown>;
-  /** The Memory. */
+  /** The Agent Engine Memory. */
   response?: Memory;
 }
 
-/** Config for deleting a Memory. */
-export declare interface DeleteMemoryConfig {
+/** Config for deleting an Agent Engine Memory. */
+export declare interface DeleteAgentEngineMemoryConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -1504,15 +1336,15 @@ export declare interface DeleteMemoryConfig {
   abortSignal?: AbortSignal;
 }
 
-/** Parameters for deleting memories. */
-export declare interface DeleteMemoryRequestParameters {
-  /** Name of the memory to delete. */
+/** Parameters for deleting agent engines. */
+export declare interface DeleteAgentEngineMemoryRequestParameters {
+  /** Name of the agent engine memory to delete. */
   name: string;
-  config?: DeleteMemoryConfig;
+  config?: DeleteAgentEngineMemoryConfig;
 }
 
-/** Operation for deleting memories. */
-export declare interface DeleteMemoryOperation {
+/** Operation for deleting agent engines. */
+export declare interface DeleteAgentEngineMemoryOperation {
   /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
   name?: string;
   /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
@@ -1559,7 +1391,7 @@ export declare interface GenerateMemoriesRequestDirectMemoriesSource {
 }
 
 /** Config for generating memories. */
-export declare interface GenerateMemoriesConfig {
+export declare interface GenerateAgentEngineMemoriesConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -1594,9 +1426,9 @@ export declare interface GenerateMemoriesConfig {
   allowedTopics?: MemoryTopicId[];
 }
 
-/** Parameters for generating memories. */
-export declare interface GenerateMemoriesRequestParameters {
-  /** Name of the Memory Bank to generate memories with. */
+/** Parameters for generating agent engine memories. */
+export declare interface GenerateAgentEngineMemoriesRequestParameters {
+  /** Name of the agent engine to generate memories for. */
   name: string;
   /** The vertex session source of the memories that should be generated. */
   vertexSessionSource?: GenerateMemoriesRequestVertexSessionSource;
@@ -1611,7 +1443,7 @@ export declare interface GenerateMemoriesRequestParameters {
       provided, it will override the scope defined in the source content. Scope
       values cannot contain the wildcard character '*'. */
   scope?: Record<string, string>;
-  config?: GenerateMemoriesConfig;
+  config?: GenerateAgentEngineMemoriesConfig;
 }
 
 /** A memory that was generated. */
@@ -1634,8 +1466,8 @@ export class GenerateMemoriesResponse {
   generatedMemories?: GenerateMemoriesResponseGeneratedMemory[];
 }
 
-/** Operation that generates memories with a Memory Bank. */
-export declare interface GenerateMemoriesOperation {
+/** Operation that generates memories for an agent engine. */
+export declare interface AgentEngineGenerateMemoriesOperation {
   /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
   name?: string;
   /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
@@ -1648,8 +1480,8 @@ export declare interface GenerateMemoriesOperation {
   response?: GenerateMemoriesResponse;
 }
 
-/** Config for getting a Memory. */
-export declare interface GetMemoryConfig {
+/** Config for getting an Agent Engine Memory. */
+export declare interface GetAgentEngineMemoryConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -1661,15 +1493,91 @@ export declare interface GetMemoryConfig {
   abortSignal?: AbortSignal;
 }
 
-/** Parameters for getting a Memory. */
-export declare interface GetMemoryRequestParameters {
-  /** Name of the memory. */
+/** Parameters for getting an agent engine. */
+export declare interface GetAgentEngineMemoryRequestParameters {
+  /** Name of the agent engine. */
   name: string;
-  config?: GetMemoryConfig;
+  config?: GetAgentEngineMemoryConfig;
 }
 
-/** Config for listing memories. */
-export declare interface ListMemoriesConfig {
+/** The direct contents source event for ingesting events. */
+export declare interface IngestionDirectContentsSourceEvent {
+  /** Required. The content of the event. */
+  content?: genaiTypes.Content;
+  /** Optional. A unique identifier for the event. If an event with the same event_id is ingested multiple times, it will be de-duplicated. */
+  eventId?: string;
+  /** Optional. The time at which the event occurred. If provided, this timestamp will be used for ordering events within a stream. If not provided, the server-side ingestion time will be used. */
+  eventTime?: string;
+}
+
+/** The direct contents source for ingesting events. */
+export declare interface IngestionDirectContentsSource {
+  /** Required. The events to ingest. */
+  events?: IngestionDirectContentsSourceEvent[];
+}
+
+/** Config for ingesting events. */
+export declare interface IngestEventsConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** Waits for the underlying memory generation operation to complete
+      before returning. Defaults to false. */
+  waitForCompletion?: boolean;
+  /** Optional. Forces a flush of all pending events in the stream and triggers memory generation immediately bypassing any conditions configured in the `generation_trigger_config`. */
+  forceFlush?: boolean;
+  /** Labels to apply to the memory revision. For example, you can use this to label a revision with its data source. */
+  revisionLabels?: Record<string, string>;
+  /** Optional. Input only. Timestamp of when the revision is considered expired. If not set, the memory revision will be kept until manually deleted. */
+  revisionExpireTime?: string;
+  /** Optional. Input only. The TTL for the revision. The expiration time is computed: now + TTL. */
+  revisionTtl?: string;
+  /** Optional. Input only. If true, no revisions will be created for this request. */
+  disableMemoryRevisions?: boolean;
+  /** Optional. User-provided metadata for the generated memories. This is not generated by Memory Bank. */
+  metadata?: Record<string, MemoryMetadataValue>;
+  /** Optional. The strategy to use when applying metadata to existing memories. */
+  metadataMergeStrategy?: MemoryMetadataMergeStrategy;
+}
+
+/** Parameters for purging agent engine memories. */
+export declare interface IngestEventsRequestParameters {
+  /** Name of the Agent Engine to ingest events into. */
+  name: string;
+  /** The ID of the stream to ingest events into. */
+  streamId?: string;
+  /** The direct memories source of the events that should be ingested. */
+  directContentsSource?: IngestionDirectContentsSource;
+  /** The scope of the memories that should be generated from the stream.
+
+      Memories will be consolidated across memories with the same scope. Scope
+      values cannot contain the wildcard character '*'. */
+  scope?: Record<string, string>;
+  /** The configuration for the memory generation trigger. */
+  generationTriggerConfig?: MemoryGenerationTriggerConfig;
+  config?: IngestEventsConfig;
+}
+
+/** Operation that ingests events into a memory bank. */
+export declare interface MemoryBankIngestEventsOperation {
+  /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
+  name?: string;
+  /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
+  metadata?: Record<string, unknown>;
+  /** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
+  done?: boolean;
+  /** The error result of the operation in case of failure or cancellation. */
+  error?: Record<string, unknown>;
+}
+
+/** Config for listing agent engine memories. */
+export declare interface ListAgentEngineMemoryConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -1695,36 +1603,36 @@ export declare interface ListMemoriesConfig {
   orderBy?: string;
 }
 
-/** Parameters for listing memories. */
-export declare interface ListMemoriesRequestParameters {
-  /** Name of the Memory Bank. */
+/** Parameters for listing agent engines. */
+export declare interface ListAgentEngineMemoryRequestParameters {
+  /** Name of the agent engine. */
   name: string;
-  config?: ListMemoriesConfig;
+  config?: ListAgentEngineMemoryConfig;
 }
 
-/** Response for listing memories. */
-export class ListMemoriesResponse {
+/** Response for listing agent engine memories. */
+export class ListReasoningEnginesMemoriesResponse {
   /** Used to retain the full HTTP response. */
   sdkHttpResponse?: genaiTypes.HttpResponse;
   nextPageToken?: string;
-  /** List of memories. */
+  /** List of agent engine memories. */
   memories?: Memory[];
 }
 
 /** Parameters for getting an operation with a memory as a response. */
-export declare interface GetMemoryOperationParameters {
+export declare interface GetAgentEngineMemoryOperationParameters {
   /** The server-assigned name for the operation. */
   operationName: string;
   /** Used to override the default configuration. */
-  config?: GetMemoryBankOperationConfig;
+  config?: GetAgentEngineOperationConfig;
 }
 
 /** Parameters for getting an operation with generated memories as a response. */
-export declare interface GetGenerateMemoriesOperationParameters {
+export declare interface GetAgentEngineGenerateMemoriesOperationParameters {
   /** The server-assigned name for the operation. */
   operationName: string;
   /** Used to override the default configuration. */
-  config?: GetMemoryBankOperationConfig;
+  config?: GetAgentEngineOperationConfig;
 }
 
 /** The parameters for semantic similarity search based retrieval. */
@@ -1762,7 +1670,7 @@ export declare interface MemoryConjunctionFilter {
 }
 
 /** Config for retrieving memories. */
-export declare interface RetrieveMemoriesConfig {
+export declare interface RetrieveAgentEngineMemoriesConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -1803,9 +1711,9 @@ export declare interface RetrieveMemoriesConfig {
   memoryTypes?: MemoryType[];
 }
 
-/** Parameters for retrieving memories. */
-export declare interface RetrieveMemoriesRequestParameters {
-  /** Name of the Memory Bank to retrieve memories from. */
+/** Parameters for retrieving agent engine memories. */
+export declare interface RetrieveAgentEngineMemoriesRequestParameters {
+  /** Name of the agent engine to retrieve memories from. */
   name: string;
   /** The scope of the memories to retrieve.
 
@@ -1817,7 +1725,7 @@ export declare interface RetrieveMemoriesRequestParameters {
   similaritySearchParams?: RetrieveMemoriesRequestSimilaritySearchParams;
   /** Parameters for simple (non-similarity search) retrieval. */
   simpleRetrievalParams?: RetrieveMemoriesRequestSimpleRetrievalParams;
-  config?: RetrieveMemoriesConfig;
+  config?: RetrieveAgentEngineMemoriesConfig;
 }
 
 /** A retrieved memory. */
@@ -1849,9 +1757,9 @@ export declare interface RetrieveMemoryProfilesConfig {
   abortSignal?: AbortSignal;
 }
 
-/** Parameters for retrieving memory profiles. */
+/** Parameters for retrieving agent engine memory profiles. */
 export declare interface RetrieveMemoryProfilesRequestParameters {
-  /** Name of the Memory Bank to retrieve memory profiles from. */
+  /** Name of the agent engine to retrieve memory profiles from. */
   name: string;
   /** The scope of the memories to retrieve.
 
@@ -1880,7 +1788,7 @@ export class RetrieveProfilesResponse {
 }
 
 /** Config for rolling back a memory. */
-export declare interface RollbackMemoryConfig {
+export declare interface RollbackAgentEngineMemoryConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -1894,17 +1802,17 @@ export declare interface RollbackMemoryConfig {
   waitForCompletion?: boolean;
 }
 
-/** Parameters for generating memories. */
-export declare interface RollbackMemoryRequestParameters {
-  /** Name of the memory to rollback. */
+/** Parameters for generating agent engine memories. */
+export declare interface RollbackAgentEngineMemoryRequestParameters {
+  /** Name of the agent engine memory to rollback. */
   name: string;
   /** The ID of the revision to rollback to. */
   targetRevisionId: string;
-  config?: RollbackMemoryConfig;
+  config?: RollbackAgentEngineMemoryConfig;
 }
 
 /** Operation that rolls back a memory. */
-export declare interface RollbackMemoryOperation {
+export declare interface AgentEngineRollbackMemoryOperation {
   /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
   name?: string;
   /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
@@ -1915,8 +1823,8 @@ export declare interface RollbackMemoryOperation {
   error?: Record<string, unknown>;
 }
 
-/** Config for updating a memory. */
-export declare interface UpdateMemoryConfig {
+/** Config for updating agent engine memory. */
+export declare interface UpdateAgentEngineMemoryConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -1955,9 +1863,9 @@ export declare interface UpdateMemoryConfig {
   updateMask?: string;
 }
 
-/** Parameters for updating memories. */
-export declare interface UpdateMemoryRequestParameters {
-  /** Name of the memory to update. */
+/** Parameters for updating agent engine memories. */
+export declare interface UpdateAgentEngineMemoryRequestParameters {
+  /** Name of the agent engine memory to update. */
   name: string;
   /** The updated fact of the memory.
 
@@ -1969,11 +1877,11 @@ export declare interface UpdateMemoryRequestParameters {
       creating or generating memories. Up to 5 key-value pairs are accepted,
       and scope values cannot contain the wildcard character '*'. */
   scope?: Record<string, string>;
-  config?: UpdateMemoryConfig;
+  config?: UpdateAgentEngineMemoryConfig;
 }
 
 /** Config for purging memories. */
-export declare interface PurgeMemoriesConfig {
+export declare interface PurgeAgentEngineMemoriesConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -1987,9 +1895,9 @@ export declare interface PurgeMemoriesConfig {
   waitForCompletion?: boolean;
 }
 
-/** Parameters for purging memories. */
-export declare interface PurgeMemoriesRequestParameters {
-  /** Name of the Memory Bank to purge memories from. */
+/** Parameters for purging agent engine memories. */
+export declare interface PurgeAgentEngineMemoriesRequestParameters {
+  /** Name of the Agent Engine to purge memories from. */
   name: string;
   /** The standard list filter to determine which memories to purge.
       More detail in [AIP-160](https://google.aip.dev/160). */
@@ -2011,7 +1919,7 @@ export declare interface PurgeMemoriesRequestParameters {
   filterGroups?: MemoryConjunctionFilter[];
   /** If true, the memories will actually be purged. If false, the purge request will be validated but not executed. */
   force?: boolean;
-  config?: PurgeMemoriesConfig;
+  config?: PurgeAgentEngineMemoriesConfig;
 }
 
 /** The response for purging memories. */
@@ -2020,8 +1928,8 @@ export class PurgeMemoriesResponse {
   purgeCount?: number;
 }
 
-/** Operation that purges memories from a Memory Bank. */
-export declare interface PurgeMemoriesOperation {
+/** Operation that purges memories from an agent engine. */
+export declare interface AgentEnginePurgeMemoriesOperation {
   /** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
   name?: string;
   /** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata.  Any method that returns a long-running operation should document the metadata type, if any. */
@@ -2034,8 +1942,8 @@ export declare interface PurgeMemoriesOperation {
   response?: PurgeMemoriesResponse;
 }
 
-/** Config for getting a Memory Revision. */
-export declare interface GetMemoryRevisionConfig {
+/** Config for getting an Agent Engine Memory Revision. */
+export declare interface GetAgentEngineMemoryRevisionConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -2047,11 +1955,11 @@ export declare interface GetMemoryRevisionConfig {
   abortSignal?: AbortSignal;
 }
 
-/** Parameters for getting a memory revision. */
-export declare interface GetMemoryRevisionRequestParameters {
-  /** Name of the Memory Revision. */
+/** Parameters for getting an Agent Engine memory revision. */
+export declare interface GetAgentEngineMemoryRevisionRequestParameters {
+  /** Name of the agent engine. */
   name: string;
-  config?: GetMemoryRevisionConfig;
+  config?: GetAgentEngineMemoryRevisionConfig;
 }
 
 /** An extracted memory that is the intermediate result before consolidation. */
@@ -2082,8 +1990,8 @@ export declare interface MemoryRevision {
   structuredData?: Record<string, unknown>;
 }
 
-/** Config for listing memory revisions. */
-export declare interface ListMemoryRevisionsConfig {
+/** Config for listing Agent Engine memory revisions. */
+export declare interface ListAgentEngineMemoryRevisionsConfig {
   /** Used to override HTTP request options. */
   httpOptions?: genaiTypes.HttpOptions;
   /** Abort signal which can be used to cancel the request.
@@ -2100,15 +2008,15 @@ export declare interface ListMemoryRevisionsConfig {
   filter?: string;
 }
 
-/** Parameters for listing memory revisions. */
-export declare interface ListMemoryRevisionsRequestParameters {
-  /** Name of the memory */
+/** Parameters for listing Agent Engine memory revisions. */
+export declare interface ListAgentEngineMemoryRevisionsRequestParameters {
+  /** Name of the Agent Engine memory */
   name: string;
-  config?: ListMemoryRevisionsConfig;
+  config?: ListAgentEngineMemoryRevisionsConfig;
 }
 
-/** Response for listing memory revisions. */
-export class ListMemoryRevisionsResponse {
+/** Response for listing agent engine memory revisions. */
+export class ListAgentEngineMemoryRevisionsResponse {
   /** Used to retain the full HTTP response. */
   sdkHttpResponse?: genaiTypes.HttpResponse;
   nextPageToken?: string;

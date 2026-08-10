@@ -9,6 +9,7 @@
 import * as common from '@google/genai/vertex_internal';
 import {ApiClient, BaseModule} from '@google/genai/vertex_internal';
 import * as converters from './converters/_agentengines_converters.js';
+import {Memories} from './memories.js';
 import {Sandboxes} from './sandboxes.js';
 import {Sessions} from './sessions.js';
 import * as types from './types.js';
@@ -16,11 +17,13 @@ import * as types from './types.js';
 export class AgentEngines extends BaseModule {
   public readonly sessions: Sessions;
   public readonly sandboxes: Sandboxes;
+  public readonly memories: Memories;
 
   constructor(private readonly apiClient: ApiClient) {
     super();
     this.sessions = new Sessions(apiClient);
     this.sandboxes = new Sandboxes(apiClient);
+    this.memories = new Memories(apiClient);
   }
 
   async createInternal(
