@@ -3308,6 +3308,18 @@ export declare interface SchemaPredictParamsGroundingConfig {
   sources?: SchemaPredictParamsGroundingConfigSourceEntry[];
 }
 
+/** Represents a prompt spec part list. */
+export declare interface SchemaPromptSpecPartList {
+  /** A list of elements that can be part of a prompt. */
+  parts?: genaiTypes.Part[];
+}
+
+/** Represents a prompt instance variable. */
+export declare interface SchemaPromptInstanceVariableValue {
+  /** The parts of the variable value. */
+  partList?: SchemaPromptSpecPartList;
+}
+
 /** A prompt instance's parameters set that contains a set of variable values. */
 export declare interface SchemaPromptInstancePromptExecution {
   /** Maps variable names to their value. */
@@ -3357,12 +3369,6 @@ export declare interface SchemaPromptSpecAppBuilderData {
   framework?: Framework;
   /** Linked resources attached to the application by the user. */
   linkedResources?: SchemaPromptSpecAppBuilderDataLinkedResource[];
-}
-
-/** Represents a prompt spec part list. */
-export declare interface SchemaPromptSpecPartList {
-  /** A list of elements that can be part of a prompt. */
-  parts?: genaiTypes.Part[];
 }
 
 /** Defines data for an interaction prompt. */
@@ -4163,12 +4169,6 @@ export type PromptData = SchemaPromptSpecPromptMessage;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type VertexBaseConfig = any;
 export type ParsedResponseUnion = any;
-
-/** Represents a prompt instance variable. */
-export declare interface SchemaPromptInstanceVariableValue {
-  /** The parts of the variable value. */
-  partList?: SchemaPromptSpecPartList;
-}
 
 /** Config for creating a prompt. */
 export declare interface CreatePromptConfig {
