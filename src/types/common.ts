@@ -182,6 +182,10 @@ export enum DefaultContainerCategory {
    * The default container image for Computer Use.
    */
   DEFAULT_CONTAINER_CATEGORY_COMPUTER_USE = 'DEFAULT_CONTAINER_CATEGORY_COMPUTER_USE',
+  /**
+   * The default container image for Shell Sandbox.
+   */
+  DEFAULT_CONTAINER_CATEGORY_SHELL_SANDBOX = 'DEFAULT_CONTAINER_CATEGORY_SHELL_SANDBOX',
 }
 
 /** Input only. Action to take on the source SandboxEnvironment after the snapshot is taken. This field is only used in CreateSandboxEnvironmentSnapshotRequest and it is not stored in the resource. */
@@ -533,6 +537,8 @@ export declare interface ReasoningEngineSpecSourceCodeSpec {
 export declare interface ReasoningEngineSpecContainerSpec {
   /** Required. The Artifact Registry Docker image URI (e.g., us-central1-docker.pkg.dev/my-project/my-repo/my-image:tag) of the container image that is to be run on each worker replica. */
   imageUri?: string;
+  /** Optional. The port the container listens on. Defaults to 8080 if unset. */
+  port?: number;
 }
 
 /** The specification of an agent engine. */
@@ -2317,10 +2323,26 @@ export declare interface SandboxEnvironmentTemplateDefaultContainerEnvironment {
   resources?: SandboxEnvironmentTemplateResourceRequirements;
 }
 
+/** Configuration for peering a customer's private DNS zone so that sandbox egress can resolve customer-internal domains via the customer VPC. */
+export declare interface SandboxEnvironmentTemplateEgressControlConfigDnsPeeringConfig {
+  /** Required. The DNS name suffix of the zone being peered to, e.g., "my-internal-domain.corp.". Must end with a dot. */
+  domain?: string;
+  /** Required. The VPC network name in the target_project where the DNS zone specified by 'domain' is visible. */
+  targetNetwork?: string;
+  /** Required. The project ID hosting the Cloud DNS managed zone that contains the 'domain'. The Vertex AI Service Agent requires the dns.peer role on this project. */
+  targetProject?: string;
+}
+
 /** Configuration for egress control of sandbox instances. */
 export declare interface SandboxEnvironmentTemplateEgressControlConfig {
   /** Optional. Whether to allow internet access. */
   internetAccess?: boolean;
+  /** Optional. The customer VPC network that sandbox egress is routed into. */
+  customerVpcNetwork?: string;
+  /** Optional. DNS peering configurations that allow sandbox egress to resolve customer-internal domains via the customer VPC. */
+  dnsPeeringConfigs?: SandboxEnvironmentTemplateEgressControlConfigDnsPeeringConfig[];
+  /** Optional. The name of the customer VPC NetworkAttachment used to draw a PSC interface IP into the customer VPC for sandbox egress. */
+  networkAttachment?: string;
 }
 
 /** Config for creating a Sandbox Template. */
