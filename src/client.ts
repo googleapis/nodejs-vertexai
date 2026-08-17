@@ -6,6 +6,7 @@
 import {ApiClient, NodeAuth, NodeDownloader, NodeUploader,} from '@google/genai/vertex_internal';
 
 import {AgentEngines} from './agentengines';
+import {Sandboxes} from './sandboxes';
 import {Skills} from './skills';
 import {Prompts} from './prompts';
 
@@ -77,5 +78,13 @@ export class Client {
       agentEnginesInternalWarned = true;
     }
     return this._agentEnginesInternal;
+  }
+
+  /**
+   * Provides access to the Agent Platform Sandboxes API, including its
+   * `environments`, `templates`, and `snapshots` submodules.
+   */
+  public get sandboxes(): Sandboxes {
+    return this._agentEnginesInternal.sandboxes;
   }
 }

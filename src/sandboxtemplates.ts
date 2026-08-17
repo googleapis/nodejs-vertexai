@@ -12,8 +12,71 @@ import * as converters from './converters/_sandboxtemplates_converters.js';
 import * as types from './types.js';
 
 export class SandboxTemplates extends BaseModule {
-  constructor(private readonly apiClient: ApiClient) {
+  constructor(
+    private readonly apiClient: ApiClient,
+    private readonly ensureDefaultParent?: () => Promise<string>,
+  ) {
     super();
+  }
+
+  /**
+   * Resolves the parent agent engine name, falling back to a shared default
+   * agent engine when the caller does not provide one.
+   */
+  private async resolveParentName(name?: string): Promise<string> {
+    if (name) {
+      return name;
+    }
+    if (!this.ensureDefaultParent) {
+      throw new Error('An agent engine name is required.');
+    }
+    return this.ensureDefaultParent();
+  }
+
+  /**
+   * Creates a sandbox environment template and returns the operation. If `name`
+   * (the parent agent engine) is omitted, a shared default agent engine is used.
+   */
+  async create(
+    params: Omit<
+      types.CreateSandboxEnvironmentTemplateRequestParameters,
+      'name'
+    > & {
+      name?: string;
+    },
+  ): Promise<types.SandboxEnvironmentTemplateOperation> {
+    const name = await this.resolveParentName(params.name);
+    return this.createInternal({...params, name});
+  }
+
+  /** Returns the sandbox environment template with the specified name. */
+  async get(
+    params: types.GetSandboxEnvironmentTemplateRequestParameters,
+  ): Promise<types.SandboxEnvironmentTemplate> {
+    return this.getInternal(params);
+  }
+
+  /**
+   * Lists the sandbox environment templates. If `name` (the parent agent
+   * engine) is omitted, a shared default agent engine is used.
+   */
+  async list(
+    params: Omit<
+      types.ListSandboxEnvironmentTemplatesRequestParameters,
+      'name'
+    > & {
+      name?: string;
+    } = {},
+  ): Promise<types.ListSandboxEnvironmentTemplatesResponse> {
+    const name = await this.resolveParentName(params.name);
+    return this.listInternal({...params, name});
+  }
+
+  /** Deletes the sandbox environment template and returns the operation. */
+  async delete(
+    params: types.DeleteSandboxEnvironmentTemplateRequestParameters,
+  ): Promise<types.DeleteSandboxEnvironmentTemplateOperation> {
+    return this.deleteInternal(params);
   }
 
   async createInternal(

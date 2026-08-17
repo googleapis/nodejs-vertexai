@@ -9,18 +9,92 @@
 import * as common from '@google/genai/vertex_internal';
 import {ApiClient, BaseModule} from '@google/genai/vertex_internal';
 import * as converters from './converters/_sandboxes_converters.js';
+import {SandboxEnvironments} from './sandboxenvironments.js';
 import {SandboxSnapshots} from './sandboxsnapshots.js';
 import {SandboxTemplates} from './sandboxtemplates.js';
 import * as types from './types.js';
 
 export class Sandboxes extends BaseModule {
+  public readonly environments: SandboxEnvironments;
   public readonly templates: SandboxTemplates;
   public readonly snapshots: SandboxSnapshots;
 
-  constructor(private readonly apiClient: ApiClient) {
+  constructor(
+    private readonly apiClient: ApiClient,
+    private readonly ensureDefaultParent?: () => Promise<string>,
+  ) {
     super();
-    this.templates = new SandboxTemplates(apiClient);
-    this.snapshots = new SandboxSnapshots(apiClient);
+    this.environments = new SandboxEnvironments(apiClient, ensureDefaultParent);
+    this.templates = new SandboxTemplates(apiClient, ensureDefaultParent);
+    this.snapshots = new SandboxSnapshots(apiClient, ensureDefaultParent);
+  }
+
+  /**
+   * Resolves the parent agent engine name, falling back to a shared default
+   * agent engine when the caller does not provide one.
+   */
+  private async resolveParentName(name?: string): Promise<string> {
+    if (name) {
+      return name;
+    }
+    if (!this.ensureDefaultParent) {
+      throw new Error('An agent engine name is required.');
+    }
+    return this.ensureDefaultParent();
+  }
+
+  /**
+   * Creates a sandbox environment and returns the operation. If `name` (the
+   * parent agent engine) is omitted, a shared default agent engine is used.
+   */
+  async create(
+    params: Omit<types.CreateAgentEngineSandboxRequestParameters, 'name'> & {
+      name?: string;
+    },
+  ): Promise<types.AgentEngineSandboxOperation> {
+    const name = await this.resolveParentName(params.name);
+    return this.createInternal({...params, name});
+  }
+
+  /** Deletes the sandbox environment and returns the operation. */
+  async delete(
+    params: types.DeleteAgentEngineSandboxRequestParameters,
+  ): Promise<types.DeleteAgentEngineSandboxOperation> {
+    return this.deleteInternal(params);
+  }
+
+  /** Executes code in the sandbox environment. */
+  async executeCode(
+    params: types.ExecuteCodeAgentEngineSandboxRequestParameters,
+  ): Promise<types.ExecuteSandboxEnvironmentResponse> {
+    return this.executeCodeInternal(params);
+  }
+
+  /** Returns the sandbox environment with the specified name. */
+  async get(
+    params: types.GetAgentEngineSandboxRequestParameters,
+  ): Promise<types.SandboxEnvironment> {
+    return this.getInternal(params);
+  }
+
+  /**
+   * Lists the sandbox environments. If `name` (the parent agent engine) is
+   * omitted, a shared default agent engine is used.
+   */
+  async list(
+    params: Omit<types.ListAgentEngineSandboxesRequestParameters, 'name'> & {
+      name?: string;
+    } = {},
+  ): Promise<types.ListAgentEngineSandboxesResponse> {
+    const name = await this.resolveParentName(params.name);
+    return this.listInternal({...params, name});
+  }
+
+  /** Returns the sandbox operation with the specified name. */
+  async getSandboxOperation(
+    params: types.GetAgentEngineSandboxOperationParameters,
+  ): Promise<types.AgentEngineSandboxOperation> {
+    return this.getSandboxOperationInternal(params);
   }
 
   async createInternal(

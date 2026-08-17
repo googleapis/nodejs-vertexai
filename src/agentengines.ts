@@ -19,11 +19,71 @@ export class AgentEngines extends BaseModule {
   public readonly sandboxes: Sandboxes;
   public readonly memories: Memories;
 
+  /** Cached resource name of the lazily-created default agent engine. */
+  private defaultAgentEngineName?: string;
+  /** In-flight promise so concurrent callers share a single default agent engine. */
+  private defaultAgentEnginePromise?: Promise<string>;
+
   constructor(private readonly apiClient: ApiClient) {
     super();
     this.sessions = new Sessions(apiClient);
-    this.sandboxes = new Sandboxes(apiClient);
+    this.sandboxes = new Sandboxes(apiClient, () =>
+      this.ensureDefaultAgentEngine(),
+    );
     this.memories = new Memories(apiClient);
+  }
+
+  /**
+   * Returns the resource name of a shared "default" agent engine for this
+   * project and location, creating it lazily if it does not exist. This backs
+   * sandbox calls where the caller does not supply an agent engine name, so
+   * repeated calls reuse one agent engine instead of creating many.
+   */
+  private async ensureDefaultAgentEngine(): Promise<string> {
+    if (this.defaultAgentEngineName) {
+      return this.defaultAgentEngineName;
+    }
+    if (!this.defaultAgentEnginePromise) {
+      this.defaultAgentEnginePromise = this.resolveDefaultAgentEngine().catch(
+        (e) => {
+          // Allow a later call to retry if resolution failed.
+          this.defaultAgentEnginePromise = undefined;
+          throw e;
+        },
+      );
+    }
+    return this.defaultAgentEnginePromise;
+  }
+
+  private async resolveDefaultAgentEngine(): Promise<string> {
+    const displayName = 'default-agent-platform-sandbox-host';
+    // Reuse an existing default agent engine if one already exists.
+    const listResponse = await this.listInternal({});
+    const existing = listResponse.reasoningEngines?.find(
+      (reasoningEngine) =>
+        reasoningEngine.displayName === displayName && !!reasoningEngine.name,
+    );
+    if (existing?.name) {
+      this.defaultAgentEngineName = existing.name;
+      return existing.name;
+    }
+    // Otherwise create one and wait for the operation to complete.
+    let operation = await this.createInternal({config: {displayName}});
+    while (!operation.done) {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      operation = await this.getAgentOperationInternal({
+        operationName: operation.name!,
+      });
+    }
+    if (operation.error) {
+      throw new Error(
+        `Failed to create default agent engine: ${JSON.stringify(
+          operation.error,
+        )}`,
+      );
+    }
+    this.defaultAgentEngineName = operation.response!.name!;
+    return this.defaultAgentEngineName;
   }
 
   async createInternal(

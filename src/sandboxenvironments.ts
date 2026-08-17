@@ -8,10 +8,10 @@
 
 import * as common from '@google/genai/vertex_internal';
 import {ApiClient, BaseModule} from '@google/genai/vertex_internal';
-import * as converters from './converters/_sandboxsnapshots_converters.js';
+import * as converters from './converters/_sandboxenvironments_converters.js';
 import * as types from './types.js';
 
-export class SandboxSnapshots extends BaseModule {
+export class SandboxEnvironments extends BaseModule {
   constructor(
     private readonly apiClient: ApiClient,
     private readonly ensureDefaultParent?: () => Promise<string>,
@@ -33,57 +33,72 @@ export class SandboxSnapshots extends BaseModule {
     return this.ensureDefaultParent();
   }
 
-  /** Creates a snapshot of a running sandbox and returns the operation. */
+  /**
+   * Creates a sandbox environment and returns the operation. If `name` (the
+   * parent agent engine) is omitted, a shared default agent engine is used.
+   */
   async create(
-    params: types.CreateSandboxEnvironmentSnapshotRequestParameters,
-  ): Promise<types.AgentEngineSandboxSnapshotOperation> {
-    return this.createInternal(params);
+    params: Omit<types.CreateAgentEngineSandboxRequestParameters, 'name'> & {
+      name?: string;
+    },
+  ): Promise<types.AgentEngineSandboxOperation> {
+    const name = await this.resolveParentName(params.name);
+    return this.createInternal({...params, name});
   }
 
-  /** Returns the sandbox environment snapshot with the specified name. */
+  /** Deletes the sandbox environment and returns the operation. */
+  async delete(
+    params: types.DeleteAgentEngineSandboxRequestParameters,
+  ): Promise<types.DeleteAgentEngineSandboxOperation> {
+    return this.deleteInternal(params);
+  }
+
+  /** Executes code in the sandbox environment. */
+  async executeCode(
+    params: types.ExecuteCodeAgentEngineSandboxRequestParameters,
+  ): Promise<types.ExecuteSandboxEnvironmentResponse> {
+    return this.executeCodeInternal(params);
+  }
+
+  /** Returns the sandbox environment with the specified name. */
   async get(
-    params: types.GetSandboxEnvironmentSnapshotRequestParameters,
-  ): Promise<types.SandboxEnvironmentSnapshot> {
+    params: types.GetAgentEngineSandboxRequestParameters,
+  ): Promise<types.SandboxEnvironment> {
     return this.getInternal(params);
   }
 
   /**
-   * Lists the sandbox environment snapshots. If `name` (the parent agent
-   * engine) is omitted, a shared default agent engine is used.
+   * Lists the sandbox environments. If `name` (the parent agent engine) is
+   * omitted, a shared default agent engine is used.
    */
   async list(
-    params: Omit<
-      types.ListSandboxEnvironmentSnapshotsRequestParameters,
-      'name'
-    > & {
+    params: Omit<types.ListAgentEngineSandboxesRequestParameters, 'name'> & {
       name?: string;
     } = {},
-  ): Promise<types.ListSandboxEnvironmentSnapshotsResponse> {
+  ): Promise<types.ListAgentEngineSandboxesResponse> {
     const name = await this.resolveParentName(params.name);
     return this.listInternal({...params, name});
   }
 
-  /** Deletes the sandbox environment snapshot and returns the operation. */
-  async delete(
-    params: types.DeleteSandboxEnvironmentSnapshotRequestParameters,
-  ): Promise<types.DeleteSandboxEnvironmentSnapshotOperation> {
-    return this.deleteInternal(params);
+  /** Returns the sandbox operation with the specified name. */
+  async getSandboxOperation(
+    params: types.GetAgentEngineSandboxOperationParameters,
+  ): Promise<types.AgentEngineSandboxOperation> {
+    return this.getSandboxOperationInternal(params);
   }
 
   async createInternal(
-    params: types.CreateSandboxEnvironmentSnapshotRequestParameters,
-  ): Promise<types.AgentEngineSandboxSnapshotOperation> {
-    let response: Promise<types.AgentEngineSandboxSnapshotOperation>;
+    params: types.CreateAgentEngineSandboxRequestParameters,
+  ): Promise<types.AgentEngineSandboxOperation> {
+    let response: Promise<types.AgentEngineSandboxOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.createSandboxEnvironmentSnapshotRequestParametersToVertex(
-          params,
-        );
+        converters.createAgentEngineSandboxRequestParametersToVertex(params);
       path = common.formatMap(
-        '{name}:snapshot',
+        '{name}/sandboxEnvironments',
         body['_url'] as Record<string, unknown>,
       );
       queryParams = body['_query'] as Record<string, string>;
@@ -102,10 +117,10 @@ export class SandboxSnapshots extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineSandboxSnapshotOperation>;
+        }) as Promise<types.AgentEngineSandboxOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineSandboxSnapshotOperation;
+        return resp as types.AgentEngineSandboxOperation;
       });
     } else {
       throw new Error(
@@ -115,17 +130,15 @@ export class SandboxSnapshots extends BaseModule {
   }
 
   async deleteInternal(
-    params: types.DeleteSandboxEnvironmentSnapshotRequestParameters,
-  ): Promise<types.DeleteSandboxEnvironmentSnapshotOperation> {
-    let response: Promise<types.DeleteSandboxEnvironmentSnapshotOperation>;
+    params: types.DeleteAgentEngineSandboxRequestParameters,
+  ): Promise<types.DeleteAgentEngineSandboxOperation> {
+    let response: Promise<types.DeleteAgentEngineSandboxOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.deleteSandboxEnvironmentSnapshotRequestParametersToVertex(
-          params,
-        );
+        converters.deleteAgentEngineSandboxRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -146,10 +159,56 @@ export class SandboxSnapshots extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.DeleteSandboxEnvironmentSnapshotOperation>;
+        }) as Promise<types.DeleteAgentEngineSandboxOperation>;
 
       return response.then((resp) => {
-        return resp as types.DeleteSandboxEnvironmentSnapshotOperation;
+        return resp as types.DeleteAgentEngineSandboxOperation;
+      });
+    } else {
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
+    }
+  }
+
+  async executeCodeInternal(
+    params: types.ExecuteCodeAgentEngineSandboxRequestParameters,
+  ): Promise<types.ExecuteSandboxEnvironmentResponse> {
+    let response: Promise<types.ExecuteSandboxEnvironmentResponse>;
+
+    let path: string = '';
+    let queryParams: Record<string, string> = {};
+    if (this.apiClient.isVertexAI()) {
+      const body =
+        converters.executeCodeAgentEngineSandboxRequestParametersToVertex(
+          params,
+        );
+      path = common.formatMap(
+        '{name}/:execute',
+        body['_url'] as Record<string, unknown>,
+      );
+      queryParams = body['_query'] as Record<string, string>;
+      delete body['_url'];
+      delete body['_query'];
+      delete body['config'];
+
+      response = this.apiClient
+        .request({
+          path: path,
+          queryParams: queryParams,
+          body: JSON.stringify(body),
+          httpMethod: 'POST',
+          httpOptions: params.config?.httpOptions,
+          abortSignal: params.config?.abortSignal,
+        })
+        .then((httpResponse) => {
+          return httpResponse.json();
+        }) as Promise<types.ExecuteSandboxEnvironmentResponse>;
+
+      return response.then((resp) => {
+        const typedResp = new types.ExecuteSandboxEnvironmentResponse();
+        Object.assign(typedResp, resp);
+        return typedResp;
       });
     } else {
       throw new Error(
@@ -159,17 +218,15 @@ export class SandboxSnapshots extends BaseModule {
   }
 
   async getInternal(
-    params: types.GetSandboxEnvironmentSnapshotRequestParameters,
-  ): Promise<types.SandboxEnvironmentSnapshot> {
-    let response: Promise<types.SandboxEnvironmentSnapshot>;
+    params: types.GetAgentEngineSandboxRequestParameters,
+  ): Promise<types.SandboxEnvironment> {
+    let response: Promise<types.SandboxEnvironment>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.getSandboxEnvironmentSnapshotRequestParametersToVertex(
-          params,
-        );
+        converters.getAgentEngineSandboxRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -190,10 +247,10 @@ export class SandboxSnapshots extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.SandboxEnvironmentSnapshot>;
+        }) as Promise<types.SandboxEnvironment>;
 
       return response.then((resp) => {
-        return resp as types.SandboxEnvironmentSnapshot;
+        return resp as types.SandboxEnvironment;
       });
     } else {
       throw new Error(
@@ -203,19 +260,17 @@ export class SandboxSnapshots extends BaseModule {
   }
 
   async listInternal(
-    params: types.ListSandboxEnvironmentSnapshotsRequestParameters,
-  ): Promise<types.ListSandboxEnvironmentSnapshotsResponse> {
-    let response: Promise<types.ListSandboxEnvironmentSnapshotsResponse>;
+    params: types.ListAgentEngineSandboxesRequestParameters,
+  ): Promise<types.ListAgentEngineSandboxesResponse> {
+    let response: Promise<types.ListAgentEngineSandboxesResponse>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.listSandboxEnvironmentSnapshotsRequestParametersToVertex(
-          params,
-        );
+        converters.listAgentEngineSandboxesRequestParametersToVertex(params);
       path = common.formatMap(
-        '{name}/sandboxEnvironmentSnapshots',
+        '{name}/sandboxEnvironments',
         body['_url'] as Record<string, unknown>,
       );
       queryParams = body['_query'] as Record<string, string>;
@@ -234,10 +289,10 @@ export class SandboxSnapshots extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.ListSandboxEnvironmentSnapshotsResponse>;
+        }) as Promise<types.ListAgentEngineSandboxesResponse>;
 
       return response.then((resp) => {
-        const typedResp = new types.ListSandboxEnvironmentSnapshotsResponse();
+        const typedResp = new types.ListAgentEngineSandboxesResponse();
         Object.assign(typedResp, resp);
         return typedResp;
       });
@@ -248,18 +303,16 @@ export class SandboxSnapshots extends BaseModule {
     }
   }
 
-  async getSandboxSnapshotOperation(
-    params: types.GetAgentEngineSandboxSnapshotOperationParameters,
-  ): Promise<types.AgentEngineSandboxSnapshotOperation> {
-    let response: Promise<types.AgentEngineSandboxSnapshotOperation>;
+  async getSandboxOperationInternal(
+    params: types.GetAgentEngineSandboxOperationParameters,
+  ): Promise<types.AgentEngineSandboxOperation> {
+    let response: Promise<types.AgentEngineSandboxOperation>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.getAgentEngineSandboxSnapshotOperationParametersToVertex(
-          params,
-        );
+        converters.getAgentEngineSandboxOperationParametersToVertex(params);
       path = common.formatMap(
         '{operationName}',
         body['_url'] as Record<string, unknown>,
@@ -280,10 +333,10 @@ export class SandboxSnapshots extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.AgentEngineSandboxSnapshotOperation>;
+        }) as Promise<types.AgentEngineSandboxOperation>;
 
       return response.then((resp) => {
-        return resp as types.AgentEngineSandboxSnapshotOperation;
+        return resp as types.AgentEngineSandboxOperation;
       });
     } else {
       throw new Error(
