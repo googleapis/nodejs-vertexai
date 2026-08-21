@@ -2041,12 +2041,17 @@ export declare interface SandboxEnvironmentSpecCodeExecutionEnvironment {
 /** The computer use environment with customized settings. */
 export declare interface SandboxEnvironmentSpecComputerUseEnvironment {}
 
+/** The shell environment with customized settings. */
+export declare interface SandboxEnvironmentSpecShellEnvironment {}
+
 /** The specification of a sandbox environment. */
 export declare interface SandboxEnvironmentSpec {
   /** Optional. The code execution environment. */
   codeExecutionEnvironment?: SandboxEnvironmentSpecCodeExecutionEnvironment;
   /** Optional. The computer use environment. */
   computerUseEnvironment?: SandboxEnvironmentSpecComputerUseEnvironment;
+  /** Optional. The shell environment. */
+  shellEnvironment?: SandboxEnvironmentSpecShellEnvironment;
 }
 
 /** Config for creating a Sandbox. */
