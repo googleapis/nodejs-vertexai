@@ -17,7 +17,7 @@ export class MemoryRevisions extends BaseModule {
   }
 
   async get(
-    params: types.GetAgentEngineMemoryRevisionRequestParameters,
+    params: types.GetMemoryRevisionRequestParameters,
   ): Promise<types.MemoryRevision> {
     let response: Promise<types.MemoryRevision>;
 
@@ -25,9 +25,7 @@ export class MemoryRevisions extends BaseModule {
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.getAgentEngineMemoryRevisionRequestParametersToVertex(
-          params,
-        );
+        converters.getMemoryRevisionRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}',
         body['_url'] as Record<string, unknown>,
@@ -61,17 +59,15 @@ export class MemoryRevisions extends BaseModule {
   }
 
   async listInternal(
-    params: types.ListAgentEngineMemoryRevisionsRequestParameters,
-  ): Promise<types.ListAgentEngineMemoryRevisionsResponse> {
-    let response: Promise<types.ListAgentEngineMemoryRevisionsResponse>;
+    params: types.ListMemoryRevisionsRequestParameters,
+  ): Promise<types.ListMemoryRevisionsResponse> {
+    let response: Promise<types.ListMemoryRevisionsResponse>;
 
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
       const body =
-        converters.listAgentEngineMemoryRevisionsRequestParametersToVertex(
-          params,
-        );
+        converters.listMemoryRevisionsRequestParametersToVertex(params);
       path = common.formatMap(
         '{name}/revisions',
         body['_url'] as Record<string, unknown>,
@@ -92,10 +88,10 @@ export class MemoryRevisions extends BaseModule {
         })
         .then((httpResponse) => {
           return httpResponse.json();
-        }) as Promise<types.ListAgentEngineMemoryRevisionsResponse>;
+        }) as Promise<types.ListMemoryRevisionsResponse>;
 
       return response.then((resp) => {
-        const typedResp = new types.ListAgentEngineMemoryRevisionsResponse();
+        const typedResp = new types.ListMemoryRevisionsResponse();
         Object.assign(typedResp, resp);
         return typedResp;
       });
