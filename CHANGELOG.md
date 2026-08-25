@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.11.0](https://github.com/googleapis/nodejs-agentplatform/compare/v0.10.0...v0.11.0) (2026-08-25)
+
+
+### Features
+
+* Add a top-level `client.sandboxes` accessor to the Vertex AI GenAI SDK for JavaScript, with `environments`, `templates`, and `snapshots` submodules. ([3624be5](https://github.com/googleapis/nodejs-agentplatform/commit/3624be5973f063f72c6923c8b5e2cc48fc946e34))
+* Add enable_data_retention to ToolParallelAiSearch, Add step_count to ReinforcementTuningHyperParameters, Add BidiGenerateContentSetup ([fbe513d](https://github.com/googleapis/nodejs-agentplatform/commit/fbe513d058b8670860c71b1814675a9ad92de0cd))
+* Add sandbox templates and snapshots submodules to the Vertex AI GenAI SDK for JavaScript. ([63f8eb6](https://github.com/googleapis/nodejs-agentplatform/commit/63f8eb63a4db541d6e2d582f92c8012b71803c07))
+* Add Shell Sandbox environment support to the Agent Engine sandbox SDK ([c59c2ae](https://github.com/googleapis/nodejs-agentplatform/commit/c59c2ae3a25a52e34066764bd0d465418e4a34e2))
+* allow users to configure max wait time for prompt management queries for Python and JS ([7a9ec5f](https://github.com/googleapis/nodejs-agentplatform/commit/7a9ec5fc9bf75789fbda8b02700f18df473ba3f8))
+* Support Endpoints module for OpenModel prediction, and .get/undeploy/delete ([b2e860e](https://github.com/googleapis/nodejs-agentplatform/commit/b2e860e86422a9141e705501f5ab95a1eb687310))
+
+
+### Bug Fixes
+
+* **deps:** allow @google/genai v2 and drop unused google-auth-library ([6c327c7](https://github.com/googleapis/nodejs-agentplatform/commit/6c327c77ebf81f9faa479c6ce283db658a0f17df))
+* Update generator configuration and SDK bindings for Agent Engine Session update calls to return Session directly. ([8c328ae](https://github.com/googleapis/nodejs-agentplatform/commit/8c328aeed62409fc89116ff72de0c8c9d89e077b))
+
 ## [0.10.0](https://github.com/googleapis/nodejs-agentplatform/compare/v0.9.0...v0.10.0) (2026-07-11)
 
 
