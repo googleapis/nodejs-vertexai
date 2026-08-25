@@ -37,8 +37,7 @@
     "posttest": "npm run lint"
   },
   "dependencies": {
-    "@google/genai": "^1.45.0",
-    "google-auth-library": "^9.1.0"
+    "@google/genai": "^1.45.0 || ^2.0.0"
   },
   "devDependencies": {
     "@eslint/js": "9.20.0",
