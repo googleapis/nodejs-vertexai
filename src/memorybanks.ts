@@ -28,7 +28,7 @@ export class MemoryBanks extends BaseModule {
     let path: string = '';
     let queryParams: Record<string, string> = {};
     if (this.apiClient.isVertexAI()) {
-      const body = converters.createMemoryBankRequestParametersToVertex();
+      const body = converters.createMemoryBankRequestParametersToVertex(params);
       path = common.formatMap(
         'reasoningEngines',
         body['_url'] as Record<string, unknown>,
@@ -51,7 +51,9 @@ export class MemoryBanks extends BaseModule {
           return httpResponse.json();
         }) as Promise<types.MemoryBankOperation>;
 
-      return response.then((resp) => {
+      return response.then((apiResponse) => {
+        const resp = converters.memoryBankOperationFromVertex(apiResponse);
+
         return resp as types.MemoryBankOperation;
       });
     } else {
@@ -102,6 +104,49 @@ export class MemoryBanks extends BaseModule {
     }
   }
 
+  async getInternal(
+    params: types.GetMemoryBankRequestParameters,
+  ): Promise<types.ReasoningEngine> {
+    let response: Promise<types.ReasoningEngine>;
+
+    let path: string = '';
+    let queryParams: Record<string, string> = {};
+    if (this.apiClient.isVertexAI()) {
+      const body = converters.getMemoryBankRequestParametersToVertex(params);
+      path = common.formatMap(
+        '{name}',
+        body['_url'] as Record<string, unknown>,
+      );
+      queryParams = body['_query'] as Record<string, string>;
+      delete body['_url'];
+      delete body['_query'];
+      delete body['config'];
+
+      response = this.apiClient
+        .request({
+          path: path,
+          queryParams: queryParams,
+          body: JSON.stringify(body),
+          httpMethod: 'GET',
+          httpOptions: params.config?.httpOptions,
+          abortSignal: params.config?.abortSignal,
+        })
+        .then((httpResponse) => {
+          return httpResponse.json();
+        }) as Promise<types.ReasoningEngine>;
+
+      return response.then((apiResponse) => {
+        const resp = converters.reasoningEngineFromVertex(apiResponse);
+
+        return resp as types.ReasoningEngine;
+      });
+    } else {
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
+    }
+  }
+
   async ingestEventsInternal(
     params: types.IngestEventsRequestParameters,
   ): Promise<types.MemoryBankIngestEventsOperation> {
@@ -143,6 +188,51 @@ export class MemoryBanks extends BaseModule {
     }
   }
 
+  async listInternal(
+    params: types.ListMemoryBanksRequestParameters,
+  ): Promise<types.ListReasoningEnginesResponse> {
+    let response: Promise<types.ListReasoningEnginesResponse>;
+
+    let path: string = '';
+    let queryParams: Record<string, string> = {};
+    if (this.apiClient.isVertexAI()) {
+      const body = converters.listMemoryBanksRequestParametersToVertex(params);
+      path = common.formatMap(
+        'reasoningEngines',
+        body['_url'] as Record<string, unknown>,
+      );
+      queryParams = body['_query'] as Record<string, string>;
+      delete body['_url'];
+      delete body['_query'];
+      delete body['config'];
+
+      response = this.apiClient
+        .request({
+          path: path,
+          queryParams: queryParams,
+          body: JSON.stringify(body),
+          httpMethod: 'GET',
+          httpOptions: params.config?.httpOptions,
+          abortSignal: params.config?.abortSignal,
+        })
+        .then((httpResponse) => {
+          return httpResponse.json();
+        }) as Promise<types.ListReasoningEnginesResponse>;
+
+      return response.then((apiResponse) => {
+        const resp =
+          converters.listReasoningEnginesResponseFromVertex(apiResponse);
+        const typedResp = new types.ListReasoningEnginesResponse();
+        Object.assign(typedResp, resp);
+        return typedResp;
+      });
+    } else {
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
+    }
+  }
+
   async getMemoryBankOperationInternal(
     params: types.GetMemoryBankOperationParameters,
   ): Promise<types.MemoryBankOperation> {
@@ -174,7 +264,9 @@ export class MemoryBanks extends BaseModule {
           return httpResponse.json();
         }) as Promise<types.MemoryBankOperation>;
 
-      return response.then((resp) => {
+      return response.then((apiResponse) => {
+        const resp = converters.memoryBankOperationFromVertex(apiResponse);
+
         return resp as types.MemoryBankOperation;
       });
     } else {

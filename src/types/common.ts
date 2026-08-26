@@ -629,7 +629,7 @@ export declare interface MemoryBankCustomizationConfigConsolidationConfig {
   revisionsPerCandidateCount?: number;
 }
 
-/** Represents configuration for organizing natural language memories for a particular scope. */
+/** Represents configuration for organizing natural language memories. */
 export declare interface MemoryBankCustomizationConfig {
   /** Optional. Indicates whether the memories will be generated in the third person (i.e. "The user generates memories with Memory Bank."). By default, the memories will be generated in the first person (i.e. "I generate memories with Memory Bank.") */
   enableThirdPersonMemories?: boolean;
@@ -1214,17 +1214,112 @@ export declare interface CreateMemoryBankConfig {
   be charged usage for any applicable operations.
        */
   abortSignal?: AbortSignal;
+  /** The user-defined name of the Memory Bank.
+
+      The display name can be up to 128 characters long and can comprise any
+      UTF-8 characters.
+       */
+  displayName?: string;
+  /** The description of the Memory Bank. */
+  description?: string;
+  /** The encryption spec to be used for the Memory Bank. */
+  encryptionSpec?: genaiTypes.EncryptionSpec;
 }
 
 /** Parameters for creating memory banks. */
 export declare interface CreateMemoryBankRequestParameters {
   config?: CreateMemoryBankConfig;
+  memoryBankConfig?: ReasoningEngineContextSpecMemoryBankConfig;
+}
+
+/** The configuration for generating memories. */
+export declare interface ManagedSemanticMemoryConfigGenerationConfig {
+  /** The model used to generate memories.
+
+      Format:
+      `projects/{project}/locations/{location}/publishers/google/models/{model}`. */
+  model?: string;
+  /** The configuration for triggering memory generation. */
+  generationTriggerConfig?: MemoryGenerationTriggerConfig;
+}
+
+/** The configuration for similarity search. */
+export declare interface ManagedSemanticMemoryConfigSimilaritySearchConfig {
+  /** The model used to generate embeddings to look up similar memories.
+      Format:
+      `projects/{project}/locations/{location}/publishers/google/models/{model}`. */
+  embeddingModel?: string;
+}
+
+/** The configuration for granular TTL. */
+export declare interface ManagedSemanticMemoryConfigTtlConfigGranularTtlConfig {
+  /** Optional. The TTL duration for memories uploaded via
+      CreateMemory. */
+  createTtl?: string;
+  /** Optional. The TTL duration for memories generated via
+      GenerateMemories. */
+  generateCreatedTtl?: string;
+  /** Optional. The TTL duration for memories updated via
+      GenerateMemories (GenerateMemoriesResponse.GeneratedMemory.Action.UPDATED).
+      In the case of an UPDATE action, the `expire_time` of the existing memory
+      will be updated to the new value (now + TTL). */
+  generateUpdatedTtl?: string;
+}
+
+/** The configuration for automatic TTL ('time-to-live') of the memories. */
+export declare interface ManagedSemanticMemoryConfigTtlConfig {
+  /** The default TTL for memories in the Memory Bank. If not set, TTL will not be applied automatically. The TTL can be explicitly set by modifying the `expire_time` of each Memory resource. */
+  defaultTtl?: string;
+  /** The granular TTL config for memories. */
+  granularTtlConfig?: ManagedSemanticMemoryConfigTtlConfigGranularTtlConfig;
+  /** The default TTL for memory revisions in the Memory Bank. If not set, TTL will not be applied automatically. The TTL can be explicitly set by modifying the `expire_time` of each Memory resource. */
+  memoryRevisionDefaultTtl?: string;
+}
+
+/** The configuration for managed semantic memory. */
+export declare interface ManagedSemanticMemoryConfig {
+  /** Represents configuration for LLMs calls. */
+  generationConfig?: ManagedSemanticMemoryConfigGenerationConfig;
+  /** Configuration for how to perform similarity search on memories. */
+  similaritySearchConfig?: ManagedSemanticMemoryConfigSimilaritySearchConfig;
+  /** Configuration for how to customize Memory Bank behavior for a
+      particular scope for unstructured memories. */
+  unstructuredMemoryConfigs?: MemoryBankCustomizationConfig[];
+  /** Configuration for organizing structured memories for a particular
+      scope. */
+  structuredMemoryConfigs?: StructuredMemoryConfig[];
+  /** Configuration for automatic TTL ('time-to-live') of the memories in
+      the Memory Bank. If not set, TTL will not be applied automatically. The
+      TTL can be explicitly set by modifying the `expire_time` of each Memory
+      resource. */
+  ttlConfig?: ManagedSemanticMemoryConfigTtlConfig;
+  /** If true, no memory revisions will be created for any requests to
+      Memory Bank. */
+  disableMemoryRevisions?: boolean;
+}
+
+/** Represents a customer-managed encryption key specification that can be applied to a Vertex AI resource. */
+export declare interface EncryptionSpec {
+  /** Required. Resource name of the Cloud KMS key used to protect the resource. The Cloud KMS key must be in the same region as the resource. It must have the format `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`. */
+  kmsKeyName?: string;
 }
 
 /** A memory bank. */
 export declare interface MemoryBank {
   /** Required. Represents the ID of the schema. Must be 1-63 characters, start with a lowercase letter, and consist of lowercase letters, numbers, and hyphens. */
   name?: string;
+  /** Represents the configuration for managed memories in Memory Bank. If not set, then the default configuration will be used. */
+  managedSemanticMemoryConfig?: ManagedSemanticMemoryConfig;
+  /** Represents the display name of the Memory Bank. */
+  displayName?: string;
+  /** Represents the description of the Memory Bank. */
+  description?: string;
+  /** Timestamp when this Memory Bank was created. */
+  createTime?: string;
+  /** Timestamp when this Memory Bank was most recently updated. */
+  updateTime?: string;
+  /** Customer-managed encryption key spec for a Memory Bank. If set, this Memory Bank and all sub-resources of this Memory Bank will be secured by this key. */
+  encryptionSpec?: EncryptionSpec;
 }
 
 /** Operation that has an memory bank as a response. */
@@ -1273,6 +1368,26 @@ export declare interface DeleteMemoryBankOperation {
   done?: boolean;
   /** The error result of the operation in case of failure or cancellation. */
   error?: Record<string, unknown>;
+}
+
+/** Config for getting a Memory Bank. */
+export declare interface GetMemoryBankConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+}
+
+/** Parameters for getting a Memory Bank. */
+export declare interface GetMemoryBankRequestParameters {
+  /** Name of the Memory Bank. */
+  name: string;
+  config?: GetMemoryBankConfig;
 }
 
 /** The direct contents source event for ingesting events. */
@@ -1361,6 +1476,26 @@ export declare interface MemoryBankIngestEventsOperation {
   done?: boolean;
   /** The error result of the operation in case of failure or cancellation. */
   error?: Record<string, unknown>;
+}
+
+/** Config for listing Memory Banks. */
+export declare interface ListMemoryBanksConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  pageSize?: number;
+  pageToken?: string;
+}
+
+/** Parameters for listing Memory Banks. */
+export declare interface ListMemoryBanksRequestParameters {
+  config?: ListMemoryBanksConfig;
 }
 
 export declare interface GetMemoryBankOperationConfig {
@@ -4359,4 +4494,10 @@ export declare interface PromptVersionRef {
   promptId?: string;
   versionId?: string;
   model?: string;
+}
+
+/** The response for listing Memory Banks. */
+export class ListMemoryBanksResponse {
+  /** The list of Memory Banks. */
+  memoryBanks?: MemoryBank[];
 }
