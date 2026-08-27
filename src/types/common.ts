@@ -188,6 +188,22 @@ export enum DefaultContainerCategory {
   DEFAULT_CONTAINER_CATEGORY_SHELL_SANDBOX = 'DEFAULT_CONTAINER_CATEGORY_SHELL_SANDBOX',
 }
 
+/** Output only. The state of the PSC service automation. */
+export enum PscAutomationState {
+  /**
+   * Should not be used.
+   */
+  PSC_AUTOMATION_STATE_UNSPECIFIED = 'PSC_AUTOMATION_STATE_UNSPECIFIED',
+  /**
+   * The PSC service automation is successful.
+   */
+  PSC_AUTOMATION_STATE_SUCCESSFUL = 'PSC_AUTOMATION_STATE_SUCCESSFUL',
+  /**
+   * The PSC service automation has failed.
+   */
+  PSC_AUTOMATION_STATE_FAILED = 'PSC_AUTOMATION_STATE_FAILED',
+}
+
 /** Input only. Action to take on the source SandboxEnvironment after the snapshot is taken. This field is only used in CreateSandboxEnvironmentSnapshotRequest and it is not stored in the resource. */
 export enum PostSnapshotAction {
   /**
@@ -2609,6 +2625,36 @@ export declare interface CreateSandboxEnvironmentTemplateRequestParameters {
   config?: CreateSandboxEnvironmentTemplateConfig;
 }
 
+/** PSC config that is used to automatically create PSC endpoints in the user projects. */
+export declare interface PSCAutomationConfig {
+  /** Output only. Error message if the PSC service automation failed. */
+  errorMessage?: string;
+  /** Output only. Forwarding rule created by the PSC service automation. */
+  forwardingRule?: string;
+  /** Output only. IP address rule created by the PSC service automation. */
+  ipAddress?: string;
+  /** Required. The full name of the Google Compute Engine [network](https://cloud.google.com/compute/docs/networks-and-firewalls#networks). [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/get): `projects/{project}/global/networks/{network}`. */
+  network?: string;
+  /** Required. Project id used to create forwarding rule. */
+  projectId?: string;
+  /** Output only. The state of the PSC service automation. */
+  state?: PscAutomationState;
+}
+
+/** Represents configuration for private service connect. */
+export declare interface PrivateServiceConnectConfig {
+  /** Required. If true, expose the IndexEndpoint via private service connect. */
+  enablePrivateServiceConnect?: boolean;
+  /** Optional. If set to true, enable secure private service connect with IAM authorization. Otherwise, private service connect will be done without authorization. Note latency will be slightly increased if authorization is enabled. */
+  enableSecurePrivateServiceConnect?: boolean;
+  /** A list of Projects from which the forwarding rule will target the service attachment. */
+  projectAllowlist?: string[];
+  /** Optional. List of projects and networks where the PSC endpoints will be created. This field is used by Online Inference(Prediction) only. */
+  pscAutomationConfigs?: PSCAutomationConfig[];
+  /** Output only. The name of the generated service attachment resource. This is only populated if the endpoint is deployed with PrivateServiceConnect. */
+  serviceAttachment?: string;
+}
+
 /** A sandbox environment template. */
 export declare interface SandboxEnvironmentTemplate {
   /** Output only. The timestamp when this SandboxEnvironmentTemplate was created. */
@@ -2633,6 +2679,8 @@ export declare interface SandboxEnvironmentTemplate {
     | 'FAILED';
   /** Output only. The timestamp when this SandboxEnvironmentTemplate was most recently updated. */
   updateTime?: string;
+  /** Optional. The configuration for private ingress (PSC-E) of this template. When set, the sandbox router is exposed privately via a PSC service attachment so VPC-SC customers can connect from their VPC over a private endpoint instead of the public internet. The resulting service attachment is surfaced on `SandboxEnvironment.connection_info.service_attachment`. Only the PSC-E (service-attachment/ingress) portion of `PrivateServiceConnectConfig` applies here: `enable_private_service_connect` and `project_allowlist` (the consumer projects allowed to connect). The nested `psc_interface_config` (PSC-I / egress) is not used for sandbox ingress; sandbox egress is configured via `egress_control_config` instead. */
+  ingressControlConfig?: PrivateServiceConnectConfig;
 }
 
 /** Operation that has an agent engine sandbox as a response. */
