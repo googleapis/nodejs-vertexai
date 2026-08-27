@@ -2533,6 +2533,50 @@ export declare interface GetAgentEngineSandboxOperationParameters {
   config?: GetAgentEngineOperationConfig;
 }
 
+/** Config for pausing an Agent Engine sandbox. */
+export declare interface PauseAgentEngineSandboxConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** Waits for the operation to complete before returning. */
+  waitForCompletion?: boolean;
+}
+
+/** Parameters for pausing an Agent Engine sandbox. */
+export declare interface PauseAgentEngineSandboxRequestParameters {
+  /** Name of the agent engine sandbox to pause. */
+  name: string;
+  config?: PauseAgentEngineSandboxConfig;
+}
+
+/** Config for resuming an Agent Engine sandbox. */
+export declare interface ResumeAgentEngineSandboxConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** Waits for the operation to complete before returning. */
+  waitForCompletion?: boolean;
+}
+
+/** Parameters for resuming an Agent Engine sandbox. */
+export declare interface ResumeAgentEngineSandboxRequestParameters {
+  /** Name of the agent engine sandbox to resume. */
+  name: string;
+  config?: ResumeAgentEngineSandboxConfig;
+}
+
 /** Specification for deploying from a custom container image. */
 export declare interface SandboxEnvironmentTemplateCustomContainerSpec {
   /** Required. The Artifact Registry Docker image URI (e.g., us-central1-docker.pkg.dev/my-project/my-repo/my-image:tag) of the container image that is to be run on each worker replica. */

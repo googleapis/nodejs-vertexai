@@ -344,4 +344,88 @@ export class SandboxEnvironments extends BaseModule {
       );
     }
   }
+
+  async pauseInternal(
+    params: types.PauseAgentEngineSandboxRequestParameters,
+  ): Promise<types.AgentEngineSandboxOperation> {
+    let response: Promise<types.AgentEngineSandboxOperation>;
+
+    let path: string = '';
+    let queryParams: Record<string, string> = {};
+    if (this.apiClient.isVertexAI()) {
+      const body =
+        converters.pauseAgentEngineSandboxRequestParametersToVertex(params);
+      path = common.formatMap(
+        '{name}/:pause',
+        body['_url'] as Record<string, unknown>,
+      );
+      queryParams = body['_query'] as Record<string, string>;
+      delete body['_url'];
+      delete body['_query'];
+      delete body['config'];
+
+      response = this.apiClient
+        .request({
+          path: path,
+          queryParams: queryParams,
+          body: JSON.stringify(body),
+          httpMethod: 'POST',
+          httpOptions: params.config?.httpOptions,
+          abortSignal: params.config?.abortSignal,
+        })
+        .then((httpResponse) => {
+          return httpResponse.json();
+        }) as Promise<types.AgentEngineSandboxOperation>;
+
+      return response.then((resp) => {
+        return resp as types.AgentEngineSandboxOperation;
+      });
+    } else {
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
+    }
+  }
+
+  async resumeInternal(
+    params: types.ResumeAgentEngineSandboxRequestParameters,
+  ): Promise<types.AgentEngineSandboxOperation> {
+    let response: Promise<types.AgentEngineSandboxOperation>;
+
+    let path: string = '';
+    let queryParams: Record<string, string> = {};
+    if (this.apiClient.isVertexAI()) {
+      const body =
+        converters.resumeAgentEngineSandboxRequestParametersToVertex(params);
+      path = common.formatMap(
+        '{name}/:resume',
+        body['_url'] as Record<string, unknown>,
+      );
+      queryParams = body['_query'] as Record<string, string>;
+      delete body['_url'];
+      delete body['_query'];
+      delete body['config'];
+
+      response = this.apiClient
+        .request({
+          path: path,
+          queryParams: queryParams,
+          body: JSON.stringify(body),
+          httpMethod: 'POST',
+          httpOptions: params.config?.httpOptions,
+          abortSignal: params.config?.abortSignal,
+        })
+        .then((httpResponse) => {
+          return httpResponse.json();
+        }) as Promise<types.AgentEngineSandboxOperation>;
+
+      return response.then((resp) => {
+        return resp as types.AgentEngineSandboxOperation;
+      });
+    } else {
+      throw new Error(
+        'This method is only supported by the Gemini Enterprise Agent Platform (previously known as Vertex AI).',
+      );
+    }
+  }
 }

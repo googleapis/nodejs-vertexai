@@ -193,3 +193,29 @@ export function listAgentEngineSandboxesRequestParametersToVertex(
 
   return toObject;
 }
+
+export function pauseAgentEngineSandboxRequestParametersToVertex(
+  fromObject: types.PauseAgentEngineSandboxRequestParameters,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromName = common.getValueByPath(fromObject, ['name']);
+  if (fromName != null) {
+    common.setValueByPath(toObject, ['_url', 'name'], fromName);
+  }
+
+  return toObject;
+}
+
+export function resumeAgentEngineSandboxRequestParametersToVertex(
+  fromObject: types.ResumeAgentEngineSandboxRequestParameters,
+): Record<string, unknown> {
+  const toObject: Record<string, unknown> = {};
+
+  const fromName = common.getValueByPath(fromObject, ['name']);
+  if (fromName != null) {
+    common.setValueByPath(toObject, ['_url', 'name'], fromName);
+  }
+
+  return toObject;
+}
