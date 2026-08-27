@@ -44,14 +44,14 @@ export function createSkillRequestParametersToVertex(
     common.setValueByPath(toObject, ['description'], fromDescription);
   }
 
-  const fromConfig = common.getValueByPath(fromObject, ['config']);
-  if (fromConfig != null) {
-    createSkillConfigToVertex(fromConfig, toObject);
-  }
-
   const fromSkillId = common.getValueByPath(fromObject, ['skillId']);
   if (fromSkillId != null) {
     common.setValueByPath(toObject, ['_query', 'skillId'], fromSkillId);
+  }
+
+  const fromConfig = common.getValueByPath(fromObject, ['config']);
+  if (fromConfig != null) {
+    createSkillConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;

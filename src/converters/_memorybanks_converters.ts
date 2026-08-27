@@ -40,11 +40,6 @@ export function createMemoryBankRequestParametersToVertex(
 ): Record<string, unknown> {
   const toObject: Record<string, unknown> = {};
 
-  const fromConfig = common.getValueByPath(fromObject, ['config']);
-  if (fromConfig != null) {
-    createMemoryBankConfigToVertex(fromConfig, toObject);
-  }
-
   const fromMemoryBankConfig = common.getValueByPath(fromObject, [
     'memoryBankConfig',
   ]);
@@ -54,6 +49,11 @@ export function createMemoryBankRequestParametersToVertex(
       ['context_spec', 'memory_bank_config'],
       reasoningEngineContextSpecMemoryBankConfigToVertex(fromMemoryBankConfig),
     );
+  }
+
+  const fromConfig = common.getValueByPath(fromObject, ['config']);
+  if (fromConfig != null) {
+    createMemoryBankConfigToVertex(fromConfig, toObject);
   }
 
   return toObject;

@@ -1228,8 +1228,8 @@ export declare interface CreateMemoryBankConfig {
 
 /** Parameters for creating memory banks. */
 export declare interface CreateMemoryBankRequestParameters {
-  config?: CreateMemoryBankConfig;
   memoryBankConfig?: ReasoningEngineContextSpecMemoryBankConfig;
+  config?: CreateMemoryBankConfig;
 }
 
 /** The configuration for generating memories. */
@@ -3364,11 +3364,11 @@ export declare interface CreateSkillRequestParameters {
   displayName: string;
   /** Required. The description of the Skill. */
   description: string;
-  config?: CreateSkillConfig;
   /** Required. The ID to use for the Skill, which will become the final
       component of the Skill's resource name.
        */
   skillId: string;
+  config?: CreateSkillConfig;
 }
 
 /** Operation that has a skill as a response. */
