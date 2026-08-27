@@ -154,6 +154,10 @@ export enum SandboxState {
    * Sandbox runtime has been deleted.
    */
   STATE_DELETED = 'STATE_DELETED',
+  /**
+   * Sandbox runtime is stopping.
+   */
+  STATE_STOPPING = 'STATE_STOPPING',
 }
 
 /** Protocol for port. Defaults to TCP if not specified. */
@@ -2284,7 +2288,7 @@ export declare interface SandboxEnvironmentSpecCodeExecutionEnvironment {
 /** The computer use environment with customized settings. */
 export declare interface SandboxEnvironmentSpecComputerUseEnvironment {}
 
-/** The shell environment with customized settings. */
+/** The shell environment. */
 export declare interface SandboxEnvironmentSpecShellEnvironment {}
 
 /** The specification of a sandbox environment. */
@@ -2293,7 +2297,7 @@ export declare interface SandboxEnvironmentSpec {
   codeExecutionEnvironment?: SandboxEnvironmentSpecCodeExecutionEnvironment;
   /** Optional. The computer use environment. */
   computerUseEnvironment?: SandboxEnvironmentSpecComputerUseEnvironment;
-  /** Optional. The shell environment. */
+  /** Optional. The shell environment for executing shell commands and scripts. */
   shellEnvironment?: SandboxEnvironmentSpecShellEnvironment;
 }
 
@@ -2621,9 +2625,9 @@ export declare interface SandboxEnvironmentTemplateDefaultContainerEnvironment {
 export declare interface SandboxEnvironmentTemplateEgressControlConfigDnsPeeringConfig {
   /** Required. The DNS name suffix of the zone being peered to, e.g., "my-internal-domain.corp.". Must end with a dot. */
   domain?: string;
-  /** Required. The VPC network name in the target_project where the DNS zone specified by 'domain' is visible. */
+  /** Required. The VPC network name in the target_project where the DNS zone specified by `domain` is visible. */
   targetNetwork?: string;
-  /** Required. The project ID hosting the Cloud DNS managed zone that contains the 'domain'. The Vertex AI Service Agent requires the dns.peer role on this project. */
+  /** Required. The project ID hosting the Cloud DNS managed zone that contains the `domain`. The Vertex AI Service Agent requires the dns.peer role on this project. */
   targetProject?: string;
 }
 
@@ -2635,7 +2639,7 @@ export declare interface SandboxEnvironmentTemplateEgressControlConfig {
   customerVpcNetwork?: string;
   /** Optional. DNS peering configurations that allow sandbox egress to resolve customer-internal domains via the customer VPC. */
   dnsPeeringConfigs?: SandboxEnvironmentTemplateEgressControlConfigDnsPeeringConfig[];
-  /** Optional. The name of the customer VPC NetworkAttachment used to draw a PSC interface IP into the customer VPC for sandbox egress. */
+  /** Optional. The name of the customer VPC `NetworkAttachment` used to draw a PSC interface IP into the customer VPC for sandbox egress. */
   networkAttachment?: string;
 }
 
@@ -3717,6 +3721,8 @@ export declare interface SchemaPromptSpecAppBuilderData {
   framework?: Framework;
   /** Linked resources attached to the application by the user. */
   linkedResources?: SchemaPromptSpecAppBuilderDataLinkedResource[];
+  /** Optional. The Cloud Run regions in which the application is currently deployed. Used to rediscover and redeploy the app in the regions it already runs in, which may differ from the prompt's location. */
+  deployedRegions?: string[];
 }
 
 /** Defines data for an interaction prompt. */
