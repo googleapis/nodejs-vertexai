@@ -48,6 +48,17 @@ export function createSandboxEnvironmentTemplateConfigToVertex(
     );
   }
 
+  const fromIngressControlConfig = common.getValueByPath(fromObject, [
+    'ingressControlConfig',
+  ]);
+  if (parentObject !== undefined && fromIngressControlConfig != null) {
+    common.setValueByPath(
+      parentObject,
+      ['ingressControlConfig'],
+      fromIngressControlConfig,
+    );
+  }
+
   return toObject;
 }
 

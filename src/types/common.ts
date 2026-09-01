@@ -2639,36 +2639,6 @@ export declare interface SandboxEnvironmentTemplateEgressControlConfig {
   networkAttachment?: string;
 }
 
-/** Config for creating a Sandbox Template. */
-export declare interface CreateSandboxEnvironmentTemplateConfig {
-  /** Used to override HTTP request options. */
-  httpOptions?: genaiTypes.HttpOptions;
-  /** Abort signal which can be used to cancel the request.
-
-  NOTE: AbortSignal is a client-only operation. Using it to cancel an
-  operation will not cancel the request in the service. You will still
-  be charged usage for any applicable operations.
-       */
-  abortSignal?: AbortSignal;
-  /** The custom container environment for the sandbox template. */
-  customContainerEnvironment?: SandboxEnvironmentTemplateCustomContainerEnvironment;
-  /** The default container environment for the sandbox template. */
-  defaultContainerEnvironment?: SandboxEnvironmentTemplateDefaultContainerEnvironment;
-  /** The egress control config for the sandbox template. */
-  egressControlConfig?: SandboxEnvironmentTemplateEgressControlConfig;
-  /** Waits for the operation to complete before returning. */
-  waitForCompletion?: boolean;
-}
-
-/** Parameters for creating Sandbox Environment Templates. */
-export declare interface CreateSandboxEnvironmentTemplateRequestParameters {
-  /** Name of the agent engine to create the template under. */
-  name: string;
-  /** The display name of the sandbox template. */
-  displayName: string;
-  config?: CreateSandboxEnvironmentTemplateConfig;
-}
-
 /** PSC config that is used to automatically create PSC endpoints in the user projects. */
 export declare interface PSCAutomationConfig {
   /** Output only. Error message if the PSC service automation failed. */
@@ -2697,6 +2667,38 @@ export declare interface PrivateServiceConnectConfig {
   pscAutomationConfigs?: PSCAutomationConfig[];
   /** Output only. The name of the generated service attachment resource. This is only populated if the endpoint is deployed with PrivateServiceConnect. */
   serviceAttachment?: string;
+}
+
+/** Config for creating a Sandbox Template. */
+export declare interface CreateSandboxEnvironmentTemplateConfig {
+  /** Used to override HTTP request options. */
+  httpOptions?: genaiTypes.HttpOptions;
+  /** Abort signal which can be used to cancel the request.
+
+  NOTE: AbortSignal is a client-only operation. Using it to cancel an
+  operation will not cancel the request in the service. You will still
+  be charged usage for any applicable operations.
+       */
+  abortSignal?: AbortSignal;
+  /** The custom container environment for the sandbox template. */
+  customContainerEnvironment?: SandboxEnvironmentTemplateCustomContainerEnvironment;
+  /** The default container environment for the sandbox template. */
+  defaultContainerEnvironment?: SandboxEnvironmentTemplateDefaultContainerEnvironment;
+  /** The egress control config for the sandbox template. */
+  egressControlConfig?: SandboxEnvironmentTemplateEgressControlConfig;
+  /** Waits for the operation to complete before returning. */
+  waitForCompletion?: boolean;
+  /** The ingress control config for the sandbox template. */
+  ingressControlConfig?: PrivateServiceConnectConfig;
+}
+
+/** Parameters for creating Sandbox Environment Templates. */
+export declare interface CreateSandboxEnvironmentTemplateRequestParameters {
+  /** Name of the agent engine to create the template under. */
+  name: string;
+  /** The display name of the sandbox template. */
+  displayName: string;
+  config?: CreateSandboxEnvironmentTemplateConfig;
 }
 
 /** A sandbox environment template. */
