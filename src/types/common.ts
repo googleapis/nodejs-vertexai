@@ -154,6 +154,18 @@ export enum SandboxState {
    * Sandbox runtime has been deleted.
    */
   STATE_DELETED = 'STATE_DELETED',
+  /**
+   * Sandbox runtime is paused.
+   */
+  STATE_PAUSED = 'STATE_PAUSED',
+  /**
+   * Sandbox runtime is pausing.
+   */
+  STATE_PAUSING = 'STATE_PAUSING',
+  /**
+   * Sandbox runtime is resuming.
+   */
+  STATE_RESUMING = 'STATE_RESUMING',
 }
 
 /** Protocol for port. Defaults to TCP if not specified. */
