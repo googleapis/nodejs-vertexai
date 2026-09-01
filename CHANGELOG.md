@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.12.0](https://github.com/googleapis/nodejs-agentplatform/compare/v0.11.0...v0.12.0) (2026-09-01)
+
+
+### Features
+
+* Add sandboxes.pause() and sandboxes.resume() methods to the Agent Engine sandbox SDK across Python, Java, and JS SDKs. ([66f6826](https://github.com/googleapis/nodejs-agentplatform/commit/66f6826aacb36c7602b07ed2135f3e6a754077cd))
+* **agentplatform:** Support client.memory_banks.get ([a907304](https://github.com/googleapis/nodejs-agentplatform/commit/a907304b21390eec20525355480f2ebe010ac1bd))
+* **agentplatform:** Support client.memory_banks.list ([a907304](https://github.com/googleapis/nodejs-agentplatform/commit/a907304b21390eec20525355480f2ebe010ac1bd))
+* **agentplatform:** Support Memory Bank configs. ([a907304](https://github.com/googleapis/nodejs-agentplatform/commit/a907304b21390eec20525355480f2ebe010ac1bd))
+* Allow setting `ingress_control_config` when creating a `SandboxEnvironmentTemplate` via the SDK (Python, Java, JS). ([0552c78](https://github.com/googleapis/nodejs-agentplatform/commit/0552c78307d5cb7dd521e6966be8078761a418ec))
+* Expose ingress_control_config field on SandboxEnvironmentTemplate across Python, Java, and JS SDKs. ([0ce350e](https://github.com/googleapis/nodejs-agentplatform/commit/0ce350ea01570afbec047cf10dd3e8c90b6a1655))
+* Expose SandboxEnvironmentTemplateState as a standalone enum class in the Python, Java, and JS SDKs. ([ad8090b](https://github.com/googleapis/nodejs-agentplatform/commit/ad8090bbd1f0ee4ca88a2e8e679f7dc07f21c9c4))
+* Expose service_attachment field on SandboxEnvironmentConnectionInfo across Python, Java, JS, and Go SDKs. ([46732b1](https://github.com/googleapis/nodejs-agentplatform/commit/46732b1de5c2d81a6e0eee7c11a44462cc278a86))
+* Expose STATE_PAUSED, STATE_PAUSING, and STATE_RESUMING values in the SandboxState enum for SandboxEnvironment across Python, Java, and JS SDKs. ([ee76556](https://github.com/googleapis/nodejs-agentplatform/commit/ee76556971fdf142f95f6959940227f3237b445a))
+
 ## [0.11.0](https://github.com/googleapis/nodejs-agentplatform/compare/v0.10.0...v0.11.0) (2026-08-25)
 
 
