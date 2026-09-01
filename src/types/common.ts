@@ -204,6 +204,34 @@ export enum PscAutomationState {
   PSC_AUTOMATION_STATE_FAILED = 'PSC_AUTOMATION_STATE_FAILED',
 }
 
+/** Output only. The state of the sandbox environment template. */
+export enum SandboxEnvironmentTemplateState {
+  /**
+   * The default value. This value is unused.
+   */
+  UNSPECIFIED = 'UNSPECIFIED',
+  /**
+   * Runtime resources are being allocated for the sandbox environment.
+   */
+  PROVISIONING = 'PROVISIONING',
+  /**
+   * Sandbox runtime is ready for serving.
+   */
+  ACTIVE = 'ACTIVE',
+  /**
+   * Sandbox runtime is halted, performing tear down tasks.
+   */
+  DEPROVISIONING = 'DEPROVISIONING',
+  /**
+   * Sandbox has terminated with underlying runtime failure.
+   */
+  DELETED = 'DELETED',
+  /**
+   * Sandbox has failed to provision.
+   */
+  FAILED = 'FAILED',
+}
+
 /** Input only. Action to take on the source SandboxEnvironment after the snapshot is taken. This field is only used in CreateSandboxEnvironmentSnapshotRequest and it is not stored in the resource. */
 export enum PostSnapshotAction {
   /**
@@ -2716,13 +2744,7 @@ export declare interface SandboxEnvironmentTemplate {
   /** Identifier. The resource name of the SandboxEnvironmentTemplate. Format: `projects/{project}/locations/{location}/reasoningEngines/{reasoning_engine}/sandboxEnvironmentTemplates/{sandbox_environment_template}` */
   name?: string;
   /** Output only. The state of the sandbox environment template. */
-  state?:
-    | 'UNSPECIFIED'
-    | 'PROVISIONING'
-    | 'ACTIVE'
-    | 'DEPROVISIONING'
-    | 'DELETED'
-    | 'FAILED';
+  state?: SandboxEnvironmentTemplateState;
   /** Output only. The timestamp when this SandboxEnvironmentTemplate was most recently updated. */
   updateTime?: string;
   /** Optional. The configuration for private ingress (PSC-E) of this template. When set, the sandbox router is exposed privately via a PSC service attachment so VPC-SC customers can connect from their VPC over a private endpoint instead of the public internet. The resulting service attachment is surfaced on `SandboxEnvironment.connection_info.service_attachment`. Only the PSC-E (service-attachment/ingress) portion of `PrivateServiceConnectConfig` applies here: `enable_private_service_connect` and `project_allowlist` (the consumer projects allowed to connect). The nested `psc_interface_config` (PSC-I / egress) is not used for sandbox ingress; sandbox egress is configured via `egress_control_config` instead. */
