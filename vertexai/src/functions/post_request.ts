@@ -55,7 +55,9 @@ export async function postRequest({
   requestOptions?: RequestOptions;
   apiVersion?: string;
 }): Promise<Response | undefined> {
-  const vertexBaseEndpoint = apiEndpoint ?? `${region}-${API_BASE_PATH}`;
+  const vertexBaseEndpoint =
+    apiEndpoint ??
+    (region === 'global' ? API_BASE_PATH : `${region}-${API_BASE_PATH}`);
 
   let vertexEndpoint = `https://${vertexBaseEndpoint}/${apiVersion}/${resourcePath}:${resourceMethod}`;
 

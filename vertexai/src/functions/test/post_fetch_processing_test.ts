@@ -33,7 +33,10 @@ import {
   UNARY_RESPONSE_MISSING_ROLE_INDEX,
 } from './test_data';
 import * as PostFetchFunctions from '../post_fetch_processing';
-import {aggregateResponses} from '../post_fetch_processing';
+import {
+  aggregateResponses,
+  throwErrorIfNotOK,
+} from '../post_fetch_processing';
 import {generateContent, generateContentStream} from '../generate_content';
 import {countTokens} from '../count_tokens';
 
@@ -177,6 +180,47 @@ describe('processStream', () => {
     expect(actualArg).toBeDefined();
     const actualResponseToProcessStream = await actualArg!.json();
     expect(actualResponseToProcessStream).toEqual(STREAM_RESPONSE_CHUNKS_1);
+  });
+});
+
+describe('throwErrorIfNotOK', () => {
+  it('non-JSON response body should throw descriptive error instead of JSON parse error', async () => {
+    const htmlBody = '<!DOCTYPE html><html><body>Not Found</body></html>';
+    const response = new Response(htmlBody, {
+      status: 404,
+      statusText: 'Not Found',
+      headers: {'Content-Type': 'text/html'},
+    });
+    await expectAsync(throwErrorIfNotOK(response)).toBeRejectedWithError(
+      /Response body is not valid JSON/
+    );
+  });
+
+  it('valid JSON 4xx response body should throw ClientError', async () => {
+    const errorBody = {
+      error: {
+        message: 'Resource not found',
+        code: 404,
+        status: 'NOT_FOUND',
+        details: [],
+      },
+    };
+    const response = new Response(JSON.stringify(errorBody), {
+      status: 404,
+      statusText: 'Not Found',
+      headers: {'Content-Type': 'application/json'},
+    });
+    await expectAsync(throwErrorIfNotOK(response)).toBeRejectedWithError(
+      /got status: 404/
+    );
+  });
+
+  it('OK response should not throw', async () => {
+    const response = new Response('{}', {
+      status: 200,
+      statusText: 'OK',
+    });
+    await expectAsync(throwErrorIfNotOK(response)).toBeResolved();
   });
 });
 

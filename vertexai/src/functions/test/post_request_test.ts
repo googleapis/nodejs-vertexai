@@ -166,6 +166,31 @@ describe('postRequest', () => {
     expect(actualHeaders.get('Content-Type')).toEqual('application/json');
   });
 
+  it('global region without apiEndpoint should use base endpoint without region prefix', async () => {
+    await postRequest({
+      region: 'global',
+      resourcePath: RESOURCE_PATH,
+      resourceMethod: RESOURCE_METHOD,
+      token: TOKEN,
+      data: data,
+    });
+    const actualUrl: string = fetchSpy.calls.mostRecent().args[0];
+    expect(actualUrl).toContain('aiplatform.googleapis.com');
+    expect(actualUrl).not.toContain('global-aiplatform.googleapis.com');
+  });
+
+  it('regional endpoint should still prepend region prefix', async () => {
+    await postRequest({
+      region: 'us-central1',
+      resourcePath: RESOURCE_PATH,
+      resourceMethod: RESOURCE_METHOD,
+      token: TOKEN,
+      data: data,
+    });
+    const actualUrl: string = fetchSpy.calls.mostRecent().args[0];
+    expect(actualUrl).toContain('us-central1-aiplatform.googleapis.com');
+  });
+
   it('set both custom header and apiClient, should prioritize custom headers if sent to external endpoint', async () => {
     const requestOptions: RequestOptions = {
       customHeaders: new Headers({

@@ -49,7 +49,9 @@ export class ApiClient {
   }
 
   getBaseUrl() {
-    return `https://${this.location}-aiplatform.googleapis.com/${this.apiVersion}`;
+    const locationPrefix =
+      this.location === 'global' ? '' : `${this.location}-`;
+    return `https://${locationPrefix}aiplatform.googleapis.com/${this.apiVersion}`;
   }
 
   getBaseResourePath() {

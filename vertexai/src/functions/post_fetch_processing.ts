@@ -39,7 +39,16 @@ export async function throwErrorIfNotOK(response: Response | undefined) {
   if (!response.ok) {
     const status: number = response.status;
     const statusText: string = response.statusText;
-    const errorBody = await response.json();
+    const responseText = await response.text();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let errorBody: any;
+    try {
+      errorBody = JSON.parse(responseText);
+    } catch {
+      throw new GoogleGenerativeAIError(
+        `got status: ${status} ${statusText}. Response body is not valid JSON: ${responseText.slice(0, 500)}`
+      );
+    }
     const errorMessage = `got status: ${status} ${statusText}. ${JSON.stringify(
       errorBody
     )}`;
