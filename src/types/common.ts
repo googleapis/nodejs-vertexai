@@ -761,6 +761,8 @@ export declare interface StructuredMemorySchemaConfig {
   id?: string;
   /** Optional. Represents the type of the structured memories associated with the schema. If not set, then `STRUCTURED_PROFILE` will be used. */
   memoryType?: MemoryType;
+  /** Required. Represents the OpenAPI schema of the structured memories. */
+  memoryJsonSchema?: unknown;
 }
 
 /** Configuration for organizing structured memories within a scope. */
