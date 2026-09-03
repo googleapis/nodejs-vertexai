@@ -260,22 +260,6 @@ export enum PostSnapshotAction {
   PAUSE = 'PAUSE',
 }
 
-/** Output only. The source of the Skill. */
-export enum SkillSource {
-  /**
-   * The skill source is unspecified.
-   */
-  SKILL_SOURCE_UNSPECIFIED = 'SKILL_SOURCE_UNSPECIFIED',
-  /**
-   * The skill is created by a user.
-   */
-  USER = 'USER',
-  /**
-   * The skill is a system skill.
-   */
-  SYSTEM = 'SYSTEM',
-}
-
 /** State of the Skill. */
 export enum SkillState {
   /**
@@ -298,6 +282,22 @@ export enum SkillState {
    * The Skill is being deleted.
    */
   DELETING = 'DELETING',
+}
+
+/** Output only. The source of the Skill. */
+export enum SkillSource {
+  /**
+   * The skill source is unspecified.
+   */
+  SKILL_SOURCE_UNSPECIFIED = 'SKILL_SOURCE_UNSPECIFIED',
+  /**
+   * The skill is created by a user.
+   */
+  USER = 'USER',
+  /**
+   * The skill is a system skill.
+   */
+  SYSTEM = 'SYSTEM',
 }
 
 /** Output only. The state of the Skill Revision. */
@@ -2416,7 +2416,7 @@ export declare interface SandboxEnvironment {
   owner?: string;
   /** Optional. The resource name of the SandboxEnvironmentSnapshot to use for creating this SandboxEnvironment. Format: `projects/{project}/locations/{location}/reasoningEngines/{reasoning_engine}/sandboxEnvironmentSnapshots/{sandbox_environment_snapshot}` */
   sandboxEnvironmentSnapshot?: string;
-  /** Optional. The name of the SandboxEnvironmentTemplate specified in the parent Agent Engine resource that this SandboxEnvironment is created from. */
+  /** Optional. The name of the SandboxEnvironmentTemplate specified in the parent Agent Engine resource that this SandboxEnvironment is created from. Only one of `sandbox_environment_template` and `spec` should be set. */
   sandboxEnvironmentTemplate?: string;
 }
 
@@ -3642,7 +3642,7 @@ export declare interface SkillRevision {
   name?: string;
   /** Output only. Timestamp when this Skill Revision was created. */
   createTime?: string;
-  /** Output only. The state of the Skill at this revision. */
+  /** Output only. The state of the Skill at this revision. TODO(b/503772996) Use a different proto for skill data included in skill revision */
   skill?: Skill;
 }
 
